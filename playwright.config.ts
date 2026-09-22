@@ -32,5 +32,14 @@ export default defineConfig({
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
+    // Deterministic auth for e2e: a syntactically-valid but unreachable Supabase
+    // config makes `isSupabaseConfigured` true so protected routes redirect,
+    // while getUser (no session cookie) resolves "session missing" without any
+    // network call. No real database is touched.
+    env: {
+      NEXT_PUBLIC_SUPABASE_URL: 'http://127.0.0.1:54321',
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: 'e2e-anon-key',
+      NEXT_PUBLIC_SITE_URL: 'http://localhost:3000',
+    },
   },
 });
