@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  background-color: theme('colors.bg');
+  color: theme('colors.text');
+}
+
+body {
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Bidi-safe number rendering: wrap Latin numerals inside RTL text. */
+.ltr-num {
+  unicode-bidi: isolate;
+  direction: ltr;
+}

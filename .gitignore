@@ -1,0 +1,27 @@
+# dependencies
+/node_modules
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+/dist
+
+# testing
+/coverage
+/playwright-report
+/test-results
+
+# env
+.env
+.env.*
+!.env.example
+
+# misc
+.DS_Store
+*.log
+.vercel
+next-env.d.ts
+tsconfig.tsbuildinfo
