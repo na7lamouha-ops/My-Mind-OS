@@ -21,7 +21,7 @@ export default async function DashboardPage() {
             {activeProject ? (
               <div>
                 <div className="flex items-center justify-between gap-2">
-                  <Link href={`/projects/${activeProject.id}`} className="text-lg font-semibold hover:text-accent">
+                  <Link href={`/projects/${activeProject.id}`} className="text-lg font-semibold hover:text-link">
                     {activeProject.title}
                   </Link>
                   <Pill value={activeProject.priority} label={priorityLabel[activeProject.priority]} />
@@ -52,9 +52,9 @@ export default async function DashboardPage() {
         <div className="space-y-4">
           <Card title="الوارد">
             {inboxCount > 0 ? (
-              <Link href="/inbox" className="flex items-center justify-between text-sm hover:text-accent">
+              <Link href="/inbox" className="flex items-center justify-between text-sm hover:text-link">
                 <span>أفكار بانتظار التنظيم</span>
-                <span className="rounded-full bg-accent/15 px-2 py-0.5 font-semibold text-accent ltr-num">
+                <span className="rounded-full bg-accent/15 px-2 py-0.5 font-semibold text-link ltr-num">
                   {inboxCount}
                 </span>
               </Link>

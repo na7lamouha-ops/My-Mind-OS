@@ -36,7 +36,7 @@ export default async function ProjectsPage() {
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <Link href={`/projects/${p.id}`} className="font-medium hover:text-accent">
+                    <Link href={`/projects/${p.id}`} className="font-medium hover:text-link">
                       {p.title}
                     </Link>
                     {p.next_action && (

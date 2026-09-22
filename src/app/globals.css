@@ -13,12 +13,59 @@ body {
 }
 
 body {
-  min-height: 100vh;
+  min-height: 100dvh;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  /* Subtle depth: a soft indigo glow anchored top-center. */
+  background-image: radial-gradient(
+    60rem 32rem at 50% -8rem,
+    rgba(79, 70, 229, 0.16),
+    transparent 70%
+  );
+  background-attachment: fixed;
 }
 
-/* Bidi-safe number rendering: wrap Latin numerals inside RTL text. */
+@layer base {
+  /* Visible, consistent focus ring for keyboard users. */
+  :focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px theme('colors.bg'),
+      0 0 0 4px theme('colors.accent');
+    border-radius: 0.5rem;
+  }
+  ::selection {
+    background: rgba(79, 70, 229, 0.35);
+  }
+  /* Quiet, on-theme scrollbars. */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: theme('colors.border-strong') transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  *::-webkit-scrollbar-thumb {
+    background: theme('colors.border-strong');
+    border-radius: 9999px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+}
+
+/* Bidi-safe number rendering + tabular figures for data. */
 .ltr-num {
   unicode-bidi: isolate;
   direction: ltr;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
 }

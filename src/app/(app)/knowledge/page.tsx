@@ -42,7 +42,7 @@ export default async function KnowledgePage() {
                         target="_blank"
                         rel="noopener noreferrer"
                         dir="ltr"
-                        className="mt-0.5 block truncate text-xs text-accent hover:underline"
+                        className="mt-0.5 block truncate text-xs text-link hover:underline"
                       >
                         {s.url}
                       </a>
