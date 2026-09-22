@@ -20,3 +20,8 @@ test('/dashboard is protected → redirects to /login without a session', async 
   await expect(page).toHaveURL(/\/login/);
   await expect(page.getByRole('heading', { name: 'تسجيل الدخول' })).toBeVisible();
 });
+
+test('new workspace routes are protected too (e.g. /graph → /login)', async ({ page }) => {
+  await page.goto('/graph');
+  await expect(page).toHaveURL(/\/login/);
+});

@@ -442,3 +442,103 @@ export async function updateAiRun(
   const { error } = await supabase.from('ai_runs').update(patch).eq('id', id).eq('owner_id', uid);
   if (error) throw new DataError(error.message);
 }
+
+// ---- content list + archive -----------------------------------------------
+
+export async function listContentItems(): Promise<ContentItem[]> {
+  const { supabase, uid } = await ctx();
+  const { data, error } = await supabase
+    .from('content_items')
+    .select('*')
+    .eq('owner_id', uid)
+    .is('deleted_at', null)
+    .order('created_at', { ascending: false });
+  return ok(data, error);
+}
+
+export async function listArchivedIdeas(): Promise<Idea[]> {
+  const { supabase, uid } = await ctx();
+  const { data, error } = await supabase
+    .from('ideas')
+    .select('*')
+    .eq('owner_id', uid)
+    .in('status', ['archived', 'snoozed'])
+    .is('deleted_at', null)
+    .order('updated_at', { ascending: false });
+  return ok(data, error);
+}
+
+// ---- graph projection over existing relations -----------------------------
+
+export async function getGraph(): Promise<import('@/lib/graph').Graph> {
+  const { supabase, uid } = await ctx();
+  const [projects, ideas, sources, tasks, content, links] = await Promise.all([
+    supabase.from('projects').select('id,title').eq('owner_id', uid).is('deleted_at', null),
+    supabase.from('ideas').select('id,title,project_id').eq('owner_id', uid).is('deleted_at', null),
+    supabase
+      .from('sources')
+      .select('id,title,project_id,idea_id')
+      .eq('owner_id', uid)
+      .is('deleted_at', null),
+    supabase.from('tasks').select('id,title,project_id').eq('owner_id', uid).is('deleted_at', null),
+    supabase
+      .from('content_items')
+      .select('id,body,idea_id,source_id')
+      .eq('owner_id', uid)
+      .is('deleted_at', null),
+    supabase
+      .from('links')
+      .select('from_type,from_id,to_type,to_id')
+      .eq('owner_id', uid)
+      .is('deleted_at', null),
+  ]);
+  for (const r of [projects, ideas, sources, tasks, content, links]) {
+    if (r.error) throw new DataError(r.error.message);
+  }
+
+  const key = (t: string, id: string) => `${t}:${id}`;
+  const nodes: { type: string; id: string; title: string }[] = [];
+  const edges: { from: string; to: string; kind: string }[] = [];
+
+  for (const p of (projects.data ?? []) as { id: string; title: string }[]) {
+    nodes.push({ type: 'project', id: p.id, title: p.title });
+  }
+  for (const i of (ideas.data ?? []) as { id: string; title: string; project_id: string | null }[]) {
+    nodes.push({ type: 'idea', id: i.id, title: i.title });
+    if (i.project_id) edges.push({ from: key('idea', i.id), to: key('project', i.project_id), kind: 'في المشروع' });
+  }
+  for (const s of (sources.data ?? []) as {
+    id: string;
+    title: string;
+    project_id: string | null;
+    idea_id: string | null;
+  }[]) {
+    nodes.push({ type: 'source', id: s.id, title: s.title });
+    if (s.project_id) edges.push({ from: key('source', s.id), to: key('project', s.project_id), kind: 'في المشروع' });
+    if (s.idea_id) edges.push({ from: key('source', s.id), to: key('idea', s.idea_id), kind: 'يخص الفكرة' });
+  }
+  for (const t of (tasks.data ?? []) as { id: string; title: string; project_id: string }[]) {
+    nodes.push({ type: 'task', id: t.id, title: t.title });
+    edges.push({ from: key('task', t.id), to: key('project', t.project_id), kind: 'مهمة المشروع' });
+  }
+  for (const c of (content.data ?? []) as {
+    id: string;
+    body: string;
+    idea_id: string | null;
+    source_id: string | null;
+  }[]) {
+    nodes.push({ type: 'content_item', id: c.id, title: c.body.slice(0, 60) });
+    if (c.idea_id) edges.push({ from: key('content_item', c.id), to: key('idea', c.idea_id), kind: 'من الفكرة' });
+    if (c.source_id) edges.push({ from: key('content_item', c.id), to: key('source', c.source_id), kind: 'من المصدر' });
+  }
+  for (const l of (links.data ?? []) as {
+    from_type: string;
+    from_id: string;
+    to_type: string;
+    to_id: string;
+  }[]) {
+    edges.push({ from: key(l.from_type, l.from_id), to: key(l.to_type, l.to_id), kind: 'رابط' });
+  }
+
+  return { nodes, edges } as import('@/lib/graph').Graph;
+}

@@ -2,11 +2,14 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 import { Card, EmptyState, Pill } from '@/components/ui';
+import { ContextPanel, ContextSection } from '@/components/context/context-panel';
+import { EntityLinkList, EntityProperties } from '@/components/context/context-parts';
 import { EditProjectForm } from '../edit-form';
 import { QuickTaskForm } from '@/app/(app)/tasks/quick-task-form';
 import { TaskRow } from '@/app/(app)/tasks/task-row';
-import { getProject, listIdeas, listSources, listTasksForProject } from '@/lib/data';
-import { ideaStatusLabel, priorityLabel, projectStatusLabel, sourceKindLabel } from '@/lib/labels';
+import { getGraph, getProject, listTasksForProject } from '@/lib/data';
+import { neighborsOf } from '@/lib/graph';
+import { priorityLabel, projectStatusLabel } from '@/lib/labels';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,17 +17,22 @@ export default async function ProjectDetailPage({ params }: { params: { id: stri
   const project = await getProject(params.id);
   if (!project) notFound();
 
-  const [tasks, allIdeas, allSources] = await Promise.all([
-    listTasksForProject(project.id),
-    listIdeas(),
-    listSources(),
-  ]);
-  const ideas = allIdeas.filter((i) => i.project_id === project.id);
-  const sources = allSources.filter((s) => s.project_id === project.id);
+  const [tasks, graph] = await Promise.all([listTasksForProject(project.id), getGraph()]);
+  const { backlinks } = neighborsOf(graph, 'project', project.id);
+  const related = backlinks.filter((b) => b.kind !== 'رابط' && b.node.type !== 'task');
+  const linked = backlinks.filter((b) => b.kind === 'رابط');
+
+  const properties = [
+    { label: 'الحالة', value: projectStatusLabel[project.status] ?? project.status },
+    { label: 'الأولوية', value: priorityLabel[project.priority] ?? project.priority },
+    { label: 'نشط', value: project.is_active ? 'نعم' : 'لا' },
+    { label: 'الخطوة التالية', value: project.next_action || '—' },
+    { label: 'أُنشئ', value: new Date(project.created_at).toLocaleDateString('ar') },
+  ];
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <Link href="/projects" className="text-sm text-muted hover:text-text">
             ← المشاريع
@@ -38,61 +46,42 @@ export default async function ProjectDetailPage({ params }: { params: { id: stri
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card title="تعديل المشروع">
-          <EditProjectForm project={project} />
-        </Card>
+      <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
+        <div className="space-y-6">
+          <Card title="تعديل المشروع">
+            <EditProjectForm project={project} />
+          </Card>
 
-        <Card title="المهام" hint={`${tasks.filter((t) => t.status === 'done').length}/${tasks.length} منجزة`}>
-          <div className="mb-3">
-            <QuickTaskForm projectId={project.id} />
-          </div>
-          {tasks.length === 0 ? (
-            <EmptyState label="لا مهام بعد." />
-          ) : (
-            <ul className="space-y-2">
-              {tasks.map((t) => (
-                <TaskRow key={t.id} task={t} />
-              ))}
-            </ul>
-          )}
-        </Card>
+          <Card
+            title="المهام"
+            hint={`${tasks.filter((t) => t.status === 'done').length}/${tasks.length} منجزة`}
+          >
+            <div className="mb-3">
+              <QuickTaskForm projectId={project.id} />
+            </div>
+            {tasks.length === 0 ? (
+              <EmptyState label="لا مهام بعد." />
+            ) : (
+              <ul className="space-y-2">
+                {tasks.map((t) => (
+                  <TaskRow key={t.id} task={t} />
+                ))}
+              </ul>
+            )}
+          </Card>
+        </div>
 
-        <Card title="الأفكار المرتبطة">
-          {ideas.length === 0 ? (
-            <EmptyState label="لا أفكار مرتبطة." />
-          ) : (
-            <ul className="space-y-2">
-              {ideas.map((i) => (
-                <li
-                  key={i.id}
-                  className="flex items-center justify-between rounded-lg border border-border bg-bg px-3 py-2 text-sm"
-                >
-                  <span>{i.title}</span>
-                  <Pill value={i.status} label={ideaStatusLabel[i.status]} />
-                </li>
-              ))}
-            </ul>
-          )}
-        </Card>
-
-        <Card title="المصادر المرتبطة">
-          {sources.length === 0 ? (
-            <EmptyState label="لا مصادر مرتبطة." />
-          ) : (
-            <ul className="space-y-2">
-              {sources.map((s) => (
-                <li
-                  key={s.id}
-                  className="flex items-center justify-between rounded-lg border border-border bg-bg px-3 py-2 text-sm"
-                >
-                  <span>{s.title}</span>
-                  <Pill value="low" label={sourceKindLabel[s.kind]} />
-                </li>
-              ))}
-            </ul>
-          )}
-        </Card>
+        <ContextPanel>
+          <ContextSection title="الخصائص">
+            <EntityProperties rows={properties} />
+          </ContextSection>
+          <ContextSection title="عناصر مرتبطة">
+            <EntityLinkList items={related} empty="لا أفكار أو مصادر مرتبطة." />
+          </ContextSection>
+          <ContextSection title="روابط خلفية">
+            <EntityLinkList items={linked} empty="لا روابط مباشرة بعد." />
+          </ContextSection>
+        </ContextPanel>
       </div>
     </div>
   );
