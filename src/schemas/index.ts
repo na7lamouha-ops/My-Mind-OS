@@ -90,7 +90,11 @@ export const Source = z.object({
   ...baseRow,
   kind: SourceKind,
   title: z.string().min(1).max(300),
-  url: z.string().url().nullable(),
+  url: z
+    .string()
+    .url()
+    .refine((v) => /^https?:\/\//i.test(v), 'يجب أن يبدأ الرابط بـ http أو https')
+    .nullable(),
   summary: z.string().max(8000).nullable(),
   project_id: uuid.nullable(),
   idea_id: uuid.nullable(),
