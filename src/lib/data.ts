@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
-import type { Idea, Project, Source, Task } from '@/schemas';
+import type { ContentItem, Idea, Project, Source, Task } from '@/schemas';
 
 type IdeaStatusT = Idea['status'];
 type ProjectStatusT = Project['status'];
@@ -265,6 +265,18 @@ export async function softDeleteTask(id: string): Promise<void> {
 
 // ---- sources --------------------------------------------------------------
 
+export async function getSource(id: string): Promise<Source | null> {
+  const { supabase, uid } = await ctx();
+  const { data, error } = await supabase
+    .from('sources')
+    .select('*')
+    .eq('owner_id', uid)
+    .eq('id', id)
+    .is('deleted_at', null)
+    .maybeSingle();
+  return ok(data, error);
+}
+
 export async function listSources(): Promise<Source[]> {
   const { supabase, uid } = await ctx();
   const { data, error } = await supabase
@@ -372,4 +384,61 @@ export async function getDashboard(): Promise<DashboardData> {
     recentSources,
     progress,
   };
+}
+
+// ---- content_items --------------------------------------------------------
+
+export async function createContentItem(input: {
+  kind: ContentItem['kind'];
+  body: string;
+  status?: ContentItem['status'];
+  idea_id: string | null;
+  source_id: string | null;
+}): Promise<ContentItem> {
+  const { supabase, uid } = await ctx();
+  const { data, error } = await supabase
+    .from('content_items')
+    .insert({
+      owner_id: uid,
+      kind: input.kind,
+      body: input.body,
+      status: input.status ?? 'draft',
+      idea_id: input.idea_id,
+      source_id: input.source_id,
+    })
+    .select('*')
+    .single();
+  return ok(data, error);
+}
+
+// ---- ai_runs (proposal log; no secrets ever stored) -----------------------
+
+export type AiRunStatusT = 'pending' | 'proposed' | 'approved' | 'rejected' | 'failed';
+export type AiRunKindT = 'organize_idea' | 'summarize_source' | 'generate_content';
+export type AiEntityT = 'project' | 'idea' | 'source' | 'task' | 'content_item';
+
+export async function createAiRun(input: {
+  kind: AiRunKindT;
+  status: AiRunStatusT;
+  input: Record<string, unknown>;
+  output: Record<string, unknown> | null;
+  entity_type: AiEntityT;
+  entity_id: string;
+}): Promise<{ id: string }> {
+  const { supabase, uid } = await ctx();
+  const { data, error } = await supabase
+    .from('ai_runs')
+    .insert({ ...input, owner_id: uid })
+    .select('id')
+    .single();
+  return ok(data, error);
+}
+
+export async function updateAiRun(
+  id: string,
+  patch: { status: AiRunStatusT; output?: Record<string, unknown> | null },
+): Promise<void> {
+  const { supabase, uid } = await ctx();
+  const { error } = await supabase.from('ai_runs').update(patch).eq('id', id).eq('owner_id', uid);
+  if (error) throw new DataError(error.message);
 }

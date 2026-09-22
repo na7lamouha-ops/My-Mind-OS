@@ -1,4 +1,5 @@
 import { SubmitButton } from '@/components/form';
+import { AiOrganizer } from '@/components/ai-organizer';
 import { Card, EmptyState, PageHeader } from '@/components/ui';
 import {
   convertIdeaToTaskCmd,
@@ -33,7 +34,9 @@ export default async function InboxPage() {
             {ideas.map((idea) => (
               <li key={idea.id} className="rounded-xl border border-border bg-surface p-4">
                 <p className="font-medium">{idea.title}</p>
-                {idea.note && <p className="mt-1 whitespace-pre-wrap text-sm text-muted">{idea.note}</p>}
+                {idea.note && (
+                  <p className="mt-1 whitespace-pre-wrap text-sm text-muted">{idea.note}</p>
+                )}
                 <div className="mt-3 flex flex-wrap gap-2">
                   <form action={setIdeaStatusCmd}>
                     <input type="hidden" name="id" value={idea.id} />
@@ -69,6 +72,7 @@ export default async function InboxPage() {
                     </SubmitButton>
                   </form>
                 </div>
+                <AiOrganizer entityType="idea" entityId={idea.id} />
               </li>
             ))}
           </ul>

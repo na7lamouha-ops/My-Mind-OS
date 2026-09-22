@@ -1,4 +1,5 @@
 import { SubmitButton } from '@/components/form';
+import { AiOrganizer } from '@/components/ai-organizer';
 import { EmptyState, PageHeader, Pill, Select } from '@/components/ui';
 import {
   convertIdeaToTaskCmd,
@@ -80,6 +81,7 @@ export default async function IdeasPage() {
                   </SubmitButton>
                 </form>
               </div>
+              <AiOrganizer entityType="idea" entityId={idea.id} />
             </li>
           ))}
         </ul>

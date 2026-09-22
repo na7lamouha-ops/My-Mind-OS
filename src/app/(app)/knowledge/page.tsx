@@ -1,3 +1,4 @@
+import { AiOrganizer } from '@/components/ai-organizer';
 import { Card, EmptyState, PageHeader, Pill } from '@/components/ui';
 import { SourceForm } from './source-form';
 import { listIdeas, listProjects, listSources } from '@/lib/data';
@@ -58,6 +59,7 @@ export default async function KnowledgePage() {
                     )}
                   </div>
                 </div>
+                <AiOrganizer entityType="source" entityId={s.id} />
               </li>
             ))}
           </ul>
