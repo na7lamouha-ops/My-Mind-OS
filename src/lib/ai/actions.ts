@@ -80,7 +80,12 @@ export const AiActionResult = z.discriminatedUnion('kind', [
       .min(1),
     ...meta,
   }),
-  z.object({ kind: z.literal('suggest_next_action'), nextAction: z.string().min(1).max(300), ...meta }),
+  z.object({
+    kind: z.literal('suggest_next_action'),
+    nextAction: z.string().min(1).max(300),
+    expectedResult: z.string().min(1).max(300),
+    ...meta,
+  }),
   z.object({
     kind: z.literal('generate_review_questions'),
     questions: z.array(z.object({ q: z.string().min(1).max(400), a: z.string().max(800).nullable() })).min(1),
@@ -171,12 +176,77 @@ function clampText(t: string, n: number): string {
 }
 
 /**
+ * Lightweight, deterministic content classifier for the Mock. Detects a domain
+ * from keywords so suggestions are specific, not generic ("ادرس السوق"). Every
+ * result stays a proposal that needs human verification — never presented as
+ * fact. No API, no cost.
+ */
+type Domain = {
+  category: string;
+  nextAction: string;
+  expectedResult: string;
+  relationType: z.infer<typeof RelationType>;
+};
+
+const DOMAINS: { re: RegExp; d: Domain }[] = [
+  {
+    re: /(متجر|تجار|ecom|shopif|منتج|بيع|عميل|زبون)/i,
+    d: {
+      category: 'التجارة الإلكترونية',
+      nextAction: 'تحدّث مع ٣ عملاء محتملين عن المشكلة خلال ٤٨ ساعة.',
+      expectedResult: 'معرفة إن كانت المشكلة تستحق بناء عرض أوّلي.',
+      relationType: 'فرصة',
+    },
+  },
+  {
+    re: /(محتوى|فيديو|منشور|سكريبت|reel|هوك|جمهور)/i,
+    d: {
+      category: 'صناعة المحتوى',
+      nextAction: 'حوّل الفكرة الأساسية إلى مسودّة Hook واحدة وانشرها كاختبار.',
+      expectedResult: 'قياس أوّلي للتفاعل يحسم إن كانت الزاوية تستحق التوسّع.',
+      relationType: 'دخل محتمل',
+    },
+  },
+  {
+    re: /(ذكاء|ai|وكيل|agent|نموذج|llm|أتمتة|workflow|saas)/i,
+    d: {
+      category: 'الذكاء الاصطناعي والأتمتة',
+      nextAction: 'حدّد خطوة واحدة متكرّرة في مشروعك النشط وجرّب أتمتتها يدويًا أولًا.',
+      expectedResult: 'تأكيد أن الأتمتة توفّر وقتًا فعليًا قبل بناء أي أداة.',
+      relationType: 'تحسين',
+    },
+  },
+  {
+    re: /(كتاب|بودكاست|تعلّم|تعلم|دورة|course|مقال)/i,
+    d: {
+      category: 'التعلّم',
+      nextAction: 'استخرج فكرة واحدة قابلة للتطبيق واربطها بخطوة في مشروعك النشط.',
+      expectedResult: 'تحويل التعلّم النظري إلى خطوة تنفيذ ملموسة.',
+      relationType: 'معرفة',
+    },
+  },
+];
+
+const DEFAULT_DOMAIN: Domain = {
+  category: 'عام',
+  nextAction: 'حدّد أصغر خطوة قابلة للتنفيذ خلال ٢٥ دقيقة لتطبيق هذا في مشروعك النشط.',
+  expectedResult: 'خطوة ملموسة تنقل هذا من فكرة إلى تنفيذ.',
+  relationType: 'معرفة',
+};
+
+export function classifyDomain(text: string): Domain {
+  return DOMAINS.find((r) => r.re.test(text))?.d ?? DEFAULT_DOMAIN;
+}
+
+/**
  * Deterministic Mock action runner. Produces a schema-valid, grounded result
  * for each kind from the entity text. No API, no key, no cost.
  */
 export function runActionMock(kind: AiActionKind, input: AiActionInput): AiActionResult {
-  const ref = [{ entityType: input.entityType, entityId: input.entityId, quote: null }];
+  const quote = input.text ? clampText(input.text, 160) : null;
+  const ref = [{ entityType: input.entityType, entityId: input.entityId, quote }];
   const body = `${input.title}\n${input.text}`.trim();
+  const domain = classifyDomain(body);
   const base = {
     confidence: 0.55,
     explanation: `اقتراح تجريبي (Mock) مبنيّ على نص «${clampText(input.title, 40)}» — يحتاج تحققًا بشريًا.`,
@@ -205,15 +275,21 @@ export function runActionMock(kind: AiActionKind, input: AiActionInput): AiActio
           .map((p, i) => ({
             projectId: p.id || null,
             projectHint: p.title,
-            reason: 'تشابه في الموضوع/الكلمات المفتاحية مع هذا العنصر.',
-            relationType: (['معرفة', 'فرصة', 'تحسين'] as const)[i % 3]!,
+            reason: `تقاطع موضوعي مع «${domain.category}» يجعل ربطه بهذا المشروع ذا قيمة.`,
+            relationType: i === 0 ? domain.relationType : (['معرفة', 'تحسين'] as const)[i % 2]!,
             relevance: 0.6 - i * 0.1,
             opportunity: i === 1 ? 'قد يفتح زاوية دخل غير مختبرة — يحتاج تحققًا.' : null,
           })),
         ...base,
       };
     case 'suggest_next_action':
-      return { kind, nextAction: 'حدّد أصغر خطوة قابلة للتنفيذ خلال ٢٥ دقيقة لتطبيق هذا.', ...base };
+      return {
+        kind,
+        nextAction: domain.nextAction,
+        expectedResult: domain.expectedResult,
+        ...base,
+        explanation: `صُنّف كـ«${domain.category}» من كلمات النص؛ الخطوة مبنيّة على هذا التصنيف وتحتاج تحققك.`,
+      };
     case 'generate_review_questions':
       return {
         kind,

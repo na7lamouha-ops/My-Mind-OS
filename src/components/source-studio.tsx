@@ -20,12 +20,18 @@ import {
 } from '@/app/(app)/ai/action-actions';
 import type { AiActionKind, AiActionResult } from '@/lib/ai/actions';
 
-/** Studio (NotebookLM-style) actions, grounded and approval-gated. */
-const ACTIONS: { kind: AiActionKind; label: string; icon: typeof Sparkles }[] = [
+type Action = { kind: AiActionKind; label: string; icon: typeof Sparkles };
+
+/** The three high-value actions, shown first (the core knowledge→action loop). */
+const PRIMARY_ACTIONS: Action[] = [
   { kind: 'summarize_source', label: 'تلخيص', icon: FileText },
-  { kind: 'extract_key_ideas', label: 'أفكار مفتاحية', icon: Lightbulb },
   { kind: 'suggest_project_links', label: 'ربط بمشروع', icon: Boxes },
   { kind: 'suggest_next_action', label: 'الخطوة التالية', icon: ListChecks },
+];
+
+/** Secondary actions, revealed under "المزيد" so the core loop stays focused. */
+const MORE_ACTIONS: Action[] = [
+  { kind: 'extract_key_ideas', label: 'أفكار مفتاحية', icon: Lightbulb },
   { kind: 'generate_review_questions', label: 'أسئلة مراجعة', icon: BookOpen },
   { kind: 'generate_flashcards', label: 'بطاقات', icon: Layers },
   { kind: 'generate_mindmap', label: 'خريطة ذهنية', icon: MapIcon },
@@ -50,6 +56,7 @@ type View =
 
 export function SourceStudio({ sourceId }: { sourceId: string }) {
   const [view, setView] = useState<View>({ s: 'idle' });
+  const [showMore, setShowMore] = useState(false);
   const [pending, start] = useTransition();
 
   function run(kind: AiActionKind) {
@@ -94,25 +101,34 @@ export function SourceStudio({ sourceId }: { sourceId: string }) {
     );
   }
 
+  const btn = ({ kind, label, icon: Icon }: Action) => {
+    const isLoading = view.s === 'loading' && view.kind === kind;
+    return (
+      <button
+        key={kind}
+        type="button"
+        onClick={() => run(kind)}
+        disabled={pending}
+        className="inline-flex items-center gap-1.5 rounded-lg border border-accent/40 bg-accent/10 px-2.5 py-1.5 text-xs font-medium text-link transition hover:bg-accent/20 disabled:opacity-60"
+      >
+        <Icon size={14} aria-hidden />
+        {isLoading ? '…' : label}
+      </button>
+    );
+  };
+
   return (
     <div className="space-y-3">
-      <div className="grid grid-cols-2 gap-1.5">
-        {ACTIONS.map(({ kind, label, icon: Icon }) => {
-          const isLoading = view.s === 'loading' && view.kind === kind;
-          return (
-            <button
-              key={kind}
-              type="button"
-              onClick={() => run(kind)}
-              disabled={pending}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-accent/40 bg-accent/10 px-2.5 py-1.5 text-xs font-medium text-link transition hover:bg-accent/20 disabled:opacity-60"
-            >
-              <Icon size={14} aria-hidden />
-              {isLoading ? '…' : label}
-            </button>
-          );
-        })}
-      </div>
+      <div className="grid grid-cols-2 gap-1.5">{PRIMARY_ACTIONS.map(btn)}</div>
+
+      <button
+        type="button"
+        onClick={() => setShowMore((v) => !v)}
+        className="text-xs text-muted transition hover:text-text"
+      >
+        {showMore ? 'إخفاء' : 'المزيد من الإجراءات'} ({MORE_ACTIONS.length})
+      </button>
+      {showMore && <div className="grid grid-cols-2 gap-1.5">{MORE_ACTIONS.map(btn)}</div>}
 
       {view.s === 'error' && (
         <p role="alert" className="rounded-lg border border-danger/40 bg-danger/10 px-3 py-2 text-xs text-danger">
@@ -132,6 +148,12 @@ export function SourceStudio({ sourceId }: { sourceId: string }) {
           </div>
 
           <ResultBody result={view.result} editing={view.editing} onSummary={patchSummary} onNext={patchNext} />
+
+          {view.result.sourceRefs[0]?.quote && (
+            <p className="border-r-2 border-border pr-2 text-[11px] text-muted">
+              <span className="text-text">الدليل: </span>«{view.result.sourceRefs[0].quote}»
+            </p>
+          )}
 
           <p className="text-[11px] text-muted">{view.result.explanation}</p>
 
@@ -216,10 +238,16 @@ function ResultBody({
       return editing ? (
         <input className={box} value={result.nextAction} onChange={(e) => onNext(e.target.value)} />
       ) : (
-        <p className="text-sm">
-          <span className="text-muted">الخطوة التالية: </span>
-          {result.nextAction}
-        </p>
+        <div className="space-y-1 text-sm">
+          <p>
+            <span className="text-muted">الفعل: </span>
+            {result.nextAction}
+          </p>
+          <p className="text-xs text-muted">
+            <span className="text-text">النتيجة المتوقعة: </span>
+            {result.expectedResult}
+          </p>
+        </div>
       );
     case 'generate_review_questions':
       return (

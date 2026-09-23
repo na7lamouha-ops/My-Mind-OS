@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   AiActionKind,
   AiActionResult,
+  classifyDomain,
   dbKindFor,
   runActionMock,
   summarizeApplyPlan,
@@ -54,6 +55,34 @@ describe('runActionMock', () => {
     const roots = result.map.nodes.filter((n) => n.kind === 'root');
     expect(roots).toHaveLength(1);
     expect(roots[0]?.entityId).toBe(input.entityId);
+  });
+});
+
+describe('classifyDomain (specific, not generic suggestions)', () => {
+  it('detects the e-commerce domain and gives a concrete customer-validation action', () => {
+    const d = classifyDomain('أفكار حول متجر إلكتروني وبيع منتج للعملاء');
+    expect(d.category).toBe('التجارة الإلكترونية');
+    expect(d.nextAction).toMatch(/عملاء/);
+  });
+
+  it('falls back to a concrete default (never "ادرس السوق")', () => {
+    const d = classifyDomain('نص عام بلا كلمات مفتاحية واضحة');
+    expect(d.category).toBe('عام');
+    expect(d.nextAction).not.toMatch(/ادرس السوق/);
+    expect(d.nextAction.length).toBeGreaterThan(10);
+  });
+});
+
+describe('suggest_next_action carries action + expected result + evidence', () => {
+  it('returns a next action, an expected result, and a source-grounded quote', () => {
+    const result = runActionMock('suggest_next_action', {
+      ...input,
+      text: 'محتوى عن صناعة المحتوى والفيديو والجمهور',
+    });
+    if (result.kind !== 'suggest_next_action') throw new Error('wrong kind');
+    expect(result.nextAction.length).toBeGreaterThan(0);
+    expect(result.expectedResult.length).toBeGreaterThan(0);
+    expect(result.sourceRefs[0]?.quote).toBeTruthy();
   });
 });
 
