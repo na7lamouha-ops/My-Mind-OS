@@ -30,3 +30,8 @@ test('source notebook route is protected → redirects to /login', async ({ page
   await page.goto('/knowledge/11111111-1111-1111-1111-111111111111');
   await expect(page).toHaveURL(/\/login/);
 });
+
+test('onboarding route is protected → redirects to /login', async ({ page }) => {
+  await page.goto('/onboarding');
+  await expect(page).toHaveURL(/\/login/);
+});
