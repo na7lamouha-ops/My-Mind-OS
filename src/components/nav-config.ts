@@ -2,7 +2,6 @@ import {
   Archive,
   BookOpen,
   CalendarCheck,
-  Columns3,
   FileText,
   Inbox,
   LayoutDashboard,
@@ -10,7 +9,6 @@ import {
   ListChecks,
   Network,
   Radar,
-  Share2,
   Target,
   type LucideIcon,
 } from 'lucide-react';
@@ -26,9 +24,7 @@ export const NAV: NavItem[] = [
   { href: '/opportunities', label: 'رادار الفرص', Icon: Radar, section: 'التنفيذ' },
   { href: '/knowledge', label: 'المعرفة', Icon: BookOpen, section: 'المعرفة' },
   { href: '/content', label: 'المحتوى', Icon: FileText, section: 'المعرفة' },
-  { href: '/graph', label: 'الرسم البياني', Icon: Share2, section: 'العرض' },
   { href: '/mindmap', label: 'الخريطة الذهنية', Icon: Network, section: 'العرض' },
-  { href: '/boards', label: 'اللوحات', Icon: Columns3, section: 'العرض' },
   { href: '/weekly-review', label: 'المراجعة الأسبوعية', Icon: CalendarCheck, section: 'العرض' },
   { href: '/archive', label: 'الأرشيف', Icon: Archive, section: 'العرض' },
 ];
