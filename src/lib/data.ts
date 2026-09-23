@@ -576,3 +576,17 @@ export async function createLink(
     .single();
   if (error && !/duplicate key|unique/i.test(error.message)) throw new DataError(error.message);
 }
+
+// ---- opportunity radar (Phase 7B; computed from existing data only) -------
+
+export async function getRadar(): Promise<import('@/lib/opportunity').RadarItem[]> {
+  const [projects, ideas, sources, tasks, graph] = await Promise.all([
+    listProjects(),
+    listIdeas(),
+    listSources(),
+    listAllTasks(),
+    getGraph(),
+  ]);
+  const { computeRadar } = await import('@/lib/opportunity');
+  return computeRadar({ projects, ideas, sources, tasks, graph });
+}

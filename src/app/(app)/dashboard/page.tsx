@@ -2,14 +2,19 @@ import Link from 'next/link';
 
 import { Card, EmptyState, PageHeader, Pill } from '@/components/ui';
 import { TaskRow } from '@/app/(app)/tasks/task-row';
-import { getDashboard } from '@/lib/data';
+import { getDashboard, getRadar } from '@/lib/data';
+import { radarSummary } from '@/lib/opportunity';
 import { priorityLabel, projectStatusLabel, sourceKindLabel } from '@/lib/labels';
 
 export const metadata = { title: 'اللوحة — My Mind OS' };
 export const dynamic = 'force-dynamic';
 
 export default async function DashboardPage() {
-  const { activeProject, activeTasks, inboxCount, recentSources, progress } = await getDashboard();
+  const [{ activeProject, activeTasks, inboxCount, recentSources, progress }, radar] = await Promise.all([
+    getDashboard(),
+    getRadar(),
+  ]);
+  const radarSum = radarSummary(radar);
 
   return (
     <div>
@@ -50,6 +55,26 @@ export default async function DashboardPage() {
         </div>
 
         <div className="space-y-4">
+          <Card title="رادار الفرص" hint="من بياناتك">
+            <Link href="/opportunities" className="block space-y-2 text-sm hover:opacity-90">
+              <div className="grid grid-cols-3 gap-2 text-center">
+                <div className="rounded-lg border border-border bg-bg py-2">
+                  <p className="text-lg font-bold text-success ltr-num">{radarSum.confirmed}</p>
+                  <p className="text-[11px] text-muted">مؤكَّدة</p>
+                </div>
+                <div className="rounded-lg border border-border bg-bg py-2">
+                  <p className="text-lg font-bold text-link ltr-num">{radarSum.potential}</p>
+                  <p className="text-[11px] text-muted">محتملة</p>
+                </div>
+                <div className="rounded-lg border border-border bg-bg py-2">
+                  <p className="text-lg font-bold text-warning ltr-num">{radarSum.missed}</p>
+                  <p className="text-[11px] text-muted">تسرّبت</p>
+                </div>
+              </div>
+              <span className="block text-xs text-link">فتح الرادار الكامل ←</span>
+            </Link>
+          </Card>
+
           <Card title="الوارد">
             {inboxCount > 0 ? (
               <Link href="/inbox" className="flex items-center justify-between text-sm hover:text-link">
