@@ -590,3 +590,17 @@ export async function getRadar(): Promise<import('@/lib/opportunity').RadarItem[
   const { computeRadar } = await import('@/lib/opportunity');
   return computeRadar({ projects, ideas, sources, tasks, graph });
 }
+
+// ---- weekly learning review (Phase 7D; computed from existing data) -------
+
+export async function getLearningReview(): Promise<import('@/lib/learning-review').LearningReview> {
+  const [sources, ideas, content, tasks, graph] = await Promise.all([
+    listSources(),
+    listIdeas(),
+    listContentItems(),
+    listAllTasks(),
+    getGraph(),
+  ]);
+  const { computeLearningReview } = await import('@/lib/learning-review');
+  return computeLearningReview({ sources, ideas, content, tasks, graph });
+}

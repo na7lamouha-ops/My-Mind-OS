@@ -5,9 +5,11 @@ import { ArrowUpRight, Sparkles } from 'lucide-react';
 import { Card, EmptyState, Pill } from '@/components/ui';
 import { ContextPanel, ContextSection } from '@/components/context/context-panel';
 import { EntityLinkList, EntityProperties } from '@/components/context/context-parts';
+import { RepurposeLadder } from '@/components/repurpose-ladder';
 import { SourceStudio } from '@/components/source-studio';
 import { getGraph, getSource, listContentItems, listProjects } from '@/lib/data';
 import { neighborsOf } from '@/lib/graph';
+import { repurposeLadder } from '@/lib/learning-review';
 import { sourceKindLabel } from '@/lib/labels';
 
 export const dynamic = 'force-dynamic';
@@ -25,6 +27,14 @@ export default async function SourceNotebookPage({ params }: { params: { id: str
   const notes = content.filter((c) => c.source_id === source.id);
 
   const activeProject = projects.find((p) => p.is_active) ?? null;
+
+  const ladder = repurposeLadder({
+    hasSummary: Boolean(source.summary),
+    keyIdeaCount: linkedIdeas.length,
+    linkedProjectCount: linkedProjects.length,
+    draftCount: notes.length,
+    resultCount: linkedTasks.length,
+  });
 
   const properties = [
     { label: 'النوع', value: sourceKindLabel[source.kind] ?? source.kind },
@@ -96,6 +106,10 @@ export default async function SourceNotebookPage({ params }: { params: { id: str
             ) : (
               <EmptyState label="لا ملخّص بعد — استخدم «تلخيص» في الاستوديو ثم راجعه واعتمده." />
             )}
+          </Card>
+
+          <Card title="سلّم إعادة التوظيف" hint="من المصدر إلى النتيجة">
+            <RepurposeLadder stages={ladder} />
           </Card>
 
           <Card title="لا تنس هذا" hint="ما يجب أن يبقى حاضرًا من هذا المصدر">

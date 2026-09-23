@@ -1,16 +1,17 @@
 import Link from 'next/link';
 
 import { Card, EmptyState, PageHeader } from '@/components/ui';
-import { getActiveProject, listAllTasks, listIdeas } from '@/lib/data';
+import { getActiveProject, getLearningReview, listAllTasks, listIdeas } from '@/lib/data';
 
 export const metadata = { title: 'المراجعة الأسبوعية — My Mind OS' };
 export const dynamic = 'force-dynamic';
 
 export default async function WeeklyReviewPage() {
-  const [active, tasks, ideas] = await Promise.all([
+  const [active, tasks, ideas, learning] = await Promise.all([
     getActiveProject(),
     listAllTasks(),
     listIdeas(),
+    getLearningReview(),
   ]);
 
   const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
@@ -41,7 +42,50 @@ export default async function WeeklyReviewPage() {
         subtitle="لقطة حيّة لأسبوعك — تُحسب من بياناتك الآن (الحفظ التاريخي يأتي لاحقًا)."
       />
 
-      <div className="grid gap-4 lg:grid-cols-2">
+      {/* Learning review — did learning turn into action this week? */}
+      <Card title="مراجعة التعلّم" hint={`آخر ${learning.windowDays} أيام`}>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+          {[
+            { label: 'مصادر أُضيفت', value: learning.sourcesAdded },
+            { label: 'مصادر مرتبطة', value: learning.sourcesLinked },
+            { label: 'أفكار التُقطت', value: learning.ideasCaptured },
+            { label: 'مسودّات', value: learning.draftsCreated },
+            { label: 'نتائج', value: learning.resultsProduced },
+          ].map((m) => (
+            <div key={m.label} className="rounded-xl border border-border bg-bg p-3 text-center">
+              <p className="text-xl font-bold ltr-num">{m.value}</p>
+              <p className="text-[11px] text-muted">{m.label}</p>
+            </div>
+          ))}
+        </div>
+        <div className="mt-3 flex items-center justify-between text-xs">
+          <span className="text-muted">تحويل المعرفة إلى عمل (مصادر مرتبطة):</span>
+          <span className="font-semibold text-link ltr-num">
+            {learning.conversion === null ? '—' : `${Math.round(learning.conversion * 100)}%`}
+          </span>
+        </div>
+        {learning.unusedRecent.length > 0 && (
+          <div className="mt-3">
+            <p className="mb-1 text-xs font-semibold text-warning">
+              مصادر حديثة بلا ربط — تصرّف قبل أن تُنسى:
+            </p>
+            <ul className="space-y-1.5 text-sm">
+              {learning.unusedRecent.map((s) => (
+                <li key={s.id}>
+                  <Link
+                    href={`/knowledge/${s.id}`}
+                    className="block truncate rounded-lg border border-border bg-bg px-3 py-1.5 hover:text-link"
+                  >
+                    {s.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </Card>
+
+      <div className="mt-4 grid gap-4 lg:grid-cols-2">
         <Card title="ماذا أنجزت؟" hint={`${doneThisWeek.length} هذا الأسبوع`}>
           <List items={doneThisWeek} />
         </Card>
