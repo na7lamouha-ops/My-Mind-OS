@@ -94,3 +94,60 @@ export function toTree(map: MindMap): MindMapTreeNode[] {
 export function mindMapStats(map: MindMap): { nodes: number; edges: number } {
   return { nodes: map.nodes.length, edges: map.edges.length };
 }
+
+/**
+ * Project → WBS mind map from a breakdown (phases + tasks). Pure; produces a
+ * single root with one branch per phase and a leaf per task. No IDs are
+ * fabricated for real entities — task/phase nodes carry synthetic ids only.
+ */
+export function breakdownToMindMap(
+  project: { id: string; title: string },
+  phases: { name: string; tasks: string[] }[],
+): MindMap {
+  const root = `root:${project.id}`;
+  const nodes: MindMapNode[] = [
+    { id: root, label: project.title, kind: 'root', entityId: project.id },
+  ];
+  const edges: MindMapEdge[] = [];
+  phases.forEach((ph, pi) => {
+    const phaseId = `phase:${project.id}:${pi}`;
+    nodes.push({ id: phaseId, label: ph.name, kind: 'concept', parentId: root });
+    edges.push({ id: `e-${phaseId}`, source: phaseId, target: root, relation: 'depends_on' });
+    ph.tasks.forEach((t, ti) => {
+      const taskId = `task:${project.id}:${pi}:${ti}`;
+      nodes.push({ id: taskId, label: t, kind: 'task', parentId: phaseId });
+      edges.push({ id: `e-${taskId}`, source: taskId, target: phaseId, relation: 'derived_from' });
+    });
+  });
+  return { nodes, edges };
+}
+
+/** All ids in the subtree rooted at nodeId (inclusive), following the tree. */
+export function collectSubtreeIds(map: MindMap, nodeId: string): Set<string> {
+  const roots = toTree(map);
+  const found = new Set<string>();
+  const walk = (n: MindMapTreeNode) => {
+    found.add(n.id);
+    n.children.forEach(walk);
+  };
+  const stack = [...roots];
+  while (stack.length) {
+    const cur = stack.pop()!;
+    if (cur.id === nodeId) {
+      walk(cur);
+      break;
+    }
+    stack.push(...cur.children);
+  }
+  return found;
+}
+
+/** Remove a node and its whole subtree (accept/reject a branch). Pure. */
+export function pruneBranch(map: MindMap, nodeId: string): MindMap {
+  const remove = collectSubtreeIds(map, nodeId);
+  if (remove.size === 0) return map;
+  return {
+    nodes: map.nodes.filter((n) => !remove.has(n.id)),
+    edges: map.edges.filter((e) => !remove.has(e.source) && !remove.has(e.target)),
+  };
+}

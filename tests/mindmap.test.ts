@@ -2,7 +2,14 @@ import { describe, expect, it } from 'vitest';
 
 import type { Graph } from '@/lib/graph';
 import { nodeKey } from '@/lib/graph';
-import { graphToMindMap, mindMapStats, toTree } from '@/lib/mindmap';
+import {
+  breakdownToMindMap,
+  collectSubtreeIds,
+  graphToMindMap,
+  mindMapStats,
+  pruneBranch,
+  toTree,
+} from '@/lib/mindmap';
 
 const graph: Graph = {
   nodes: [
@@ -49,5 +56,48 @@ describe('toTree', () => {
     });
     expect(roots).toHaveLength(1);
     expect(roots[0]?.children[0]?.id).toBe('a');
+  });
+});
+
+describe('breakdownToMindMap', () => {
+  it('builds a root → phases → tasks WBS with the project as the entity root', () => {
+    const map = breakdownToMindMap({ id: 'p1', title: 'مشروع' }, [
+      { name: 'التحقّق', tasks: ['خطوة أ', 'خطوة ب'] },
+      { name: 'البناء', tasks: ['نسخة أولى'] },
+    ]);
+    const root = map.nodes.find((n) => n.kind === 'root');
+    expect(root?.entityId).toBe('p1');
+    expect(map.nodes.filter((n) => n.kind === 'concept')).toHaveLength(2);
+    expect(map.nodes.filter((n) => n.kind === 'task')).toHaveLength(3);
+    const roots = toTree(map);
+    expect(roots).toHaveLength(1);
+    expect(roots[0]?.children).toHaveLength(2);
+  });
+});
+
+describe('pruneBranch / collectSubtreeIds', () => {
+  const map = breakdownToMindMap({ id: 'p1', title: 'مشروع' }, [
+    { name: 'مرحلة', tasks: ['أ', 'ب'] },
+  ]);
+
+  it('collects a node and all its descendants', () => {
+    const phaseId = map.nodes.find((n) => n.kind === 'concept')!.id;
+    const ids = collectSubtreeIds(map, phaseId);
+    // phase + its 2 tasks
+    expect(ids.size).toBe(3);
+  });
+
+  it('removes a whole branch and its edges', () => {
+    const phaseId = map.nodes.find((n) => n.kind === 'concept')!.id;
+    const next = pruneBranch(map, phaseId);
+    expect(next.nodes.some((n) => n.id === phaseId)).toBe(false);
+    expect(next.nodes.filter((n) => n.kind === 'task')).toHaveLength(0);
+    // only the root survives
+    expect(next.nodes).toHaveLength(1);
+    expect(next.edges).toHaveLength(0);
+  });
+
+  it('returns the map unchanged for an unknown node', () => {
+    expect(pruneBranch(map, 'nope')).toBe(map);
   });
 });
