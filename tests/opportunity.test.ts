@@ -97,6 +97,37 @@ describe('computeRadar', () => {
     expect(found?.recoveryTest).toBeTruthy();
   });
 
+  it('gives every actionable opportunity an experiment, duration, criterion and decision', () => {
+    const items = computeRadar(
+      input({
+        sources: [source({ id: 's1', summary: null })],
+        ideas: [idea({ id: 'i1', status: 'archived', project_id: null })],
+        projects: [project({ id: 'p1', is_active: true, next_action: null })],
+      }),
+    );
+    const actionable = items.filter((x) => x.layer !== 'confirmed');
+    expect(actionable.length).toBeGreaterThan(0);
+    for (const it of actionable) {
+      expect(it.recoveryTest).toBeTruthy();
+      expect(it.duration).toBeTruthy();
+      expect(it.successCriterion).toBeTruthy();
+      expect(['execute', 'defer', 'watch', 'reject']).toContain(it.decision);
+    }
+  });
+
+  it('confirmed items are watch-only (no experiment needed)', () => {
+    const graph: Graph = {
+      nodes: [
+        { type: 'source', id: 's1', title: 'A' },
+        { type: 'project', id: 'p1', title: 'P' },
+      ],
+      edges: [{ from: nodeKey('source', 's1'), to: nodeKey('project', 'p1'), kind: 'رابط' }],
+    };
+    const items = computeRadar(input({ sources: [source({ id: 's1' })], projects: [project()], graph }));
+    const confirmed = items.filter((x) => x.layer === 'confirmed');
+    for (const it of confirmed) expect(it.decision).toBe('watch');
+  });
+
   it('counts a linked source as confirmed knowledge', () => {
     const graph: Graph = {
       nodes: [

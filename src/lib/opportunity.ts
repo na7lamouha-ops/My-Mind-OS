@@ -24,7 +24,14 @@ export type RadarItem = {
   projectId: string | null;
   projectTitle: string | null;
   preventiveAction: string | null;
+  /** The small experiment to run (a.k.a. recovery test). */
   recoveryTest: string | null;
+  /** Time-box for the experiment, e.g. "خلال أسبوع". */
+  duration: string | null;
+  /** How you know the experiment succeeded. */
+  successCriterion: string | null;
+  /** Recommended decision. Persistence of a chosen decision is Phase 7E. */
+  decision: 'execute' | 'defer' | 'reject' | 'watch';
   /** Computed default; real persistence is proposed in Phase 7E. */
   status: 'open';
 };
@@ -56,6 +63,10 @@ function base(id: string, layer: OpportunityLayer, title: string, detail: string
     projectTitle: null,
     preventiveAction: null,
     recoveryTest: null,
+    duration: null,
+    successCriterion: null,
+    // Confirmed assets are watched; anything actionable defaults to "run the test".
+    decision: layer === 'confirmed' ? 'watch' : 'execute',
     status: 'open',
   };
 }
@@ -124,7 +135,9 @@ export function computeRadar(input: RadarInput): RadarItem[] {
         `مصدر غير مستثمَر: ${s.title}`,
         'معرفة محفوظة لكنها غير مرتبطة بأي مشروع أو فكرة بعد.',
       );
-      it.recoveryTest = 'افتح دفتر المصدر واستخرج فكرة واحدة أو اربطه بمشروع نشط خلال ٢٥ دقيقة.';
+      it.recoveryTest = 'افتح دفتر المصدر واستخرج فكرة واحدة أو اربطه بمشروع نشط.';
+      it.duration = '٢٥ دقيقة';
+      it.successCriterion = 'المصدر مرتبط بمشروع أو خرجت منه فكرة واحدة على الأقل.';
       items.push(it);
     } else if (!s.summary) {
       const it = base(
@@ -134,6 +147,8 @@ export function computeRadar(input: RadarInput): RadarItem[] {
         'المصدر مرتبط لكن بلا ملخّص — قد تُنسى خلاصته.',
       );
       it.recoveryTest = 'استخدم «تلخيص» في الاستوديو واعتمد ملخّصًا قصيرًا.';
+      it.duration = '١٥ دقيقة';
+      it.successCriterion = 'يوجد ملخّص معتمَد للمصدر.';
       items.push(it);
     }
   }
@@ -148,6 +163,8 @@ export function computeRadar(input: RadarInput): RadarItem[] {
     it.projectId = p.id;
     it.projectTitle = p.title;
     it.recoveryTest = 'حدّد أصغر خطوة قابلة للتنفيذ الآن كخطوة تالية.';
+    it.duration = 'اليوم';
+    it.successCriterion = 'المشروع النشط له خطوة تالية واضحة.';
     items.push(it);
   }
 
@@ -163,6 +180,8 @@ export function computeRadar(input: RadarInput): RadarItem[] {
       it.cause = 'لم تُربط بمشروع ولم تُحوَّل إلى خطوة قبل تأجيلها.';
       it.preventiveAction = 'قبل تأجيل أي فكرة، اربطها بمشروع أو حوّلها إلى مهمة صغيرة.';
       it.recoveryTest = 'أعد تقييمها: هل تخدم هدفًا نشطًا؟ إن نعم، حوّلها إلى مشروع أو مهمة.';
+      it.duration = 'خلال أسبوع';
+      it.successCriterion = 'قرار واضح: تحوّلت إلى مهمة/مشروع أو أُرشفت بوعي.';
       items.push(it);
     }
   }
@@ -178,7 +197,9 @@ export function computeRadar(input: RadarInput): RadarItem[] {
     );
     it.cause = 'تراكم في الالتقاط دون مراجعة دورية.';
     it.preventiveAction = 'راجعة أسبوعية ثابتة تُفرّغ الوارد إلى قرار أو مشروع أو أرشفة واعية.';
-    it.recoveryTest = 'خصّص ١٥ دقيقة لتصنيف كل فكرة عالقة الآن.';
+    it.recoveryTest = 'خصّص وقتًا لتصنيف كل فكرة عالقة الآن.';
+    it.duration = '١٥ دقيقة';
+    it.successCriterion = 'الوارد صُنّف بالكامل إلى قرار/مشروع/أرشفة.';
     items.push(it);
   }
   const forgottenSources = sources.filter(
@@ -193,7 +214,9 @@ export function computeRadar(input: RadarInput): RadarItem[] {
     );
     it.cause = 'حُفظت المصادر دون خطوة استخلاص أو ربط.';
     it.preventiveAction = 'لكل مصدر جديد: استخرج فكرة واحدة أو اربطه بمشروع في نفس الجلسة.';
-    it.recoveryTest = 'اختر أقدم مصدر وطبّق عليه إجراء استوديو واحدًا اليوم.';
+    it.recoveryTest = 'اختر أقدم مصدر وطبّق عليه إجراء استوديو واحدًا.';
+    it.duration = 'اليوم';
+    it.successCriterion = 'أقدم مصدر منسيّ صار مرتبطًا أو مُلخّصًا.';
     items.push(it);
   }
   for (const p of projects) {
@@ -210,6 +233,8 @@ export function computeRadar(input: RadarInput): RadarItem[] {
       it.cause = 'أُوقف المشروع دون إغلاق أو إعادة جدولة لمهامه.';
       it.preventiveAction = 'عند إيقاف مشروع، أغلق مهامه أو انقلها إلى مشروع آخر بوعي.';
       it.recoveryTest = 'قرّر: استئناف، أو إغلاق المهام، أو نقلها — لا تتركها معلّقة.';
+      it.duration = 'خلال أسبوع';
+      it.successCriterion = 'لا مهام معلّقة في مشروع متوقّف.';
       it.projectId = p.id;
       it.projectTitle = p.title;
       items.push(it);

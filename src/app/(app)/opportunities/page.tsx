@@ -32,6 +32,13 @@ const LAYER: Record<
   },
 };
 
+const decisionLabel: Record<RadarItem['decision'], string> = {
+  execute: 'نفّذ',
+  defer: 'أجّل',
+  watch: 'راقب',
+  reject: 'ارفض',
+};
+
 function LayerColumn({ layer, items }: { layer: OpportunityLayer; items: RadarItem[] }) {
   const meta = LAYER[layer];
   const Icon = meta.Icon;
@@ -67,9 +74,15 @@ function LayerColumn({ layer, items }: { layer: OpportunityLayer; items: RadarIt
               )}
               {it.recoveryTest && (
                 <p className="mt-1 text-xs text-link">
-                  <span className="text-muted">اختبار الاسترجاع: </span>
+                  <span className="text-muted">التجربة: </span>
                   {it.recoveryTest}
                 </p>
+              )}
+              {(it.duration || it.successCriterion) && (
+                <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-[11px] text-muted">
+                  {it.duration && <span>المدة: {it.duration}</span>}
+                  {it.successCriterion && <span>معيار النجاح: {it.successCriterion}</span>}
+                </div>
               )}
               {it.projectId && it.projectTitle && (
                 <Link
@@ -78,6 +91,23 @@ function LayerColumn({ layer, items }: { layer: OpportunityLayer; items: RadarIt
                 >
                   المشروع: {it.projectTitle} ←
                 </Link>
+              )}
+              {it.layer !== 'confirmed' && (
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {(['execute', 'defer', 'watch', 'reject'] as const).map((d) => (
+                    <span
+                      key={d}
+                      className={`rounded-md border px-2 py-0.5 text-[11px] ${
+                        it.decision === d
+                          ? 'border-accent bg-accent/15 text-link'
+                          : 'border-border text-muted'
+                      }`}
+                    >
+                      {decisionLabel[d]}
+                    </span>
+                  ))}
+                  <span className="text-[11px] text-muted/70">القرار المقترح مميّز</span>
+                </div>
               )}
             </li>
           ))}
