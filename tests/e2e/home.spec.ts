@@ -25,3 +25,8 @@ test('new workspace routes are protected too (e.g. /graph → /login)', async ({
   await page.goto('/graph');
   await expect(page).toHaveURL(/\/login/);
 });
+
+test('source notebook route is protected → redirects to /login', async ({ page }) => {
+  await page.goto('/knowledge/11111111-1111-1111-1111-111111111111');
+  await expect(page).toHaveURL(/\/login/);
+});

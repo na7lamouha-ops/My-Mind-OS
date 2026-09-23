@@ -1,3 +1,6 @@
+import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
+
 import { AiOrganizer } from '@/components/ai-organizer';
 import { Card, EmptyState, PageHeader, Pill } from '@/components/ui';
 import { SourceForm } from './source-form';
@@ -36,7 +39,17 @@ export default async function KnowledgePage() {
               <li key={s.id} className="rounded-xl border border-border bg-surface p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <p className="font-medium">{s.title}</p>
+                    <Link
+                      href={`/knowledge/${s.id}`}
+                      className="group inline-flex items-center gap-1 font-medium hover:text-link"
+                    >
+                      {s.title}
+                      <ArrowLeft
+                        size={14}
+                        className="opacity-0 transition group-hover:opacity-100"
+                        aria-hidden
+                      />
+                    </Link>
                     {s.url && /^https?:\/\//i.test(s.url) && (
                       <a
                         href={s.url}

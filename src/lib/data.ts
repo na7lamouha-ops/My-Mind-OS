@@ -542,3 +542,37 @@ export async function getGraph(): Promise<import('@/lib/graph').Graph> {
 
   return { nodes, edges } as import('@/lib/graph').Graph;
 }
+
+// ---- source update + generic links (Phase 7, existing columns/table) ------
+
+export async function updateSource(
+  id: string,
+  patch: Partial<{ summary: string | null; project_id: string | null; idea_id: string | null }>,
+): Promise<Source> {
+  const { supabase, uid } = await ctx();
+  const { data, error } = await supabase
+    .from('sources')
+    .update(patch)
+    .eq('id', id)
+    .eq('owner_id', uid)
+    .select('*')
+    .single();
+  return ok(data, error);
+}
+
+type LinkEntityT = 'project' | 'idea' | 'source' | 'task' | 'content_item';
+
+export async function createLink(
+  from_type: LinkEntityT,
+  from_id: string,
+  to_type: LinkEntityT,
+  to_id: string,
+): Promise<void> {
+  const { supabase, uid } = await ctx();
+  const { error } = await supabase
+    .from('links')
+    .insert({ owner_id: uid, from_type, from_id, to_type, to_id })
+    .select('id')
+    .single();
+  if (error && !/duplicate key|unique/i.test(error.message)) throw new DataError(error.message);
+}
