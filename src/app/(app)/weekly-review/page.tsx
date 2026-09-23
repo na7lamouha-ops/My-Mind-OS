@@ -1,17 +1,19 @@
 import Link from 'next/link';
+import { FlaskConical, PlayCircle, MoonStar } from 'lucide-react';
 
 import { Card, EmptyState, PageHeader } from '@/components/ui';
-import { getActiveProject, getLearningReview, listAllTasks, listIdeas } from '@/lib/data';
+import { getActiveProject, getLearningReview, getRadar, listAllTasks, listIdeas } from '@/lib/data';
 
 export const metadata = { title: 'المراجعة الأسبوعية — My Mind OS' };
 export const dynamic = 'force-dynamic';
 
 export default async function WeeklyReviewPage() {
-  const [active, tasks, ideas, learning] = await Promise.all([
+  const [active, tasks, ideas, learning, radar] = await Promise.all([
     getActiveProject(),
     listAllTasks(),
     listIdeas(),
     getLearningReview(),
+    getRadar(),
   ]);
 
   const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
@@ -21,6 +23,39 @@ export default async function WeeklyReviewPage() {
   const inProgress = tasks.filter((t) => t.status === 'doing');
   const inbox = ideas.filter((i) => i.status === 'inbox');
   const snoozed = ideas.filter((i) => i.status === 'snoozed');
+
+  // The week's 1–3 decisions, computed from live data (not stored yet).
+  const topOpp = radar.find((o) => o.layer === 'missed') ?? radar.find((o) => o.layer === 'potential');
+  const decisions: { icon: typeof PlayCircle; tone: string; label: string; text: string; href: string }[] = [];
+  if (active) {
+    decisions.push({
+      icon: PlayCircle,
+      tone: 'text-success',
+      label: 'نفّذ',
+      text: active.next_action
+        ? `الخطوة التالية في «${active.title}»: ${active.next_action}`
+        : `حدّد خطوة تالية واضحة لمشروعك النشط «${active.title}».`,
+      href: `/projects/${active.id}`,
+    });
+  }
+  if (topOpp) {
+    decisions.push({
+      icon: FlaskConical,
+      tone: 'text-link',
+      label: 'اختبر',
+      text: topOpp.recoveryTest ? `${topOpp.title} — ${topOpp.recoveryTest}` : topOpp.title,
+      href: '/opportunities',
+    });
+  }
+  if (snoozed.length > 0 || inbox.length > 0) {
+    decisions.push({
+      icon: MoonStar,
+      tone: 'text-muted',
+      label: 'أوقف/أجّل',
+      text: `راجع ${inbox.length} واردًا و${snoozed.length} مؤجّلًا: احسم كلًّا إلى قرار أو أرشفة واعية.`,
+      href: '/inbox',
+    });
+  }
 
   const List = ({ items }: { items: { id: string; title: string }[] }) =>
     items.length === 0 ? (
@@ -41,6 +76,39 @@ export default async function WeeklyReviewPage() {
         title="المراجعة الأسبوعية"
         subtitle="لقطة حيّة لأسبوعك — تُحسب من بياناتك الآن (الحفظ التاريخي يأتي لاحقًا)."
       />
+
+      {/* The week's 1–3 decisions — the point of the review */}
+      <Card title="قرارات هذا الأسبوع" hint="ركّز على ٣ لا أكثر">
+        {decisions.length === 0 ? (
+          <EmptyState label="فعّل مشروعًا وأضِف عناصر لتظهر قرارات الأسبوع." />
+        ) : (
+          <ul className="space-y-2">
+            {decisions.map((d) => {
+              const Icon = d.icon;
+              return (
+                <li key={d.label}>
+                  <Link
+                    href={d.href}
+                    className="flex items-start gap-2.5 rounded-xl border border-border bg-bg p-3 transition hover:border-border-strong"
+                  >
+                    <Icon size={16} className={`mt-0.5 shrink-0 ${d.tone}`} aria-hidden />
+                    <span className="text-sm">
+                      <span className="font-semibold">{d.label}: </span>
+                      {d.text}
+                    </span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+        <p className="mt-3 text-[11px] text-muted">
+          قرارات محسوبة من حالتك الآن. نفّذها من روابطها؛ الحفظ التاريخي للخطة يأتي مع التخزين
+          المقترح (7E).
+        </p>
+      </Card>
+
+      <div className="mt-4" />
 
       {/* Learning review — did learning turn into action this week? */}
       <Card title="مراجعة التعلّم" hint={`آخر ${learning.windowDays} أيام`}>
