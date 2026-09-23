@@ -5,6 +5,7 @@ import {
   AiActionResult,
   dbKindFor,
   runActionMock,
+  summarizeApplyPlan,
   type AiActionInput,
 } from '@/lib/ai/actions';
 
@@ -53,6 +54,19 @@ describe('runActionMock', () => {
     const roots = result.map.nodes.filter((n) => n.kind === 'root');
     expect(roots).toHaveLength(1);
     expect(roots[0]?.entityId).toBe(input.entityId);
+  });
+});
+
+describe('summarizeApplyPlan (no original-text loss)', () => {
+  it('fills an empty summary in place', () => {
+    expect(summarizeApplyPlan(null, 'ملخّص AI')).toEqual({ action: 'set', summary: 'ملخّص AI' });
+    expect(summarizeApplyPlan('', 'ملخّص AI')).toEqual({ action: 'set', summary: 'ملخّص AI' });
+    expect(summarizeApplyPlan('   ', 'ملخّص AI')).toEqual({ action: 'set', summary: 'ملخّص AI' });
+  });
+
+  it('never overwrites the user’s own summary — saves AI text as a note instead', () => {
+    const plan = summarizeApplyPlan('ملخّصي اليدوي المهم', 'ملخّص AI');
+    expect(plan).toEqual({ action: 'note', body: 'ملخّص AI' });
   });
 });
 

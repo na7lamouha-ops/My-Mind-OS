@@ -21,6 +21,7 @@ import {
   AiActionResult,
   dbKindFor,
   runAction,
+  summarizeApplyPlan,
   type AiActionInput,
 } from '@/lib/ai/actions';
 
@@ -163,8 +164,21 @@ export async function applyAiActionAction(payloadRaw: unknown): Promise<ApplyAct
 
     switch (result.kind) {
       case 'summarize_source': {
-        await updateSource(sourceId, { summary: result.summary });
-        note = 'حُدِّث ملخّص المصدر ✓';
+        // Never overwrite the user's own summary (see summarizeApplyPlan).
+        const plan = summarizeApplyPlan(source.summary, result.summary);
+        if (plan.action === 'set') {
+          await updateSource(sourceId, { summary: plan.summary });
+          note = 'حُدِّث ملخّص المصدر ✓';
+        } else {
+          await createContentItem({
+            kind: 'summary',
+            body: plan.body,
+            status: 'draft',
+            idea_id: null,
+            source_id: sourceId,
+          });
+          note = 'حُفِظ الملخّص كملاحظة — احتُفِظ بملخّصك الأصلي ✓';
+        }
         break;
       }
       case 'extract_key_ideas': {

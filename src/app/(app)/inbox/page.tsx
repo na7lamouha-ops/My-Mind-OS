@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 import { SubmitButton } from '@/components/form';
 import { AiOrganizer } from '@/components/ai-organizer';
 import { Card, EmptyState, PageHeader } from '@/components/ui';
@@ -6,7 +8,7 @@ import {
   deleteIdeaCmd,
   setIdeaStatusCmd,
 } from '@/app/(app)/ideas/actions';
-import { listIdeas } from '@/lib/data';
+import { getActiveProject, listIdeas } from '@/lib/data';
 
 import { CaptureForm } from './capture-form';
 
@@ -14,7 +16,7 @@ export const metadata = { title: 'الوارد — My Mind OS' };
 export const dynamic = 'force-dynamic';
 
 export default async function InboxPage() {
-  const ideas = await listIdeas('inbox');
+  const [ideas, active] = await Promise.all([listIdeas('inbox'), getActiveProject()]);
 
   return (
     <div className="grid gap-6 lg:grid-cols-[360px_1fr]">
@@ -45,12 +47,22 @@ export default async function InboxPage() {
                       نظّم
                     </SubmitButton>
                   </form>
-                  <form action={convertIdeaToTaskCmd}>
-                    <input type="hidden" name="id" value={idea.id} />
-                    <SubmitButton size="sm" variant="ghost">
-                      حوّل إلى مهمة
-                    </SubmitButton>
-                  </form>
+                  {idea.project_id || active ? (
+                    <form action={convertIdeaToTaskCmd}>
+                      <input type="hidden" name="id" value={idea.id} />
+                      <SubmitButton size="sm" variant="ghost">
+                        حوّل إلى مهمة
+                      </SubmitButton>
+                    </form>
+                  ) : (
+                    <Link
+                      href="/projects"
+                      className="rounded-lg border border-border px-2.5 py-1 text-xs text-muted transition hover:bg-elevated hover:text-text"
+                      title="فعّل مشروعًا لتتمكن من تحويل الفكرة إلى مهمة"
+                    >
+                      فعّل مشروعًا للتحويل
+                    </Link>
+                  )}
                   <form action={setIdeaStatusCmd}>
                     <input type="hidden" name="id" value={idea.id} />
                     <input type="hidden" name="status" value="snoozed" />

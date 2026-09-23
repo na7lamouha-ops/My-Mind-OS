@@ -562,6 +562,31 @@ export async function updateSource(
 
 type LinkEntityT = 'project' | 'idea' | 'source' | 'task' | 'content_item';
 
+const LINK_TABLE: Record<LinkEntityT, string> = {
+  project: 'projects',
+  idea: 'ideas',
+  source: 'sources',
+  task: 'tasks',
+  content_item: 'content_items',
+};
+
+/** Verify a row of the given type exists and belongs to the current owner. */
+async function assertOwns(
+  supabase: Awaited<ReturnType<typeof ctx>>['supabase'],
+  uid: string,
+  type: LinkEntityT,
+  id: string,
+): Promise<void> {
+  const { data, error } = await supabase
+    .from(LINK_TABLE[type])
+    .select('id')
+    .eq('id', id)
+    .eq('owner_id', uid)
+    .maybeSingle();
+  if (error) throw new DataError(error.message);
+  if (!data) throw new DataError('لا يمكن الربط بعنصر غير موجود أو لا تملكه.');
+}
+
 export async function createLink(
   from_type: LinkEntityT,
   from_id: string,
@@ -569,6 +594,10 @@ export async function createLink(
   to_id: string,
 ): Promise<void> {
   const { supabase, uid } = await ctx();
+  // Defense in depth: RLS stamps owner_id, but the links row can still reference
+  // foreign ids. Verify both endpoints are owned before creating the edge.
+  await assertOwns(supabase, uid, from_type, from_id);
+  await assertOwns(supabase, uid, to_type, to_id);
   const { error } = await supabase
     .from('links')
     .insert({ owner_id: uid, from_type, from_id, to_type, to_id })

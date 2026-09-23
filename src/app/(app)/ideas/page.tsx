@@ -16,6 +16,7 @@ export const dynamic = 'force-dynamic';
 export default async function IdeasPage() {
   const [ideas, projects] = await Promise.all([listIdeas(), listProjects()]);
   const projectName = new Map(projects.map((p) => [p.id, p.title]));
+  const hasActive = projects.some((p) => p.is_active);
 
   return (
     <div>
@@ -59,12 +60,14 @@ export default async function IdeasPage() {
                   </SubmitButton>
                 </form>
 
-                <form action={convertIdeaToTaskCmd}>
-                  <input type="hidden" name="id" value={idea.id} />
-                  <SubmitButton size="sm" variant="ghost">
-                    حوّل إلى مهمة
-                  </SubmitButton>
-                </form>
+                {idea.project_id || hasActive ? (
+                  <form action={convertIdeaToTaskCmd}>
+                    <input type="hidden" name="id" value={idea.id} />
+                    <SubmitButton size="sm" variant="ghost">
+                      حوّل إلى مهمة
+                    </SubmitButton>
+                  </form>
+                ) : null}
 
                 <form action={setIdeaStatusCmd}>
                   <input type="hidden" name="id" value={idea.id} />

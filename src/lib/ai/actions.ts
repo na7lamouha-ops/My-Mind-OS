@@ -150,6 +150,21 @@ export function dbKindFor(kind: AiActionKind, entityType: string): 'organize_ide
   return 'organize_idea';
 }
 
+/**
+ * Decide how to apply a generated summary WITHOUT losing the user's own text.
+ * If the source already has a non-empty summary, keep it and store the AI one as
+ * a note; only fill an empty summary in place. Pure so it can be unit-tested.
+ */
+export function summarizeApplyPlan(
+  existingSummary: string | null,
+  aiSummary: string,
+): { action: 'set'; summary: string } | { action: 'note'; body: string } {
+  if (existingSummary && existingSummary.trim().length > 0) {
+    return { action: 'note', body: aiSummary };
+  }
+  return { action: 'set', summary: aiSummary };
+}
+
 function clampText(t: string, n: number): string {
   const s = t.replace(/\s+/g, ' ').trim();
   return s.length <= n ? s : `${s.slice(0, n - 1)}…`;
