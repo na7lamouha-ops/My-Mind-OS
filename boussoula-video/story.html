@@ -33,7 +33,7 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:var(--bg);font-f
 .bar{position:absolute;bottom:40px;width:78px;border-radius:12px 12px 4px 4px;background:linear-gradient(180deg,#7ef0a8,#22c55e);}
 .bar span{position:absolute;top:-44px;left:0;right:0;text-align:center;font-size:28px;font-weight:900;color:#d8fbe5;}
 .avg{position:absolute;left:0;right:0;border-top:4px dashed var(--gold);}
-.avg span{position:absolute;right:0;top:-46px;font-size:28px;font-weight:900;color:var(--gold);background:var(--bg);padding:0 8px;}
+.avg span{display:none;position:absolute;left:0;top:-46px;font-size:28px;font-weight:900;color:var(--gold);background:var(--bg);padding:0 8px;}
 .days{position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:space-between;font-size:22px;color:var(--mut);font-weight:700;padding:0 18px;}
 .prog{position:absolute;top:1110px;left:140px;width:800px;}
 .prog .lb{display:flex;justify-content:space-between;font-size:30px;font-weight:900;margin-bottom:12px;}
@@ -61,7 +61,7 @@ svg.chart{position:absolute;top:470px;left:90px;width:900px;height:560px;overflo
 .card b{display:block;font-size:50px;font-weight:900;} .card span{display:block;font-size:32px;color:var(--mut);font-weight:700;margin-top:6px;}
 .card.l{border:3px solid rgba(34,197,94,.6);box-shadow:0 0 50px rgba(34,197,94,.18);} .card.i{border:3px solid rgba(255,77,106,.5);} .card.a{border:3px solid rgba(90,162,255,.5);}
 .cta-btn{display:inline-block;margin-top:56px;background:linear-gradient(135deg,#FDE68A,#F5C542,#B8860B);color:#1a1408;font-size:46px;font-weight:900;padding:28px 56px;border-radius:30px;box-shadow:0 20px 50px rgba(245,197,66,.35);}
-.disc{position:absolute;top:1450px;left:70px;right:70px;line-height:1.5;text-align:center;font-size:29px;color:#c9c7d4;font-weight:700;}
+.disc{position:absolute;top:1508px;font-size:25px!important;left:70px;right:70px;line-height:1.5;text-align:center;font-size:29px;color:#c9c7d4;font-weight:700;}
 </style>
 </head>
 <body>
@@ -79,7 +79,7 @@ svg.chart{position:absolute;top:470px;left:90px;width:900px;height:560px;overflo
   <div class="c mid" style="top:330px">تعرّف عليهم 👇</div>
   <div class="av l" id="a1" style="left:810px;top:620px">👩‍💼</div><div class="nm" id="n1" style="left:810px;top:840px"><b>لينا</b><span>صانعة محتوى بيزنس</span></div>
   <div class="av i" id="a2" style="left:540px;top:620px">🤳</div><div class="nm" id="n2" style="left:540px;top:840px"><b>إلياس</b><span>صانع محتوى<br>«ازدم وسكايلي»</span></div>
-  <div class="av a" id="a3" style="left:270px;top:620px">😤</div><div class="nm" id="n3" style="left:270px;top:840px"><b>عبد الرحمان</b><span>تاجر متحمّس</span></div>
+  <div class="av a" id="a3" style="left:270px;top:620px">😤</div><div class="nm" id="n3" style="left:270px;top:840px"><b>عبد الرحمان</b><span>صانع محتوى متحمّس</span></div>
   <div class="c sm" id="s1c" style="top:1180px">كل واحد دار 100 مليون… بطريقتو.</div>
 </div>
 
@@ -87,6 +87,7 @@ svg.chart{position:absolute;top:470px;left:90px;width:900px;height:560px;overflo
 <div class="sc" id="s2">
   <div class="head"><div class="av l">👩‍💼</div><div class="hn"><b class="grn">لينا</b><span>بدات بالهدف</span></div></div>
   <div class="flow"><div class="fn" id="f1"><i>🎯</i><b>الهدف</b></div><div class="fn" id="f2"><i>🧮</i><b>الحساب</b></div><div class="fn" id="f3"><i>🗺️</i><b>الخطة</b></div></div>
+  <div id="avglbl" style="position:absolute;top:640px;left:0;right:0;text-align:center;font-size:32px;font-weight:900;color:#F5C542;opacity:0">- - - المعدل: 36 ليد / نهار</div>
   <div class="bars" id="bars"><div class="avg" id="avg" style="bottom:184px"><span>المعدل: 36 / نهار</span></div><div class="days"><span>سبت</span><span>أحد</span><span>اثنين</span><span>ثلاثاء</span><span>أربعاء</span><span>خميس</span><span>جمعة</span></div></div>
   <div class="prog" id="pg"><div class="lb"><span>📅 40 يوم</span><span class="grn" id="pgv">0%</span></div><div class="tr"><div class="fl" id="pgf" style="background:linear-gradient(90deg,#22c55e,#7ef0a8)"></div></div></div>
   <div class="cap" id="cap2"><div>100 مليون في 40 يوم. حسبت قبل ما تصرف.</div><div class="s">نهار 22 ليد، نهار 51… عادي. الحكم بالأسبوع: ~253.</div><div class="grn">✅ وصلت — براحة. تعرف واش دارت… وتقدر تعاودها.</div></div>
@@ -97,7 +98,7 @@ svg.chart{position:absolute;top:470px;left:90px;width:900px;height:560px;overflo
   <div class="head"><div class="av i">🤳</div><div class="hn"><b class="red">إلياس</b><span>«ازدم وسكايلي»</span></div></div>
   <div class="phone" id="ph"><div class="notch"></div></div>
   <div class="qm" id="qm"><div class="hundred">100 <small>مليون ✔</small></div><div class="qsplit"><div>رقم أعمال؟</div><div>ولا فايدة؟</div></div><div class="qmark" id="qmk">؟</div></div>
-  <div class="cap" id="cap3"><div>طلق، وسكرين شوت الطلبيات في الستوري كل نهار.</div><div class="s">الستوك خلاص، الكاش في الطريق… والضغط يطلع.</div><div class="red">وصل 100 مليون… بصح ما يعرفش: شيفر دافار ولا فايدة؟</div></div>
+  <div class="cap" id="cap3" style="top:1225px"><div>طلق، وسكرين شوت الطلبيات في الستوري كل نهار.</div><div class="s">الستوك خلاص، الكاش في الطريق… والضغط يطلع.</div><div class="red">وصل 100 مليون… رقم أعمال ولا فايدة؟</div></div>
 </div>
 
 <!-- S4 Abderrahmane -->
@@ -114,7 +115,7 @@ svg.chart{position:absolute;top:470px;left:90px;width:900px;height:560px;overflo
   <div class="c mid" style="top:220px">الثلاثة وصلو. بصح…</div>
   <div class="cards">
     <div class="card l" id="k1"><div class="av l">👩‍💼</div><div><b class="grn">لينا تحب البيزنس</b><span>هدف ← حساب ← خطة • براحة</span></div></div>
-    <div class="card i" id="k2"><div class="av i">🤳</div><div><b class="red">إلياس يحوّس يخدم</b><span>حركة بزاف… وما يعرفش واش ربح</span></div></div>
+    <div class="card i" id="k2"><div class="av i">🤳</div><div><b class="red">إلياس يجري ورا الحركة</b><span>حركة بزاف… وما يعرفش واش ربح</span></div></div>
     <div class="card a" id="k3"><div class="av a">😤</div><div><b class="blu">عبد الرحمان يحارب</b><span>طلبيات بزاف • تعب بزاف</span></div></div>
   </div>
 </div>
@@ -131,11 +132,11 @@ svg.chart{position:absolute;top:470px;left:90px;width:900px;height:560px;overflo
   <div class="c" style="top:420px"><svg width="220" height="220" viewBox="0 0 130 130"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFF1B8"/><stop offset=".4" stop-color="#F5C542"/><stop offset="1" stop-color="#A8750A"/></linearGradient></defs><polygon points="65,12 110.9,38.5 110.9,91.5 65,118 19.1,91.5 19.1,38.5" fill="#100f16" stroke="url(#lg)" stroke-width="4" stroke-linejoin="round"/><g id="needle" style="transform-origin:65px 65px"><polygon points="65,27 58.5,65 71.5,65" fill="url(#lg)"/><polygon points="65,103 58.5,65 71.5,65" fill="#26242e" stroke="url(#lg)" stroke-width=".9"/></g><polygon points="65,58.5 70.6,61.75 70.6,68.25 65,71.5 59.4,68.25 59.4,61.75" fill="url(#lg)"/></svg></div>
   <div class="c big gold" style="top:680px">بوصلة التاجر</div>
   <div class="c sm" style="top:810px;color:#e8e6ef">كون كيما لينا: الهدف قبل، والحساب قبل الصرف.</div>
-  <div class="c" style="top:900px"><div class="cta-btn" id="ctab">🧭 احسب خطتك — مجاناً</div></div>
+  <div class="c" style="top:900px"><div class="cta-btn" id="ctab">🎁 هديتين مجانيتين: الكتاب + البوصلة</div></div>
   <div class="c sm" style="top:1110px;direction:ltr">al-khaliya.space/start.html</div>
   <div class="c mid gold" style="top:1190px;font-size:40px">الرابط في البيو 👆</div>
 </div>
-<div class="disc" id="disc">الشخصيات تمثيلية — مستوحاة من واقع صناعة المحتوى. الأرقام محسوبة بالبوصلة.</div>
+<div class="disc" id="disc">الشخصيات تمثيلية — مستوحاة من واقع صناعة المحتوى. مثال تخطيط محسوب بالبوصلة، ماشي وعد بالربح.</div>
 <div id="vign"></div>
 
 <script>
@@ -158,23 +159,23 @@ const NS='http://www.w3.org/2000/svg', ch=$('chart');
 const pts=[[0,430],[90,300],[160,380],[240,190],[310,330],[390,150],[460,360],[540,210],[610,400],[690,170],[770,300],[860,120]];
 let d='M'+pts.map(p=>p.join(',')).join(' L');
 ch.innerHTML=`<line x1="0" y1="500" x2="900" y2="500" stroke="rgba(255,255,255,.15)" stroke-width="3"/><path id="cp" d="${d}" fill="none" stroke="#5aa2ff" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/><circle id="cd" r="18" fill="#cfe3ff"/>`+
- [[160,380,'طاح'],[240,190,'نهض'],[460,360,'طاح'],[690,170,'نهض']].map(([x,y,l],i)=>`<text id="cl${i}" x="${x}" y="${y+(l==='طاح'?70:-36)}" text-anchor="middle" font-size="34" font-weight="900" fill="${l==='طاح'?'#ff9aab':'#7ef0a8'}" font-family="Tajawal">${l}</text>`).join('');
+ [[160,380,'طاح'],[240,190,'ناض'],[460,360,'طاح'],[690,170,'ناض']].map(([x,y,l],i)=>`<text id="cl${i}" x="${x}" y="${y+(l==='طاح'?70:-36)}" text-anchor="middle" font-size="34" font-weight="900" fill="${l==='طاح'?'#ff9aab':'#7ef0a8'}" font-family="Tajawal">${l}</text>`).join('');
 const cp=$('cp'), CL=cp.getTotalLength(); cp.style.strokeDasharray=CL;
 window.render=function(t){
   $('grid').style.backgroundPosition=`${(t*6)%44}px ${(t*9)%44}px`;
-  S.forEach(([id,a,b])=>{ const o=seg(t,a,a+0.35)*(1-seg(t,b-0.3,b)); $(id).style.opacity=o; $(id).style.visibility=o>0?'visible':'hidden'; });
+  S.forEach(([id,a,b])=>{ const o=(a===0?1:seg(t,a,a+0.35))*(1-seg(t,b-0.3,b)); $(id).style.opacity=o; $(id).style.visibility=o>0?'visible':'hidden'; });
   // tint per chapter
   const tg=seg(t,7.4,8)*(1-seg(t,20.6,21)), tr=seg(t,21,21.6)*(1-seg(t,33.6,34)), tb=seg(t,34,34.6)*(1-seg(t,46.6,47));
   $('tint').style.background=`radial-gradient(ellipse at 50% 30%, rgba(34,197,94,${0.13*tg}), rgba(255,77,106,${0.13*tr*(0.8+0.2*Math.sin(t*7))}) 60%, rgba(90,162,255,${0.10*tb}) 100%)`;
   // S0
-  pop($('h1'),t,0.0); pop($('h2'),t,0.9); pop($('h3'),t,2.0);
+  $('h1').style.opacity=1; $('h1').style.transform='none'; $('h2').style.opacity=1; $('h2').style.transform=`scale(${1+0.03*Math.sin(t*3)})`; pop($('h3'),t,1.2);
   // S1
   [['a1','n1',3.9],['a2','n2',4.5],['a3','n3',5.1]].forEach(([a,n,s])=>{ const k=back(seg(t,s,s+0.5)); $(a).style.opacity=seg(t,s,s+0.3); $(a).style.transform=`scale(${0.5+0.5*k})`; pop($(n),t,s+0.2); });
   pop($('s1c'),t,6.0);
   // S2 Lina
   ['f1','f2','f3'].forEach((id,i)=>{ const s=8.0+i*0.7; pop($(id),t,s); $(id).style.boxShadow=`0 0 ${40*Math.exp(-2*Math.max(0,t-s))}px rgba(34,197,94,.6)`; });
   const bk=t; barEls.forEach(({b,v},i)=>{ const s=10.6+i*0.25; const k=ease(seg(bk,s,s+0.5)); b.style.height=(H*v/maxV*k)+'px'; b.style.opacity=k?1:0; });
-  $('avg').style.opacity=seg(t,12.6,13.0);
+  $('avg').style.opacity=seg(t,12.6,13.0); $('avglbl').style.opacity=seg(t,12.6,13.0);
   const pk=easeIO(seg(t,14.6,18.6)); $('pgf').style.width=(pk*100)+'%'; $('pgv').textContent=Math.round(pk*100)+'%'; $('pg').style.opacity=seg(t,14.3,14.6);
   [...$('cap2').children].forEach((e,i)=>pop(e,t,[8.6,12.8,18.8][i]));
   // S3 Ilyas
@@ -201,7 +202,7 @@ window.render=function(t){
   const sw=seg(t,57.5,60.5); $('needle').style.transform=`rotate(${-40*Math.exp(-3*sw)*Math.cos(sw*14)}deg)`;
   $('ctab').style.transform=`scale(${1+0.035*Math.sin(t*5)*seg(t,58.5,62)})`;
   // disclaimer: during story chapters and CTA (small, readable)
-  $('disc').style.opacity = Math.max(seg(t,4,4.4)*(1-seg(t,7,7.4)), seg(t,57.8,58.3));
+  $('disc').style.opacity = Math.max(seg(t,4,4.4)*(1-seg(t,7,7.4)), 0.55*seg(t,21.4,21.8)*(1-seg(t,33.6,34)), seg(t,57.8,58.3));
   document.body.style.opacity=clamp((DUR-t)/0.3);
 };
 window.DUR=DUR;
