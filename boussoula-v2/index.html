@@ -451,6 +451,10 @@ input[type=range]::-moz-range-thumb{background:var(--gold);border:none;}
 .cp-btn.on{background:var(--gold);color:#1a1408;border-color:var(--gold);}
 .cp-note{font-size:11px;color:var(--gray);margin-top:10px;line-height:1.7;}
 .cp-note b{color:var(--white);}
+.pp-card{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:10px;margin-top:8px;} .pp-h{font-size:13px;font-weight:900;color:var(--white);margin-bottom:8px;} .pp-h span{float:left;font-size:11px;color:var(--gold);}
+.pp-g{display:grid;grid-template-columns:1fr 1fr;gap:6px;} .pp-g div{background:var(--s1);border-radius:8px;padding:7px;text-align:center;} .pp-g b{display:block;font-size:14px;color:var(--white);} .pp-g span{font-size:10.5px;color:var(--gray);line-height:1.5;}
+.follow-note{margin-top:12px;font-size:12px;color:#cfeeda;line-height:1.85;background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.3);border-radius:10px;padding:11px 12px;} .follow-note b{color:#fff;}
+.cp-more summary{font-size:11px;color:var(--gold);cursor:pointer;text-align:center;list-style:none;} .cp-more summary::-webkit-details-marker{display:none;} .cp-more[open] summary{margin-bottom:6px;}
 
 .pname-row{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
 .pname{flex:1;min-width:160px;background:var(--s2);border:1px dashed var(--gold-b);border-radius:8px;padding:8px 10px;color:var(--gold);font-family:inherit;font-size:14px;font-weight:900;}
@@ -525,6 +529,9 @@ input[type=range]::-moz-range-thumb{background:var(--gold);border:none;}
 .smap-s{font-size:12px;color:var(--gray);text-align:center;margin:4px 0 10px;line-height:1.7;}
 .smap-r{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 2px;border-bottom:1px solid rgba(255,255,255,.07);font-size:13.5px;color:#e2e0ea;}
 .smap-r b{color:#F5C542;font-weight:900;white-space:nowrap;font-size:14.5px;}
+.smap-r b.fog{text-shadow:0 0 10px rgba(245,197,66,.55);border-bottom:1px dashed rgba(245,197,66,.45);padding-bottom:2px;}
+.smap-r b.fog::after{content:'≈ يتبدّل';display:block;font-size:9.5px;color:var(--gray);font-weight:700;text-align:left;text-shadow:none;}
+.smap-fog{margin-top:10px;font-size:11.5px;color:var(--gray);line-height:1.75;background:rgba(255,255,255,.03);border:1px dashed rgba(255,255,255,.12);border-radius:10px;padding:9px 11px;} .smap-fog b{color:#e2e0ea;}
 .smap-r small{display:block;font-size:11px;color:var(--gray);font-weight:400;margin-top:2px;}
 .smap-r.gem{border:1px solid rgba(245,197,66,.55);border-radius:12px;padding:12px;margin-top:10px;background:rgba(245,197,66,.07);} .smap-r.gem b{font-size:17px;}
 .smap-g{font-size:12.5px;color:#e2e0ea;line-height:1.8;margin:8px 2px 0;} .smap-g b{color:#fff;}
@@ -798,10 +805,11 @@ body{background-image:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(245,197,6
       <div class="smap-s">🗺️ خريطة منتجك — النص الأول <span id="sm-map-t"></span></div>
       <div class="smap-pv">المنتج رابح ✔ — <b>الخطة مازال ما تحسبتش.</b> قبل ما يدخل أول كاش، كلش يخرج من جيبك.<br><span id="mp-prog"></span></div>
       <div class="smap-r"><span>📦 استرجاع الدفعة<small>معلومة كاملة ✔ — الباقي ربح</small></span><b id="mp-be">—</b></div>
-      <div class="smap-r"><span>🎯 الليدات في النهار<small>شحال مؤكّد ومتتبّع يلزمهم؟</small></span><b id="mp-leads">…</b></div>
-      <div class="smap-r"><span>💰 رأس المال اللازم<small>في المتقدم: برقم واحد + النهار اللي يرجعلك</small></span><b id="mp-cap">…</b></div>
-      <div class="smap-r" id="mp-left-row"><span>🧵 ستوك يبقالك في الآخر<small>فلوس راقدة — تصفّيه ولا تكمل؟</small></span><b id="mp-left">…</b></div>
-      <div class="smap-r gem" id="sm-leak" style="display:none"><span>💎 الربح المهمل — طلبيات متروكة ورسائل ما تكمّلتش<small id="sm-leak-pct"></small></span><b id="sm-leak-val">…</b></div>
+      <div class="smap-r"><span>🎯 الليدات في النهار<small>شحال مؤكّد ومتتبّع يلزمهم؟</small></span><b class="fog" id="mp-leads">…</b></div>
+      <div class="smap-r"><span>💰 رأس المال اللازم<small>في المتقدم: برقم واحد + النهار اللي يرجعلك</small></span><b class="fog" id="mp-cap">…</b></div>
+      <div class="smap-r" id="mp-left-row"><span>🧵 ستوك يبقالك في الآخر<small>فلوس راقدة — تصفّيه ولا تكمل؟</small></span><b class="fog" id="mp-left">…</b></div>
+      <div class="smap-r gem" id="sm-leak" style="display:none"><span>💎 الربح المهمل — طلبيات متروكة ورسائل ما تكمّلتش<small id="sm-leak-pct"></small></span><b class="fog" id="sm-leak-val">…</b></div>
+      <div class="smap-fog">🌫️ <b>الأرقام بين رقمين = منتج واحد وحدو.</b> في خطة كاملة (منتج ثاني، مدة أخرى، سعر آخر) يتبدّلو — ساعات بزاف، للفوق ولا للتحت. رقمك أنت بالضبط، يوم بيوم: في المتقدم.</div>
       <div class="smap-g">💎 خلّصت عليهم الأدس، بداو الطلبية… وما كمّلوش. تعرفهم ديجا — بصح عمرك ما حسبتهم <b>بالدينار</b>. داخل: شحال يسواو لكل منتج + <b>الروتين اليومي (5 خطوات) وزوج رسائل جاهزين</b> لفريقك.</div>
       <div class="prelim" style="margin:14px 0 0;">ℹ️ <b>هذا حساب ابتدائي برك</b> — لمنتج واحد. باش الخطة تكون صحيحة، لازم تحسب زيادة: <b>رأس المال بالتفصيل، شحال من عامل، شحال سلعة تشري ووقتاش تعاود تطلب، ووقتاش يرجع الكاش</b>.</div>
       <div class="smap-lock"><b>البسيط حكم على منتجك. المتقدم يحكم على خطتك:</b><div>🔒 في أي نهار يرجع رأس مالك؟</div><div>🔒 <span id="mp-gap">تقدر تنقّص رأس المال؟ بسعر آخر ولا بمنتج ثاني — الكوتش يرتّبلك كل الطرق</span></div><div>🔒 ما عندكش هذا المبلغ؟ دخّل شحال عندك، والبوصلة تقولك في أي نهار توصل</div><div>🔒 الربح المهمل: شحال يسوى لكل منتج — والروتين اليومي باش ترجّعو</div><div>🔒 حكم الكوتش على خطتك: تطلق، تطلق بحذر، ولا تصلّح قبل؟</div></div>
@@ -917,7 +925,7 @@ body{background-image:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(245,197,6
   <div class="block" style="border-color:var(--gold-b);">
     <div class="step-label"><div class="step-q" style="color:var(--gold);">🧭 الخطوة ① — في أي ربح تلعب؟</div><div class="step-line" style="background:var(--gold-b)"></div></div>
     <div class="compass-q">شحال تحب تربح <b>صافي في كل طلبية</b>؟ اكتب 2-3 احتمالات — البوصلة تقولك شحال ليد وعمال يلزمك، وعلى واش منتج تدوّر.</div>
-    <div class="dir-note">🧭 <b>السوق يقولك "ازدم وسكايلي".</b> البوصلة تقولك: <b>شوف وين رايح… ومن بعد ازدم.</b> من هدفك ووقتك، تشوف قبل ما تبدا: شحال ليد في النهار، شحال مؤكّد ومتتبّع، واش فريقك يستوعب، وشحال يلزمك.</div>
+    <div class="dir-note">🧭 <b>السوق يقولك "ازدم وسكايلي".</b> البوصلة تقولك: <b>شوف وين رايح… ومن بعد ازدم وسكايلي.</b> من هدفك ووقتك، تشوف قبل ما تبدا: شحال ليد في النهار، شحال مؤكّد ومتتبّع، واش فريقك يستوعب، وشحال يلزمك.</div>
     <div class="assume-box">
       <div class="assume-h">⚙️ فرضيات نيشك — <span>كل الأرقام تحت مبنية عليها، بدّلها بأرقامك</span></div>
       <div class="g3" style="margin:6px 0 10px;">
@@ -1089,11 +1097,11 @@ body{background-image:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(245,197,6
 <div class="page" id="pageOffers">
   <div class="block blue">
     <div class="step-label"><div class="step-q">⚖️ نفس المنتج — أي عرض يوصلك أحسن؟</div><div class="step-line"></div></div>
-    <details class="xpl"><summary>ℹ️ شرح</summary><div>سعر أعلى = مارج أكبر، بصح التأكيد والليد يتبدلو. قارن عروض نفس المنتج (سعر، تأكيد، توصيل، تكلفة ليد) والبوصلة تقولك أي واحد يوصلك للهدف بأقل رأس مال وأسرع. <b>النسب تاع «سعر أعلى» و«سعر أقل» فرضيات للبداية</b> — بدّلها بأرقام التاست تاعك.</div></details>
+    <details class="xpl"><summary>ℹ️ شرح</summary><div>سعر أعلى = مارج أكبر، بصح التأكيد والليد يتبدلو. قارن عروض نفس المنتج (سعر، تأكيد، توصيل، تكلفة ليد) والبوصلة تقولك أي واحد يوصلك للهدف بأقل رأس مال وأسرع. <b>النسب تاع «العرض 1» و«العرض 2» فرضيات للبداية</b> — بدّلها بأرقام التاست تاعك.</div></details>
     <div class="field" style="max-width:280px;margin-bottom:14px;"><label>المنتج</label><select id="of-prod" onchange="resetOffers()" style="width:100%;background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--white);font-family:inherit;"></select></div>
     <div id="offersList"></div>
     <button class="add-sc-btn" onclick="addOffer()">+ عرض جديد</button>
-    <div class="cap-line" style="margin-top:10px;">ℹ️ «سعر أعلى» و«سعر أقل» معمّرين بـ<b>فرضيات</b> (تأكيد، توصيل، ليد) باش تبدا — بدّلهم بأرقام التاست تاعك، والترتيب يتعاود وحدو.</div>
+    <div class="cap-line" style="margin-top:10px;">ℹ️ «العرض 1» (سعر أعلى) و«العرض 2» (سعر أقل) معمّرين بـ<b>فرضيات</b> (تأكيد، توصيل، ليد) باش تبدا — بدّلهم بأرقام التاست تاعك، والترتيب يتعاود وحدو.</div>
   </div>
   <div class="block" style="border-color:var(--gold-b);">
     <div class="step-label"><div class="step-q" style="color:var(--gold);">🏁 النتيجة — ترتيب العروض</div><div class="step-line" style="background:var(--gold-b)"></div></div>
@@ -1434,7 +1442,7 @@ function smMap(){
   { let nR=0; if(R.leadsPerDay>0) nR++; if(isFinite(R.starterCapital)) nR++; if(leftPcs>=1) nR++; try{ if(abExtra(p,R,shared).profit>0) nR++; }catch(e){} setEl('mp-prog', 'خريطتك واقفة في النص: محطة وحدة بالرقم الكامل، و'+nR+' بين رقمين.'); }
   // 💎 الربح المهمل: نفس حساب المتقدم (abExtra) — نص المعلومة: المجال + النسبة من الإعلان
   if(lk){ const x=abExtra(p,R,shared);
-    if(x.profit>0){ lk.style.display='flex'; setEl('sm-leak-val', halfMoney(x.profit)); const rr=+el('t-abrec').value||0, hk=halfRange(x.profit), dLo=Math.round(hk[0]/P/50)*50, dHi=Math.round(hk[1]/P/50)*50; setEl('sm-leak-pct', 'ربح ضايع لو ترجّع '+(rr===25?'ربعهم برك':rr+'% منهم')+(dLo>0?': بين '+fmt(dLo)+' و '+fmt(dHi)+' دج كل نهار':'')+(R.adsReq>0?'، قد ~'+Math.round(x.profit/R.adsReq*100)+'% من واش تصرف في الأدس':'')); lk.dataset.v=Math.round(x.profit); }
+    if(x.profit>0){ lk.style.display='flex'; setEl('sm-leak-val', halfMoney(x.profit)); const rr=+el('t-abrec').value||0, hk=halfRange(x.profit), dLo=Math.round(hk[0]/P/50)*50, dHi=Math.round(hk[1]/P/50)*50; setEl('sm-leak-pct', 'ربح ضايع لو ترجّع '+(rr===25?'ربعهم برك':rr+'% منهم')+(dLo>0?': بين '+fmt(dLo)+' و '+fmt(dHi)+' دج كل نهار':'')); lk.dataset.v=Math.round(x.profit); }
     else lk.style.display='none'; }
 }
 
@@ -2584,7 +2592,20 @@ function renderExecution(v){
         ${smE&&smE.cashDay?`<div class="tl-i" style="color:var(--green)"><b>حوالي اليوم ~${fmt(smE.cashDay)}</b> — 💵 يوصلك آخر كاش. ${targetMode==='cash'?`الهدف كامل دراهم في جيبك: <b>~${fmt(Math.round(smE.cash-Csim))} دج</b> — والسلعة الباقية <b>زيادة فوقو</b>.`:`ربحك: <b>~${fmt(Math.round(smE.cash-Csim))} دج كاش + ~${fmt(Math.round(smE.stock))} دج سلعة</b>.`}</div>`:''}
       </div>
     </div>`;
-  box.innerHTML=cards+total+timeline;
+  // 🧩 خطة الدمج: تفصيل كل منتج (مخفي، يتفتح بالضغط)
+  const perProd = plan.products.length>1 ? `<details class="xpl pp-box" style="margin-top:12px;"><summary>🧩 تفصيل كل منتج في الدمج — شحال لكل واحد؟ <span style="color:var(--gray);font-weight:700;">▾ اضغط</span></summary><div>
+    ${plan.products.map(({p,R,share})=>`<div class="pp-card"><div class="pp-h">🛍️ ${p.name} <span>${Math.round(share*100)}% من الهدف</span></div>
+      <div class="pp-g">
+        <div><b>~${one(R.leadsPerDay)}</b><span>ليد/نهار • ~${fmt(Math.round(R.leadsPerDay*7))} في الأسبوع</span></div>
+        <div><b>~${one(R.sendPerDay)}</b><span>مؤكدة ترسلها/نهار</span></div>
+        <div><b>~${one(R.delPerDay)}</b><span>موصلة/نهار</span></div>
+        <div><b>${fmt(R.starterStock)}</b><span>قطعة للبدء (~${fmt(R.starterStockCost)} دج)</span></div>
+        <div><b>${fmt(R.reorderPoint)}</b><span>كي يوصل الستوك هنا ← اطلب دفعة (${R.prodDays} أيام تحضير)</span></div>
+        <div><b>${rate>0?usdMain(R.adsPerDay*7,rate):fmt(Math.round(R.adsPerDay*7))+' دج'}</b><span>أدس في الأسبوع</span></div>
+      </div></div>`).join('')}
+    <div style="font-size:11px;color:var(--gray);margin-top:6px;">كل منتج بحملتو وأرقامو وحدو — باش تعرف شكون يربح وشكون يطيّح.</div></div></details>` : '';
+  const follow = `<div class="follow-note">📌 <b>تتبّع خطتك كل أسبوع:</b> دخّل الأرقام الحقيقية (تكلفة الليد، التأكيد، التوصيل) والبوصلة تعاود تحسب. السوق يتبدّل: الليد يغلى ولا يرخص، والتوصيل يطلع ويهبط. بصح إذا بنيت خطتك على <b>أسوأ سيناريو</b>، وأرقامك الحقيقية بقات قدّو ولا أحسن، الخطة تبقى رابحة من اليوم 1 حتى الهدف — بإذن الله. وإذا طاحو تحتو، البوصلة تنبّهك <b>قبل</b> ما تخسر.</div>`;
+  box.innerHTML=cards+total+timeline+perProd+follow;
 }
 
 // ── توصية البوصلة: حلقة تحقق قبل أي نصيحة ──
@@ -2989,18 +3010,18 @@ function resetOffers(){
   const p=prodData[offerIdx], rate=+el('t-exchange').value||245;
   const lu=+(p.lead/rate).toFixed(2);
   offers=[
-    {name:'العرض الحالي', sell:p.sell, conf:p.conf, del:p.del, leadUsd:lu},
-    {name:'سعر أعلى', sell:Math.round(p.sell*1.15/100)*100, conf:Math.max(10,p.conf-7), del:Math.max(10,p.del-3), leadUsd:+(lu*1.15).toFixed(2)},
-    {name:'سعر أقل', sell:Math.round(p.sell*0.88/100)*100, conf:Math.min(100,p.conf+5), del:p.del, leadUsd:+(lu*0.9).toFixed(2)},
+    {name:'العرض 1', sell:Math.round(p.sell*1.15/100)*100, buy:p.buy, conf:Math.max(10,p.conf-7), del:Math.max(10,p.del-3), leadUsd:+(lu*1.15).toFixed(2)},
+    {name:'العرض 2', sell:Math.round(p.sell*0.88/100)*100, buy:p.buy, conf:Math.min(100,p.conf+5), del:p.del, leadUsd:+(lu*0.9).toFixed(2)},
+    {name:'العرض الحالي', sell:p.sell, buy:p.buy, conf:p.conf, del:p.del, leadUsd:lu, cur:true},
   ];
   renderOffers();
 }
-function addOffer(){ const b=offers[0]||{sell:3500,conf:55,del:65,leadUsd:1}; offers.push({...b,name:'عرض '+(offers.length+1)}); renderOffers(); }
+function addOffer(){ const b=offers.find(o=>o.cur)||offers[offers.length-1]||{sell:3500,buy:1500,conf:55,del:65,leadUsd:1}; let n=1; while(offers.some(o=>o.name==='العرض '+n)) n++; offers.push({...b,cur:false,name:'العرض '+n}); renderOffers(); }
 function removeOffer(i){ offers.splice(i,1); renderOffers(); }
-function updOffer(i,f,val){ let x=parseFloat(val)||0; if(f==='conf'||f==='del') x=Math.min(100,Math.max(1,x)); if(f==='sell'||f==='leadUsd') x=Math.max(0,x); offers[i][f]= f==='name'?cleanTxt(val):x; computeOffers(); }
+function updOffer(i,f,val){ let x=parseFloat(val)||0; if(f==='conf'||f==='del') x=Math.min(100,Math.max(1,x)); if(f==='sell'||f==='leadUsd'||f==='buy') x=Math.max(0,x); offers[i][f]= f==='name'?cleanTxt(val):x; computeOffers(); }
 function applyOffer(i){
   const o=offers[i], rate=+el('t-exchange').value||245, p=prodData[offerIdx];
-  p.sell=o.sell; p.conf=o.conf; p.del=o.del; p.leadUsd=o.leadUsd; p.lead=Math.round(o.leadUsd*rate);
+  p.sell=o.sell; if(o.buy!=null) p.buy=o.buy; p.conf=o.conf; p.del=o.del; p.leadUsd=o.leadUsd; p.lead=Math.round(o.leadUsd*rate);
   renderProdCards(); calc(); switchTab(1); scrollToSection('sec-prodresults');
 }
 function renderOffers(){
@@ -3012,8 +3033,11 @@ function renderOffers(){
   el('offersList').innerHTML=offers.map((o,i)=>`
     <div class="sc-card" style="margin-bottom:10px;">
       <div class="sc-head"><div class="sc-name"><input type="text" value="${o.name}" oninput="updOffer(${i},'name',this.value)"></div>${offers.length>1?`<button class="sc-remove" onclick="removeOffer(${i})">✕</button>`:''}</div>
-      <div class="g4">
+      <div class="g2">
+        <div class="sc-f"><label>سعر الإنتاج (دج)</label><input type="number" value="${o.buy!=null?o.buy:prodData[offerIdx].buy}" oninput="updOffer(${i},'buy',this.value)"></div>
         <div class="sc-f"><label>سعر البيع (دج)</label><input type="number" value="${o.sell}" oninput="updOffer(${i},'sell',this.value)"></div>
+      </div>
+      <div class="g3" style="margin-top:8px;">
         <div class="sc-f"><label>تأكيد %</label><input type="number" value="${o.conf}" oninput="updOffer(${i},'conf',this.value)"></div>
         <div class="sc-f"><label>توصيل %</label><input type="number" value="${o.del}" oninput="updOffer(${i},'del',this.value)"></div>
         <div class="sc-f"><label>ليد ($)</label><input type="number" step="0.1" value="${o.leadUsd}" oninput="updOffer(${i},'leadUsd',this.value)"></div>
@@ -3028,7 +3052,7 @@ function computeOffers(){
   const shared={rate, pack:v.pack, delCost:v.delCost, retCost:v.retCost, surplus, periodDays:(period||30), cycleDays:stockCycleDays, prodDays:prepDays()};
   const C= capMode==='mine' ? (+el('t-mycap').value||0) : 0, capLeads=capL(), P=period||30;   // "حددلي": نقارنو برأس المال اللازم برك
   const res=offers.map((o,i)=>{
-    const q={...p, sell:o.sell, conf:o.conf, del:o.del, lead:o.leadUsd*rate};
+    const q={...p, sell:o.sell, buy:(o.buy!=null?o.buy:p.buy), conf:o.conf, del:o.del, lead:o.leadUsd*rate};
     const R=calcOneProduct(q, shared, v.target);
     const qp={products:[{p:q,R,share:1}]};
     const days = (R.netPerLead>0 && C>0) ? simPlan(qp,v,C,v.target,capLeads,stockCycleDays,730,{...optWithBonus(qp),P:(period||30)}).reached : null;
@@ -3193,7 +3217,7 @@ function renderDestBanner(){
   const b=el('destBanner'); if(!b) return;
   if(destProfit==null){ b.innerHTML=`<div class="dest-banner">🧭 ما اخترتش وجهة بعد. <a onclick="switchTab(0)" style="color:var(--gold);cursor:pointer;text-decoration:underline;">ارجع للخطوة ①</a> وقرّر في أي ربح/طلبية تلعب — باش الخطة تقولك إذا منتجك يوصلها.</div>`; return; }
   const v=getV(), sc=dsScen.find(x=>x.p===destProfit), d=dsCompute(destProfit,v,sc?dsLead(sc):null);
-  b.innerHTML=`<div class="dest-banner">🧭 وجهتك: <b>${fmt(destProfit)} دج صافي/طلبية</b> → ${d.cash?'~':''}${fmt(d.leads)} ليد ← ${d.cash?'~':''}${fmt(d.confirmed)} مؤكدة ← ${d.cash?'~':''}${fmt(d.orders)} موصلة • ~${d.confs} مؤكّد + ~${d.tracks} متتبّع. المنتج اللي يوصلها: <b>الفرق بين سعر البيع وسعر الإنتاج لازم يكون ${fmt(Math.round(d.grossNeed))} دج ولا أكثر</b> (المارج قبل الأدس: ${fmt(Math.round(d.margeNeed))} ولا أكثر). كل بطاقة منتج تحت تقولك يوصلها ولا لا.</div>`;
+  b.innerHTML=`<div class="dest-banner">🧭 وجهتك: <b>${fmt(destProfit)} دج صافي/طلبية</b> → ${d.cash?'~':''}${fmt(d.leads)} ليد ← ${d.cash?'~':''}${fmt(d.confirmed)} مؤكدة ← ${d.cash?'~':''}${fmt(d.orders)} موصلة • ~${d.confs} مؤكّد + ~${d.tracks} متتبّع. المنتج اللي يوصلها: <b>الفرق بين سعر البيع وسعر الإنتاج لازم يكون ${fmt(Math.round(d.grossNeed))} دج ولا أكثر</b> . كل بطاقة منتج تحت تقولك يوصلها ولا لا.</div>`;
 }
 
 function dsCompute(profit,v,leadUsd){
@@ -3231,17 +3255,20 @@ function drawDestTree(){ const _hasAb=abRaw()>0;
     const chosen=destProfit===r.profit;
     const badge = chosen?'<div class="rm-badge">✅ وجهتك</div>':(r===lightest&&R.length>1?'<div class="rm-badge" style="background:var(--green);color:#062">🪶 الأخف</div>':'');
     return `<div class="cp-card${chosen?' on':''}">${badge}
-      <div class="cp-head">💰 ${fmt(r.profit)} دج<span>صافي/طلبية • ليد ${rate>0?'$'+r.leadUsd:fmt(r.leadUsd)}</span></div>
+      <div class="cp-head">💰 ${fmt(r.profit)} دج<span>تربح في كل طلبية • ليد ${rate>0?'$'+r.leadUsd:fmt(r.leadUsd)}</span></div>
       <div class="cp-kpis">
-        <div><b>~${fmt(Math.round(r.leadsDay))}</b><span>ليد/يوم</span></div>
+        <div><b>~${fmt(Math.round(r.leadsDay))}</b><span>ليد في النهار</span></div>
         <div><b>~${r.confs+r.tracks}</b><span>عمال</span></div>
-        <div><b>${fmt(Math.round(r.margeNeed))}</b><span>مارج قبل الأدس</span></div>
+        <div><b>${fmt(Math.round(r.grossNeed))}</b><span>الفرق اللازم</span></div>
       </div>
-      <div class="cp-flow">📅 في الأسبوع: <b>~${fmt(Math.round(r.leadsDay*7))}</b> ليد ← <b>~${fmt(Math.round(r.delDay*7))}</b> موصلة</div>
-      <div class="cp-flow">💵 أدس الأسبوع: <b>~${$r(r.adsWeek)}</b>${rate>0?` (~${fmt(Math.round(r.adsWeek))} دج)`:''} • المدة كاملة ~${$r(r.adsTotal)}</div>
-      <div class="cp-flow cp-sum">🧮 الفرق بين سعر البيع وسعر الإنتاج لازم يكون <b>${fmt(Math.round(r.grossNeed))} دج ولا أكثر</b>${r.buy>0?` — يعني تبيع بـ <b>${fmt(Math.round(r.sellNeed))}</b> ولا أكثر`:''}<br>= صافي ${fmt(r.profit)} + أدس ~${fmt(Math.round(r.adPerDel))} + تغليف ${fmt(r.pack)} + توصيل ${fmt(r.delCost)} + روتور ~${fmt(Math.round(r.retPer))}${r.sc>0?` + فائض ~${fmt(Math.round(r.sc))}`:''}</div>
-      <div class="cp-flow">💰 رأس مال للبدء: <b>${isFinite(r.capital)?fmtCap(r.capital):'ما يوصلش في المدة'}</b>${r.capDays?` <span style="color:var(--yellow)">(مدتك قصيرة — يحتاج ~${r.capDays} يوم)</span>`:''}${(isFinite(r.capital)&&r.capital>v.target*3)?`<br><span style="color:var(--yellow)">⚠️ ثقيلة: يلزمك رأس مال قد الهدف ${fmt(Math.round(r.capital/v.target))} مرات، والربح في الطلبية صغير بزاف.</span>`:''}</div>
-      <div class="cp-flow">${r.cash?'~':''}${fmt(r.leads)} ليد ← ${r.cash?'~':''}${fmt(r.confirmed)} مؤكدة ← <b>${r.cash?'~':''}${fmt(r.orders)}</b> موصلة${r!==base?` <span style="color:var(--green)">(ليدات أقل بـ ${pct(r.leads,base.leads)}%)</span>`:''}</div>
+      <div class="cp-flow cp-sum">🧮 <b>الفرق</b> بين سعر البيع وسعر الإنتاج لازم يكون <b>${fmt(Math.round(r.grossNeed))} دج ولا أكثر</b>${r.buy>0?`<br>يعني لو تشري بـ ${fmt(r.buy)}، تبيع بـ <b>${fmt(Math.round(r.sellNeed))}</b> ولا أكثر`:''}</div>
+      <div class="cp-flow">📅 في الأسبوع: <b>~${fmt(Math.round(r.leadsDay*7))}</b> ليد ← <b>~${fmt(Math.round(r.delDay*7))}</b> طلبية موصلة</div>
+      <div class="cp-flow">💰 رأس المال للبدء: <b>${isFinite(r.capital)?fmtCap(r.capital):'ما يوصلش في المدة'}</b>${r.capDays?` <span style="color:var(--yellow)">(مدتك قصيرة — يحتاج ~${r.capDays} يوم)</span>`:''}${(isFinite(r.capital)&&r.capital>v.target*3)?`<br><span style="color:var(--yellow)">⚠️ ثقيلة: رأس المال قد الهدف ${fmt(Math.round(r.capital/v.target))} مرات — الربح في الطلبية صغير بزاف.</span>`:''}</div>
+      <details class="cp-more"><summary>▾ منين جا الفرق؟ (الأدس، التوصيل…)</summary>
+        <div class="cp-flow">= ربحك ${fmt(r.profit)} + أدس ~${fmt(Math.round(r.adPerDel))} + تغليف ${fmt(r.pack)} + توصيل ${fmt(r.delCost)} + روتور ~${fmt(Math.round(r.retPer))}${r.sc>0?` + فائض ~${fmt(Math.round(r.sc))}`:''}</div>
+        <div class="cp-flow">💵 أدس الأسبوع: <b>~${$r(r.adsWeek)}</b>${rate>0?` (~${fmt(Math.round(r.adsWeek))} دج)`:''} • المدة كاملة ~${$r(r.adsTotal)}</div>
+        <div class="cp-flow">${r.cash?'~':''}${fmt(r.leads)} ليد ← ${r.cash?'~':''}${fmt(r.confirmed)} مؤكدة ← <b>${r.cash?'~':''}${fmt(r.orders)}</b> موصلة${r!==base?` <span style="color:var(--green)">(ليدات أقل بـ ${pct(r.leads,base.leads)}%)</span>`:''}</div>
+      </details>
       <button class="mode-btn cp-btn${chosen?' on':''}" onclick="dsChoose(${r.profit})">${chosen?'✅ هذي وجهتي':'اختار هذي الوجهة'}</button>
     </div>`;
   };
@@ -3250,8 +3277,8 @@ function drawDestTree(){ const _hasAb=abRaw()>0;
   saveState();
   const adv = destProfit==null
     ? `🏆 <b>كل ما يكبر الربح في الطلبية، التسيير يخف:</b> من ${fmt(base.profit)} لـ ${fmt(last.profit)} دج/طلبية، الليدات تنقص ${pct(last.leads,base.leads)}% والفريق من ~${base.team} لـ ~${last.team}.${diffLead?' <b>وتكلفة الليد تتبدّل من سيناريو لآخر</b> — شوف "أدس على الموصلة": كل دولار زايد في الليد لازم مارج أكبر باش يعطيك نفس الربح.':''} <b>اختار الوجهة اللي تقدر تلقى ليها منتج</b> — الخطوة ② تقولك إذا منتجك يوصلها.`
-    : `🏆 <b>وجهتك: ${fmt(destProfit)} دج/طلبية.</b> دوّر على منتج <b>سعر بيعو − سعر إنتاجو ≥ ${fmt(Math.round((R.find(r=>r.profit===destProfit)||base).grossNeed))} دج</b> (مارج قبل الأدس ≥ ${fmt(Math.round((R.find(r=>r.profit===destProfit)||base).margeNeed))}) بهذي النسب. في الخطوة ② كل منتج تدخّلو يقولك يوصلها ولا لا.`;
-  box.innerHTML=`<div class="cp-grid">${R.map(col).join('')}</div><div class="cp-note"><b>"مارج قبل الأدس"</b> = واش يبقالك من الطلبية قبل ما تخلّص الأدس (بعد التغليف والتوصيل والروتور). السطر 🧮 يزيد عليه هاذ التكاليف: يعطيك الفرق اللازم بين سعر البيع وسعر الإنتاج.${R.some(r=>r.cash)?'<br><b>💵 كاش فقط:</b> الأرقام محسوبة باش الهدف يدخل كامل دراهم، والسلعة اللي تبقى زيادة فوقو.':''}<br><b>🧭 الوجهة تقدير بمنتج واحد:</b> في ② تتحسب بمنتجاتك أنت (${P} يوم بيع، من أول يوم الستوك جاهز).</div><div class="gold-advice">${adv}</div>`;
+    : `🏆 <b>وجهتك: ${fmt(destProfit)} دج/طلبية.</b> دوّر على منتج <b>سعر بيعو − سعر إنتاجو ≥ ${fmt(Math.round((R.find(r=>r.profit===destProfit)||base).grossNeed))} دج</b> بهذي النسب. في الخطوة ② كل منتج تدخّلو يقولك يوصلها ولا لا.`;
+  box.innerHTML=`<div class="cp-grid">${R.map(col).join('')}</div><div class="cp-note"><b>"الفرق اللازم"</b> = شحال لازم يكون بين سعر البيع وسعر الإنتاج باش يبقالك الربح اللي اخترت، بعد الأدس والتغليف والتوصيل والروتور.${R.some(r=>r.cash)?'<br><b>💵 كاش فقط:</b> الأرقام محسوبة باش الهدف يدخل كامل دراهم، والسلعة اللي تبقى زيادة فوقو.':''}<br><b>🧭 الوجهة تقدير بمنتج واحد:</b> في ② تتحسب بمنتجاتك أنت (${P} يوم بيع، من أول يوم الستوك جاهز).</div><div class="gold-advice">${adv}</div>`;
 }
 
 function abExtra(p,R,v){   // ربح المتروكة بنفس الليدات: مؤكدات زايدة بلا أدس
