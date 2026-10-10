@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>بوصلة التاجر — القرار الصحيح بالرقم الصحيح</title>
+<title>بوصلة التاجر — شوف وين رايح… ومن بعد ازدم وسكايلي</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -530,7 +530,7 @@ input[type=range]::-moz-range-thumb{background:var(--gold);border:none;}
 .smap-r{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 2px;border-bottom:1px solid rgba(255,255,255,.07);font-size:13.5px;color:#e2e0ea;}
 .smap-r b{color:#F5C542;font-weight:900;white-space:nowrap;font-size:14.5px;}
 .smap-r b.fog{text-shadow:0 0 10px rgba(245,197,66,.55);border-bottom:1px dashed rgba(245,197,66,.45);padding-bottom:2px;}
-.smap-r b.fog::after{content:'≈ يتبدّل';display:block;font-size:9.5px;color:var(--gray);font-weight:700;text-align:left;text-shadow:none;}
+.smap-r b.fog::after{content:'≈ تقريبي';display:block;font-size:9.5px;color:var(--gray);font-weight:700;text-align:left;text-shadow:none;}
 .smap-fog{margin-top:10px;font-size:11.5px;color:var(--gray);line-height:1.75;background:rgba(255,255,255,.03);border:1px dashed rgba(255,255,255,.12);border-radius:10px;padding:9px 11px;} .smap-fog b{color:#e2e0ea;}
 .smap-r small{display:block;font-size:11px;color:var(--gray);font-weight:400;margin-top:2px;}
 .smap-r.gem{border:1px solid rgba(245,197,66,.55);border-radius:12px;padding:12px;margin-top:10px;background:rgba(245,197,66,.07);} .smap-r.gem b{font-size:17px;}
@@ -809,7 +809,7 @@ body{background-image:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(245,197,6
       <div class="smap-r"><span>💰 رأس المال اللازم<small>في المتقدم: برقم واحد + النهار اللي يرجعلك</small></span><b class="fog" id="mp-cap">…</b></div>
       <div class="smap-r" id="mp-left-row"><span>🧵 ستوك يبقالك في الآخر<small>فلوس راقدة — تصفّيه ولا تكمل؟</small></span><b class="fog" id="mp-left">…</b></div>
       <div class="smap-r gem" id="sm-leak" style="display:none"><span>💎 الربح المهمل — طلبيات متروكة ورسائل ما تكمّلتش<small id="sm-leak-pct"></small></span><b class="fog" id="sm-leak-val">…</b></div>
-      <div class="smap-fog">🌫️ <b>الأرقام بين رقمين = منتج واحد وحدو.</b> في خطة كاملة (منتج ثاني، مدة أخرى، سعر آخر) يتبدّلو — ساعات بزاف، للفوق ولا للتحت. رقمك أنت بالضبط، يوم بيوم: في المتقدم.</div>
+      <div class="smap-fog">🌫️ <b>لمنتجك وحدو، الرقم الصحيح داخل هاد المجال.</b> كي تزيد منتج ولا تبدّل المدة ولا السعر، يتبدّل — رقمك بالضبط، يوم بيوم: في المتقدم.</div>
       <div class="smap-g">💎 خلّصت عليهم الأدس، بداو الطلبية… وما كمّلوش. تعرفهم ديجا — بصح عمرك ما حسبتهم <b>بالدينار</b>. داخل: شحال يسواو لكل منتج + <b>الروتين اليومي (5 خطوات) وزوج رسائل جاهزين</b> لفريقك.</div>
       <div class="prelim" style="margin:14px 0 0;">ℹ️ <b>هذا حساب ابتدائي برك</b> — لمنتج واحد. باش الخطة تكون صحيحة، لازم تحسب زيادة: <b>رأس المال بالتفصيل، شحال من عامل، شحال سلعة تشري ووقتاش تعاود تطلب، ووقتاش يرجع الكاش</b>.</div>
       <div class="smap-lock"><b>البسيط حكم على منتجك. المتقدم يحكم على خطتك:</b><div>🔒 في أي نهار يرجع رأس مالك؟</div><div>🔒 <span id="mp-gap">تقدر تنقّص رأس المال؟ بسعر آخر ولا بمنتج ثاني — الكوتش يرتّبلك كل الطرق</span></div><div>🔒 ما عندكش هذا المبلغ؟ دخّل شحال عندك، والبوصلة تقولك في أي نهار توصل</div><div>🔒 الربح المهمل: شحال يسوى لكل منتج — والروتين اليومي باش ترجّعو</div><div>🔒 حكم الكوتش على خطتك: تطلق، تطلق بحذر، ولا تصلّح قبل؟</div></div>
@@ -1442,7 +1442,7 @@ function smMap(){
   { let nR=0; if(R.leadsPerDay>0) nR++; if(isFinite(R.starterCapital)) nR++; if(leftPcs>=1) nR++; try{ if(abExtra(p,R,shared).profit>0) nR++; }catch(e){} setEl('mp-prog', 'خريطتك واقفة في النص: محطة وحدة بالرقم الكامل، و'+nR+' بين رقمين.'); }
   // 💎 الربح المهمل: نفس حساب المتقدم (abExtra) — نص المعلومة: المجال + النسبة من الإعلان
   if(lk){ const x=abExtra(p,R,shared);
-    if(x.profit>0){ lk.style.display='flex'; setEl('sm-leak-val', halfMoney(x.profit)); const rr=+el('t-abrec').value||0, hk=halfRange(x.profit), dLo=Math.round(hk[0]/P/50)*50, dHi=Math.round(hk[1]/P/50)*50; setEl('sm-leak-pct', 'ربح ضايع لو ترجّع '+(rr===25?'ربعهم برك':rr+'% منهم')+(dLo>0?': بين '+fmt(dLo)+' و '+fmt(dHi)+' دج كل نهار':'')); lk.dataset.v=Math.round(x.profit); }
+    if(x.profit>0){ lk.style.display='flex'; setEl('sm-leak-val', halfMoney(x.profit)); const rr=+el('t-abrec').value||0, hk=halfRange(x.profit), dLo=Math.round(hk[0]/P/50)*50, dHi=Math.round(hk[1]/P/50)*50; setEl('sm-leak-pct', 'ربح ضايع لو ترجّع '+(rr===25?'ربعهم برك':rr+'% منهم')+' • 🔒 شحال كل نهار + الروتين باش ترجّعهم: في المتقدم'); lk.dataset.v=Math.round(x.profit); }
     else lk.style.display='none'; }
 }
 
@@ -2599,12 +2599,12 @@ function renderExecution(v){
         <div><b>~${one(R.leadsPerDay)}</b><span>ليد/نهار • ~${fmt(Math.round(R.leadsPerDay*7))} في الأسبوع</span></div>
         <div><b>~${one(R.sendPerDay)}</b><span>مؤكدة ترسلها/نهار</span></div>
         <div><b>~${one(R.delPerDay)}</b><span>موصلة/نهار</span></div>
-        <div><b>${fmt(R.starterStock)}</b><span>قطعة للبدء (~${fmt(R.starterStockCost)} دج)</span></div>
+        <div><b>${fmt(R.starterStock)}</b><span>قطعة للدفعة الأولى (تتشرى على مراحل في الدورة 1)</span></div>
         <div><b>${fmt(R.reorderPoint)}</b><span>كي يوصل الستوك هنا ← اطلب دفعة (${R.prodDays} أيام تحضير)</span></div>
         <div><b>${rate>0?usdMain(R.adsPerDay*7,rate):fmt(Math.round(R.adsPerDay*7))+' دج'}</b><span>أدس في الأسبوع</span></div>
       </div></div>`).join('')}
     <div style="font-size:11px;color:var(--gray);margin-top:6px;">كل منتج بحملتو وأرقامو وحدو — باش تعرف شكون يربح وشكون يطيّح.</div></div></details>` : '';
-  const follow = `<div class="follow-note">📌 <b>تتبّع خطتك كل أسبوع:</b> دخّل الأرقام الحقيقية (تكلفة الليد، التأكيد، التوصيل) والبوصلة تعاود تحسب. السوق يتبدّل: الليد يغلى ولا يرخص، والتوصيل يطلع ويهبط. بصح إذا بنيت خطتك على <b>أسوأ سيناريو</b>، وأرقامك الحقيقية بقات قدّو ولا أحسن، الخطة تبقى رابحة من اليوم 1 حتى الهدف — بإذن الله. وإذا طاحو تحتو، البوصلة تنبّهك <b>قبل</b> ما تخسر.</div>`;
+  const follow = `<div class="follow-note">📌 <b>تتبّع خطتك كل أسبوع:</b> دخّل الأرقام الحقيقية (تكلفة الليد، التأكيد، التوصيل) والبوصلة تعاود تحسب. السوق يتبدّل: الليد يغلى ولا يرخص، والتوصيل يطلع ويهبط. بصح إذا بنيت خطتك على <b>أسوأ سيناريو</b>، وأرقامك الحقيقية بقات قدّو ولا أحسن، كل طلبية موصلة تبقى رابحة والهدف يقرب كيما مخطّط — بإذن الله. وإذا طاحو تحتو، دخّلهم هنا والبوصلة تقولك واش تبدّل <b>قبل</b> ما تخسر أكثر.</div>`;
   box.innerHTML=cards+total+timeline+perProd+follow;
 }
 
@@ -3004,21 +3004,24 @@ function renderCapRanking(v,C,target,capLeads,T,P,daysCur){
 // ══════════════════════════════════════════════
 //  مقارنة العروض — نفس المنتج، عدة أسعار
 // ══════════════════════════════════════════════
-let offers=[], offerIdx=0;
+let offers=[], offerIdx=0, offersByProd={};
+function curOfferFrom(p){ const rate=+el('t-exchange').value||245; return {name:'العرض الحالي', sell:p.sell, buy:p.buy, conf:p.conf, del:p.del, leadUsd:(p.leadUsd!=null?+(+p.leadUsd).toFixed(2):+(p.lead/rate).toFixed(2)), cur:true}; }
 function resetOffers(){
   offerIdx=+(el('of-prod')||{value:0}).value||0;
-  const p=prodData[offerIdx], rate=+el('t-exchange').value||245;
-  const lu=+(p.lead/rate).toFixed(2);
+  if(offersByProd[offerIdx] && offersByProd[offerIdx].length){ offers=offersByProd[offerIdx]; renderOffers(); return; }   // عروضك تبقى كيما خلّيتهم
+  const p=prodData[offerIdx], c=curOfferFrom(p), lu=c.leadUsd;
   offers=[
     {name:'العرض 1', sell:Math.round(p.sell*1.15/100)*100, buy:p.buy, conf:Math.max(10,p.conf-7), del:Math.max(10,p.del-3), leadUsd:+(lu*1.15).toFixed(2)},
     {name:'العرض 2', sell:Math.round(p.sell*0.88/100)*100, buy:p.buy, conf:Math.min(100,p.conf+5), del:p.del, leadUsd:+(lu*0.9).toFixed(2)},
-    {name:'العرض الحالي', sell:p.sell, buy:p.buy, conf:p.conf, del:p.del, leadUsd:lu, cur:true},
+    c,
   ];
+  offersByProd[offerIdx]=offers;
   renderOffers();
 }
-function addOffer(){ const b=offers.find(o=>o.cur)||offers[offers.length-1]||{sell:3500,buy:1500,conf:55,del:65,leadUsd:1}; let n=1; while(offers.some(o=>o.name==='العرض '+n)) n++; offers.push({...b,cur:false,name:'العرض '+n}); renderOffers(); }
-function removeOffer(i){ offers.splice(i,1); renderOffers(); }
-function updOffer(i,f,val){ let x=parseFloat(val)||0; if(f==='conf'||f==='del') x=Math.min(100,Math.max(1,x)); if(f==='sell'||f==='leadUsd'||f==='buy') x=Math.max(0,x); offers[i][f]= f==='name'?cleanTxt(val):x; computeOffers(); }
+function addOffer(){ const b=offers.find(o=>o.cur)||offers[offers.length-1]||{sell:3500,buy:1500,conf:55,del:65,leadUsd:1}; const n=1+Math.max(0,...offers.map(o=>{ const m=String(o.name).match(/^العرض (\d+)$/); return m?+m[1]:0; })); offers.push({...b,cur:false,name:'العرض '+n}); renderOffers(); saveState(); }
+function removeOffer(i){ offers.splice(i,1); renderOffers(); saveState(); }
+function updOffer(i,f,val){ let x=parseFloat(val)||0; if(f==='conf'||f==='del') x=Math.min(100,Math.max(1,x)); if(f==='sell'||f==='leadUsd'||f==='buy') x=Math.max(0,x); offers[i][f]= f==='name'?cleanTxt(val):x; computeOffers(); saveState(); }
+function fixOfferInput(inp,i,f){ inp.value=offers[i][f]; }
 function applyOffer(i){
   const o=offers[i], rate=+el('t-exchange').value||245, p=prodData[offerIdx];
   p.sell=o.sell; if(o.buy!=null) p.buy=o.buy; p.conf=o.conf; p.del=o.del; p.leadUsd=o.leadUsd; p.lead=Math.round(o.leadUsd*rate);
@@ -3029,18 +3032,19 @@ function renderOffers(){
   const cur=sel.value;
   sel.innerHTML=prodData.slice(0,prodCount).map((p,i)=>`<option value="${i}">${prodCount>1?p.name:'منتجك'}</option>`).join('');
   if(cur && +cur<prodCount) sel.value=cur;
-  if(!offers.length || offerIdx>=prodCount){ resetOffers(); return; }
+  const want=+(sel.value||0); if(!offers.length || offerIdx>=prodCount || want!==offerIdx){ resetOffers(); return; }
+  { const c=offers.find(o=>o.cur); if(c) Object.assign(c, curOfferFrom(prodData[offerIdx])); }   // العرض الحالي = أرقام المنتج دوكا
   el('offersList').innerHTML=offers.map((o,i)=>`
     <div class="sc-card" style="margin-bottom:10px;">
       <div class="sc-head"><div class="sc-name"><input type="text" value="${o.name}" oninput="updOffer(${i},'name',this.value)"></div>${offers.length>1?`<button class="sc-remove" onclick="removeOffer(${i})">✕</button>`:''}</div>
       <div class="g2">
-        <div class="sc-f"><label>سعر الإنتاج (دج)</label><input type="number" value="${o.buy!=null?o.buy:prodData[offerIdx].buy}" oninput="updOffer(${i},'buy',this.value)"></div>
-        <div class="sc-f"><label>سعر البيع (دج)</label><input type="number" value="${o.sell}" oninput="updOffer(${i},'sell',this.value)"></div>
+        <div class="sc-f"><label>سعر الإنتاج (دج)</label><input type="number" value="${o.buy!=null?o.buy:prodData[offerIdx].buy}" oninput="updOffer(${i},'buy',this.value)" onchange="fixOfferInput(this,${i},'buy')"></div>
+        <div class="sc-f"><label>سعر البيع (دج)</label><input type="number" value="${o.sell}" oninput="updOffer(${i},'sell',this.value)" onchange="fixOfferInput(this,${i},'sell')"></div>
       </div>
       <div class="g3" style="margin-top:8px;">
-        <div class="sc-f"><label>تأكيد %</label><input type="number" value="${o.conf}" oninput="updOffer(${i},'conf',this.value)"></div>
-        <div class="sc-f"><label>توصيل %</label><input type="number" value="${o.del}" oninput="updOffer(${i},'del',this.value)"></div>
-        <div class="sc-f"><label>ليد ($)</label><input type="number" step="0.1" value="${o.leadUsd}" oninput="updOffer(${i},'leadUsd',this.value)"></div>
+        <div class="sc-f"><label>تأكيد %</label><input type="number" value="${o.conf}" oninput="updOffer(${i},'conf',this.value)" onchange="fixOfferInput(this,${i},'conf')"></div>
+        <div class="sc-f"><label>توصيل %</label><input type="number" value="${o.del}" oninput="updOffer(${i},'del',this.value)" onchange="fixOfferInput(this,${i},'del')"></div>
+        <div class="sc-f"><label>ليد ($)</label><input type="number" step="0.01" value="${o.leadUsd}" oninput="updOffer(${i},'leadUsd',this.value)" onchange="fixOfferInput(this,${i},'leadUsd')"></div>
       </div>
     </div>`).join('');
   computeOffers();
@@ -3268,6 +3272,7 @@ function drawDestTree(){ const _hasAb=abRaw()>0;
         <div class="cp-flow">= ربحك ${fmt(r.profit)} + أدس ~${fmt(Math.round(r.adPerDel))} + تغليف ${fmt(r.pack)} + توصيل ${fmt(r.delCost)} + روتور ~${fmt(Math.round(r.retPer))}${r.sc>0?` + فائض ~${fmt(Math.round(r.sc))}`:''}</div>
         <div class="cp-flow">💵 أدس الأسبوع: <b>~${$r(r.adsWeek)}</b>${rate>0?` (~${fmt(Math.round(r.adsWeek))} دج)`:''} • المدة كاملة ~${$r(r.adsTotal)}</div>
         <div class="cp-flow">${r.cash?'~':''}${fmt(r.leads)} ليد ← ${r.cash?'~':''}${fmt(r.confirmed)} مؤكدة ← <b>${r.cash?'~':''}${fmt(r.orders)}</b> موصلة${r!==base?` <span style="color:var(--green)">(ليدات أقل بـ ${pct(r.leads,base.leads)}%)</span>`:''}</div>
+        ${r.cash?`<div class="cp-flow">💵 علاش موصلات أكثر من «الهدف ÷ ربحك»؟ جزء من الربح يبقى سلعة (فائض + روتور آخر دورة). في «كاش فقط» نزيدو طلبيات باش الهدف يدخل دراهم.</div>`:''}
       </details>
       <button class="mode-btn cp-btn${chosen?' on':''}" onclick="dsChoose(${r.profit})">${chosen?'✅ هذي وجهتي':'اختار هذي الوجهة'}</button>
     </div>`;
@@ -3332,7 +3337,7 @@ function saveState(){
   clearTimeout(stT);
   stT=setTimeout(()=>{ try{
     const f={}; ST_IDS.forEach(id=>{ const e=el(id); if(e) f[id]=e.value; });
-    localStorage.setItem(ST_KEY, JSON.stringify({v:1,f,leadMode,prodData,prodCount,period,targetMode,deliveryDays,persona,capMode,planSel,smSig,dsScen,dsInit,destProfit,
+    localStorage.setItem(ST_KEY, JSON.stringify({v:1,f,leadMode,prodData,prodCount,period,targetMode,deliveryDays,persona,capMode,planSel,smSig,dsScen,dsInit,destProfit,offersByProd,
       adv: el('advancedMode').style.display!=='none'}));
   }catch(e){} }, 350);
 }
@@ -3359,6 +3364,7 @@ function loadState(){
     if(Array.isArray(o.dsScen) && o.dsScen.length) dsScen=o.dsScen.slice(0,8).map(x=>({p:Math.max(0,num(x&&x.p,1000)), l:(x&&x.l>0)?num(x.l,null):null}));
     dsInit=!!o.dsInit; destProfit=(o.destProfit==null)?null:num(o.destProfit,null);
     if(o.leadMode==='auto'||o.leadMode==='manual') leadMode=o.leadMode;
+    if(o.offersByProd && typeof o.offersByProd==='object'){ Object.keys(o.offersByProd).slice(0,10).forEach(k=>{ const L=o.offersByProd[k]; if(Array.isArray(L)) offersByProd[+k]=L.slice(0,12).filter(x=>x&&typeof x==='object').map(x=>({name:cleanTxt(x.name)||'عرض', sell:Math.max(0,num(x.sell,0)), buy:Math.max(0,num(x.buy,0)), conf:Math.min(100,Math.max(1,num(x.conf,50))), del:Math.min(100,Math.max(1,num(x.del,50))), leadUsd:Math.max(0,num(x.leadUsd,1)), cur:!!x.cur})); }); }
     return o;
   }catch(e){ return null; }
 }
@@ -3397,6 +3403,7 @@ function navSync(){
 }
 document.addEventListener('click',e=>{ const g=e.target.closest && e.target.closest('[data-go]'); if(g) goTo(g.dataset.go); });
 window.addEventListener('scroll',navSync,{passive:true});
+window.addEventListener('pagehide',()=>{ if(stT){ clearTimeout(stT); stT=null; const r=stReady; if(r){ /* حفظ فوري */ const f={}; ST_IDS.forEach(id=>{ const e=el(id); if(e) f[id]=e.value; }); try{ localStorage.setItem(ST_KEY, JSON.stringify({v:1,f,leadMode,prodData,prodCount,period,targetMode,deliveryDays,persona,capMode,planSel,smSig,dsScen,dsInit,destProfit,offersByProd,adv: el('advancedMode').style.display!=='none'})); }catch(e){} } } });
 
 smDef=JSON.stringify(smState());
 const _st0=loadState();
