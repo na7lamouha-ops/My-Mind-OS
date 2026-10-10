@@ -21,7 +21,7 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:var(--bg);font-f
 .head{position:absolute;top:250px;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:28px;}
 .head .av{position:relative;left:auto;margin:0;width:150px;height:150px;font-size:76px;}
 .head b{display:block;font-size:54px;font-weight:900;} .head span{display:block;font-size:30px;color:var(--mut);font-weight:700;}
-.cap{position:absolute;top:1240px;left:70px;right:70px;text-align:center;}
+.cap{position:absolute;top:1240px;left:140px;right:140px;text-align:center;}
 .cap div{font-size:46px;font-weight:900;line-height:1.45;opacity:0;} .cap div.s{font-size:36px;color:var(--mut);font-weight:700;}
 /* reels feed */
 .phone{position:absolute;top:440px;left:300px;width:480px;height:720px;border-radius:56px;background:#111118;border:3px solid rgba(255,255,255,.12);overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.6);}
@@ -33,7 +33,7 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:var(--bg);font-f
 .chip{font-size:32px;font-weight:900;padding:12px 26px;border-radius:40px;background:rgba(255,122,69,.12);border:2px solid rgba(255,122,69,.5);color:#ffc7a8;opacity:0;}
 svg.ch{direction:ltr;position:absolute;top:460px;left:90px;width:900px;height:620px;overflow:visible;}
 /* chat */
-.chat{position:absolute;top:430px;left:80px;right:80px;}
+.chat{position:absolute;top:430px;left:90px;right:140px;}
 .bub{max-width:760px;font-size:38px;font-weight:700;line-height:1.5;padding:20px 28px;border-radius:30px;margin-bottom:22px;opacity:0;}
 .bub.them{background:#1d1d27;border:1px solid rgba(255,255,255,.1);margin-left:auto;border-top-right-radius:8px;}
 .bub.me{background:rgba(34,197,94,.16);border:1px solid rgba(34,197,94,.45);margin-right:auto;border-top-left-radius:8px;color:#d8fbe5;}
@@ -49,7 +49,7 @@ svg.ch{direction:ltr;position:absolute;top:460px;left:90px;width:900px;height:62
 .card b{display:block;font-size:52px;font-weight:900;} .card span{display:block;font-size:32px;color:var(--mut);font-weight:700;margin-top:6px;}
 .card.s{border:3px solid rgba(255,122,69,.5);} .card.y{border:3px solid rgba(34,197,94,.6);box-shadow:0 0 50px rgba(34,197,94,.18);}
 .cta-btn{display:inline-block;margin-top:50px;background:linear-gradient(135deg,#FDE68A,#F5C542,#B8860B);color:#1a1408;font-size:44px;font-weight:900;padding:28px 50px;border-radius:30px;box-shadow:0 20px 50px rgba(245,197,66,.35);}
-.disc{position:absolute;top:1508px;left:70px;right:70px;text-align:center;font-size:25px;color:#c9c7d4;font-weight:700;line-height:1.5;}
+.disc{position:absolute;top:1430px;left:70px;right:70px;text-align:center;font-size:25px;color:#c9c7d4;font-weight:700;line-height:1.5;}
 </style>
 </head>
 <body>
@@ -58,7 +58,7 @@ svg.ch{direction:ltr;position:absolute;top:460px;left:90px;width:900px;height:62
 <div class="sc" id="s0">
   <div class="c big" id="h1" style="top:600px">زوج شباب دخلو للإيكوم.</div>
   <div class="c mid" id="h2" style="top:830px">واحد تعلّم من <span class="red">الريلز</span>…</div>
-  <div class="c mid" id="h3" style="top:930px">والآخر من <span class="grn">ناس دايرين بيزنس</span>.</div>
+  <div class="c mid" id="h3" style="top:930px">ولاخر من <span class="grn">ناس دايرين بيزنس</span>.</div>
 </div>
 
 <div class="sc" id="s1">
@@ -86,10 +86,11 @@ svg.ch{direction:ltr;position:absolute;top:460px;left:90px;width:900px;height:62
   <div class="chat" id="chat">
     <div class="bub them"><small>صاحب بيزنس</small>واش هو الهدف تاعك؟</div>
     <div class="bub me"><small>يوسف</small>نخدم إيكوم.</div>
-    <div class="bub them"><small>صاحب بيزنس</small>😄 الإيكوم ماشي هدف. الهدف: شحال، في قداش من وقت… وشحال يتحمّل رأس مالك؟</div>
+    <div class="bub them" style="font-size:44px">😂 ضحكو.</div>
+    <div class="bub them"><small>صاحب بيزنس</small>الإيكوم ماشي هدف. الهدف: شحال، في قداش من وقت… وشحال يتحمّل رأس مالك؟</div>
     <div class="bub them"><small>صاحب بيزنس</small>بزاف من صحابنا طاحو: ما كانوش عارفين وجهة البروجي، ولا شحال يتحمّل رأس مالهم.</div>
   </div>
-  <div class="compass" id="cmp"><svg width="110" height="110" viewBox="0 0 130 130"><defs><linearGradient id="lg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFF1B8"/><stop offset=".4" stop-color="#F5C542"/><stop offset="1" stop-color="#A8750A"/></linearGradient></defs><polygon points="65,12 110.9,38.5 110.9,91.5 65,118 19.1,91.5 19.1,38.5" fill="#100f16" stroke="url(#lg2)" stroke-width="5"/><polygon points="65,27 58.5,65 71.5,65" fill="url(#lg2)"/><polygon points="65,103 58.5,65 71.5,65" fill="#26242e" stroke="url(#lg2)"/></svg><div><b>«ابدا بهاذي»</b><span>البوصلة — باش ما تتبحّرش في الطريق</span></div></div>
+  <div class="compass" id="cmp"><svg width="110" height="110" viewBox="0 0 130 130"><defs><linearGradient id="lg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFF1B8"/><stop offset=".4" stop-color="#F5C542"/><stop offset="1" stop-color="#A8750A"/></linearGradient></defs><polygon points="65,12 110.9,38.5 110.9,91.5 65,118 19.1,91.5 19.1,38.5" fill="#100f16" stroke="url(#lg2)" stroke-width="5"/><polygon points="65,27 58.5,65 71.5,65" fill="url(#lg2)"/><polygon points="65,103 58.5,65 71.5,65" fill="#26242e" stroke="url(#lg2)"/></svg><div><b>«ابدا بهاذي»</b><span>البوصلة — باش ما تتلفش في الطريق</span></div></div>
 </div>
 <div class="sc" id="s5">
   <div class="head"><div class="av y">🧠</div><div><b class="grn">يوسف</b><span>بدا من الوجهة</span></div></div>
@@ -101,7 +102,7 @@ svg.ch{direction:ltr;position:absolute;top:460px;left:90px;width:900px;height:62
 <div class="sc" id="s6">
   <div class="c mid" style="top:300px">الحقيقة اللي ما يقولوهاش في الريلز:</div>
   <svg class="ch" id="ch2" viewBox="0 0 900 620" style="top:520px"></svg>
-  <div class="cap" id="cap6" style="top:1200px"><div>الفرصة اللي كانت في <span class="gold">2023</span>… راحت.</div><div class="s">وكل عام تزيد تقلّ.</div><div class="gold">وما يدوم غير القواعد الصحيحة تاع البيزنس.</div></div>
+  <div class="cap" id="cap6" style="top:1200px"><div>الفرصة السهلة اللي كانت من <span class="gold">2021 حتى 2023</span>… راحت.</div><div class="s">وكل عام تزيد تصعاب.</div><div class="gold">وما يدوم غير القواعد الصحيحة تاع البيزنس.</div></div>
 </div>
 
 <div class="sc" id="s7">
@@ -124,7 +125,7 @@ svg.ch{direction:ltr;position:absolute;top:460px;left:90px;width:900px;height:62
   <div class="c sm" style="top:790px;color:#e8e6ef">بداية الطريق الصح: الوجهة قبل التاست.</div>
   <div class="c" style="top:880px"><div class="cta-btn" id="ctab">🎁 هديتين مجانيتين: الكتاب + البوصلة</div></div>
   <div class="c sm" style="top:1090px;direction:ltr">al-khaliya.space/start.html</div>
-  <div class="c mid gold" style="top:1170px;font-size:40px">الرابط في البيو 👆</div>
+  <div class="c mid gold" style="top:1170px;font-size:40px">مجاناً — الرابط في البيو 👆</div>
 </div>
 <div class="disc" id="disc">الشخصيات تمثيلية — مستوحاة من واقع الإيكوم في الجزائر. مثال، ماشي وعد بالربح.</div>
 <div id="vign"></div>
@@ -134,22 +135,22 @@ const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x)), seg=(t,a,b)=>clamp((t-a)/(b-
 const ease=x=>1-Math.pow(1-clamp(x),3), easeIO=x=>{x=clamp(x);return x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;};
 const back=x=>{x=clamp(x);const c1=1.70158,c3=c1+1;return 1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2);};
 const $=id=>document.getElementById(id);
-const S=[['s0',0,3.8],['s1',3.8,7],['s2',7,16.5],['s3',16.5,24.5],['s4',24.5,36.5],['s5',36.5,43.5],['s6',43.5,51],['s7',51,55.5],['s8',55.5,59],['s9',59,63.5]];
-const DUR=63.5;
+const S=[['s0',0,3.8],['s1',3.8,7],['s2',7,16.5],['s3',16.5,24.5],['s4',24.5,36.5],['s5',36.5,43.5],['s6',43.5,51],['s7',51,55.5],['s8',55.5,59],['s9',59,64]];
+const DUR=64;
 function pop(el,t,a,dy=30){ const k=ease(seg(t,a,a+0.45)); el.style.opacity=k; el.style.transform=`translateY(${(1-k)*dy}px) scale(${0.92+0.08*back(seg(t,a,a+0.5))})`; }
 // reels
 const REELS=[['الإيكوم ساهل 🔥','«دير تاست وخلاص»','#3a1a12'],['جيب كوسط رخيص 📉','«الليد بـ 0.3$!»','#1a2236'],['شوف عدد الطلبيات 📦','«100 طلبية في النهار»','#2a1736'],['اشري وابعث 🚚','«ساهلة بزاف»','#123026']];
-const ph=$('ph'); const reels=REELS.map(([b,s,c])=>{ const d=document.createElement('div'); d.className='reel'; d.style.background=`linear-gradient(180deg,${c},#0d0d14)`; d.innerHTML=`<b>${b}</b><span>${s}</span><div class="ui"><span>❤️</span><span>💬</span><span>↗️</span></div><div class="tag">@ecom.guru</div>`; ph.appendChild(d); return d; });
+const ph=$('ph'); const reels=REELS.map(([b,s,c])=>{ const d=document.createElement('div'); d.className='reel'; d.style.background=`linear-gradient(180deg,${c},#0d0d14)`; d.innerHTML=`<b>${b}</b><span>${s}</span><div class="ui"><span>❤️</span><span>💬</span><span>↗️</span></div><div class="tag">@reel.ecom</div>`; ph.appendChild(d); return d; });
 // chart 1 (rollercoaster flat ~ zero profit)
 const NS='http://www.w3.org/2000/svg';
 const pts=[[0,300],[80,170],[150,330],[230,150],[300,360],[380,190],[450,350],[540,170],[610,370],[700,200],[780,340],[880,250]];
-$('ch').innerHTML=`<line x1="0" y1="300" x2="900" y2="300" stroke="rgba(255,255,255,.25)" stroke-width="3" stroke-dasharray="10 10"/><text x="450" y="500" text-anchor="middle" font-size="32" font-weight="900" fill="#c9c7d4" font-family="Tajawal">- - -  الفايدة الحقيقية ≈ 0  - - -</text><path id="p1" d="M${pts.map(p=>p.join(',')).join(' L')}" fill="none" stroke="#ff7a45" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/><circle id="d1" r="18" fill="#ffd1a3"/>`+
+$('ch').innerHTML=`<line x1="0" y1="300" x2="900" y2="300" stroke="rgba(255,255,255,.25)" stroke-width="3" stroke-dasharray="10 10"/><text x="450" y="520" text-anchor="middle" font-size="30" font-weight="900" fill="#e8e6ef" font-family="Tajawal">الخط المتقطع = الفايدة الحقيقية ≈ 0</text><text x="20" y="40" text-anchor="start" font-size="30" font-weight="900" fill="#ffc7a8" font-family="Tajawal">الطلبيات / المداخيل</text><path id="p1" d="M${pts.map(p=>p.join(',')).join(' L')}" fill="none" stroke="#ff7a45" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/><circle id="d1" r="18" fill="#ffd1a3"/>`+
  [[150,330,'طاح'],[230,150,'ناض'],[450,350,'طاح'],[540,170,'ناض']].map(([x,y,l],i)=>`<text id="l${i}" x="${x}" y="${y+(l==='طاح'?70:-36)}" text-anchor="middle" font-size="34" font-weight="900" fill="${l==='طاح'?'#ff9aab':'#7ef0a8'}" font-family="Tajawal">${l}</text>`).join('');
 const p1=$('p1'), L1=p1.getTotalLength(); p1.style.strokeDasharray=L1;
 // chart 2: opportunity declining vs rules steady
 $('ch2').innerHTML=`<path id="op" d="M0,60 C200,90 380,200 520,330 S800,520 900,560" fill="none" stroke="#ff4d6a" stroke-width="10" stroke-linecap="round"/><path id="ru" d="M0,420 C250,400 500,330 900,200" fill="none" stroke="#F5C542" stroke-width="10" stroke-linecap="round"/>
 <text id="opl" x="20" y="40" font-size="34" font-weight="900" fill="#ff9aab" font-family="Tajawal" text-anchor="start">الفرصة</text><text id="rul" x="890" y="170" font-size="34" font-weight="900" fill="#F5C542" font-family="Tajawal" text-anchor="end">القواعد الصحيحة</text>
-<text x="0" y="610" font-size="28" fill="#a9a7b4" font-weight="700" font-family="Tajawal" text-anchor="start">2023</text><text x="900" y="610" font-size="28" fill="#a9a7b4" font-weight="700" font-family="Tajawal" text-anchor="end">اليوم وغدوة</text>`;
+<text x="0" y="610" font-size="28" fill="#a9a7b4" font-weight="700" font-family="Tajawal" text-anchor="start">2021</text><text x="900" y="610" font-size="28" fill="#a9a7b4" font-weight="700" font-family="Tajawal" text-anchor="end">اليوم وغدوة →</text>`;
 const op=$('op'), ru=$('ru'), LO=op.getTotalLength(), LR=ru.getTotalLength(); op.style.strokeDasharray=LO; ru.style.strokeDasharray=LR;
 window.render=function(t){
   $('grid').style.backgroundPosition=`${(t*6)%44}px ${(t*9)%44}px`;
@@ -157,7 +158,7 @@ window.render=function(t){
   const tS=seg(t,7,7.6)*(1-seg(t,24,24.5)), tY=seg(t,24.5,25.1)*(1-seg(t,43,43.5));
   $('tint').style.background=`radial-gradient(ellipse at 50% 30%, rgba(255,122,69,${0.12*tS}), rgba(34,197,94,${0.11*tY}) 70%, transparent 100%)`;
   // S0
-  $('h1').style.opacity=1; $('h1').style.transform=`scale(${1+0.02*Math.sin(t*3)})`; pop($('h2'),t,1.0); pop($('h3'),t,2.0);
+  $('h1').style.opacity=1; $('h1').style.transform=`scale(${1+0.02*Math.sin(t*3)})`; pop($('h2'),t,0.15); pop($('h3'),t,0.6);
   // S1
   [['a1','n1',4.0],['a2','n2',4.6]].forEach(([a,n,s])=>{ $(a).style.opacity=seg(t,s,s+0.3); $(a).style.transform=`scale(${0.5+0.5*back(seg(t,s,s+0.5))})`; pop($(n),t,s+0.2); });
   pop($('s1c'),t,5.4);
@@ -170,9 +171,9 @@ window.render=function(t){
   const ck=easeIO(seg(t,17,22)); p1.style.strokeDashoffset=L1*(1-ck); const P=p1.getPointAtLength(L1*ck); $('d1').setAttribute('cx',P.x); $('d1').setAttribute('cy',P.y); $('d1').style.opacity=seg(t,17,17.2);
   [0,1,2,3].forEach(i=>{ $('l'+i).style.opacity=seg(t,17.8+i*0.9,18.1+i*0.9); });
   $('ch').style.transform=`translateX(${Math.sin(t*30)*4*seg(t,20,21)*(1-seg(t,24,24.3))}px)`;
-  [...$('cap3').children].forEach((e,i)=>pop(e,t,[17,19.5,21.6][i]));
+  [...$('cap3').children].forEach((e,i)=>pop(e,t,[17,19.2,20.6][i]));
   // S4 chat
-  [...$('chat').children].forEach((e,i)=>pop(e,t,[25,26.6,28.2,31.6][i],20));
+  { const sc=easeIO(seg(t,33.1,33.7)); $('chat').style.transform=`translateY(${-300*sc}px)`; [...$('chat').children].forEach((e,i)=>{ pop(e,t,[25,26.4,27.4,28.6,31.6][i],20); if(i<3) e.style.opacity=(+e.style.opacity)*(1-sc); }); }
   const ck2=back(seg(t,33.6,34.3)); $('cmp').style.opacity=seg(t,33.6,33.9); $('cmp').style.transform=`scale(${0.7+0.3*ck2})`;
   // S5
   ['f1','f2','f3'].forEach((id,i)=>{ const s=37+i*0.8; pop($(id),t,s); $(id).style.boxShadow=`0 0 ${40*Math.exp(-2*Math.max(0,t-s))}px rgba(34,197,94,.6)`; });
