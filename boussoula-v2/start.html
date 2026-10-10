@@ -119,6 +119,24 @@ body{background-image:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(245,197,6
 .know-q b{color:#F5C542;}
 .guar{font-size:12.5px;color:#cfeeda;background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.3);border-radius:10px;padding:10px 12px;margin:12px 0 0;line-height:1.8;text-align:center;}
 .guar b{color:#fff;}
+.goal{margin:22px 0 18px;padding:22px 16px 18px;border-radius:16px;background:linear-gradient(180deg,rgba(245,197,66,.07),rgba(245,197,66,0) 70%);border:1px solid rgba(245,197,66,.22);}
+.goal-k{display:table;margin:0 auto 12px;font-size:12px;font-weight:900;color:#F5C542;border:1px solid rgba(245,197,66,.45);border-radius:30px;padding:3px 14px;}
+.goal-h{font-size:25px;font-weight:900;color:#fff;line-height:1.5;text-align:center;margin-bottom:10px;} .goal-h b{color:#F5C542;font-size:29px;}
+.goal-p{font-size:14.5px;color:#e2e0ea;line-height:1.95;} .goal-p b{color:#fff;}
+.era{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0;}
+.era>div{border-radius:12px;padding:13px;font-size:13px;line-height:1.8;}
+.era span{display:inline-block;font-size:11px;font-weight:900;border-radius:20px;padding:1px 9px;margin-bottom:6px;}
+.era h3{font-size:15px;color:#fff;margin-bottom:4px;}
+.era-old{background:var(--s2);border:1px solid var(--border);color:#a9a7b4;} .era-old span{background:rgba(255,255,255,.08);color:#cfcdd8;}
+.era-new{background:rgba(245,197,66,.08);border:1px solid rgba(245,197,66,.45);color:#f3e3b5;} .era-new span{background:#F5C542;color:#1a1408;}
+.ladder{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:14px 13px;}
+.ladder-h{font-size:14px;font-weight:900;color:#fff;margin-bottom:10px;text-align:center;}
+.rung{display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px dashed rgba(245,197,66,.18);font-size:14px;color:#e2e0ea;line-height:1.7;} .rung:last-of-type{border-bottom:none;} .rung b{color:#fff;}
+.rung i{flex:0 0 26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#FDE68A,#F5C542,#B8860B);color:#1a1408;font-style:normal;font-weight:900;font-size:13px;display:flex;align-items:center;justify-content:center;}
+.ladder-f{margin-top:10px;font-size:12.5px;color:#9fe0b5;text-align:center;line-height:1.7;}
+.goal-q{margin:16px 0 0;text-align:center;font-size:15.5px;color:#cfcdd8;line-height:1.9;} .goal-q b{color:#F5C542;}
+.goal-bridge{margin:12px 0 0;text-align:center;font-size:13.5px;color:var(--gray);}
+@media (max-width:380px){.era{grid-template-columns:1fr}.goal-h{font-size:22px}.goal-h b{font-size:25px}}
 </style>
 </head>
 <body>
@@ -146,6 +164,27 @@ body{background-image:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(245,197,6
     <div class="sub">السوق يقولك "ازدم". 🧭 البوصلة تقولك: شوف وين رايح… ومن بعد ازدم.</div>
     <div class="what"><b style="color:#e8e6ef">ماشي فورماسيون. ماشي فيديوهات.</b> أداة: تدخّل أرقامك — تخرجلك خريطة تجارتك قبل ما تصرف الدينار الأول.<br><b style="color:#f3e3b5">تبدا من النهاية:</b> حط هدفك — وهي ترجع بيك لليوم 1.</div>
   </div>
+
+  <div class="goal">
+    <div class="goal-k">🎯 القاعدة اللي تفرّق البيزنس على الفرصة</div>
+    <h2 class="goal-h">الشركات الكبار ما تبداش بالسلعة.<br><b>تبدا بالهدف.</b></h2>
+    <p class="goal-p">أي شركة كبيرة ولا ستارتاب، قبل ما تصرف الدينار الأول، تكتب <b>هدف العام</b>: شحال تربح، وفي قداش من وقت. ومن بعد <b>ترجع بيه للور</b>: شحال لازم تبيع، شحال تحتاج ناس، وشحال رأس مال يخرج قبل ما الكاش يدور. والمستثمر ما يعطيهاش ولا دينار قبل ما تجاوب على هاذ الأسئلة.</p>
+    <div class="era">
+      <div class="era-old"><span>2019 – 2021</span><h3>كانت فرصة</h3>السوق فارغ، الليد رخيص، والناس تشري. تزدم بلا حساب وتربح، لأن الفرصة كانت تغطّي على الأغلاط.</div>
+      <div class="era-new"><span>اليوم</span><h3>ولّات بيزنس</h3>الليد غلى، المنافس ينسخك بسرعة، والروتور ياكل. غلطة صغيرة في الحساب تولّي خسارة. اللي يربح اليوم هو اللي يخطّط كيما شركة.</div>
+    </div>
+    <div class="ladder">
+      <div class="ladder-h">الطريقة بالمقلوب: من الهدف حتى اليوم 1</div>
+      <div class="rung"><i>1</i><span>🎯 <b>الهدف:</b> مثلاً 100 مليون ربح كاش في 40 يوم</span></div>
+      <div class="rung"><i>2</i><span>📦 شحال <b>طلبية موصلة</b> يلزمك باش توصلو؟</span></div>
+      <div class="rung"><i>3</i><span>📞 شحال <b>ليد في النهار</b>؟ وشحال <b>عامل</b> يأكّدهم؟</span></div>
+      <div class="rung"><i>4</i><span>💰 شحال <b>رأس مال</b> يخرج من جيبك، ووقتاش يرجعلك؟</span></div>
+      <div class="ladder-f">هكذا تخطّط الشركات، وهكذا تحسب البوصلة. الأجوبة تاع هذا المثال في الخريطة تحت 👇</div>
+    </div>
+    <p class="goal-q">التاجر يسقسي: <b>«واش نبيع؟»</b><br>صاحب البيزنس يسقسي: <b>«وين حاب نوصل؟»</b></p>
+    <p class="goal-bridge">وأول درجة في السلّم، المارج، هي اللي يحبس فيها أغلب التجار…</p>
+  </div>
+
   <div class="know">
     <div class="know-h">في بالك <b>المارج</b>:</div>
     <div class="chips"><span>✔ التأكيد</span><span>✔ التوصيل</span><span>✔ التغليف</span><span>✔ سعر الليد</span></div>
