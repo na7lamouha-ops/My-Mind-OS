@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تحدي الـ9 أرقام + كتاب النزيف الصامت — بوصلة التاجر</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07070a;--s1:#0f0f14;--s2:#16161c;--s3:#1e1e26;
+  --border:rgba(240,240,245,.08);--white:#f0f0f5;--gray:#9a9aa5;--gray2:#6a6a75;
+  --red:#ff3b5c;--gold:#F5C542;--red-b:rgba(255,45,68,.25);--red-dim:rgba(255,45,68,.08);
+  --green:#22c55e;--green-b:rgba(34,197,94,.25);--green-dim:rgba(34,197,94,.08);
+  --blue:#3b82f6;--blue-b:rgba(59,130,246,.25);--blue-dim:rgba(59,130,246,.08);
+  --yellow:#f59e0b;--yellow-b:rgba(245,158,11,.25);--yellow-dim:rgba(245,158,11,.08);
+  --purple:#a78bfa;--purple-b:rgba(167,139,250,.25);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--white);font-family:'Tajawal',sans-serif;line-height:1.75;}
+.wrap{max-width:760px;margin:0 auto;padding:40px 20px 90px;}
+.hero{text-align:center;margin-bottom:44px;}
+.hero .logo{font-size:52px;margin-bottom:14px;}
+.hero h1{font-size:30px;font-weight:900;margin-bottom:10px;}
+.hero p{font-size:15px;color:var(--gray);max-width:540px;margin:0 auto;}
+.sec{font-size:22px;font-weight:900;margin:44px 0 18px;padding-bottom:12px;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:10px;}
+.card{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:16px;}
+.card h3{font-size:16px;font-weight:900;margin-bottom:10px;color:var(--white);}
+.card p{font-size:13.5px;color:var(--gray);margin-bottom:10px;}
+.card b{color:var(--white);}
+.why{background:var(--blue-dim);border:1px solid var(--blue-b);border-radius:10px;padding:13px 15px;font-size:13px;color:#a9c8f5;margin:12px 0;line-height:1.7;}
+.why b{color:#fff;}
+.impact{background:var(--green-dim);border:1px solid var(--green-b);border-radius:10px;padding:13px 15px;font-size:13px;color:#9fe0b5;margin:12px 0;line-height:1.7;}
+.impact b{color:#fff;}
+.warn{background:var(--red-dim);border:1px solid var(--red-b);border-radius:10px;padding:13px 15px;font-size:13px;color:#ffb3bd;margin:12px 0;line-height:1.7;}
+.warn b{color:#fff;}
+.formula{background:#000;border:1px solid var(--border);border-radius:8px;padding:13px 15px;font-size:12.5px;color:var(--green);margin:10px 0;direction:ltr;text-align:left;font-family:monospace;line-height:1.8;}
+.formula.rtl{direction:rtl;text-align:right;font-family:'Tajawal',sans-serif;font-size:13px;}
+.step-num{display:inline-flex;width:30px;height:30px;border-radius:8px;background:var(--red);color:#fff;align-items:center;justify-content:center;font-weight:900;font-size:14px;margin-inline-end:10px;}
+.flow-line{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:14px 0;font-size:12px;font-weight:700;}
+.flow-box{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:9px 13px;}
+.flow-box.hl{border-color:var(--green-b);color:var(--green);}
+.arr{color:var(--gray2);}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px;}
+th,td{padding:9px 12px;text-align:right;border-bottom:1px solid var(--border);}
+th{color:var(--yellow);font-weight:900;font-size:12px;}
+td b{color:var(--white);}
+.tag{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:900;}
+.tag.g{background:var(--green-dim);color:var(--green);}
+.tag.r{background:var(--red-dim);color:var(--red);}
+
+@keyframes goldPulse{0%,100%{filter:drop-shadow(0 0 6px rgba(245,197,66,.3));}50%{filter:drop-shadow(0 0 16px rgba(245,197,66,.6));}}
+.hero h1{background:linear-gradient(135deg,#FDE68A,#F5C542);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+.hero .tagline{font-size:14px;font-weight:700;color:#F5C542;letter-spacing:1px;margin-bottom:10px;}
+
+/* 🧭 البوصلة: إبرة تتحرك كالرقاص ثم تثبت على الوجهة */
+@keyframes needleSwing{0%{transform:rotate(-38deg)}14%{transform:rotate(26deg)}28%{transform:rotate(-16deg)}42%{transform:rotate(9deg)}56%{transform:rotate(-4deg)}70%{transform:rotate(1.5deg)}82%,100%{transform:rotate(0deg)}}
+.compass-needle{animation:needleSwing 5s cubic-bezier(.45,.05,.3,1) infinite;}
+.compass-logo:hover .compass-needle{animation-duration:2.4s;}
+
+/* 🐝 بصمة النحلة: خلايا شبه مخفية + توقيع يدوي */
+body{background-image:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(245,197,66,.07),transparent),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97' viewBox='0 0 56 97'%3E%3Cpath d='M28 0 L56 16.2 L56 48.5 L28 64.7 L0 48.5 L0 16.2Z M28 64.7 L28 97' fill='none' stroke='%23F5C542' stroke-width='.6' opacity='.05'/%3E%3C/svg%3E") !important;background-attachment:fixed;}
+/* توقيع: صغير، في الآخر، بعيد على الشعار */
+.na7la-sign{display:flex;align-items:center;justify-content:center;gap:6px;font-family:'Tajawal',sans-serif;font-size:11px;font-weight:700;letter-spacing:.5px;color:rgba(245,197,66,.55);margin:28px auto 18px;direction:ltr;}
+.na7la-sign svg{color:rgba(245,197,66,.55);}
+.gate-card .na7la-sign{margin:18px auto 0;}
+
+.jr{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:14px;margin:14px 0;}
+.jr-h{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.jr-n{flex:0 0 32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#FDE68A,#F5C542,#B8860B);color:#1a1408;font-weight:900;display:flex;align-items:center;justify-content:center;}
+.jr-t{font-size:15px;font-weight:900;color:var(--white);}
+.shot{display:block;width:100%;max-width:380px;margin:0 auto 12px;border-radius:12px;border:1px solid var(--border);box-shadow:0 8px 26px rgba(0,0,0,.45);}
+.jr-r{font-size:12.8px;color:var(--gray);line-height:1.85;margin-top:4px;}
+.jr-r b{color:var(--white);}
+.jr-a{margin-top:10px;font-size:13px;line-height:1.85;color:#f3e3b5;background:rgba(245,197,66,.07);border-inline-start:3px solid var(--gold);border-radius:8px;padding:9px 12px;}
+.jr-a b{color:var(--gold);}
+
+.intro .big{font-size:15px;color:var(--white);line-height:1.9;}
+.map{margin-top:10px;font-size:11.5px;color:var(--gold);line-height:2;background:var(--s2);border-radius:10px;padding:8px 12px;}
+.stg{background:var(--s1);border:1px solid var(--border);border-radius:16px;padding:16px;margin:18px 0;}
+.stg-h{display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;}
+.stg-n{flex:0 0 36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#FDE68A,#F5C542,#B8860B);color:#1a1408;font-weight:900;display:flex;align-items:center;justify-content:center;font-size:15px;}
+.stg-t{font-size:16px;font-weight:900;color:var(--white);}
+.stg-g{font-size:12.5px;color:var(--gold);margin-top:3px;}
+.coach{background:rgba(245,197,66,.06);border:1px solid var(--gold-b);border-radius:12px;padding:12px 14px;margin-bottom:10px;}
+.coach-l{font-size:11px;font-weight:900;color:var(--gold);margin-bottom:6px;letter-spacing:.5px;}
+.coach p{font-size:13px;color:#e8e6ef;line-height:1.95;margin:0;}
+.coach b{color:var(--gold);}
+.rule{margin-top:8px;font-size:12.5px;color:#f3e3b5;font-weight:700;}
+.blk{background:var(--s2);border-radius:10px;padding:10px 12px;margin:8px 0;font-size:12.8px;color:var(--gray);line-height:1.85;}
+.blk-l{font-size:11px;font-weight:900;color:var(--white);margin-bottom:4px;}
+.blk ul{margin:0;padding-inline-start:18px;} .blk b{color:var(--white);}
+.blk.imp{border:1px solid rgba(34,197,94,.35);} .blk.imp .blk-l{color:#9fe0b5;}
+.dic,.ex{margin-top:8px;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:8px 12px;}
+.dic summary,.ex summary{cursor:pointer;font-size:12px;font-weight:900;color:var(--gold);list-style:none;}
+.dic summary::-webkit-details-marker,.ex summary::-webkit-details-marker{display:none;}
+.dic-r{display:flex;gap:10px;font-size:12px;padding:5px 0;border-bottom:1px solid var(--border);}
+.dic-r:last-child{border-bottom:none;} .dic-r b{flex:0 0 120px;color:var(--white);} .dic-r span{color:var(--gray);}
+.ex img{display:block;width:100%;max-width:380px;margin:10px auto;border-radius:12px;border:1px solid var(--border);}
+.ex-c{font-size:12px;color:#9fe0b5;text-align:center;}
+
+.ch{background:var(--s1);border:1px solid var(--border);border-radius:16px;padding:18px;margin:22px 0;}
+.ch-k{font-size:11px;letter-spacing:1.5px;color:var(--gold);font-weight:900;}
+.ch-t{font-size:19px;font-weight:900;color:var(--white);margin:4px 0 12px;line-height:1.5;}
+.ch p{font-size:14px;color:#e2e0ea;line-height:2.05;margin:0 0 12px;}
+.ch b{color:var(--gold);}
+.story{border-inline-start:3px solid var(--gold);padding:4px 14px;margin:12px 0;font-style:normal;color:#cfcdd8;}
+.wrong{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.3);border-radius:10px;padding:10px 12px;margin:10px 0;font-size:13px;color:#f3b4b4;}
+.truth{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.3);border-radius:10px;padding:10px 12px;margin:10px 0;font-size:13px;color:#b7ecc9;}
+.num{font-size:26px;font-weight:900;color:var(--gold);text-align:center;margin:10px 0 2px;}
+.num-s{font-size:12px;color:var(--gray);text-align:center;margin-bottom:10px;}
+.lesson{font-size:13.5px;font-weight:900;color:#f3e3b5;background:rgba(245,197,66,.07);border-radius:10px;padding:10px 12px;margin-top:8px;}
+.quiz{background:var(--s2);border:1px solid var(--gold-b);border-radius:14px;padding:16px;}
+.quiz label{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;color:#e2e0ea;line-height:1.8;padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer;}
+.quiz input{margin-top:5px;width:22px;height:22px;accent-color:#F5C542;flex:0 0 22px;}
+.quiz label span{flex:1;min-width:0;}
+.quiz label{padding:10px 0;}
+.qres{margin-top:12px;font-size:14px;line-height:1.9;color:var(--white);background:var(--s1);border-radius:10px;padding:12px;}
+.cta{text-align:center;background:linear-gradient(135deg,rgba(245,197,66,.14),rgba(245,197,66,.04));border:1px solid var(--gold);border-radius:16px;padding:20px;margin:24px 0;}
+.cta .t{font-size:18px;font-weight:900;color:var(--white);margin-bottom:8px;}
+.cta p{font-size:13.5px;color:#e2e0ea;line-height:1.9;}
+.big-btn{display:block;text-align:center;background:linear-gradient(135deg,#FDE68A,#F5C542,#B8860B);color:#1a1408;font-weight:900;font-size:16px;text-decoration:none;border-radius:12px;padding:15px;margin-top:16px;box-shadow:0 6px 20px rgba(245,197,66,.3);}
+.big-btn:active{transform:scale(.98);}
+</style>
+<style>
+.part{margin:46px 0 6px;text-align:center;}
+.part span{display:inline-block;background:linear-gradient(135deg,#FDE68A,#F5C542,#B8860B);color:#1a1408;font-weight:900;font-size:13px;border-radius:30px;padding:6px 18px;}
+.part p{font-size:12.5px;color:var(--gray);margin-top:8px;}
+.ind{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin:10px 0;}
+.ind h4{font-size:14px;font-weight:900;color:var(--gold);margin-bottom:6px;}
+.ind .r{font-size:12.5px;color:var(--gray);line-height:1.85;}
+.ind .r b{color:var(--white);}
+.ind .ex{font-size:12px;color:#9fe0b5;margin-top:6px;line-height:1.7;}
+.ind .rule{font-size:12px;color:#f3e3b5;margin-top:4px;line-height:1.7;}
+.sh{padding:16px;} .sh .ch-t{font-size:17px;margin-bottom:8px;} .sh .story{margin:8px 0;font-size:13.5px;line-height:1.9;}
+.open-tag{display:inline-block;margin-inline-start:8px;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.4);color:#b7ecc9;border-radius:20px;padding:1px 10px;font-size:10.5px;letter-spacing:0;}
+.lock{display:block;position:relative;background:rgba(245,197,66,.05);border:1px dashed rgba(245,197,66,.45);border-radius:10px;padding:12px;margin-top:10px;text-decoration:none;}
+.lock .sk{display:block;height:9px;border-radius:6px;background:rgba(183,236,201,.35);filter:blur(3px);margin:0 0 8px;width:92%;} .lock .sk.s{width:64%;}
+.lock-t{font-size:13px;font-weight:700;color:#f3e3b5;line-height:1.7;} .lock-t b{color:#F5C542;}
+.lock.free{border-style:solid;border-color:rgba(34,197,94,.45);background:rgba(34,197,94,.07);} .lock.free .lock-t{color:#cfeeda;} .lock.free .lock-t b{color:#fff;}
+.wa-btn{display:block;text-align:center;background:#25D366;color:#fff;font-weight:900;font-size:15.5px;text-decoration:none;border-radius:12px;padding:15px;margin-top:14px;}
+.ghost-btn{display:block;text-align:center;color:#F5C542;font-weight:700;font-size:13.5px;text-decoration:underline;padding:12px 6px 4px;}
+.qmiss{margin-top:10px;font-size:13px;color:#e2e0ea;line-height:2.3;} .qmiss b{color:#F5C542;} .qmiss a{display:inline-block;color:#F5C542;border:1px solid rgba(245,197,66,.5);border-radius:20px;padding:0 10px;margin:0 3px 4px;text-decoration:none;font-weight:700;font-size:12.5px;} .qstart{font-size:12.5px;color:#cfcdd8;line-height:1.8;margin-top:4px;}
+.ch{scroll-margin-top:12px;}
+.qline{font-size:13px;color:#e2e0ea;line-height:1.9;margin-top:10px;} .qline b{color:#F5C542;}
+.act{font-size:18px;font-weight:900;color:#fff;line-height:1.7;margin:14px 0 4px;} .act b{color:#F5C542;}
+.lock{border-style:dashed;} .lock .lock-t{font-weight:400;} .lock .lock-t b{font-weight:900;}
+.price{margin:14px 0 0;text-align:center;background:rgba(245,197,66,.08);border:1px solid rgba(245,197,66,.5);border-radius:12px;padding:12px;font-size:14.5px;color:#fff;font-weight:700;} .price b{font-size:22px;color:#F5C542;font-weight:900;} .price small{display:block;font-size:12px;color:#cfcdd8;font-weight:400;margin-top:4px;line-height:1.7;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <div class="logo"><svg class="compass-logo" width="96" height="96" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 6px 22px rgba(245,197,66,.35));">
+  <defs>
+    <linearGradient id="hg_guideh1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFF1B8"/><stop offset=".4" stop-color="#F5C542"/><stop offset="1" stop-color="#A8750A"/></linearGradient>
+    <radialGradient id="hw_guideh1" cx=".5" cy=".5" r=".55"><stop offset="0" stop-color="#F5C542" stop-opacity=".22"/><stop offset="1" stop-color="#F5C542" stop-opacity="0"/></radialGradient>
+    <pattern id="hp_guideh1" width="10" height="17.32" patternUnits="userSpaceOnUse" patternTransform="scale(.9)"><path d="M5 0 L10 2.887 L10 8.66 L5 11.547 L0 8.66 L0 2.887Z M5 11.547 L5 17.32" fill="none" stroke="#F5C542" stroke-width=".35" opacity=".22"/></pattern>
+    <clipPath id="hc_guideh1"><polygon points="65,12 110.9,38.5 110.9,91.5 65,118 19.1,91.5 19.1,38.5"/></clipPath>
+  </defs>
+  <circle cx="65" cy="65" r="63" fill="url(#hw_guideh1)"/>
+  <polygon points="65,12 110.9,38.5 110.9,91.5 65,118 19.1,91.5 19.1,38.5" fill="#100f16"/>
+  <rect width="130" height="130" fill="url(#hp_guideh1)" clip-path="url(#hc_guideh1)"/>
+  <polygon points="65,12 110.9,38.5 110.9,91.5 65,118 19.1,91.5 19.1,38.5" fill="none" stroke="url(#hg_guideh1)" stroke-width="4" stroke-linejoin="round"/>
+  <polygon points="65,22 102.2,43.5 102.2,86.5 65,108 27.8,86.5 27.8,43.5" fill="none" stroke="url(#hg_guideh1)" stroke-width=".8" opacity=".45" stroke-linejoin="round"/>
+  <polygon points="65,16 68.5,24 61.5,24" fill="url(#hg_guideh1)"/>
+  <g class="compass-needle" style="transform-box:view-box;transform-origin:65px 65px;">
+    <polygon points="65,27 58.5,65 71.5,65" fill="url(#hg_guideh1)"/>
+    <polygon points="65,103 58.5,65 71.5,65" fill="#26242e" stroke="url(#hg_guideh1)" stroke-width=".9"/>
+  </g>
+  <polygon points="65,58.5 70.6,61.75 70.6,68.25 65,71.5 59.4,68.25 59.4,61.75" fill="url(#hg_guideh1)" stroke="#1a1408" stroke-width="1"/>
+</svg></div>
+    <div style="font-size:13px;font-weight:900;color:#F5C542;letter-spacing:2px;margin-bottom:6px;">بوصلة التاجر</div><h1>تحدي الـ9 أرقام</h1><div class="tagline">القرار الصحيح، بالرقم الصحيح</div>
+    <p style="color:#e8e6ef"><b>في دقيقتين تعرف:</b> شحال من رقم في تجارتك <b style="color:#F5C542">تعرفو بصح</b> — وشحال راك <b style="color:#F5C542">تخمّنو</b>.</p>
+    <p style="margin-top:10px;font-size:14px;color:#f3e3b5">جاوبت على الـ9؟ ما تحتاجناش — ونقولوهالك بصراحة.</p>
+    <p style="margin-top:8px;font-size:12.5px">ومن بعد: كتاب <b>"النزيف الصامت"</b> — كل رقم ما عرفتوش عندو فصل يوريك وين يروح.</p>
+  </div>
+
+  <!-- التحدي -->
+  <div class="card" id="tahadi"><div style="text-align:center;margin-bottom:10px"><span style="display:inline-block;font-size:12px;font-weight:900;color:#F5C542;border:1px solid rgba(245,197,66,.45);border-radius:30px;padding:3px 14px">🎯 التحدي — 9 أرقام</span></div><p style="font-size:14.5px;color:#e2e0ea;line-height:1.9;text-align:center">علّم غير على اللي تقدر <b style="color:var(--gold)">تكتب رقمو دوكا، بلا حاسبة</b>. "تقريباً" = ما تعلّمش.<br>ما تغشّش: النتيجة ليك وحدك.</p><div class="quiz"><label><input type="checkbox" class="qc" data-l="0" data-s="الليدات في النهار"><span><b style="color:#F5C542">1.</b> تعرف شحال من <b>ليد في النهار</b> لازم تجيب باش توصل هدفك في وقتو؟</span></label><label><input type="checkbox" class="qc" data-l="0" data-s="الفريق"><span><b style="color:#F5C542">2.</b> تعرف شحال من <b>مؤكّد ومتتبّع</b> يلزمك — وواش فريقك يلحق؟</span></label><label><input type="checkbox" class="qc" data-l="2" data-s="الصافي من كل ليد"><span><b style="color:#F5C542">3.</b> تعرف شحال يبقالك <b>صافي</b> من كل ليد — بعد الأدس والروتور؟</span></label><label><input type="checkbox" class="qc" data-l="1" data-s="أقل سعر"><span><b style="color:#F5C542">4.</b> تعرف <b>أقل سعر</b> تقدر تبيع بيه منتجك قبل ما تبدا تخسر؟</span></label><label><input type="checkbox" class="qc" data-l="4" data-s="استرجاع الدفعة"><span><b style="color:#F5C542">5.</b> تعرف شحال من قطعة لازم تبيع من الدفعة باش <b>ترجّع ثمنها</b>؟</span></label><label><input type="checkbox" class="qc" data-l="4" data-s="يوم رجوع رأس المال"><span><b style="color:#F5C542">6.</b> تعرف <b>في أي يوم</b> يرجعلك رأس مالك كامل؟</span></label><label><input type="checkbox" class="qc" data-l="3" data-s="رأس المال"><span><b style="color:#F5C542">7.</b> تعرف شحال من <b>رأس مال بالضبط</b> يلزمك لهدفك — ماشي تقريباً؟</span></label><label><input type="checkbox" class="qc" data-l="5" data-s="الكنز المهمل"><span><b style="color:#F5C542">8.</b> تعرف شحال من <b>ربح يضيع</b> في الليدات اللي تبرد؟</span></label><label><input type="checkbox" class="qc" data-l="6" data-s="الستوك اللي يبقى"><span><b style="color:#F5C542">9.</b> تعرف شحال من <b>قطعة تبقالك</b> كي توصل الهدف — وواش تدير بيهم؟</span></label></div>
+<button class="big-btn" id="qgo" style="width:100%;border:none;cursor:pointer;font-family:inherit;">📊 شوف نتيجتي</button>
+<div id="qbox" style="display:none">
+  <div class="qres" id="qres"></div>
+  <div class="qmiss" id="qmiss"></div>
+  <div class="qline" id="qline"></div>
+  <a class="wa-btn" id="qwa" href="https://wa.me/213540695112">💬 دير لاكشن — ندخل للمتقدم</a>
+  <a class="ghost-btn" id="qfree" href="https://al-khaliya.space">🧭 ولا شوف النص الأول من خريطتك — مجاناً ←</a>
+  <a class="ghost-btn" id="qshare" href="https://wa.me/?text=" style="margin-top:8px">📤 تحدّى تاجر تعرفو — ابعثلو التحدي</a>
+</div>
+<script>
+(function(){
+  const qs=[...document.querySelectorAll('.qc')], N=qs.length, box=document.getElementById('qbox'), r=document.getElementById('qres'), w=document.getElementById('qwa');
+  function show(){
+    const n=qs.filter(x=>x.checked).length, u=N-n, miss=qs.filter(x=>!x.checked);
+    r.innerHTML = n>=7 ? `🟢 <b>نتيجتك: ${n} من ${N} — تاجر يحسب.</b><br>ثبّتها: دخّل منتجك في البوصلة، مجاناً. تطابقو أرقامك؟ مبروك. ما تطابقوش؟ خير تعرف اليوم.`
+      : n>=4 ? `🟡 <b>نتيجتك: ${n} من ${N} — تعرف المارج، ناقصتك الحرب.</b><br>الـ${u} اللي ما علّمتش عليهم: هنا تتلعب الحرب — رأس المال والستوك.`
+      : `🔴 <b>نتيجتك: ${n} من ${N}.</b><br>تبيع — بصح ${u} أرقام تقرر في كاشك مازال تخمّنهم.`;
+    const m=document.getElementById('qmiss');
+    m.innerHTML = miss.length ? '<b>ناقصينك:</b> '+miss.map(x=>`<a href="#l${x.dataset.l}">${x.dataset.s}</a>`).join('')+`<div class="qstart">👇 ابدا <a href="#l${miss[0].dataset.l}" style="border:none;padding:0;margin:0;text-decoration:underline">بالنزيف ${miss[0].dataset.l}</a> — كل رقم ناقص عندو فصل يعطيك نص الجواب.</div>` : '<b>9 من 9.</b> ما تحتاجش الكتاب — جرّب أرقامك في البوصلة وشوف واش تطابقو.';
+    document.getElementById('qline').innerHTML = 'مجاناً، في دقيقة: <b>الصافي، أقصى ليد واسترجاع الدفعة</b> برقم واحد، ورأس المال والكنز بين رقمين. الفريق، يوم الرجوع وحكم الكوتش: في المتقدم (<b>3,900 دج</b>، مرة وحدة).';
+    const sh=document.getElementById('qshare'); if(sh) sh.href='https://wa.me/?text='+encodeURIComponent('جاوبت '+n+' من '+N+' في تحدي الـ9 أرقام 🧭 — 9 أرقام على تجارتك. وأنت شحال؟\nhttps://al-khaliya.space/ebook-boussala.html');
+    w.href='https://wa.me/213540695112?text='+encodeURIComponent('سلام النحلة 🧭 نتيجتي '+n+'/'+N+' في تحدي الـ9 أرقام'+(miss.length?' — ناقصني: '+miss.map(x=>x.dataset.s).join('، '):'')+'. حاب المتقدم');
+    const e=document.getElementById('endline'); if(e) e.innerHTML = u>0 ? `في البداية علّمت على <b>${n} من ${N}</b>. الـ${u} الباقيين — أرقامهم في البوصلة.` : `علّمت على <b>9 من 9</b>. ثبّتهم بأرقامك في البوصلة.`;
+    const f=document.getElementById('qfree');
+    w.parentNode.insertBefore(f,w); f.className='big-btn'; f.textContent = n>=7 ? '🧭 ثبّت أرقامك في البوصلة — مجاناً' : '🧭 احسب أرقامك الناقصة — مجاناً، دقيقة';
+    w.className='ghost-btn'; w.textContent='💬 ولا ادخل للمتقدم ديركت — 3,900 دج ←';
+    box.style.display='block';
+  }
+  document.getElementById('qgo').addEventListener('click',()=>{ show(); document.getElementById('qgo').style.display='none'; });
+  qs.forEach(c=>c.addEventListener('change',()=>{ if(box.style.display!=='none') show(); }));
+})();
+</script></div>
+
+  <div class="ch"><div class="ch-k">المقدمة</div><div class="ch-t">الخسارة اللي ما تسمعهاش</div><p>الخسارة في الكاش أون ديليفري تجي <b>بصمت</b>: طلبية بطلبية، روتور بروتور، دينار بدينار. والشهر اللي تخسر فيه يبان مليح: الهاتف ما يحبسش، الإعلان يخدم. <b>الحركة كاينة… والكاش ما كانش.</b></p>
+<p>في بالك <b>المارج</b>: التأكيد، التوصيل، التغليف، سعر الليد. مليح — المارج يربّحك الطلبية. بصح <b>الحرب راهي في رأس المال والستوك</b>.</p>
+<p>هنا <b>الغلطة الأم + 7 نزيفات</b> — كل واحد يجاوب على رقم من التحدي. زوج مفتوحين كامل (0 و 2). الباقي نعطيك فيهم <b>نص الجواب</b> — والنص الثاني (رقمك أنت) تحسبو البوصلة.</p>
+<p style="font-size:11.5px;color:var(--gray);line-height:1.8;margin:0">📌 الشخصيات (كريم، أمين، سارة، ياسين، نادية) تمثيلية. الأرقام محسوبة بالبوصلة على مثال ملابس: خطة 100 مليون ربح كاش في 40 يوم، بمنتجين (واحد منهم فستان أمين). النزيف 0 يقارن نفس الخطة في 20 يوم، والنزيف 7 مثال آخر. مثال — ماشي وعد.</p></div>
+
+  <div class="ch" id="l0"><div class="ch-k">النزيف 0 — الغلطة الأم <span class="open-tag">مفتوح</span> <span class="open-tag" style="background:none;border-color:rgba(245,197,66,.4);color:#f3e3b5">الرقم 1 و 2</span></div><div class="ch-t">"ازدم، ومن بعد ساهل"</div>
+<div class="story">كريم سمعها في 20 فيديو: <i>"ما تخممش بزاف. ازدم. التجربة هي اللي تعلّمك."</i> زدم. طلق الإعلان، والتيليفون بدا يصوّن. بعد أسبوع: 100 ليد في النهار، الستوك خلاص، والكاش مازال في الطريق. <b>كان يجري… بصح ما كانش يعرف وين.</b></div>
+<div class="wrong">❌ <b>الغلطة:</b> "نبدا، ومن بعد نشوف التأكيد والتوصيل." — يعني تقرا الخريطة <b>بعد</b> ما تلفت.</div>
+<div class="truth">✅ <b>الحقيقة:</b> الصح تبدا بالوجهة: <b>هدف محدد + وقت محدد</b>. ومنهم يخرج كلش. التأكيد والتوصيل يقولولك <b>واش صرا</b> — الوجهة تقولك <b>وين رايح</b>.</div>
+<div class="num">36 ليد/يوم ← 100 ليد/يوم</div><div class="num-s">نفس الـ100 مليون: في 40 يوم ← في 20 يوم ("ازدم")<br>36 ليد = 1 مؤكّد + 1 متتبّع. 100 ليد = 2 مؤكّدين + متتبّع — وكريم ما حسبهمش.</div>
+<p style="font-size:12.5px;color:var(--gray);text-align:center;margin:0 0 10px">علاش أكثر من الضعف؟ في 20 يوم، الروتور والكاش ما يلحقوش يرجعو ويتعاودو — لازم تعوّضهم بليدات جداد.</p>
+<div class="num">61 مليون ← 220 مليون</div><div class="num-s">رأس المال اللازم — كي تجري ×2، تخلّص ×3.5</div>
+<div class="lesson">📜 السرعةُ في الاتجاه الخاطئ لا توصلك أسرع — تُبعِدك أسرع.</div></div>
+
+  <div class="ch sh" id="l1"><div class="ch-k">النزيف 1 <span class="open-tag" style="background:none;border-color:rgba(245,197,66,.4);color:#f3e3b5">الرقم 4</span></div><div class="ch-t">المارج اللي يكذب عليك</div><div class="story">أمين يبيع فستان بـ 8,900، يشريه بـ 3,000. في راسو: <i>"نربح 5,900 في القطعة."</i> بعد شهر، الكاش ناقص، ومازال ما فهمش.</div>
+<div class="wrong">❌ <b>الغلطة:</b> "الربح = البيع − الشراء."</div>
+<div class="num">5,900 ← 3,646</div><div class="num-s">واش كان يحسب ← واش يدخل جيبو بصح</div>
+<div class="truth">✅ <b>نص الحقيقة:</b> بين البيع والجيب كاين التغليف، التوصيل، الروتور، المقاسات اللي تبقى… والأدس.<br>تحسبهم ديجا؟ مليح — راك فايت أمين. كمّل للنزيف 2: <b>سعر الليد ماشي هو الأدس على الطلبية</b>.<br>وأقل سعر يبيع بيه أمين قبل ما يخسر: <b>5,254 دج</b>. تحتو، كل بيعة خسارة.</div>
+<a class="lock free" href="https://al-khaliya.space"><div class="lock-t">🔓 <b>النص الثاني:</b> الصافي تاع <b>منتجك</b> مجاناً في البسيط. وأقل سعر، مفصّل دينار بدينار، في المتقدم</div></a></div>
+
+  <div class="ch" id="l2"><div class="ch-k">النزيف 2 <span class="open-tag">مفتوح</span> <span class="open-tag" style="background:none;border-color:rgba(245,197,66,.4);color:#f3e3b5">الرقم 3</span></div><div class="ch-t">الأدس ما يتحسبش على الليد</div><div class="story">أمين يخلّص 1.8$ في الليد (441 دج). يقول: <i>"رخيص!"</i></div>
+<div class="wrong">❌ <b>الغلطة:</b> "الأدس يكلّفني 441 دج في الطلبية."</div>
+<div class="truth">✅ <b>الحقيقة (في المثال):</b> من كل 100 ليد، 55 يأكّدو، ونصهم برك يوصلو ويخلّصو (~27). يعني كل طلبية <b>موصلة</b> تشيل أدس ~3.6 ليد: <b>~1,604 دج</b>.</div>
+<div class="num">441 ← 1,604</div><div class="num-s">ليد ← أدس على كل طلبية موصلة<br>وكل ليد يدخّل لأمين صافي: 1,003 دج — ماشي الـ5,900 اللي كان يحسبها في القطعة.</div>
+<div class="lesson">📜 الإعلانُ يُحسب على مَن دفع، لا على مَن طلب.</div></div>
+
+  <div class="ch sh" id="l3"><div class="ch-k">النزيف 3 <span class="open-tag" style="background:none;border-color:rgba(245,197,66,.4);color:#f3e3b5">الرقم 7</span></div><div class="ch-t">رأس المال ماشي ثمن الستوك</div><div class="story">سارة حسبت: <i>"نحتاج ستوك بـ 39 مليون ونبدا."</i> في اليوم 8، الكاش خلاص. الإعلان وقف. البيع وقف.</div>
+<div class="wrong">❌ <b>الغلطة:</b> "رأس المال = ثمن الستوك."</div>
+<div class="num">61 مليون</div><div class="num-s">رأس المال اللازم في خطة المثال — ماشي 39</div>
+<div class="truth">✅ <b>نص الحقيقة:</b> رأس المال = الستوك + الأدس + احتياط — حتى يرجع أول كاش. الستوك وحدو ما يكفيش.</div>
+<div class="lock"><div class="lock-t">🔓 <b>النص الثاني في المتقدم:</b> شحال بالضبط يلزمك <b>أنت</b> — مفصّل: ستوك + أدس + احتياط.</div></div></div>
+  <div class="ch sh" id="l4"><div class="ch-k">النزيف 4 <span class="open-tag" style="background:none;border-color:rgba(245,197,66,.4);color:#f3e3b5">الرقم 5 و 6</span></div><div class="ch-t">"وقتاش نرجّع فلوسي؟"</div><div class="story">ياسين شرى 200 قطعة. كل نهار يسقسي روحو: <i>"شحال مازال باش نرجّع فلوسي؟"</i> وما عندوش جواب.</div>
+<div class="wrong">❌ <b>الغلطة:</b> "نبيع النص، نرجّع فلوسي." (تخمين)</div>
+<div class="num">44 / 100 • اليوم 23</div><div class="num-s">44 قطعة من كل 100 ترجّع الدفعة (فستان أمين) — ورأس المال يرجع حوالي اليوم 23 (خطة المثال)</div>
+<div class="truth">✅ <b>نص الحقيقة:</b> ما تستناش تبيع الدفعة كاملة. في المثال، 44 قطعة من 100 تكفي — والباقي ربح.</div>
+<div class="lock"><div class="lock-t">🔓 <b>النص الثاني:</b> نقطة الاسترجاع تاع <b>منتجك</b> مجاناً في البسيط. في المتقدم: في أي يوم يرجع رأس مالك — وفي أي نهار يدخل آخر دينار.</div></div></div>
+
+  <div class="ch" id="l5" style="border-color:var(--gold);box-shadow:0 0 0 1px rgba(245,197,66,.25);"><div class="ch-k">💎 النزيف 5 — الكنز المهمل <span class="open-tag" style="background:none;border-color:rgba(245,197,66,.4);color:#f3e3b5">الرقم 8</span></div><div class="ch-t">الليدات اللي تبرد</div><div class="story">كل نهار عند أمين: ليدات خلّص عليهم الأدس… وبردو. يقول: <i>"ماشي مهم، يجيو غيرهم."</i> ويزيد في ميزانية الأدس.</div>
+<div class="wrong">❌ <b>الغلطة:</b> "اللي برد… راح."</div>
+<div class="truth">✅ <b>نص الحقيقة:</b> هاذو ماشي خسارة عادية — هاذو <b>ربح ضايع</b>. خلّصت عليهم، وجزء منهم يرجع <b>بلا دينار أدس زايد</b>. محطة في الخريطة… وبزاف تجار يفوتو عليها.</div>
+<div class="num">12 مليون</div><div class="num-s">ربح ضايع في 40 يوم، على خطة الـ100 مليون (بمنتجين) — لو ترجّع ربعهم برك.<br>يعني أكثر من 3,000 دج كل نهار… أمين خلّص عليهم ديجا.</div>
+<div class="lock"><div class="lock-t">🔓 <b>النص الثاني في المتقدم:</b> شحال يسوى لكل منتج عندك <b>أنت</b> — والروتين اليومي (5 خطوات) وزوج رسائل جاهزين لفريقك باش ترجّعو.</div></div>
+<a class="wa-btn" href="https://wa.me/213540695112?text=%D8%B3%D9%84%D8%A7%D9%85%20%D8%A7%D9%84%D9%86%D8%AD%D9%84%D8%A9%20%F0%9F%A7%AD%20%D9%82%D8%B1%D9%8A%D8%AA%20%D8%A7%D9%84%D9%86%D8%B2%D9%8A%D9%81%205%20%E2%80%94%20%D8%AD%D8%A7%D8%A8%20%D9%86%D8%B9%D8%B1%D9%81%20%D8%B4%D8%AD%D8%A7%D9%84%20%D9%83%D9%86%D8%B2%D9%8A%20%D8%A7%D9%84%D9%85%D9%87%D9%85%D9%84">💬 شحال كنزي أنا؟ — المتقدم</a>
+<div class="lesson">📜 أرخصُ ربحٍ هو الذي دفعتَ ثمنه… ثم تركتَه.</div></div>
+
+  <div class="ch sh" id="l6"><div class="ch-k">النزيف 6 <span class="open-tag" style="background:none;border-color:rgba(245,197,66,.4);color:#f3e3b5">الرقم 9</span></div><div class="ch-t">السلعة اللي تبقى</div><div class="story">نادية وصلت الهدف ووقفت. لقات 158 قطعة في المخزن — فلوس راقدة. حسبتها خسارة.</div>
+<div class="wrong">❌ <b>الغلطة:</b> "الباقي = خسارة" — ولا العكس: "الباقي = ربح."</div>
+<div class="num">~27 مليون</div><div class="num-s">الفرق بين "توقف" و"تكمل" — على نفس الـ158 قطعة</div>
+<div class="truth">✅ <b>نص الحقيقة:</b> السلعة الباقية ماشي خسارة ولا ربح — حسب واش تدير بيها: توقف ولا تكمل.</div>
+<div class="lock"><div class="lock-t">🔓 <b>النص الثاني في المتقدم:</b> شحال يبقالك <b>أنت</b>، وأي قرار يربّحك أكثر بالأرقام.</div></div></div>
+  <div class="ch sh" id="l7"><div class="ch-k">النزيف 7 — زيادة</div><div class="ch-t">الخطة اللي بنيتها على أحسن أسبوع</div><div class="story">منتج بـ 2,500، يكلّف 500. بأرقام أحسن أسبوع عندو، الخطة تعطي عائد 963%. فرح.</div>
+<div class="wrong">❌ <b>الغلطة:</b> تخطط بأرقام أحسن أسبوع عندك.</div>
+<div class="num">963% ← 46%</div><div class="num-s">مثال آخر، نفس المنتج — توصيل 65% وليد 0.3$ ← توصيل 45% وليد 1$</div>
+<div class="truth">✅ <b>نص الحقيقة:</b> الخطة لازم تربح بأرقام أسوأ أسبوع، ماشي أحسن واحد.</div>
+<div class="lock"><div class="lock-t">🔓 <b>النص الثاني في المتقدم:</b> الكوتش ينبّهك كي تكون فرضياتك <b>أنت</b> متفائلة — وتعاود تحسب خطتك بأسوأ سيناريو قبل ما تشري.</div></div></div>
+
+  <div class="cta"><div class="t" id="endline">9 أرقام. شحال منهم تعرف — بالرقم؟</div>
+<p>الكتاب عطاك <b>نص الجواب</b>. النص الثاني هو <b>أرقامك أنت</b> — ويتحسب في دقايق.</p>
+<div class="act">دير لاكشن الصح:<br><b>نظّم تفكيرك قبل تجارتك.</b></div>
+<div class="price"><b>3,900 دج</b> — مرة وحدة، بلا اشتراك<small>أقل من ثمن 9 ليدات (ليد بـ 441 دج في المثال)</small></div>
+<a class="wa-btn" href="https://wa.me/213540695112?text=%D8%B3%D9%84%D8%A7%D9%85%20%D8%A7%D9%84%D9%86%D8%AD%D9%84%D8%A9%20%F0%9F%A7%AD%20%D9%82%D8%B1%D9%8A%D8%AA%20%D9%83%D8%AA%D8%A7%D8%A8%20%D8%A7%D9%84%D9%86%D8%B2%D9%8A%D9%81%20%D8%A7%D9%84%D8%B5%D8%A7%D9%85%D8%AA%20%E2%80%94%20%D8%AD%D8%A7%D8%A8%20%D9%86%D8%AF%D8%AE%D9%84%20%D9%84%D9%84%D9%85%D8%AA%D9%82%D8%AF%D9%85">💬 دير لاكشن — ندخل للمتقدم</a>
+<p style="color:var(--gray);font-size:12px;margin-top:10px">🛡️ الضمان: لو ما لقيتش فخ واحد ما كنتش تعرفو في منتجك، نرجعلك دراهمك — خلال 48 ساعة.</p>
+<a class="ghost-btn" href="https://al-khaliya.space">🧭 ولا شوف النص الأول من خريطتك — مجاناً ←</a></div>
+
+  <div style="text-align:center;margin-top:44px;color:var(--gray2);font-size:12px;">
+    🧭 بوصلة التاجر — القرار الصحيح، بالرقم الصحيح<br>
+  </div>
+
+</div>
+<div class="na7la-sign"><svg viewBox="0 0 12 13" width="9" height="10"><polygon points="6,0.5 11.5,3.5 11.5,9.5 6,12.5 0.5,9.5 0.5,3.5" fill="none" stroke="currentColor" stroke-width="1.3"/></svg><bdi dir="ltr">al-KHALiYA</bdi></div>
+</body>
+</html>
