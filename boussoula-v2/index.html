@@ -790,7 +790,7 @@ body{background-image:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(245,197,6
 
     <!-- 🗺️ خريطتك — النص الأول (معلومة ولا نصها، ماشي تغبيش) -->
     <div class="smap" id="sm-map" style="display:none">
-      <div class="smap-h">في بالك <b>المارج</b>. الحرب راهي في <b>رأس المال والستوك</b>.</div>
+      <div class="smap-h">راك تخمّم غير في <b>المارج</b>؟ المارج محطة وحدة — الخريطة فيها <b>عدة محطات</b>.</div>
       <div class="smap-s">🗺️ خريطة منتجك — النص الأول <span id="sm-map-t"></span></div>
       <div class="smap-pv">المنتج رابح ✔ — <b>الخطة مازال ما تحسبتش.</b> قبل ما يدخل أول كاش، كلش يخرج من جيبك.<br><span id="mp-prog"></span></div>
       <div class="smap-r"><span>📦 استرجاع الدفعة<small>معلومة كاملة ✔ — الباقي ربح</small></span><b id="mp-be">—</b></div>
@@ -842,7 +842,7 @@ body{background-image:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(245,197,6
   <button class="mode-btn" onclick="switchMode('simple')">← رجوع للوضع البسيط</button>
 </div>
 
-<div class="adv-frame">في بالك <b>المارج</b>. هنا تحسب <b>الحرب</b>: رأس المال ويوم رجوعو • شحال ستوك تشري ووقتاش تعاود تطلب • الليدات والعمال في النهار • و💎 الربح المهمل (طلبيات متروكة ورسائل ما تكمّلتش).</div>
+<div class="adv-frame">المارج <b>محطة وحدة</b>. هنا تحسب <b>كل المحطات</b>: رأس المال ويوم رجوعو • شحال ستوك تشري ووقتاش تعاود تطلب • الليدات والعمال في النهار • و💎 الربح المهمل (طلبيات متروكة ورسائل ما تكمّلتش).</div>
 <div class="welcome" id="advWelcome" style="display:none">👋 <b>مرحبا بيك في خريطتك.</b> <span id="advWelcomeTxt">الأرقام اللي تشوفهم مثال — بدّلهم بأرقامك.</span><br>5 دقايق: <b>①</b> الوجهة: اختار ربحك في الطلبية. <b>②</b> الخطة: دخّل منتجاتك بأرقام أسوأ أسبوع. وفي الآخر 🧭 التوصية: <b>حكم الكوتش، ترتيب كل الطرق، ميزانية التاست، ووقتاش تطلب السلعة الجاية</b>.<button onclick="try{localStorage.setItem('bt_welcome','1')}catch(e){};this.parentElement.style.display='none'">فهمت ✓</button></div>
 <div class="journey-head">
   <!-- 1. سعر الصرف -->
@@ -1420,7 +1420,7 @@ function smMap(){
   setEl('mp-leads', R.leadsPerDay>0 ? halfCount(R.leadsPerDay) : '—');
   setEl('mp-cap', isFinite(R.starterCapital) ? halfMoney(R.starterCapital) : 'ما يكفيش '+P+' يوم — البدائل في المتقدم');
   { const ge=el('mp-gap'); const isDef = target===1000000 && st.sell===8900 && st.buy===3000 && P===40 && targetMode==='cash';
-    if(ge) ge.textContent = isDef ? 'تقدر تنقّص رأس المال؟ في مثال البوصلة: بمنتج ثاني 61 مليون — وكاين طريق أرخص منو، والكوتش ما اختاروش. علاش؟' : 'تقدر تنقّص رأس المال؟ بسعر آخر ولا بمنتج ثاني — الكوتش يرتّبلك كل الطرق'; }
+    if(ge) ge.textContent = isDef ? 'تقدر تنقّص رأس المال؟ في مثال البوصلة: بمنتج ثاني 61.5 مليون — وكاين طريق أرخص منو، والكوتش ما اختاروش. علاش؟' : 'تقدر تنقّص رأس المال؟ بسعر آخر ولا بمنتج ثاني — الكوتش يرتّبلك كل الطرق'; }
   { const an=el('mp-anchor'), L=p.lead, N=L>0?Math.floor(3900/L)+1:0;
     if(an){ if(N>=1 && N<=30){ an.textContent='3,900 دج = أقل من ثمن '+(N===1?'ليد واحد':N===2?'ليدين':N<=10?N+' ليدات':N+' ليد')+' تاعك (ليد بـ '+fmt(L)+' دج).'; an.style.display='block'; } else an.style.display='none'; } }
   const lr=el('mp-left-row'), leftPcs = p.buy>0 ? R.leftValue/p.buy : 0; if(lr){ lr.style.display = leftPcs>=1 ? 'flex' : 'none'; if(leftPcs>=1) setEl('mp-left', halfCount(leftPcs)+' قطعة'); }
@@ -1848,7 +1848,7 @@ function calc(){
       recV.textContent = `استرجاع ${fmt(recCount)} طلبية من المتروكة = ${fmt(recVal)} دج ربح إضافي بدون أي أدس جديد — وتقلل طلبيات استرجاع رأس المال بنفس العدد`;
       recV.className='verdict ok';
     } else {
-      recV.textContent = 'أدخل عدد المتروكة عندك (من الفورم أو رسائل واتساب/ماسنجر) لتشوف الربح الكامن فيها';
+      recV.textContent = 'دخّل عدد المتروكة عندك (طلبيات متروكة في المتجر ولا رسائل الصفحة وإنستغرام) باش تشوف شحال فيها ربح مهمل';
       recV.className='verdict warn';
     }
   }
@@ -2645,7 +2645,7 @@ function renderCoach(v){
   // المتروكة: الكوتش يعطيها أهمية
   { const abx=abRaw();
     if(abx>0){ const pa2=withAb(()=>getChosenPlan(v)); out.push({lvl:'ok',txt:`🔄 <b>المتروكة = أرخص ربح عندك.</b> بنسبك (~${(abx*100).toFixed(1)} مؤكدة من كل 100 ليد بلا أدس) توفّرلك <b>${fmt(plan.leads-pa2.leads)} ليد</b> على الهدف. خصّص مؤكّد يتابعها <b>كل يوم</b> (المتجر + الصفحة + إنستغرام) — ماشي في آخر الأسبوع، الكليان يبرد بسرعة.`}); }
-    else out.push({lvl:'warn',txt:`🔄 <b>ما دخّلتش المتروكة.</b> في COD عادةً 10-20% من الليدات يتركو الفورم ولا ما يردّوش. خطّط لمتابعتها من اليوم 1 — أرخص ربح عندك، بلا أدس.`}); }
+    else out.push({lvl:'warn',txt:`🔄 <b>ما دخّلتش المتروكة.</b> في COD عادةً 10-20% من الليدات يتركو الطلبية في المتجر ولا يبعثو في الصفحة وإنستغرام وما يكمّلوش. خطّط لمتابعتها من اليوم 1 — أرخص ربح عندك، بلا أدس.`}); }
   // خطة التاست = أول 100 ليد لكل منتج، في نفس المسار (بنفس رأس المال)
   const testLeads=100;
   const Cn = capMode==='mine' ? (+((el('t-mycap')||{}).value)||0) : (isFinite(plan.starterCapital)?plan.starterCapital:0);   // نفس رأس مال قسم 💼
@@ -3281,7 +3281,7 @@ function renderAbandon(v){
     <details class="xpl" style="margin-top:10px;"><summary>🗓️ الروتين اليومي (5 خطوات) + زوج رسائل جاهزين — انسخهم لفريقك</summary><div style="line-height:2">
       <b>1.</b> كل صباح، قبل الليدات الجداد: المتروكة تاع البارح أولاً — ابدا بالسخونين.<br>
       <b>2.</b> الطلبية المتروكة في المتجر: الرقم عندك — عيّطلو كيما أي ليد: <i>"عيّطتلك على الطلبية اللي بديتها البارح — مازلت حابها؟ نأكّدهالك دوكا."</i><br>
-      <b>3.</b> رسالة في الصفحة ولا إنستغرام ما كمّلتش: رد في نفس المحادثة: <i>"سلام 👋 شفت بلي بديت طلبية [المنتج] وما كمّلتش. نكمّلوها مع بعض؟ ابعثلي المقاس والولاية برك."</i><br>
+      <b>3.</b> رسالة في الصفحة ولا إنستغرام ما كمّلتش: رد في نفس المحادثة: <i>"سلام 👋 سقسيتنا على [المنتج] — مازال متوفر. نكمّلولك الطلبية؟ ابعثلي المقاس والولاية برك."</i><br>
       <b>4.</b> ما ردّش؟ عاود مرة وحدة غدوة — ومن بعد خلّيه.<br>
       <b>5.</b> علّم كل واحد: رجع ✅ / ما ردّش / رفض — وحط نسبتك الحقيقية في الخانتين فوق. البوصلة تعاود تحسب.</div></details>`;
 }
