@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>تحدي الـ9 أرقام + بلاي بوك النزيف الصامت — بوصلة التاجر</title>
-<meta name="description" content="9 أرقام تقرر تجارتك في الكاش أون ديليفري. في دقيقتين تعرف شحال منهم تعرف بالرقم — ومن بعد البلاي بوك «النزيف الصامت» مجاناً.">
+<title>تحدي الـ9 أرقام + كتاب النزيف الصامت — بوصلة التاجر</title>
+<meta name="description" content="9 أرقام تقرر تجارتك في الكاش أون ديليفري. في دقيقتين تعرف شحال منهم تعرف بالرقم — ومن بعد كتاب «النزيف الصامت» مجاناً.">
 <meta name="theme-color" content="#07070a">
 <meta property="og:type" content="article">
 <meta property="og:locale" content="ar_DZ">
 <meta property="og:title" content="تحدي الـ9 أرقام — شحال تعرف منهم بالرقم؟">
-<meta property="og:description" content="9 أرقام على تجارتك: الليدات، الفريق، الصافي، رأس المال، يوم الرجوع… جاوب في دقيقتين، وكل رقم ناقص عندو فصل في البلاي بوك «النزيف الصامت».">
+<meta property="og:description" content="9 أرقام على تجارتك: الليدات، الفريق، الصافي، رأس المال، يوم الرجوع… جاوب في دقيقتين، وكل رقم ناقص عندو فصل في كتاب «النزيف الصامت».">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -190,7 +190,7 @@ body{background-image:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(245,197,6
     <div style="font-size:13px;font-weight:900;color:#F5C542;letter-spacing:2px;margin-bottom:6px;">بوصلة التاجر</div><h1>تحدي الـ9 أرقام</h1><div class="tagline">القرار الصحيح، بالرقم الصحيح</div>
     <p style="color:#e8e6ef"><b>في دقيقتين تعرف:</b> شحال من رقم في تجارتك <b style="color:#F5C542">تعرفو بصح</b> — وشحال راك <b style="color:#F5C542">تخمّنو</b>.</p>
     <p style="margin-top:10px;font-size:14px;color:#f3e3b5">جاوبت على الـ9؟ ما تحتاجناش — ونقولوهالك بصراحة.</p>
-    <p style="margin-top:8px;font-size:12.5px">ومن بعد: البلاي بوك <b>"النزيف الصامت"</b> — كل رقم ما عرفتوش عندو فصل يوريك وين يروح.</p>
+    <p style="margin-top:8px;font-size:12.5px">ومن بعد: كتاب <b>"النزيف الصامت"</b> — كل رقم ما عرفتوش عندو فصل يوريك وين يروح.</p>
   </div>
 
   <!-- التحدي -->
@@ -213,7 +213,7 @@ body{background-image:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(245,197,6
       : n>=4 ? `🟡 <b>نتيجتك: ${n} من ${N} — تعرف المارج، ناقصتك الحرب.</b><br>الـ${u} اللي ما علّمتش عليهم: هنا تتلعب الحرب — رأس المال والستوك.`
       : `🔴 <b>نتيجتك: ${n} من ${N}.</b><br>تبيع — بصح ${u} أرقام تقرر في كاشك مازال تخمّنهم.`;
     const m=document.getElementById('qmiss');
-    m.innerHTML = miss.length ? '<b>ناقصينك:</b> '+miss.map(x=>`<a href="#l${x.dataset.l}">${x.dataset.s}</a>`).join('')+`<div class="qstart">👇 ابدا <a href="#l${miss[0].dataset.l}" style="border:none;padding:0;margin:0;text-decoration:underline">بالنزيف ${miss[0].dataset.l}</a> — كل رقم ناقص عندو فصل يعطيك نص الجواب.</div>` : '<b>9 من 9.</b> ما تحتاجش البلاي بوك — جرّب أرقامك في البوصلة وشوف واش تطابقو.';
+    m.innerHTML = miss.length ? '<b>ناقصينك:</b> '+miss.map(x=>`<a href="#l${x.dataset.l}">${x.dataset.s}</a>`).join('')+`<div class="qstart">👇 ابدا <a href="#l${miss[0].dataset.l}" style="border:none;padding:0;margin:0;text-decoration:underline">بالنزيف ${miss[0].dataset.l}</a> — كل رقم ناقص عندو فصل يعطيك نص الجواب.</div>` : '<b>9 من 9.</b> ما تحتاجش الكتاب — جرّب أرقامك في البوصلة وشوف واش تطابقو.';
     document.getElementById('qline').innerHTML = 'مجاناً، في دقيقة: <b>الصافي، أقصى ليد واسترجاع الدفعة</b> برقم واحد، ورأس المال والربح المهمل بين رقمين. الفريق، يوم الرجوع وحكم الكوتش: في المتقدم (<b>3,900 دج</b>، مرة وحدة).';
     const sh=document.getElementById('qshare'); if(sh) sh.href='https://wa.me/?text='+encodeURIComponent('جاوبت '+n+' من '+N+' في تحدي الـ9 أرقام 🧭 — 9 أرقام على تجارتك. وأنت شحال؟\nhttps://al-khaliya.space/ebook-boussala.html');
     w.href='https://wa.me/213540695112?text='+encodeURIComponent('سلام النحلة 🧭 نتيجتي '+n+'/'+N+' في تحدي الـ9 أرقام'+(miss.length?' — ناقصني: '+miss.map(x=>x.dataset.s).join('، '):'')+'. حاب المتقدم');
@@ -297,10 +297,10 @@ body{background-image:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(245,197,6
 <div class="lock"><span class="sk"></span><span class="sk s"></span><div class="lock-t">🔓 <b>النص الثاني في المتقدم:</b> الكوتش ينبّهك كي تكون فرضياتك <b>أنت</b> متفائلة — وتعاود تحسب خطتك بأسوأ سيناريو قبل ما تشري.</div></div></div>
 
   <div class="cta"><div class="t" id="endline">9 أرقام. شحال منهم تعرف — بالرقم؟</div>
-<p>البلاي بوك عطاك <b>نص الجواب</b>. النص الثاني هو <b>أرقامك أنت</b> — ويتحسب في دقايق.</p>
+<p>الكتاب عطاك <b>نص الجواب</b>. النص الثاني هو <b>أرقامك أنت</b> — ويتحسب في دقايق.</p>
 <div class="act">دير لاكشن الصح:<br><b>نظّم تفكيرك قبل تجارتك.</b></div>
 <div class="price"><b>3,900 دج</b> — مرة وحدة، بلا اشتراك<small>أقل من ثمن 9 ليدات (ليد بـ 441 دج في المثال)</small></div>
-<a class="wa-btn" href="https://wa.me/213540695112?text=%D8%B3%D9%84%D8%A7%D9%85%20%D8%A7%D9%84%D9%86%D8%AD%D9%84%D8%A9%20%F0%9F%A7%AD%20%D9%82%D8%B1%D9%8A%D8%AA%20%D8%A7%D9%84%D8%A8%D9%84%D8%A7%D9%8A%20%D8%A8%D9%88%D9%83%20%D8%A7%D9%84%D9%86%D8%B2%D9%8A%D9%81%20%D8%A7%D9%84%D8%B5%D8%A7%D9%85%D8%AA%20%E2%80%94%20%D8%AD%D8%A7%D8%A8%20%D9%86%D8%AF%D8%AE%D9%84%20%D9%84%D9%84%D9%85%D8%AA%D9%82%D8%AF%D9%85" target="_blank" rel="noopener">💬 دير لاكشن — ندخل للمتقدم</a>
+<a class="wa-btn" href="https://wa.me/213540695112?text=%D8%B3%D9%84%D8%A7%D9%85%20%D8%A7%D9%84%D9%86%D8%AD%D9%84%D8%A9%20%F0%9F%A7%AD%20%D9%82%D8%B1%D9%8A%D8%AA%20%D9%83%D8%AA%D8%A7%D8%A8%20%D8%A7%D9%84%D9%86%D8%B2%D9%8A%D9%81%20%D8%A7%D9%84%D8%B5%D8%A7%D9%85%D8%AA%20%E2%80%94%20%D8%AD%D8%A7%D8%A8%20%D9%86%D8%AF%D8%AE%D9%84%20%D9%84%D9%84%D9%85%D8%AA%D9%82%D8%AF%D9%85" target="_blank" rel="noopener">💬 دير لاكشن — ندخل للمتقدم</a>
 <p style="color:var(--gray);font-size:12px;margin-top:10px">🛡️ الضمان: لو ما لقيتش فخ واحد ما كنتش تعرفو في منتجك، نرجعلك دراهمك — خلال 48 ساعة.</p>
 <a class="ghost-btn" href="index.html">🧭 ولا شوف النص الأول من خريطتك — مجاناً ←</a></div>
 
