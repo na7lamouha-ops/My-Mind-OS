@@ -13,21 +13,23 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:var(--bg);font-f
 #vign{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 40%,transparent 40%,rgba(0,0,0,.65) 100%);pointer-events:none;}
 #cam{position:absolute;inset:0;transform-origin:50% 45%;}
 svg#edges{position:absolute;inset:0;width:1080px;height:1920px;overflow:visible;}
-.node{position:absolute;width:450px;height:132px;margin-left:-225px;margin-top:-66px;background:var(--card);border:2px solid var(--line);border-radius:22px;
+.node.chip{width:340px;height:64px;margin-left:-170px;margin-top:-32px;justify-content:center;font-size:32px;font-weight:900;border-radius:40px;padding:0;}
+.node.chip.g{background:rgba(34,197,94,.14);border:2px solid rgba(34,197,94,.6);color:#7ef0a8;} .node.chip.r{background:rgba(255,77,106,.14);border:2px solid rgba(255,77,106,.6);color:#ff9aab;}
+.node{position:absolute;width:430px;height:118px;margin-left:-215px;margin-top:-59px;background:var(--card);border:2px solid var(--line);border-radius:22px;
   display:flex;align-items:center;gap:18px;padding:0 22px;box-shadow:0 18px 40px rgba(0,0,0,.45);opacity:0;}
-.node .ic{flex:0 0 74px;height:74px;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:40px;}
+.node .ic{flex:0 0 64px;height:64px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:36px;}
 .node .tx{flex:1;min-width:0;}
-.node .t{font-size:33px;font-weight:900;line-height:1.15;white-space:nowrap;}
-.node .s{font-size:22px;color:var(--mut);margin-top:6px;white-space:nowrap;font-weight:700;}
+.node .t{font-size:35px;font-weight:900;line-height:1.15;white-space:nowrap;}
+.node .s{font-size:25px;color:#a9a7b4;margin-top:4px;white-space:nowrap;font-weight:700;}
 .node .badge{position:absolute;top:-16px;left:18px;font-size:19px;font-weight:900;padding:3px 12px;border-radius:20px;}
 .g .ic{background:rgba(34,197,94,.14);} .g{border-color:rgba(34,197,94,.35);}
 .r .ic{background:rgba(255,77,106,.14);} .r{border-color:rgba(255,77,106,.35);}
-.goal{width:560px;margin-left:-280px;border-color:rgba(245,197,66,.6);} .goal .ic{background:rgba(245,197,66,.16);}
+.goal{width:600px;margin-left:-300px;border-color:rgba(245,197,66,.6);} .goal .ic{background:rgba(245,197,66,.16);}
 .lane{position:absolute;top:0;font-size:30px;font-weight:900;padding:10px 26px;border-radius:40px;margin-left:-160px;width:320px;text-align:center;opacity:0;}
 .lane.g{background:rgba(34,197,94,.12);border:2px solid rgba(34,197,94,.5);color:#7ef0a8;}
 .lane.r{background:rgba(255,77,106,.12);border:2px solid rgba(255,77,106,.5);color:#ff9aab;}
 .meter{position:absolute;width:420px;margin-left:-210px;opacity:0;}
-.meter .lbl{display:flex;justify-content:space-between;font-size:22px;font-weight:900;color:var(--mut);margin-bottom:8px;}
+.meter .lbl{display:flex;justify-content:space-between;font-size:26px;font-weight:900;color:var(--mut);margin-bottom:8px;}
 .meter .bar{height:16px;border-radius:10px;background:rgba(255,255,255,.07);overflow:hidden;}
 .meter .fill{height:100%;width:0;border-radius:10px;}
 #hook{position:absolute;left:0;right:0;text-align:center;}
@@ -60,7 +62,12 @@ svg#edges{position:absolute;inset:0;width:1080px;height:1920px;overflow:visible;
 .tag{font-size:38px;color:#e8e6ef;margin-top:14px;font-weight:700;}
 .btn{margin-top:60px;background:linear-gradient(135deg,#FDE68A,#F5C542,#B8860B);color:#1a1408;font-size:48px;font-weight:900;padding:30px 64px;border-radius:30px;box-shadow:0 20px 50px rgba(245,197,66,.35);}
 .url{margin-top:34px;font-size:36px;color:#cfcdd8;font-weight:700;direction:ltr;}
-.disc{position:absolute;bottom:70px;left:0;right:0;font-size:24px;color:#6a6a75;text-align:center;}
+.disc{position:absolute;top:1395px;left:0;right:0;font-size:30px;color:#c9c7d4;text-align:center;font-weight:700;}
+.disc2{font-size:28px;color:#c9c7d4;margin-top:34px;font-weight:700;}
+.bio{margin-top:18px;font-size:34px;color:var(--gold);font-weight:900;}
+#hook2{position:absolute;left:0;right:0;text-align:center;}
+#hook2 .h{font-size:96px;font-weight:900;line-height:1.2;} #hook2 .h b{color:var(--gold);} #hook2 .sub{font-size:44px;color:#ff9aab;margin-top:26px;font-weight:900;}
+#flash{position:absolute;inset:0;background:rgba(255,40,70,.0);pointer-events:none;}
 .chk{position:absolute;font-size:40px;opacity:0;}
 </style>
 </head>
@@ -68,11 +75,13 @@ svg#edges{position:absolute;inset:0;width:1080px;height:1920px;overflow:visible;
 <div id="stage">
   <div id="grid"></div>
   <div id="cam">
-    <div id="hook"><div class="k">🧭 بوصلة التاجر</div><div class="h">نفس الهدف:<br><b>100 مليون</b></div><div class="sub">زوج طرق… شكون يوصل <b style="color:#7ef0a8">مرتاح</b>؟</div></div>
+    <div id="hook2"><div class="h"><b>37 مليون</b> زايدة…</div><div class="sub">باش تربح 10 أيام؟</div></div>
+    <div id="hook"><div class="k">🧭 بوصلة التاجر</div><div class="h">نفس الهدف:<br><b>100 مليون</b></div><div class="sub">زوج تجار… شكون يوصل <b style="color:#7ef0a8">مرتاح</b>؟</div></div>
     <svg id="edges"></svg>
     <div id="nodes"></div>
   </div>
   <div id="vign"></div>
+  <div id="flash"></div>
   <div class="overlay" id="cmp">
     <div class="cmp-h">💰 رأس المال اللي يخرج من الجيب</div>
     <div class="cmp-row">
@@ -80,6 +89,7 @@ svg#edges{position:absolute;inset:0;width:1080px;height:1920px;overflow:visible;
       <div class="cmp-c r"><div class="n">⚡ إلياس</div><div class="d">ازدم وسكايلي</div><div class="v" id="cr">0</div><div class="u">مليون</div></div>
     </div>
     <div class="diff" id="diff">الفرق<b>~37 مليون</b><span>باش يربح 10 أيام برك</span></div>
+    <div class="disc2">الشخصيات تمثيلية — الأرقام محسوبة بالبوصلة. مثال، ماشي وعد.</div>
   </div>
   <div class="overlay" id="msg">
     <div class="msg-l" id="m1">الزوج وصلو للهدف.</div>
@@ -96,45 +106,47 @@ svg#edges{position:absolute;inset:0;width:1080px;height:1920px;overflow:visible;
     <div class="tag">شوف وين رايح… ومن بعد ازدم وسكايلي</div>
     <div class="btn">🧭 احسب خطتك — مجاناً</div>
     <div class="url">al-khaliya.space/start.html</div>
-    <div class="disc">أمثلة تمثيلية محسوبة بالبوصلة — مثال، ماشي وعد</div>
+    <div class="bio">الرابط في البيو 👆</div>
+    <div class="disc">الشخصيات تمثيلية — مثال محسوب بالبوصلة، ماشي وعد</div>
   </div>
 </div>
 <script>
-const W=1080, XG=790, XR=290;   // RTL: لينا (الصحيح) على اليمين
-const ROW=[700,890,1080,1270,1460,1680];
+const W=1080, XG=745, XR=300;   // RTL: لينا (الصحيح) على اليمين — بعيد على أزرار ريلز
+const ROW=[715,855,995,1135,1275,1415];
 const D=[ // nodes
- {id:'goal',x:540,y:470,cls:'goal',ic:'🎯',t:'الهدف: 100 مليون',s:'ربح كاش • منتجين',at:3.4},
- {id:'g1',lane:'g',x:XG,y:ROW[0],ic:'🧮',t:'الحساب قبل الصرف',s:'كل المحطات قبل الدينار 1',at:6.0},
- {id:'r1',lane:'r',x:XR,y:ROW[0],ic:'🚀',t:'ازدم وسكايلي',s:'طلق الإعلان بلا حساب',at:6.6},
- {id:'g2',lane:'g',x:XG,y:ROW[1],ic:'🎯',t:'36 ليد / نهار',s:'~253 في الأسبوع — هادئ',at:8.6},
- {id:'r2',lane:'r',x:XR,y:ROW[1],ic:'🔥',t:'52 ليد / نهار',s:'~366 في الأسبوع — جري',at:9.2},
+ {id:'goal',x:540,y:370,cls:'goal',ic:'🎯',t:'الهدف: 100 مليون',s:'ربح كاش • منتجين',at:3.4},
+ {id:'cg',lane:'g',chip:true,x:XG,y:510,t:'✅ لينا — 40 يوم',at:4.6},
+ {id:'cr',lane:'r',chip:true,x:XR,y:510,t:'⚡ إلياس — 30 يوم',at:4.8},
+ {id:'g1',lane:'g',x:XG,y:ROW[0],ic:'🧮',t:'حسبت كلش',s:'قبل ما تصرف الدينار 1',at:6.0},
+ {id:'r1',lane:'r',x:XR,y:ROW[0],ic:'🚀',t:'ازدم وسكايلي',s:'بدا بالإعلان، حسب من بعد',at:6.6},
+ {id:'g2',lane:'g',x:XG,y:ROW[1],ic:'🎯',t:'36 ليد / نهار',s:'~253 / أسبوع — هادئ',at:8.6},
+ {id:'r2',lane:'r',x:XR,y:ROW[1],ic:'🔥',t:'52 ليد / نهار',s:'~366 / أسبوع — جري',at:9.2},
  {id:'g3',lane:'g',x:XG,y:ROW[2],ic:'👥',t:'مؤكّد + متتبّع',s:'فريق مرتاح',at:11.2},
  {id:'r3',lane:'r',x:XR,y:ROW[2],ic:'⚠️',t:'الستوك خلاص',s:'والكاش مازال في الطريق',at:11.8,warn:true},
- {id:'g4',lane:'g',x:XG,y:ROW[3],ic:'💰',t:'رأس المال 61.5',s:'مليون • يرجع قبل اليوم 30',at:13.8},
- {id:'r4',lane:'r',x:XR,y:ROW[3],ic:'💸',t:'رأس المال 99',s:'مليون • يسلّف باش يكمّل',at:14.4,warn:true},
+ {id:'g4',lane:'g',x:XG,y:ROW[3],ic:'💰',t:'61.5 مليون',s:'يرجع قبل اليوم 30',at:13.8},
+ {id:'r4',lane:'r',x:XR,y:ROW[3],ic:'💸',t:'99 مليون',s:'الكاش مشدود',at:14.4,warn:true},
  {id:'g5',lane:'g',x:XG,y:ROW[4],ic:'🧵',t:'~158 قطعة تبقى',s:'محسوبة من البداية',at:16.4},
  {id:'r5',lane:'r',x:XR,y:ROW[4],ic:'📦',t:'~212 قطعة تبقى',s:'فلوس راقدة',at:17.0,warn:true},
  {id:'g6',lane:'g',x:XG,y:ROW[5],ic:'✅',t:'الهدف — 40 يوم',s:'مرتاح، الكاش يدور',at:19.0,final:true},
  {id:'r6',lane:'r',x:XR,y:ROW[5],ic:'😮‍💨',t:'الهدف — 30 يوم',s:'وصل… تحت الضغط',at:19.6,final:true,warn:true},
 ];
-const E=[['goal','g1'],['goal','r1'],['g1','g2'],['r1','r2'],['g2','g3'],['r2','r3'],['g3','g4'],['r3','r4'],['g4','g5'],['r4','r5'],['g5','g6'],['r5','r6']];
+const E=[['goal','cg'],['goal','cr'],['cg','g1'],['cr','r1'],['g1','g2'],['r1','r2'],['g2','g3'],['r2','r3'],['g3','g4'],['r3','r4'],['g4','g5'],['r4','r5'],['g5','g6'],['r5','r6']];
 const nodesEl=document.getElementById('nodes'), svg=document.getElementById('edges');
 const byId={};
-D.forEach(n=>{ const d=document.createElement('div'); d.className='node '+(n.cls||n.lane)+(n.final?' fin':''); d.style.left=n.x+'px'; d.style.top=n.y+'px';
-  d.innerHTML=`<div class="ic">${n.ic}</div><div class="tx"><div class="t">${n.t}</div><div class="s">${n.s}</div></div>`;
+D.forEach(n=>{ const d=document.createElement('div'); d.className='node '+(n.cls||n.lane)+(n.final?' fin':'')+(n.chip?' chip':''); d.style.left=n.x+'px'; d.style.top=n.y+'px';
+  d.innerHTML= n.chip ? n.t : `<div class="ic">${n.ic}</div><div class="tx"><div class="t">${n.t}</div><div class="s">${n.s}</div></div>`;
   if(n.warn){ const b=document.createElement('div'); b.className='badge'; b.style.cssText='background:#ff4d6a;color:#fff'; b.textContent='ضغط'; b.style.opacity=0; d.appendChild(b); n.badge=b; }
   nodesEl.appendChild(d); n.el=d; byId[n.id]=n; });
 // lane chips + meters
-const laneG=document.createElement('div'); laneG.className='lane g'; laneG.textContent='✅ لينا — 40 يوم'; laneG.style.left=XG+'px'; laneG.style.top='560px'; nodesEl.appendChild(laneG);
-const laneR=document.createElement('div'); laneR.className='lane r'; laneR.textContent='⚡ إلياس — شهر'; laneR.style.left=XR+'px'; laneR.style.top='560px'; nodesEl.appendChild(laneR);
-function meter(x,label,color){ const m=document.createElement('div'); m.className='meter'; m.style.left=x+'px'; m.style.top='1810px';
+const laneG={style:{}}, laneR={style:{}};
+function meter(x,label,color){ const m=document.createElement('div'); m.className='meter'; m.style.left=x+'px'; m.style.top='575px';
   m.innerHTML=`<div class="lbl"><span>${label}</span><span class="pc">0%</span></div><div class="bar"><div class="fill" style="background:${color}"></div></div>`; nodesEl.appendChild(m); return m; }
 const mG=meter(XG,'😌 الضغط','linear-gradient(90deg,#22c55e,#7ef0a8)'), mR=meter(XR,'😰 الضغط','linear-gradient(90deg,#ff9f43,#ff4d6a)');
 // edges
 const NS='http://www.w3.org/2000/svg';
 const defs=document.createElementNS(NS,'defs'); defs.innerHTML='<filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>'; svg.appendChild(defs);
 const EDGES=E.map(([a,b])=>{ const A=byId[a], B=byId[b]; const lane=B.lane;
-  const x1=A.x, y1=A.y+66, x2=B.x, y2=B.y-66; const my=(y1+y2)/2;
+  const hh=n=>n.chip?32:59; const x1=A.x, y1=A.y+hh(A), x2=B.x, y2=B.y-hh(B); const my=(y1+y2)/2;
   const dstr=`M${x1},${y1} C${x1},${my} ${x2},${my} ${x2},${y2}`;
   const base=document.createElementNS(NS,'path'); base.setAttribute('d',dstr); base.setAttribute('fill','none'); base.setAttribute('stroke','rgba(255,255,255,.10)'); base.setAttribute('stroke-width','5'); svg.appendChild(base);
   const p=document.createElementNS(NS,'path'); p.setAttribute('d',dstr); p.setAttribute('fill','none'); const col= lane==='g'?'#22c55e':'#ff4d6a'; p.setAttribute('stroke',col); p.setAttribute('stroke-width','5'); p.setAttribute('stroke-linecap','round'); svg.appendChild(p);
@@ -160,13 +172,13 @@ window.render=function(t){
   const z=1+0.035*easeIO(seg(t,4,20));
   cam.style.transform=`scale(${z})`;
   // hook: big centered 0-3.2, then moves to header
-  const hIn=ease(seg(t,0.1,0.9)), hUp=easeIO(seg(t,2.6,3.6));
-  const hy=760 - 600*hUp, hs=1 - 0.48*hUp;
-  hook.style.top=hy+'px'; set(hook, hIn*(1-0.0*hUp), `scale(${hs})`);
+  const h2=document.getElementById('hook2'); const h2o=1-seg(t,1.6,1.9); h2.style.top='760px'; set(h2,h2o,`scale(${1+0.04*seg(t,0,1.9)})`);
+  const hIn=ease(seg(t,1.8,2.3)), hUp=easeIO(seg(t,2.9,3.6));
+  const hy=760 - 720*hUp, hs=1 - 0.6*hUp;
+  hook.style.top=hy+'px'; set(hook, hIn, `scale(${hs})`);
   hook.querySelector('.sub').style.opacity = 1-hUp;
   // lanes + meters
   const lIn=back(seg(t,4.4,5.2));
-  set(laneG, seg(t,4.4,4.8), `scale(${0.6+0.4*lIn})`); set(laneR, seg(t,4.6,5.0), `scale(${0.6+0.4*back(seg(t,4.6,5.4))})`);
   const mIn=seg(t,5.2,5.8); set(mG,mIn); set(mR,mIn);
   const pg = 18 + 6*Math.sin(t*1.3)*seg(t,6,20);                      // لينا: هادئ
   const pr = clamp(10 + 85*easeIO(seg(t,6.5,19.6)) + 4*Math.sin(t*9)*seg(t,11,20), 0, 99);   // إلياس: يطلع ويرجف
@@ -179,7 +191,7 @@ window.render=function(t){
     e.dots.forEach((c,i)=>{ if(!live){ c.style.opacity=0; return; } const sp = e.lane==='r'?1.45:0.8; const ph=((t-e.start)*sp + i/3)%1; const pt=e.p.getPointAtLength(ph*e.L); c.setAttribute('cx',pt.x); c.setAttribute('cy',pt.y); c.style.opacity= (0.25+0.75*Math.sin(ph*Math.PI)); }); });
   // nodes
   D.forEach(n=>{ const k=seg(t,n.at,n.at+0.45); let tr=`scale(${0.7+0.3*back(k)})`;
-    if(n.lane==='r' && t>n.at+0.45){ const amp = n.warn ? 3.2 : 1.2; const sh = Math.sin(t*38+n.y)*amp*seg(t,n.at+0.4,n.at+0.9); tr+=` translateX(${sh}px) rotate(${sh*0.15}deg)`; }
+    if(n.lane==='r' && !n.chip && t>n.at+0.45){ const amp = n.warn ? 6 : 2; const sh = Math.sin(t*38+n.y)*amp*seg(t,n.at+0.4,n.at+0.9); tr+=` translateX(${sh}px) rotate(${sh*0.15}deg)`; }
     n.el.style.opacity=ease(k); n.el.style.transform=tr;
     // glow
     let glow='0 18px 40px rgba(0,0,0,.45)';
@@ -189,6 +201,7 @@ window.render=function(t){
     n.el.style.boxShadow=glow;
     if(n.badge){ n.badge.style.opacity = seg(t,n.at+0.5,n.at+0.8)*(0.75+0.25*Math.sin(t*10)); }
   });
+  document.getElementById('flash').style.background=`rgba(255,40,70,${0.22*Math.exp(-6*Math.max(0,t-11.8))*(t>11.8?1:0)})`;
   // compare overlay 21-27.4
   const cIn=ease(seg(t,21,21.6)), cOut=1-seg(t,27.2,27.7);
   cmp.style.opacity=cIn*cOut; cmp.style.transform=`translateY(${(1-cIn)*60}px)`;
@@ -203,7 +216,7 @@ window.render=function(t){
   const nd=document.getElementById('needle'); const sw = seg(t,31.6,34.5); nd.style.transform=`rotate(${-40*Math.exp(-3*sw)*Math.cos(sw*14)}deg)`;
   cta.querySelector('.btn').style.transform=`scale(${1+0.035*Math.sin(t*5)*seg(t,33,36)})`;
   // global fade in/out
-  document.getElementById('stage').style.opacity = clamp(t/0.25)*clamp((DUR-t)/0.3);
+  document.getElementById('stage').style.opacity = clamp((DUR-t)/0.3);
 };
 window.DUR=DUR;
 document.fonts.ready.then(()=>{ window.READY=true; render(0); });
