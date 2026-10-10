@@ -630,6 +630,13 @@ body{background-image:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(245,197,6
   [style*="font-size:9px"],[style*="font-size:10px"],[style*="font-size:10.5px"]{font-size:11px !important;}
   .cap-kpi span,.ab-paren,.pname-hint,.cp-kpis span{font-size:11px;}
 }
+#guideFab{position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:1200;background:rgba(15,15,20,.92);color:#F5C542;border:1px solid rgba(245,197,66,.5);border-radius:30px;padding:7px 16px;font-family:inherit;font-weight:900;font-size:13px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.5);backdrop-filter:blur(6px);}
+#guideFab span{font-size:10px;}
+#guidePanel{position:fixed;inset:0 0 auto 0;height:0;overflow:hidden;z-index:1300;background:#07070a;transition:height .3s ease;border-bottom:1px solid rgba(245,197,66,.4);box-shadow:0 12px 40px rgba(0,0,0,.6);display:flex;flex-direction:column;}
+#guidePanel.open{height:88vh;}
+#guidePanel .gp-bar{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 14px;background:#0f0f14;border-bottom:1px solid rgba(255,255,255,.08);font-size:13px;color:#f0f0f5;}
+#guidePanel .gp-bar button{background:none;border:1px solid rgba(245,197,66,.45);color:#F5C542;border-radius:20px;padding:5px 12px;font-family:inherit;font-weight:900;cursor:pointer;}
+#guideFrame{flex:1;width:100%;border:0;background:#07070a;}
 </style>
 </head>
 <body>
@@ -637,6 +644,8 @@ body{background-image:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(245,197,6
 <!-- ═══════════════════════════════════════
      LOGIN GATE
 ════════════════════════════════════════ -->
+<button id="guideFab" type="button" onclick="toggleGuide()" aria-expanded="false" style="display:none">📘 الدليل <span>▾</span></button>
+<div id="guidePanel" aria-hidden="true"><div class="gp-bar"><b>📘 دليل الاستعمال — مرحلة بمرحلة</b><button type="button" onclick="toggleGuide(false)">✕ سكّر</button></div><iframe id="guideFrame" title="دليل الاستعمال" loading="lazy"></iframe></div>
 <div id="loginGate">
   <div class="gate-card">
     <div class="gate-logo">
@@ -862,7 +871,7 @@ body{background-image:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(245,197,6
 </div>
 
 <div class="adv-frame">المارج <b>محطة وحدة</b>. هنا تحسب <b>كل المحطات</b>: رأس المال ويوم رجوعو • شحال ستوك تشري ووقتاش تعاود تطلب • الليدات والعمال في النهار • و💎 الربح المهمل (طلبيات متروكة ورسائل ما تكمّلتش).</div>
-<div class="welcome" id="advWelcome" style="display:none">👋 <b>مرحبا بيك في خريطتك.</b> 📘 <a href="guide-usage.html" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:underline;">دليل الاستعمال، مرحلة بمرحلة</a><br><span id="advWelcomeTxt">الأرقام اللي تشوفهم مثال — بدّلهم بأرقامك.</span><br>5 دقايق: <b>①</b> الوجهة: اختار ربحك في الطلبية. <b>②</b> الخطة: دخّل منتجاتك بأرقام أسوأ أسبوع. وفي الآخر 🧭 التوصية: <b>حكم الكوتش، ترتيب كل الطرق، ميزانية التاست، ووقتاش تطلب السلعة الجاية</b>.<button onclick="try{localStorage.setItem('bt_welcome','1')}catch(e){};this.parentElement.style.display='none'">فهمت ✓</button></div>
+<div class="welcome" id="advWelcome" style="display:none">👋 <b>مرحبا بيك في خريطتك.</b> 📘 <a href="guide-usage.html" onclick="toggleGuide(true);return false;" style="color:var(--gold);text-decoration:underline;">دليل الاستعمال، مرحلة بمرحلة</a> (ديما فوق في زر 📘)<br><span id="advWelcomeTxt">الأرقام اللي تشوفهم مثال — بدّلهم بأرقامك.</span><br>5 دقايق: <b>①</b> الوجهة: اختار ربحك في الطلبية. <b>②</b> الخطة: دخّل منتجاتك بأرقام أسوأ أسبوع. وفي الآخر 🧭 التوصية: <b>حكم الكوتش، ترتيب كل الطرق، ميزانية التاست، ووقتاش تطلب السلعة الجاية</b>.<button onclick="try{localStorage.setItem('bt_welcome','1')}catch(e){};this.parentElement.style.display='none'">فهمت ✓</button></div>
 <div class="journey-head">
   <!-- 1. سعر الصرف -->
   <div class="block blue" id="sec-exchange">
@@ -1262,6 +1271,14 @@ document.addEventListener('keydown', e=>{
 });
 
 
+// ── 📘 الدليل: مخبي فوق، يتفتح غير لي يحب ──
+function toggleGuide(force){
+  const p=el('guidePanel'), b=el('guideFab'), fr=el('guideFrame'); if(!p) return;
+  const open = force===undefined ? !p.classList.contains('open') : !!force;
+  if(open && !fr.getAttribute('src')) fr.setAttribute('src','guide-usage.html');   // يتحمّل غير كي تفتحو
+  p.classList.toggle('open',open); p.setAttribute('aria-hidden',open?'false':'true');
+  if(b){ b.setAttribute('aria-expanded',open?'true':'false'); b.innerHTML = open ? '📘 الدليل <span>▴</span>' : '📘 الدليل <span>▾</span>'; }
+}
 // ── MODE SWITCH ──
 function switchMode(mode){
   if(mode==='advanced' && !hasAccess && !switchMode._waited){ switchMode._waited=true; accessReady.then(ok=>{ if(ok) switchMode('advanced'); else { switchMode('advanced'); } switchMode._waited=false; }); return; }
@@ -1269,6 +1286,7 @@ function switchMode(mode){
   if(mode==='simple'){ advToSimple(); calcSimple(); }
   document.getElementById('simpleMode').style.display   = mode==='simple'   ? 'block' : 'none';
   document.getElementById('advancedMode').style.display = mode==='advanced' ? 'block' : 'none';
+  { const gf=el('guideFab'); if(gf) gf.style.display = mode==='advanced' ? 'block' : 'none'; if(mode!=='advanced') toggleGuide(false); }
   window.scrollTo(0,0);
   if(mode==='advanced'){
     try{ const w=el('advWelcome'); if(w) w.style.display = localStorage.getItem('bt_welcome') ? 'none' : 'block'; }catch(e){}
