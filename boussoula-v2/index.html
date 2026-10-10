@@ -705,12 +705,6 @@ body{background-image:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(245,197,6
     <div class="simple-card">
       <div class="simple-inputs">
 
-        <!-- سعر الصرف -->
-        <div class="simple-field" style="margin-bottom:4px;">
-          <label>💱 سعر الصرف <span class="hint">(1 دولار = شحال بالدينار؟ السعر الموازي)</span></label>
-          <input type="number" id="sm-exchange" value="245" oninput="calcSimple()">
-        </div>
-
         <!-- 1. الهدف أول (نبدأ بيه) -->
         <div class="simple-field" style="border-bottom:1px solid var(--gold-b);padding-bottom:18px;margin-bottom:4px;">
           <label style="color:var(--gold);">🎯 وين رايح؟ — هدفك من الربح <span class="hint" style="color:var(--gray)">(شحال تحب تربح؟ بالدينار)</span></label>
@@ -730,7 +724,7 @@ body{background-image:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(245,197,6
 
         <!-- تكلفة الليد -->
         <div class="simple-field">
-          <label>تكلفة الليد — كيفاش نحسبوها؟</label>
+          <label>تكلفة الليد ($) — كيفاش نحسبوها؟</label>
           <div style="display:flex;gap:8px;margin-bottom:10px;">
             <button class="mode-btn" id="leadModeBtn1" style="flex:1;padding:9px;font-size:12px;border-color:var(--gold-b);color:var(--gold);background:var(--gold-dim);" onclick="setLeadMode('manual')">نقدّرها بيدي</button>
             <button class="mode-btn" id="leadModeBtn2" style="flex:1;padding:9px;font-size:12px;" onclick="setLeadMode('auto')">من الأدس الكلي</button>
@@ -745,6 +739,11 @@ body{background-image:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(245,197,6
               <input type="number" id="sm-totalleads" value="200" oninput="calcSimple()" placeholder="عدد الليدات" style="flex:1;">
             </div>
             <div class="hint" style="margin-top:6px;">تكلفة الليد المحسوبة: <b id="sm-lead-calc" style="color:var(--gold)">—</b></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:10px;">
+            <label for="sm-exchange" style="margin:0;white-space:nowrap;font-size:12px;">💱 1$ =</label>
+            <input type="number" id="sm-exchange" value="245" oninput="calcSimple()" style="max-width:110px;">
+            <span class="hint">دج (السعر الموازي)</span>
           </div>
         </div>
 
@@ -761,13 +760,18 @@ body{background-image:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(245,197,6
         </div>
 
         <div class="simple-field">
-          <label>تكلفة الروتور الواحد <span class="hint">(رسوم الإرجاع + التغليف اللي يضيع — وزيد التوصيل لو شركتك تحسبو)</span></label>
+          <label>🚚 التوصيل + التغليف <span class="hint">(على كل طلبية موصلة: فرق التوصيل اللي تخلّصو + التغليف + أي مصاريف زايدة)</span></label>
+          <input type="number" id="sm-other" value="250" oninput="calcSimple()">
+        </div>
+
+        <div class="simple-field">
+          <label>↩️ الروتور <span class="hint">(على كل طلبية ترجع: رسوم الإرجاع + التغليف اللي يضيع — وزيد التوصيل لو شركتك تحسبو)</span></label>
           <input type="number" id="sm-retour" value="100" oninput="calcSimple()">
         </div>
 
         <div class="simple-field">
-          <label>تكاليف التوصيل + أخرى / قطعة <span class="hint">(رسوم التوصيل + التغليف + أي مصاريف زايدة)</span></label>
-          <input type="number" id="sm-other" value="250" oninput="calcSimple()">
+          <div class="simple-slider-top"><label>🧵 فائض المقاسات <span class="hint">(مقاسات وألوان ما تتباعش من كل دفعة)</span></label><span class="simple-slider-val" id="sm-surplus-val">20%</span></div>
+          <input type="range" id="sm-surplus" min="0" max="50" value="20" style="accent-color:var(--gold)" oninput="smSetSurplus(this.value)">
         </div>
 
       </div>
@@ -913,7 +917,7 @@ body{background-image:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(245,197,6
   <div class="block" style="border-color:var(--gold-b);">
     <div class="step-label"><div class="step-q" style="color:var(--gold);">🧭 الخطوة ① — في أي ربح تلعب؟</div><div class="step-line" style="background:var(--gold-b)"></div></div>
     <div class="compass-q">شحال تحب تربح <b>صافي في كل طلبية</b>؟ اكتب 2-3 احتمالات — البوصلة تقولك شحال ليد وعمال يلزمك، وعلى واش منتج تدوّر.</div>
-    <div class="dir-note">🧭 <b>السوق يقولك "ازدم، ومن بعد ساهل".</b> البوصلة تقولك: <b>شوف وين رايح… ومن بعد ازدم.</b> من هدفك ووقتك، تشوف قبل ما تبدا: شحال ليد في النهار، شحال مؤكّد ومتتبّع، واش فريقك يستوعب، وشحال يلزمك.</div>
+    <div class="dir-note">🧭 <b>السوق يقولك "ازدم وسكايلي".</b> البوصلة تقولك: <b>شوف وين رايح… ومن بعد ازدم.</b> من هدفك ووقتك، تشوف قبل ما تبدا: شحال ليد في النهار، شحال مؤكّد ومتتبّع، واش فريقك يستوعب، وشحال يلزمك.</div>
     <div class="assume-box">
       <div class="assume-h">⚙️ فرضيات نيشك — <span>كل الأرقام تحت مبنية عليها، بدّلها بأرقامك</span></div>
       <div class="g3" style="margin:6px 0 10px;">
@@ -1302,6 +1306,8 @@ function setLeadMode(mode){
   calcSimple();
 }
 
+// فائض المقاسات: خانة وحدة مشتركة بين البسيط والمتقدم (t-surplus)
+function smSetSurplus(v){ const t=el('t-surplus'); if(t){ t.value=v; setEl('t-surplus-val', v+'%'); } setEl('sm-surplus-val', v+'%'); calcSimple(); if(el('advancedMode') && el('advancedMode').style.display!=='none') calc(); }
 // ── SIMPLE MODE CALC ──
 function calcSimple(){
   const buy    = +el('sm-buy').value||0;
@@ -1311,7 +1317,7 @@ function calcSimple(){
   const retour = +el('sm-retour').value||0;
   const other  = +el('sm-other').value||0;
   const target = +el('sm-target').value||0;
-  const rate   = +el('sm-exchange').value||0;
+  const rate   = (+el('sm-exchange').value>0) ? +el('sm-exchange').value : 245;   // فارغ ولا 0 = 245 (ما نخلّيوش الليد يولّي مجاني)
 
   // الهدف بالدولار (بين قوسين)
   setEl('sm-target-usd', fmt(target)+' دج'+(mil(target)?' ('+mil(target)+')':'')+(rate>0 ? ' • $'+fmt(Math.round(target/rate)) : ''));
@@ -1345,6 +1351,7 @@ function calcSimple(){
   const marge = sell - buy - other - retPerDel*retour;
   // فائض المقاسات (كاش فقط) — نفس حساب المتقدم: نص نسبة الفائض × سعر الإنتاج
   const surpPct = +((el('t-surplus')||{}).value)||0;
+  { const ss=el('sm-surplus'); if(ss && document.activeElement!==ss){ ss.value=surpPct; setEl('sm-surplus-val', surpPct+'%'); } }
   const surp = targetMode==='cash' ? buy*(surpPct/100)*0.5 : 0;
   // صافي/موصلة بعد الأدس (وفي كاش فقط: بعد الفائض) — الربح الحقيقي
   const netPerDel = marge - costDelivered - surp;
@@ -2006,7 +2013,7 @@ function renderProdResults(v){
       </div>
       ${destProfit!=null?(()=>{ const now=R.netAfterAdsPerDel||0; const okD=now>=destProfit-0.5;
         return `<div style="font-size:11.5px;margin-bottom:10px;padding:8px 10px;border-radius:8px;background:${okD?'var(--green-dim)':'var(--s2)'};border:1px solid ${okD?'var(--green-b)':'var(--border)'};color:${okD?'var(--green)':'var(--gray)'};">🧭 ${okD?`يوصل وجهتك (${fmt(Math.round(now))} ≥ ${fmt(destProfit)} دج/طلبية)`:`تحت وجهتك: ${fmt(Math.round(now))} من ${fmt(destProfit)} دج/طلبية — ناقصو ${fmt(Math.round(destProfit-now))} دج`}</div>`; })():''}
-      ${(abRaw()>0 && R.netPerLead>0)?(()=>{ const x=abExtra(p,R,v); return `<div class="ab-line">🔄 لو خدمتو وحدو، المتروكة تزيدلك <b>~${fmt(Math.round(x.profit))} دج</b> على هذا المنتج (~${fmt(Math.round(x.rd))} طلبية موصلة بلا أدس)</div>`; })():''}
+      ${(abRaw()>0 && R.netPerLead>0)?(()=>{ const x=abExtra(p,R,v); return `<div class="ab-line">💎 لو خدمتو وحدو، الربح المهمل يزيدلك <b>~${fmt(Math.round(x.profit))} دج</b> على هذا المنتج (~${fmt(Math.round(x.rd))} طلبية موصلة بلا أدس)</div>`; })():''}
       ${(R.netPerLead>0 && isFinite(R.beStock))?`<div class="be-stock"><b>📦 نقطة استرجاع الدفعة:</b> من كل 100 قطعة تبيعها، <b>~${Math.ceil(R.beStock*100)}</b> ترجّعلك ثمن الدفعة كاملة — <b style="color:var(--green)">الـ${100-Math.ceil(R.beStock*100)} الباقيين ربح</b>.<details class="xpl" style="margin-top:6px;"><summary>▾ كيفاش نحسبوها؟</summary><div>كل قطعة تتباع يرجعلك منها ~${fmt(Math.round(R.contribPerDel))} دج (البيع ناقص التغليف، التوصيل، الروتور والأدس). القطعة تكلّفك ${fmt(p.buy)}. يعني من كل 100 قطعة، ~${Math.ceil(R.beStock*100)} يرجّعو ثمن الدفعة كاملة، والباقي ربح. <b>الكوتش:</b> تحت 50% = منتج مريح • 50-70% = عادي • فوق 70% = خطر (الفائض والروتور ياكلو الربح).</div></details></div>`:''}
       <div class="g4">
         <div style="text-align:center"><div class="stat-lbl">المارج / موصلة</div><div style="font-size:15px;font-weight:900;color:var(--white)">${fmt(R.marge)}</div><div class="stat-sub">المارج قبل الأدس</div></div>
@@ -2644,8 +2651,8 @@ function renderCoach(v){
 
   // المتروكة: الكوتش يعطيها أهمية
   { const abx=abRaw();
-    if(abx>0){ const pa2=withAb(()=>getChosenPlan(v)); out.push({lvl:'ok',txt:`🔄 <b>المتروكة = أرخص ربح عندك.</b> بنسبك (~${(abx*100).toFixed(1)} مؤكدة من كل 100 ليد بلا أدس) توفّرلك <b>${fmt(plan.leads-pa2.leads)} ليد</b> على الهدف. خصّص مؤكّد يتابعها <b>كل يوم</b> (المتجر + الصفحة + إنستغرام) — ماشي في آخر الأسبوع، الكليان يبرد بسرعة.`}); }
-    else out.push({lvl:'warn',txt:`🔄 <b>ما دخّلتش المتروكة.</b> في COD عادةً 10-20% من الليدات يتركو الطلبية في المتجر ولا يبعثو في الصفحة وإنستغرام وما يكمّلوش. خطّط لمتابعتها من اليوم 1 — أرخص ربح عندك، بلا أدس.`}); }
+    if(abx>0){ const pa2=withAb(()=>getChosenPlan(v)); out.push({lvl:'ok',txt:`💎 <b>الربح المهمل = أرخص ربح عندك.</b> بنسبك (~${(abx*100).toFixed(1)} مؤكدة من كل 100 ليد بلا أدس) توفّرلك <b>${fmt(plan.leads-pa2.leads)} ليد</b> على الهدف. خصّص مؤكّد يتابعها <b>كل يوم</b> (المتجر + الصفحة + إنستغرام) — ماشي في آخر الأسبوع، الكليان يبرد بسرعة.`}); }
+    else out.push({lvl:'warn',txt:`💎 <b>ما دخّلتش الربح المهمل.</b> في COD عادةً 10-20% من الليدات يتركو الطلبية في المتجر ولا يبعثو في الصفحة وإنستغرام وما يكمّلوش. خطّط لمتابعتها من اليوم 1 — أرخص ربح عندك، بلا أدس.`}); }
   // خطة التاست = أول 100 ليد لكل منتج، في نفس المسار (بنفس رأس المال)
   const testLeads=100;
   const Cn = capMode==='mine' ? (+((el('t-mycap')||{}).value)||0) : (isFinite(plan.starterCapital)?plan.starterCapital:0);   // نفس رأس مال قسم 💼
@@ -2879,7 +2886,7 @@ function renderCapital(v){
     return;
   }
   const inTime = days<=P;
-  const ab=(x)=> x!=null ? `<span class="ab-paren">(مع المتروكة: ${x})</span>` : '';
+  const ab=(x)=> x!=null ? `<span class="ab-paren">(مع الربح المهمل: ${x})</span>` : '';
   const adsDay1 = sim.firstN*(plan.products[0]?plan.products[0].p.lead:0);
   const head = capMode==='auto'
     ? (plan.capDays ? `<div class="cap-big">مدتك (${P} يوم) قصيرة لهذا الهدف. <b>أقل مدة ممكنة: ~${plan.capDays} يوم</b>، وتحتاج <b>${fmtCap(need)}</b> للبدء`
@@ -2990,7 +2997,7 @@ function resetOffers(){
 }
 function addOffer(){ const b=offers[0]||{sell:3500,conf:55,del:65,leadUsd:1}; offers.push({...b,name:'عرض '+(offers.length+1)}); renderOffers(); }
 function removeOffer(i){ offers.splice(i,1); renderOffers(); }
-function updOffer(i,f,val){ offers[i][f]= f==='name'?val:(parseFloat(val)||0); computeOffers(); }
+function updOffer(i,f,val){ let x=parseFloat(val)||0; if(f==='conf'||f==='del') x=Math.min(100,Math.max(1,x)); if(f==='sell'||f==='leadUsd') x=Math.max(0,x); offers[i][f]= f==='name'?cleanTxt(val):x; computeOffers(); }
 function applyOffer(i){
   const o=offers[i], rate=+el('t-exchange').value||245, p=prodData[offerIdx];
   p.sell=o.sell; p.conf=o.conf; p.del=o.del; p.leadUsd=o.leadUsd; p.lead=Math.round(o.leadUsd*rate);
@@ -3277,7 +3284,7 @@ function renderAbandon(v){
       <div class="cap-kpi"><span>🎯 ليدات أقل للهدف</span><b>\u200E−${fmt(pn.leads-pa.leads)}</b><span style="margin-top:3px;">${fmt(pn.leads)} ← ${fmt(pa.leads)}</span></div>
       <div class="cap-kpi"><span>💵 أدس أقل</span><b>\u200E−${rate0(v,pn.adsReq-pa.adsReq)}</b><span style="margin-top:3px;">${rate0(v,pn.adsReq)} ← ${rate0(v,pa.adsReq)}</span></div>
     </div>
-    <div class="cap-line" style="margin-top:10px;">الخطة فوق <b>ما تحسبش</b> هذا المبلغ. هي <b>ربح زايد</b> لو تخدم المتروكة — و<b>ربح ضايع</b> لو تهملها.</div>
+    <div class="cap-line" style="margin-top:10px;">الخطة فوق <b>ما تحسبش</b> هذا المبلغ. هي <b>ربح زايد</b> لو تخدم الربح المهمل — و<b>ربح ضايع</b> لو تهملها.</div>
     <details class="xpl" style="margin-top:10px;"><summary>🗓️ الروتين اليومي (5 خطوات) + زوج رسائل جاهزين — انسخهم لفريقك</summary><div style="line-height:2">
       <b>1.</b> كل صباح، قبل الليدات الجداد: المتروكة تاع البارح أولاً — ابدا بالسخونين.<br>
       <b>2.</b> الطلبية المتروكة في المتجر: الرقم عندك — عيّطلو كيما أي ليد: <i>"عيّطتلك على الطلبية اللي بديتها البارح — مازلت حابها؟ نأكّدهالك دوكا."</i><br>
