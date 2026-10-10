@@ -451,6 +451,7 @@ input[type=range]::-moz-range-thumb{background:var(--gold);border:none;}
 .cp-btn.on{background:var(--gold);color:#1a1408;border-color:var(--gold);}
 .cp-note{font-size:11px;color:var(--gray);margin-top:10px;line-height:1.7;}
 .cp-note b{color:var(--white);}
+.hot-rule{background:rgba(245,197,66,.08);border:1px solid rgba(245,197,66,.4);border-radius:10px;padding:8px 10px;margin-bottom:6px;line-height:1.8;}
 .pp-card{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:10px;margin-top:8px;} .pp-h{font-size:13px;font-weight:900;color:var(--white);margin-bottom:8px;} .pp-h span{float:left;font-size:11px;color:var(--gold);}
 .pp-g{display:grid;grid-template-columns:1fr 1fr;gap:6px;} .pp-g div{background:var(--s1);border-radius:8px;padding:7px;text-align:center;} .pp-g b{display:block;font-size:14px;color:var(--white);} .pp-g span{font-size:10.5px;color:var(--gray);line-height:1.5;}
 .follow-note{margin-top:12px;font-size:12px;color:#cfeeda;line-height:1.85;background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.3);border-radius:10px;padding:11px 12px;} .follow-note b{color:#fff;}
@@ -810,9 +811,9 @@ body{background-image:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(245,197,6
       <div class="smap-r" id="mp-left-row"><span>🧵 ستوك يبقالك في الآخر<small>فلوس راقدة — تصفّيه ولا تكمل؟</small></span><b class="fog" id="mp-left">…</b></div>
       <div class="smap-r gem" id="sm-leak" style="display:none"><span>💎 الربح المهمل — طلبيات متروكة ورسائل ما تكمّلتش<small id="sm-leak-pct"></small></span><b class="fog" id="sm-leak-val">…</b></div>
       <div class="smap-fog">🌫️ <b>لمنتجك وحدو، الرقم الصحيح داخل هاد المجال.</b> كي تزيد منتج ولا تبدّل المدة ولا السعر، يتبدّل — رقمك بالضبط، يوم بيوم: في المتقدم.</div>
-      <div class="smap-g">💎 خلّصت عليهم الأدس، بداو الطلبية… وما كمّلوش. تعرفهم ديجا — بصح عمرك ما حسبتهم <b>بالدينار</b>. داخل: شحال يسواو لكل منتج + <b>الروتين اليومي (5 خطوات) وزوج رسائل جاهزين</b> لفريقك.</div>
+      <div class="smap-g">💎 خلّصت عليهم الأدس، بداو الطلبية… وما كمّلوش. تعرفهم ديجا — بصح عمرك ما حسبتهم <b>بالدينار</b>. داخل: شحال يسواو لكل منتج + <b>الروتين (7 خطوات)، العرض اللي ما يتفوّتش، ورسائل جاهزة</b> لفريقك.</div>
       <div class="prelim" style="margin:14px 0 0;">ℹ️ <b>هذا حساب ابتدائي برك</b> — لمنتج واحد. باش الخطة تكون صحيحة، لازم تحسب زيادة: <b>رأس المال بالتفصيل، شحال من عامل، شحال سلعة تشري ووقتاش تعاود تطلب، ووقتاش يرجع الكاش</b>.</div>
-      <div class="smap-lock"><b>البسيط حكم على منتجك. المتقدم يحكم على خطتك:</b><div>🔒 في أي نهار يرجع رأس مالك؟</div><div>🔒 <span id="mp-gap">تقدر تنقّص رأس المال؟ بسعر آخر ولا بمنتج ثاني — الكوتش يرتّبلك كل الطرق</span></div><div>🔒 ما عندكش هذا المبلغ؟ دخّل شحال عندك، والبوصلة تقولك في أي نهار توصل</div><div>🔒 الربح المهمل: شحال يسوى لكل منتج — والروتين اليومي باش ترجّعو</div><div>🔒 حكم الكوتش على خطتك: تطلق، تطلق بحذر، ولا تصلّح قبل؟</div></div>
+      <div class="smap-lock"><b>البسيط حكم على منتجك. المتقدم يحكم على خطتك:</b><div>🔒 في أي نهار يرجع رأس مالك؟</div><div>🔒 <span id="mp-gap">تقدر تنقّص رأس المال؟ بسعر آخر ولا بمنتج ثاني — الكوتش يرتّبلك كل الطرق</span></div><div>🔒 ما عندكش هذا المبلغ؟ دخّل شحال عندك، والبوصلة تقولك في أي نهار توصل</div><div>🔒 الربح المهمل: شحال يسوى لكل منتج — والروتين والعرض باش ترجّعو</div><div>🔒 حكم الكوتش على خطتك: تطلق، تطلق بحذر، ولا تصلّح قبل؟</div></div>
       <button class="tease-btn" onclick="switchMode('advanced')">🔓 كمّل خريطتك — 3,900 دج، مرة وحدة</button>
       <div class="smap-gu" id="mp-anchor" style="color:#f3e3b5;display:none"></div>
       <div class="smap-gu">🛡️ لو ما لقيتش فخ واحد ما كنتش تعرفو في منتجك، نرجعلك دراهمك — خلال 48 ساعة.</div>
@@ -1192,7 +1193,17 @@ function triesLocked(){ const t=triesGet(); const m=Math.ceil((t.until-Date.now(
 function triesFail(){ const t=triesGet(); t.n=(t.n||0)+1; if(t.n>=5){ t.until=Date.now()+10*60000; t.n=0; } try{ localStorage.setItem('bt_tries',JSON.stringify(t)); }catch(e){} }
 function triesReset(){ try{ localStorage.removeItem('bt_tries'); }catch(e){} }
 let hasAccess=false;
-try{ hasAccess=!!localStorage.getItem('bt_access'); }catch(e){}
+// الكود المحفوظ يتعاود يتحقق منو في كل فتحة (ماشي غير "كاين ولا لا") — قيمة مزوّرة في الجهاز ما تفتحش المتقدم
+let accessReady = (async()=>{
+  let code=null; try{ code=localStorage.getItem('bt_access'); }catch(e){}
+  if(!code) return false;
+  if(SCRIPT_URL==='ضع_رابط_Google_Script_هنا'){
+    if(await codeOk(String(code).trim().toUpperCase())){ hasAccess=true; return true; }
+    try{ localStorage.removeItem('bt_access'); localStorage.removeItem('bt_last_check'); }catch(e){}
+    return false;
+  }
+  hasAccess=true; return true;   // وضع السيرفر: silentRecheck يتكفّل
+})();
 // ══ التحقق الصامت: كل ما تنفتح الأداة (مرة كل 6 ساعات) — الكود المسحوب يتسكّر ══
 async function silentRecheck(){
   try{
@@ -2672,7 +2683,7 @@ function renderCoach(v){
 
   // المتروكة: الكوتش يعطيها أهمية
   { const abx=abRaw();
-    if(abx>0){ const pa2=withAb(()=>getChosenPlan(v)); out.push({lvl:'ok',txt:`💎 <b>الربح المهمل = أرخص ربح عندك.</b> بنسبك (~${(abx*100).toFixed(1)} مؤكدة من كل 100 ليد بلا أدس) توفّرلك <b>${fmt(plan.leads-pa2.leads)} ليد</b> على الهدف. خصّص مؤكّد يتابعها <b>كل يوم</b> (المتجر + الصفحة + إنستغرام) — ماشي في آخر الأسبوع، الكليان يبرد بسرعة.`}); }
+    if(abx>0){ const pa2=withAb(()=>getChosenPlan(v)); out.push({lvl:'ok',txt:`💎 <b>الربح المهمل = أرخص ربح عندك.</b> بنسبك (~${(abx*100).toFixed(1)} مؤكدة من كل 100 ليد بلا أدس) توفّرلك <b>${fmt(plan.leads-pa2.leads)} ليد</b> على الهدف. عاملها <b>كي طلبية</b>: رد في دقايق، السخون أولاً، ورد آلي في الصفحة وإنستغرام. الكليان يبرد بسرعة — وعرض صغير (قد ثمن ليد) يرجّعو.`}); }
     else out.push({lvl:'warn',txt:`💎 <b>ما دخّلتش الربح المهمل.</b> في COD عادةً 10-20% من الليدات يتركو الطلبية في المتجر ولا يبعثو في الصفحة وإنستغرام وما يكمّلوش. خطّط لمتابعتها من اليوم 1 — أرخص ربح عندك، بلا أدس.`}); }
   // خطة التاست = أول 100 ليد لكل منتج، في نفس المسار (بنفس رأس المال)
   const testLeads=100;
@@ -3304,6 +3315,7 @@ function renderAbandon(v){
     abTot+=x.ab; recConf+=x.rc; recDel+=x.rd; lost+=x.profit;
     rows+=`<tr><td>${p.name}</td><td>~${fmt(Math.round(x.ab))}</td><td>~${fmt(Math.round(x.rd))}</td><td style="color:var(--green);font-weight:900;">\u200E+${fmt(Math.round(x.profit))}</td></tr>`;
   });
+  const minLead=Math.min(...pn.products.map(({p})=>p.lead||0)), offAmt=Math.max(0,Math.floor(minLead/50)*50), minAdDel=Math.min(...pn.products.map(({R})=>R.adPerDel||0));
   const cover = pn.adsReq>0 ? lost/pn.adsReq*100 : 0;
   box.innerHTML=`
     <div class="lost-card">
@@ -3317,12 +3329,15 @@ function renderAbandon(v){
       <div class="cap-kpi"><span>💵 أدس أقل</span><b>\u200E−${rate0(v,pn.adsReq-pa.adsReq)}</b><span style="margin-top:3px;">${rate0(v,pn.adsReq)} ← ${rate0(v,pa.adsReq)}</span></div>
     </div>
     <div class="cap-line" style="margin-top:10px;">الخطة فوق <b>ما تحسبش</b> هذا المبلغ. هي <b>ربح زايد</b> لو تخدم الربح المهمل — و<b>ربح ضايع</b> لو تهملها.</div>
-    <details class="xpl" style="margin-top:10px;"><summary>🗓️ الروتين اليومي (5 خطوات) + زوج رسائل جاهزين — انسخهم لفريقك</summary><div style="line-height:2">
-      <b>1.</b> كل صباح، قبل الليدات الجداد: المتروكة تاع البارح أولاً — ابدا بالسخونين.<br>
-      <b>2.</b> الطلبية المتروكة في المتجر: الرقم عندك — عيّطلو كيما أي ليد: <i>"عيّطتلك على الطلبية اللي بديتها البارح — مازلت حابها؟ نأكّدهالك دوكا."</i><br>
-      <b>3.</b> رسالة في الصفحة ولا إنستغرام ما كمّلتش: رد في نفس المحادثة: <i>"سلام 👋 سقسيتنا على [المنتج] — مازال متوفر. نكمّلولك الطلبية؟ ابعثلي المقاس والولاية برك."</i><br>
-      <b>4.</b> ما ردّش؟ عاود مرة وحدة غدوة — ومن بعد خلّيه.<br>
-      <b>5.</b> علّم كل واحد: رجع ✅ / ما ردّش / رفض — وحط نسبتك الحقيقية في الخانتين فوق. البوصلة تعاود تحسب.</div></details>`;
+    <details class="xpl" style="margin-top:10px;"><summary>🗓️ الروتين (7 خطوات) + العرض اللي ما يتفوّتش + رسائل جاهزة — انسخهم لفريقك</summary><div style="line-height:2">
+      <div class="hot-rule">⚡ <b>القاعدة:</b> المتروكة = طلبية. نفس <b>السرعة</b> ونفس <b>التأكيد</b>. وكل طلبية — ليد جديد ولا متروكة — تبدا <b>بالسخون</b>: في أسرع وقت، ماشي "نخلّيها لغدوة".</div>
+      <b>1. خصّص واحد</b> من الفريق (ولا زيد مؤكّد) للمتروكة والرسائل: يرد في <b>دقايق</b>، ماشي في ساعات.<br>
+      <b>2. فعّل الرد الآلي</b> في الصفحة وإنستغرام — يجاوب فوراً حتى في الليل: <i>"سلام 👋 شكراً على رسالتك! [المنتج] متوفر بـ [السعر]، التوصيل لكل الولايات والدفع عند الاستلام. ابعثلنا المقاس + الولاية + رقم الهاتف ونأكّدولك الطلبية دوكا."</i><br>
+      <b>3. السخون أولاً:</b> رتّب الطلبيات بالوقت — اللي جات دوكا قبل اللي جات من ساعة، واللي تاع اليوم قبل تاع البارح.<br>
+      <b>4. الطلبية المتروكة في المتجر:</b> الرقم عندك — عيّطلو وأكّد معاه كيما أي طلبية (المقاس، الولاية، العنوان): <i>"عيّطتلك على الطلبية اللي بديتها — مازلت حابها؟ نأكّدهالك دوكا."</i><br>
+      <b>5. 🎁 العرض اللي ما يتفوّتش:</b> اللي تردّد، اعطيه تخفيض <b>~${fmt(offAmt)} دج</b> (قد ثمن ليد واحد: ${fmt(minLead)} دج) ولا توصيل مجاني — <b>صالح اليوم برك</b>. علاش يربح؟ موصلة جديدة بالإعلان تكلّفك ~${fmt(Math.round(minAdDel))} دج أدس؛ هذي جاتك بلا أدس، حتى بالتخفيض.<br>
+      <b>6. ما ردّش؟</b> عاود مرة وحدة غدوة — ومن بعد خلّيه، ما تزعجش.<br>
+      <b>7. علّم كل واحد:</b> رجع ✅ / ما ردّش / رفض — وحط نسبتك الحقيقية في الخانتين فوق. البوصلة تعاود تحسب.</div></details>`;
 }
 
 function rate0(v,x){ return v.rate>0? usdMain(x,v.rate) : fmt(Math.round(x))+' دج'; }
@@ -3380,7 +3395,7 @@ function applyStateUI(o){
     const mb=el('capMineBox'); if(mb) mb.style.display=capMode==='mine'?'block':'none';
     document.querySelectorAll('#stockCycleBtns .cbtn').forEach(b=>b.classList.toggle('active',(b.getAttribute('onclick')||'').includes(','+deliveryDays+')')));
     syncCycle(); setLeadMode(leadMode); renderProdCards(); calc();
-    if(o.adv && hasAccess) switchMode('advanced');
+    if(o.adv) accessReady.then(ok=>{ if(ok) switchMode('advanced'); });
   }catch(e){}
 }
 function resetState(){ try{ localStorage.removeItem(ST_KEY); }catch(e){} stReady=false; location.reload(); }
