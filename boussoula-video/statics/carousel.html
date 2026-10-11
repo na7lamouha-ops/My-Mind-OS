@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../fonts/local.css">
+<link rel="stylesheet" href="../fonts/hand.css">
+<style>
+/* أسلوب «ملف حالة» على الورق — مختلف تماماً على الفيديوهات (الداكنة) */
+:root{--paper:#F4EEE2;--ink:#1d1b22;--mut:#5e5868;--red:#cf2f3d;--grn:#1d8a4b;--gold:#b98309;--blue:#2c62c9;--note:#FFE680;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:1080px;height:1350px;overflow:hidden;background:var(--paper);font-family:'Tajawal','Noto Color Emoji',sans-serif;color:var(--ink);}
+body{background-image:linear-gradient(rgba(60,90,160,.10) 2px,transparent 2px);background-size:100% 64px;background-position:0 40px;}
+.margin{position:absolute;top:0;bottom:0;right:96px;width:3px;background:rgba(207,47,61,.35);}
+.pg{position:absolute;inset:0;padding:120px 150px 150px 90px;}
+.top{position:absolute;top:44px;right:150px;left:90px;display:flex;justify-content:space-between;align-items:center;font-weight:900;font-size:28px;color:var(--mut);}
+.tab{background:var(--ink);color:var(--paper);padding:8px 22px;border-radius:10px 10px 0 0;font-size:28px;}
+.foot{position:absolute;bottom:46px;right:150px;left:90px;display:flex;justify-content:space-between;align-items:center;font-size:28px;font-weight:900;color:var(--mut);}
+.foot .sw{color:var(--ink);background:var(--note);padding:8px 20px;border-radius:8px;transform:rotate(-2deg);box-shadow:0 6px 14px rgba(0,0,0,.12);}
+.h{font-family:'Ruqaa','Tajawal';font-weight:700;line-height:1.35;}
+.h1{font-size:96px;} .h2{font-size:72px;} .h3{font-size:56px;}
+.t{font-size:40px;font-weight:700;line-height:1.6;} .s{font-size:32px;color:var(--mut);font-weight:700;line-height:1.55;}
+.mk{background:linear-gradient(transparent 55%,rgba(255,214,0,.75) 55%);padding:0 6px;}
+.mkr{background:linear-gradient(transparent 55%,rgba(207,47,61,.28) 55%);padding:0 6px;}
+.mkg{background:linear-gradient(transparent 55%,rgba(29,138,75,.25) 55%);padding:0 6px;}
+.red{color:var(--red);} .grn{color:var(--grn);} .gold{color:var(--gold);} .blue{color:var(--blue);}
+.pol{display:inline-block;background:#fff;padding:16px 16px 54px;box-shadow:0 14px 30px rgba(0,0,0,.18);position:relative;text-align:center;}
+.pol .im{width:190px;height:190px;display:flex;align-items:center;justify-content:center;font-size:110px;}
+.pol b{position:absolute;bottom:10px;left:0;right:0;font-family:'Ruqaa';font-size:40px;}
+.pol:before{content:"";position:absolute;top:-18px;left:50%;width:120px;height:36px;margin-left:-60px;background:rgba(255,230,128,.85);transform:rotate(-4deg);}
+.im.r{background:linear-gradient(135deg,#ffc2cc,#ff4d6a);} .im.g{background:linear-gradient(135deg,#a7f3c4,#22c55e);} .im.b{background:linear-gradient(135deg,#cfe3ff,#5aa2ff);} .im.o{background:linear-gradient(135deg,#ffd1a3,#ff7a45);} .im.y{background:linear-gradient(135deg,#FDE68A,#F5C542);} .im.k{background:linear-gradient(135deg,#e5e5ea,#8e8e9a);}
+.stamp{display:inline-block;font-family:'Ruqaa';font-size:52px;border:6px solid currentColor;border-radius:14px;padding:4px 26px;transform:rotate(-8deg);opacity:.88;}
+.note{background:var(--note);padding:26px 30px;box-shadow:0 12px 26px rgba(0,0,0,.15);font-size:38px;font-weight:900;line-height:1.5;}
+.card{background:#fff;border:3px solid var(--ink);border-radius:18px;padding:22px 26px;font-size:38px;font-weight:700;box-shadow:8px 8px 0 var(--ink);}
+.row{display:flex;gap:22px;align-items:center;}
+.tl{display:flex;flex-direction:column;gap:18px;}
+.tl .e{display:flex;gap:20px;align-items:flex-start;}
+.tl .e i{font-style:normal;flex:0 0 auto;font-size:30px;font-weight:900;background:var(--ink);color:var(--paper);border-radius:10px;padding:6px 14px;direction:ltr;margin-top:6px;}
+.tl .e div{font-size:38px;font-weight:900;line-height:1.4;} .tl .e span{display:block;font-size:30px;color:var(--mut);font-weight:700;}
+.kp{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.kp div{background:#fff;border:2px dashed rgba(0,0,0,.25);border-radius:14px;padding:14px 18px;font-size:30px;font-weight:700;color:var(--mut);}
+.kp b{display:block;font-size:46px;color:var(--ink);font-weight:900;}
+table{border-collapse:collapse;width:100%;font-size:34px;font-weight:900;background:#fff;}
+td,th{border:3px solid var(--ink);padding:16px 12px;text-align:center;}
+th{font-family:'Ruqaa';font-size:42px;}
+.dlg{display:flex;flex-direction:column;gap:22px;}
+.dlg p{font-size:38px;font-weight:700;line-height:1.55;} .dlg p b{font-family:'Ruqaa';font-size:42px;margin-left:10px;}
+.dlg .dir{font-size:30px;color:var(--mut);font-style:italic;}
+.arrow{font-size:44px;text-align:center;color:var(--mut);line-height:1;}
+.disc{position:absolute;bottom:104px;right:150px;left:90px;font-size:24px;color:var(--mut);font-weight:700;text-align:center;}
+.box{border:5px dashed var(--ink);border-radius:20px;}
+.ctab{display:inline-block;background:var(--ink);color:#F5C542;font-size:42px;font-weight:900;padding:24px 40px;border-radius:24px;box-shadow:8px 8px 0 #F5C542;}
+</style>
+</head>
+<body>
+<div class="margin"></div>
+<div id="root"></div>
+<script>
+const P=new URLSearchParams(location.search), C=P.get('c'), N=+P.get('s');
+const pol=(e,c,n,rot)=>`<div class="pol" style="transform:rotate(${rot||0}deg)"><div class="im ${c}">${e}</div><b>${n}</b></div>`;
+const DB='الشخصيات تمثيلية (صناع محتوى وتجار) — أرقام محسوبة بالبوصلة، مثال ماشي وعد بالربح.';
+const DN='مثال توضيحي — التخطيط ما يضمنش النجاح، يحسّن القرار.';
+const tl=rows=>`<div class="tl">${rows.map(r=>`<div class="e"><i>${r[0]}</i><div>${r[1]}<span>${r[2]||''}</span></div></div>`).join('')}</div>`;
+const kp=rows=>`<div class="kp">${rows.map(r=>`<div>${r[0]}<b>${r[1]}</b></div>`).join('')}</div>`;
+const CAR={
+ c1:{tab:'📁 دراسة حالة #1',d:DB,slides:[
+  ()=>`<div style="margin-top:60px"><div class="stamp red" style="font-size:44px">ملف مفتوح</div></div>
+   <div class="h h1" style="margin-top:50px">3 صناع محتوى…<br><span class="mk">نفس الهدف.</span></div>
+   <div class="t" style="margin-top:20px">100 مليون. وحدة برك وصلت… <b class="grn">وهي عايشة حياتها.</b></div>
+   <div class="row" style="margin-top:80px;justify-content:center;gap:50px">${pol('🏃','r','إلياس',-5)}${pol('😮‍💨','b','عبد الرحمان',3)}${pol('🧭','g','لينا',-2)}</div>`,
+  ()=>`<div class="h h2" style="margin-top:40px">كل واحد يحكي لجمهورو:</div>
+   <div style="margin-top:60px;display:flex;flex-direction:column;gap:46px">
+    <div class="note" style="transform:rotate(-2deg);width:82%">🏃 <u>إلياس</u>: «ازدم وسكايلي 🚀 ما تخممش بزاف!»</div>
+    <div class="note" style="transform:rotate(1.5deg);width:82%;margin-right:auto;background:#cfe3ff">😮‍💨 <u>عبد الرحمان</u>: «234 ليد اليوم 🔥 الفريق ما رقدش!»</div>
+    <div class="note" style="transform:rotate(-1deg);width:82%;background:#c9f2d8">🧭 <u>لينا</u>: «خطة 40 يوم. اليوم 12: على الخريطة ✅»</div></div>
+   <div class="s" style="margin-top:56px">ثلاث طرق تفكير… وشوف وين وصّلت كل وحدة 👇</div>`,
+  ()=>`<div class="row" style="margin-top:20px;justify-content:space-between">${pol('🏃','r','إلياس',-4)}<div class="stamp red">مرهق</div></div>
+   <div class="h h3" style="margin-top:36px">«ازدم وسكايلي»… <span class="mkr">في 30 يوم</span></div>
+   <div style="margin-top:34px">${tl([['08:00','📞 52 ليد في النهار','ونفس الفريق (2)… ما يلحقش'],['15:00','📦 الستوك خلاص','والكاش مازال في الطريق'],['02:00','🌙 يحسب واش يسلّف','باش ما يحبسش الإعلان']])}</div>
+   <div style="margin-top:40px">${kp([['رأس المال','99 مليون'],['سلعة تبقى','~212 قطعة']])}</div>`,
+  ()=>`<div class="row" style="margin-top:20px;justify-content:space-between">${pol('😮‍💨','b','عبد الرحمان',3)}<div class="stamp blue">يجري</div></div>
+   <div class="h h3" style="margin-top:36px">«بزاف طلبيات = نجاح»</div>
+   <div style="margin-top:34px">${tl([['08:00','☎️ 234 ليد في النهار','منتج بـ 4,500، يكلّف 2,000'],['13:00','👥 6 عمال يجريو','والتيليفون ما يحبسش'],['23:00','📦 ~890 قطعة راح تبقى','والربح في الطلبية صغير (~880 دج)']])}</div>
+   <div style="margin-top:40px">${kp([['رأس المال','421 مليون'],['مقارنة بلينا','×7']])}</div>`,
+  ()=>`<div class="row" style="margin-top:20px;justify-content:space-between">${pol('🧭','g','لينا',-2)}<div class="stamp grn">مرتاحة</div></div>
+   <div class="h h3" style="margin-top:36px">«الخريطة قبل»… <span class="mkg">40 يوم</span></div>
+   <div style="margin-top:34px">${tl([['09:00','☕ تشوف الأرقام','وتعرف وين راهي في الخريطة'],['14:00','📞 36 ليد في النهار','الفريق (2) مرتاح'],['19:00','🏋️ وقتها ليها','الخطة تخدم… وهي عايشة']])}</div>
+   <div style="margin-top:40px">${kp([['رأس المال','61.5 مليون'],['يرجع','قبل اليوم 30']])}</div>`,
+  ()=>`<div class="h h2" style="margin-top:30px">نفس الـ100 مليون:</div>
+   <table style="margin-top:44px"><tr><th></th><th class="red">إلياس</th><th class="blue">عبد الرحمان</th><th class="grn">لينا</th></tr>
+   <tr><td>المدة</td><td>30 يوم</td><td>40 يوم</td><td>40 يوم</td></tr><tr><td>ليد/نهار</td><td>52</td><td>234</td><td>36</td></tr>
+   <tr><td>الفريق</td><td>2</td><td>6</td><td>2</td></tr><tr><td>رأس المال</td><td>99 م</td><td>421 م</td><td class="grn">61.5 م</td></tr><tr><td>سلعة تبقى</td><td>~212</td><td>~890</td><td>~158</td></tr></table>
+   <div class="note" style="margin-top:50px;transform:rotate(-1.5deg)">الفرق ماشي في الخدمة… <span class="mk">الفرق في الخطة.</span></div>`,
+  ()=>`<div class="h h1" style="margin-top:90px">الخطة هي اللي فرّقت<br><span class="mk">بين التعب والراحة.</span></div>
+   <div class="t" style="margin-top:50px">حاب تعرف <b>علاش لينا خمّمت هكذا؟</b> 👀<br>الكاروسيل الجاي: «لينا ورجل الأعمال».</div>
+   <div style="margin-top:70px;text-align:center"><div class="ctab">🧭 ابدا من الوجهة — مجاناً</div><div class="s" style="margin-top:22px">الرابط في البيو 👆</div></div>`]},
+ c2:{tab:'📁 دراسة حالة #2',d:DB,slides:[
+  ()=>`<div class="row" style="margin-top:60px;justify-content:center;gap:60px">${pol('🧭','g','لينا',-3)}${pol('👔','y','سي مراد',4)}</div>
+   <div class="h h1" style="margin-top:70px">قبل ما تشري حتى سلعة…<br><span class="mk">سقسات رجل أعمال.</span></div>
+   <div class="t" style="margin-top:20px">وكي جاوبتو… ضحك. 😄</div>`,
+  ()=>`<div class="h h3" style="margin-top:30px;color:var(--mut)">المشهد 1 — في القهوة ☕</div>
+   <div class="dlg" style="margin-top:44px">
+    <p><b class="grn">لينا:</b> راني حابة نبدا مشروع إيكوم.</p><p><b class="gold">سي مراد:</b> مليح. واش حابة ديري؟</p>
+    <p><b class="grn">لينا:</b> نبيع حوايج.</p><p class="dir">(سي مراد يضحك 😄)</p>
+    <p><b class="gold">سي مراد:</b> هذا <span class="mk">واش راح تبيعي</span>… أنا سقسيتك <span class="mk">واش حابة ديري</span>.</p></div>`,
+  ()=>`<div class="h h2" style="margin-top:30px">«كل مشروع ناجح<br><span class="mk">يبدا من الآخر.</span>»</div>
+   <div class="card" style="margin-top:50px;transform:rotate(-1deg)"><div class="tl">
+    <div class="e"><i>1</i><div>🎯 شحال حابة تربحي؟ وفي قداش؟</div></div>
+    <div class="e"><i>2</i><div>💰 شحال تقدري تحطي… وتستناي؟</div></div>
+    <div class="e"><i>3</i><div>🔁 ومن بعد ارجعي لور<span>زبائن، عمال، دراهم، ووقتاش يرجعو</span></div></div></div></div>
+   <div class="note" style="margin-top:46px;transform:rotate(1.5deg)">«أنا كتبت الرقم… قبل ما نكري المحل.»</div>`,
+  ()=>`<div class="h h2" style="margin-top:20px">شافت النهاية… <span class="mkg">وبنات الخطة لور</span></div>
+   <div style="margin-top:40px;display:flex;flex-direction:column;gap:10px">
+    <div class="card">🎯 <b>100 مليون في 40 يوم</b></div><div class="arrow">⬇</div>
+    <div class="card">📞 <b>36 ليد في النهار</b> <span class="s">(~253 في الأسبوع)</span></div><div class="arrow">⬇</div>
+    <div class="card">👥 <b>فريق: 2</b> &nbsp;·&nbsp; 💰 <b>رأس المال: 61.5 مليون</b></div><div class="arrow">⬇</div>
+    <div class="card">🗓️ <b>يرجع قبل اليوم 30</b></div></div>`,
+  ()=>`<div class="h h1" style="margin-top:110px">وعاد… اختارت السلعة.</div>
+   <div class="note" style="margin-top:60px;transform:rotate(-2deg);font-size:52px">السلعة <span class="mk">آخر قرار</span>،<br>ماشي الأول.</div>
+   <div class="t" style="margin-top:60px">هكذا تبدا الشركات. وهكذا تحسب البوصلة: من الهدف حتى الكاش.</div>`,
+  ()=>`<div class="h h1" style="margin-top:100px">وأنت؟<br><span class="mk">واش حاب ديري؟</span></div>
+   <div class="t" style="margin-top:40px">الكاروسيل الجاي: <b>ديدين وترابينكو</b>…<br>نفس الريلز، طريقين 🔀</div>
+   <div style="margin-top:70px;text-align:center"><div class="ctab">🧭 اكتب هدفك — مجاناً</div><div class="s" style="margin-top:22px">الرابط في البيو 👆</div></div>`]},
+ c3:{tab:'📁 دراسة حالة #3',d:DN,slides:[
+  ()=>`<div class="row" style="margin-top:60px;justify-content:center;gap:60px">${pol('😎','o','ديدين',-4)}${pol('🤔','k','ترابينكو',3)}</div>
+   <div class="h h1" style="margin-top:70px">شافو نفس الريلز…</div>
+   <div class="note" style="margin-top:40px;transform:rotate(-2deg);font-size:56px;display:inline-block">«ازدم ساهلة!»</div>`,
+  ()=>`<div class="h h2" style="margin-top:30px">الوصفة اللي تعلّموها:</div>
+   <div class="card" style="margin-top:50px"><div class="row" style="justify-content:space-around;font-size:44px;font-weight:900;text-align:center">
+    <div>📦<br>منتج</div><div class="arrow">⬅</div><div>📣<br>إعلان</div><div class="arrow">⬅</div><div>🛒<br>اشري</div><div class="arrow">⬅</div><div>🚚<br>ابعث</div></div></div>
+   <div class="t" style="margin-top:60px"><b>ديدين ازدم.</b> بلا هدف، بلا حساب…<br>«<span class="mkr">من بعد نشوف</span>».</div>`,
+  ()=>`<div class="h h2" style="margin-top:30px">الطلبيات:</div>
+   <svg viewBox="0 0 840 420" style="direction:ltr;width:840px;height:420px;margin-top:30px"><line x1="0" y1="210" x2="840" y2="210" stroke="#999" stroke-width="3" stroke-dasharray="10 10"/><path d="M0,230 L70,110 L140,260 L210,90 L280,300 L350,140 L420,280 L500,120 L570,320 L650,150 L720,290 L840,190" fill="none" stroke="#cf2f3d" stroke-width="9" stroke-linejoin="round" stroke-linecap="round"/></svg>
+   <div class="t" style="margin-top:30px">تطلع… تهبط… تطلع.<br><span class="mkr">وكل مرة: مشكل جديد.</span></div>`,
+  ()=>`<div class="h h2" style="margin-top:30px">المشاكل اللي ما ورّاتهاش الريلز:</div>
+   <div style="margin-top:50px;display:grid;grid-template-columns:1fr 1fr;gap:34px">
+    <div class="note" style="transform:rotate(-2deg)">💸 الكاش ناقص… يسلّف من صحابو</div><div class="note" style="transform:rotate(2deg);background:#ffd6d6">↩️ الروتور يطيح عليه</div>
+    <div class="note" style="transform:rotate(1deg);background:#cfe3ff">📦 السلعة يا تخلاص… يا تبقى</div><div class="note" style="transform:rotate(-1.5deg)">😮‍💨 يخدم من الصباح لليل</div></div>`,
+  ()=>`<div class="h h2" style="margin-top:30px">وفي آخر كل شهر:</div>
+   <div class="row" style="margin-top:50px;justify-content:space-around">${['جانفي','فيفري','مارس'].map(m=>`<div class="card" style="text-align:center;width:230px"><div style="font-size:30px;font-weight:900;color:var(--mut)">${m}</div><div class="h red" style="font-size:120px;line-height:1.1">؟</div></div>`).join('')}</div>
+   <div class="h h2 red" style="margin-top:60px">«شحال دخلت؟… ما نعرفش.»</div>
+   <div class="s" style="margin-top:20px">ماشي عيب فيه: الريلز ورّاتلو نص الطريق برك.</div>`,
+  ()=>`<div class="h h1" style="margin-top:110px">وترابينكو؟</div>
+   <div class="t" style="margin-top:30px">ما ازدمش… <span class="mk">سقسى قبل.</span><br>الكاروسيل الجاي: «ترابينكو والتاجر النخبة» 🧠</div>
+   <div style="margin-top:80px;text-align:center"><div class="ctab">🧭 شوف وين رايح — مجاناً</div><div class="s" style="margin-top:22px">الرابط في البيو 👆</div></div>`]},
+ c4:{tab:'📁 دراسة حالة #4',d:DN,slides:[
+  ()=>`<div style="margin-top:60px;text-align:center">${pol('🤔','k','ترابينكو',-3)}</div>
+   <div class="h h1" style="margin-top:60px">«الفرصة تاع 2023<br><span class="mkr">راحت؟</span>»</div>
+   <div class="t" style="margin-top:20px">سقساها لتاجر في الإيكوم من 2019… وهذا واش قالو 👇</div>`,
+  ()=>`<div class="h h3" style="margin-top:30px;color:var(--mut)">المشهد 1 ☕</div>
+   <div class="dlg" style="margin-top:40px">
+    <p><b>ترابينكو:</b> قالو الفرصة تاع 2023 راحت… صح؟</p><p><b class="gold">عمي رشيد:</b> إيه. راحت.</p>
+    <p><b>ترابينكو:</b> خلاص… ما بقاش فيها 😞</p>
+    <p><b class="gold">عمي رشيد:</b> ماشي هكذا. <span class="mk">الفرصة راحت… واللعبة بدات.</span></p></div>`,
+  ()=>`<div class="h h3" style="margin-top:30px;color:var(--mut)">المشهد 2 🧠</div>
+   <div class="dlg" style="margin-top:40px">
+    <p><b class="gold">عمي رشيد:</b> اليوم كاين بزاف معلنين، والكوسط يطلع. <span class="mk">هذا عادي.</span></p>
+    <p><b class="gold">عمي رشيد:</b> اللي يعرف القواعد ويحترم المعايير… <span class="mkg">ينجح.</span></p>
+    <p><b>ترابينكو:</b> واش هوما القواعد؟</p></div>`,
+  ()=>`<div class="h h2" style="margin-top:20px">قواعد اللعبة:</div>
+   <div class="card" style="margin-top:40px"><div class="tl">${[['الهدف قبل السلعة','شحال، وفي قداش من وقت'],['الحساب قبل الصرف','رأس المال، الستوك، يوم رجوع الكاش'],['الخطة تتحسب على أسوأ أسبوع','ماشي على أحسن واحد'],['المعيار: الكاش اللي يرجع','ماشي عدد الطلبيات']].map((r,i)=>`<div class="e"><i>☐ ${i+1}</i><div>${r[0]}<span>${r[1]}</span></div></div>`).join('')}</div></div>`,
+  ()=>`<div style="position:relative;height:560px;margin-top:40px"><div class="box" style="position:absolute;right:120px;top:60px;width:420px;height:420px;display:flex;align-items:center;justify-content:center;font-size:40px;font-weight:900;color:var(--mut);text-align:center">«ازدم ساهلة»<br>«منتج ← إعلان»</div>
+   <div style="position:absolute;left:30px;top:150px">${pol('🤔','k','ترابينكو',-6)}</div></div>
+   <div class="h h1">بدا يشوف<br><span class="mk">من برّا الصندوق.</span></div>`,
+  ()=>`<div class="h h2" style="margin-top:40px">وشاف حكاية لينا، إلياس،<br>وعبد الرحمان…</div>
+   <div class="row" style="margin-top:50px;justify-content:center;gap:40px">${pol('🏃','r','إلياس',-5)}${pol('😮‍💨','b','عبد الرحمان',3)}${pol('🧭','g','لينا',-2)}</div>
+   <div class="note" style="margin-top:50px;transform:rotate(-1.5deg)">نفس الهدف، 3 طرق… <span class="mk">ووحدة برك وصلت مرتاحة.</span></div>`,
+  ()=>`<div class="h h1" style="margin-top:110px">واللي ما شافهاش؟</div>
+   <div class="t" style="margin-top:30px">راهي في <b>دراسة الحالة #1</b> 👆<br>(أول كاروسيل في الصفحة)</div>
+   <div style="margin-top:80px;text-align:center"><div class="ctab">🧭 اعرف القواعد — مجاناً</div><div class="s" style="margin-top:22px">الرابط في البيو 👆</div></div>`]},
+};
+const car=CAR[C], tot=car.slides.length;
+document.getElementById('root').innerHTML=`<div class="top"><span class="tab">${car.tab}</span><span>${N}/${tot}</span></div><div class="pg">${car.slides[N-1]()}</div><div class="disc">${car.d}</div><div class="foot"><span>🧭 البوصلة · Na7la</span>${N<tot?'<span class="sw">اسحب ⬅️</span>':''}</div>`;
+window.TOT=tot; document.fonts.ready.then(()=>window.READY=true);
+</script>
+</body>
+</html>

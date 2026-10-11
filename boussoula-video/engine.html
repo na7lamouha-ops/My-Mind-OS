@@ -72,6 +72,13 @@ svg.chart{direction:ltr;left:90px;width:900px;height:560px;overflow:visible;}
 #badge{position:absolute;top:236px;left:0;right:0;text-align:center;opacity:0;}
 #badge span{display:inline-block;font-size:30px;font-weight:900;color:var(--gold);border:2px solid rgba(245,197,66,.5);background:rgba(20,18,10,.7);border-radius:40px;padding:8px 26px;}
 .q{display:inline-block;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.14);border-radius:28px;padding:14px 30px;}
+.li i.tm{flex:0 0 auto;width:auto;padding:0 12px;font-size:28px;direction:ltr;}
+.post{left:150px;right:150px;background:#fff;color:#111;border-radius:30px;overflow:hidden;box-shadow:0 26px 70px rgba(0,0,0,.6);}
+.post .ph2{display:flex;align-items:center;gap:16px;padding:20px 24px;}
+.post .pa{width:76px;height:76px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:40px;}
+.post .pn b{display:block;font-size:32px;font-weight:900;} .post .pn span{font-size:24px;color:#666;font-weight:700;}
+.post .pb{padding:26px 30px;font-size:40px;font-weight:900;line-height:1.45;color:#fff;text-align:center;min-height:250px;display:flex;align-items:center;justify-content:center;}
+.post .pf{padding:16px 26px;font-size:28px;font-weight:700;color:#333;display:flex;gap:26px;}
 </style>
 </head>
 <body>
@@ -99,6 +106,7 @@ V.scenes.forEach((s,si)=>{
   (s.items||[]).forEach(it=>{
     const e=document.createElement('div'); e.className='it'; d.appendChild(e); const at=it.at||0; const o={it,e,at};
     if(it.type==='text'){ e.classList.add('tx',it.size||'mid'); if(it.color) e.classList.add(it.color); e.style.top=(it.y+(V.yoff||0))+'px'; e.innerHTML=it.strike!=null?`<span class="stk">${it.t}<i></i></span>`:it.t; if(it.static) o.static=true; }
+    else if(it.type==='post'){ e.classList.add('post'); e.style.top=(it.y+(V.yoff||0))+'px'; e.innerHTML=`<div class="ph2"><div class="pa g-${it.g}">${it.emoji}</div><div class="pn"><b>${it.name}</b><span>${it.handle||'صانع محتوى · 🎥'}</span></div></div><div class="pb" style="background:${it.bg||'linear-gradient(135deg,#ff4d6a,#ff9f43)'}">${it.t}</div><div class="pf"><span>❤️ ${it.likes||'1.2K'}</span><span>💬 ${it.comments||'240'}</span><span>↗️</span></div>`; }
     else if(it.type==='counter'){ e.classList.add('cn'); if(it.color) e.classList.add(it.color); e.style.top=(it.y+(V.yoff||0))+'px'; e.innerHTML=`<div style="font-size:${it.size||150}px">${it.pre||''}<span class="n"></span>${it.suf||''}</div>${it.label?`<div class="cl">${it.label}</div>`:''}`; }
     else if(it.type==='phone'){ e.classList.add('ph'); e.style.top=(it.y+(V.yoff||0))+'px'; e.innerHTML=`<div class="hd">${it.head||''}${it.badge?'<span class="bd">0</span>':''}</div>`+it.notifs.map(n=>`<div class="nt"><i>${n.i}</i><div><b>${n.t}</b>${n.s?`<span>${n.s}</span>`:''}</div></div>`).join(''); o.nts=[...e.querySelectorAll('.nt')]; }
     else if(it.type==='tiles'){ e.classList.add('tl'); e.style.top=(it.y+(V.yoff||0))+'px'; e.style.opacity=1; e.innerHTML=it.list.map((x,i)=>`<div class="tile"><b>${i+1}</b><span>${x}</span></div>`).join(''); o.kids=[...e.children]; o.step=it.step||0.3; }
@@ -107,7 +115,7 @@ V.scenes.forEach((s,si)=>{
     else if(it.type==='chat'){ e.classList.add('chat'); e.style.top=(it.y+(V.yoff||0))+'px'; e.style.opacity=1; e.innerHTML=it.list.map(b=>`<div class="bub ${b.side||'r'}">${b.who?`<small>${b.who}</small>`:''}${b.t}</div>`).join(''); o.kids=[...e.children]; o.times=it.list.map(b=>b.at); o.scroll=it.scroll; }
     else if(it.type==='flow'){ e.classList.add('flow'); e.style.top=(it.y+(V.yoff||0))+'px'; e.style.opacity=1; e.innerHTML=it.nodes.map(n=>`<div class="fn" style="${n.c?`border-color:${n.c}`:''}"><i>${n.i}</i><b>${n.b}</b>${n.s?`<span>${n.s}</span>`:''}</div>`).join(''); o.kids=[...e.children]; o.step=it.step||0.7; }
     else if(it.type==='split'){ e.classList.add('split'); e.style.top=(it.y+(V.yoff||0))+'px'; e.style.opacity=1; e.innerHTML=it.cols.map(c=>`<div class="sp ${c.k}"><h3>${c.h}</h3>${c.s?`<div class="s">${c.s}</div>`:''}${(c.rows||[]).map(r=>`<div class="r"><span>${r[0]}</span><b>${r[1]}</b></div>`).join('')}</div>`).join(''); o.kids=[...e.children]; o.step=it.step||0.6; }
-    else if(it.type==='list'){ e.classList.add('list'); e.style.top=(it.y+(V.yoff||0))+'px'; e.style.opacity=1; e.innerHTML=it.rows.map((r,i)=>`<div class="li${r.lock?' lock':''}"><i>${r.n||i+1}</i><div>${r.t}${r.s?`<span>${r.s}</span>`:''}</div>${r.lock?`<em>${r.lock===true?'🔒 في المتقدم':r.lock}</em>`:''}</div>`).join(''); o.kids=[...e.children]; o.step=it.step||0.6; }
+    else if(it.type==='list'){ e.classList.add('list'); e.style.top=(it.y+(V.yoff||0))+'px'; e.style.opacity=1; e.innerHTML=it.rows.map((r,i)=>`<div class="li${r.lock?' lock':''}"><i class="${r.tm?'tm':''}">${r.tm||r.n||i+1}</i><div>${r.t}${r.s?`<span>${r.s}</span>`:''}</div>${r.lock?`<em>${r.lock===true?'🔒 في المتقدم':r.lock}</em>`:''}</div>`).join(''); o.kids=[...e.children]; o.step=it.step||0.6; }
     else if(it.type==='icons'){ e.classList.add('icons'); e.style.top=(it.y+(V.yoff||0))+'px'; e.style.opacity=1; if(it.compact){ e.style.gap='18px'; } e.innerHTML=it.list.map(x=>`<div class="ic" style="${it.compact?'width:190px':''}"><i style="${it.compact?'font-size:90px':''}">${x[0]}</i><b>${x[1]}</b></div>`).join(''); o.kids=[...e.children]; o.step=it.step||0.5; }
     else if(it.type==='products'){ e.classList.add('prod'); e.style.top=(it.y+(V.yoff||0))+'px'; e.style.opacity=1; e.innerHTML=it.list.map(x=>`<div class="pc"><i>${x.i}</i><b>${x.b}</b><span>${x.s}</span></div>`).join(''); o.kids=[...e.children]; o.step=it.step||0.7; }
     else if(it.type==='meter'){ e.classList.add('meter'); e.style.top=(it.y+(V.yoff||0))+'px'; e.innerHTML=`<div class="lb"><span>${it.label}</span><span class="pc" style="${it.nopc?'display:none':''}">0%</span></div><div class="tr"><div class="fl" style="background:${it.color}"></div></div>`; }
@@ -154,8 +162,8 @@ window.render=function(t){
     sc.items.forEach(x=>{ const it=x.it, e=x.e;
       if(x.static){ e.style.opacity=1; e.style.transform=`scale(${1+0.02*Math.sin(t*3)})`; return; }
       const k=seg(lt,x.at,x.at+0.45); const fade= it.until? (1-seg(lt,it.until,it.until+0.3)) : 1;
-      if(['text','avatar','meter'].includes(it.type) && !it.slam){ pop(e,k, it.type==='avatar'?0:30); if(it.type==='avatar'){ e.style.transform=`scale(${0.5+0.5*back(seg(lt,x.at,x.at+0.5))})`; } }
-      if(it.until && ['text','avatar'].includes(it.type)) e.style.opacity=(+e.style.opacity)*fade;
+      if(['text','avatar','meter','post'].includes(it.type) && !it.slam){ pop(e,k, it.type==='avatar'?0:30); if(it.type==='avatar'){ e.style.transform=`scale(${0.5+0.5*back(seg(lt,x.at,x.at+0.5))})`; } }
+      if(it.until && ['text','avatar','post'].includes(it.type)) e.style.opacity=(+e.style.opacity)*fade;
       if(it.type==='meter'){ const v=it.from+(it.to-it.from)*easeIO(seg(lt,it.at+0.3,it.at+(it.dur||3))) + (it.jitter? Math.sin(t*9)*it.jitter*seg(lt,it.at+1,it.at+2):0); e.querySelector('.fl').style.width=clamp(v,0,100)+'%'; e.querySelector('.pc').textContent=Math.round(clamp(v,0,100))+'%'; }
       if(x.kids){ x.kids.forEach((c,i)=>{ const a = x.times? x.times[i] : x.at+i*x.step; const kk=seg(lt,a,a+0.45); c.style.opacity=ease(kk); c.style.transform=`translateY(${(1-ease(kk))*24}px) scale(${0.94+0.06*back(kk)})`; }); if(x.scroll){ const sc2=easeIO(seg(lt,x.scroll.at,x.scroll.at+0.6)); e.style.transform=`translateY(${-x.scroll.by*sc2}px)`; x.kids.forEach((c,i)=>{ if(i<x.scroll.hide) c.style.opacity=(+c.style.opacity)*(1-sc2); }); } }
       if(x.paths){ e.style.opacity=seg(lt,x.at,x.at+0.3); x.paths.forEach((p,i)=>{ p.p.style.strokeDashoffset=p.L*(1-easeIO(seg(lt,x.at+i*0.8,x.at+i*0.8+(it.dur||3)))); }); }
