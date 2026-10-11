@@ -9,11 +9,13 @@ const FPS = 30, WPS = 2.6; // سرعة الكلام: ~2.6 كلمة في الثا
   const b = await chromium.launch(); const ctx = await b.newContext({ viewport: { width: 432, height: 768 }, deviceScaleFactor: 2.5, isMobile: true, hasTouch: true });
   const pg = await ctx.newPage();
   await pg.goto('file:///home/user/My-Mind-OS/boussoula-v2/index.html'); await pg.waitForTimeout(1200);
-  await pg.addStyleTag({ content: `#guideFab{display:none!important}
+  await pg.addStyleTag({ content: `#guideFab,#waFab{display:none!important}
+   #reclabel{position:fixed;top:66px;left:50%;transform:translateX(-50%);z-index:99998;background:rgba(10,10,14,.82);color:#F5C542;border:1px solid rgba(245,197,66,.5);border-radius:20px;padding:4px 14px;font:800 12px Tajawal,sans-serif;white-space:nowrap;pointer-events:none}
    #fing{position:fixed;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:rgba(255,255,255,.28);border:3px solid rgba(255,255,255,.9);box-shadow:0 4px 18px rgba(0,0,0,.5);z-index:99999;pointer-events:none;transition:none}
    #fing.tap{background:rgba(245,197,66,.55)}
    .rec-glow{outline:4px solid #F5C542!important;outline-offset:6px;border-radius:14px;box-shadow:0 0 40px rgba(245,197,66,.6)!important}` });
   await pg.evaluate(() => { const f = document.createElement('div'); f.id = 'fing'; f.style.left = '300px'; f.style.top = '600px'; document.body.appendChild(f); });
+  if (SC.label) await pg.evaluate(t => { const l = document.createElement('div'); l.id = 'reclabel'; l.textContent = t; document.body.appendChild(l); }, SC.label);
   if (SC.setup) await pg.evaluate(SC.setup);
   let n = 0, t = 0; const events = []; let fx = 300, fy = 600;
   const shot = async () => { await pg.screenshot({ path: `${dir}/f${String(n).padStart(5, '0')}.jpg`, type: 'jpeg', quality: 90 }); n++; t = n / FPS; };
@@ -36,6 +38,8 @@ const FPS = 30, WPS = 2.6; // سرعة الكلام: ~2.6 كلمة في الثا
     glow: async (s) => { await pg.evaluate(sel => document.querySelector(sel).classList.add('rec-glow'), s.sel); await hold(s.sec || 1.2); if (!s.keep) await pg.evaluate(sel => document.querySelector(sel).classList.remove('rec-glow'), s.sel); },
     unglow: async (s) => pg.evaluate(sel => document.querySelector(sel).classList.remove('rec-glow'), s.sel),
     fingAway: async () => moveF(470, 900, 0.3),
+    eval: async (s) => pg.evaluate(new Function(s.js)),
+    jump: async (s) => pg.evaluate(([sel, o]) => window.scrollTo(0, Math.max(0, document.querySelector(sel).getBoundingClientRect().top + scrollY - o)), [s.sel, s.off ?? 120]),
   };
   // كل «بلوك»: جملة صوت + خطوات. مدة البلوك = أكبر وحدة بين الخطوات ومدة الكلام
   for (const blk of SC.blocks) {
