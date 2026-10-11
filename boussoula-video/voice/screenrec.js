@@ -7,7 +7,8 @@ const FPS = 30, WPS = 2.6; // سرعة الكلام: ~2.6 كلمة في الثا
   const [scnFile, out] = process.argv.slice(2); const SC = require(path.resolve(scnFile));
   const dir = `${out}/frames_${SC.name}`; fs.rmSync(dir, { recursive: true, force: true }); fs.mkdirSync(dir, { recursive: true });
   const b = await chromium.launch(); const ctx = await b.newContext({ viewport: { width: 432, height: 768 }, deviceScaleFactor: 2.5, isMobile: true, hasTouch: true });
-  const pg = await ctx.newPage();
+  await ctx.route(/^https?:\/\/(?!fonts)/, r => r.abort());
+  const pg = await ctx.newPage(); pg.on('dialog', d => d.accept());
   await pg.goto('file:///home/user/My-Mind-OS/boussoula-v2/index.html'); await pg.waitForTimeout(1200);
   await pg.addStyleTag({ content: `#guideFab,#waFab{display:none!important}
    #reclabel{position:fixed;top:66px;left:50%;transform:translateX(-50%);z-index:99998;background:rgba(10,10,14,.82);color:#F5C542;border:1px solid rgba(245,197,66,.5);border-radius:20px;padding:4px 14px;font:800 12px Tajawal,sans-serif;white-space:nowrap;pointer-events:none}
@@ -17,6 +18,7 @@ const FPS = 30, WPS = 2.6; // سرعة الكلام: ~2.6 كلمة في الثا
   await pg.evaluate(() => { const f = document.createElement('div'); f.id = 'fing'; f.style.left = '300px'; f.style.top = '600px'; document.body.appendChild(f); });
   if (SC.label) await pg.evaluate(t => { const l = document.createElement('div'); l.id = 'reclabel'; l.textContent = t; document.body.appendChild(l); }, SC.label);
   if (SC.setup) await pg.evaluate(SC.setup);
+  if (SC.blurDays) await pg.evaluate(() => { const re = /اليوم\s*~?\s*(1\d|2\d)(?!\d)/; const run = () => { document.querySelectorAll('#advancedMode *').forEach(e => { if (e.children.length > 4) return; const t = e.textContent || ''; if (t.length < 320 && re.test(t)) e.style.filter = 'blur(6px)'; }); }; run(); let q; new MutationObserver(() => { clearTimeout(q); q = setTimeout(run, 0); }).observe(document.body, { subtree: true, childList: true, characterData: true }); window.__blurRun = run; });
   let n = 0, t = 0; const events = []; let fx = 300, fy = 600;
   const shot = async () => { await pg.screenshot({ path: `${dir}/f${String(n).padStart(5, '0')}.jpg`, type: 'jpeg', quality: 90 }); n++; t = n / FPS; };
   const hold = async (sec) => { const k = Math.round(sec * FPS); for (let i = 0; i < k; i++) await shot(); };
@@ -34,11 +36,12 @@ const FPS = 30, WPS = 2.6; // سرعة الكلام: ~2.6 كلمة في الثا
       await pg.evaluate(sel => document.querySelector(sel).blur(), s.sel); },
     slide: async (s) => { const [x, y] = await center(s.sel); await moveF(x, y); await tapF(); const k = Math.round((s.sec || 1) * FPS);
       for (let i = 1; i <= k; i++) { const v = Math.round(s.from + (s.to - s.from) * ease(i / k)); await pg.evaluate(([sel, v]) => { const e = document.querySelector(sel); e.value = v; e.dispatchEvent(new Event('input', { bubbles: true })); }, [s.sel, v]); await shot(); } },
-    tap: async (s) => { const [x, y] = await center(s.sel); await moveF(x, y); await tapF(); if (s.click) await pg.evaluate(sel => document.querySelector(sel).click(), s.sel); },
+    tap: async (s) => { const [x, y] = await center(s.sel); await moveF(x, y); await tapF(); if (s.click) { await pg.evaluate(sel => document.querySelector(sel).click(), s.sel); await pg.evaluate(() => window.__blurRun && window.__blurRun()); await hold(0.2); } },
     glow: async (s) => { await pg.evaluate(sel => document.querySelector(sel).classList.add('rec-glow'), s.sel); await hold(s.sec || 1.2); if (!s.keep) await pg.evaluate(sel => document.querySelector(sel).classList.remove('rec-glow'), s.sel); },
     unglow: async (s) => pg.evaluate(sel => document.querySelector(sel).classList.remove('rec-glow'), s.sel),
     fingAway: async () => moveF(470, 900, 0.3),
-    eval: async (s) => pg.evaluate(new Function(s.js)),
+    eval: async (s) => { await pg.evaluate(new Function(s.js)); await pg.evaluate(() => window.__blurRun && window.__blurRun()); },
+    tag: async (s) => pg.evaluate(([txt, id, root]) => { const all = [...document.querySelectorAll((root || '#advancedMode') + ' *')].filter(e => e.offsetParent && (e.innerText || '').includes(txt)); all.sort((a, b) => a.innerText.length - b.innerText.length); const e = all[0]; if (e) { const old = document.getElementById(id); if (old && old !== e) old.removeAttribute('id'); e.id = id; } }, [s.text, s.id, s.root]),
     jump: async (s) => pg.evaluate(([sel, o]) => window.scrollTo(0, Math.max(0, document.querySelector(sel).getBoundingClientRect().top + scrollY - o)), [s.sel, s.off ?? 120]),
   };
   // كل «بلوك»: جملة صوت + خطوات. مدة البلوك = أكبر وحدة بين الخطوات ومدة الكلام
