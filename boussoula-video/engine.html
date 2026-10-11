@@ -69,12 +69,15 @@ svg.chart{direction:ltr;left:90px;width:900px;height:560px;overflow:visible;}
 .tml .tk{position:absolute;top:58px;font-size:30px;color:var(--mut);font-weight:900;transform:translateX(50%);white-space:nowrap;}
 .tml .ok{margin-top:120px;text-align:center;font-size:44px;font-weight:900;color:#7ef0a8;opacity:0;}
 .li.lock>div{filter:blur(9px);opacity:.75;} .li.lock em{font-style:normal;margin-right:auto;flex:0 0 auto;font-size:28px;font-weight:900;color:var(--gold);border:2px solid rgba(245,197,66,.5);border-radius:30px;padding:6px 16px;white-space:nowrap;}
+#badge{position:absolute;top:236px;left:0;right:0;text-align:center;opacity:0;}
+#badge span{display:inline-block;font-size:30px;font-weight:900;color:var(--gold);border:2px solid rgba(245,197,66,.5);background:rgba(20,18,10,.7);border-radius:40px;padding:8px 26px;}
+.q{display:inline-block;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.14);border-radius:28px;padding:14px 30px;}
 </style>
 </head>
 <body>
 <div id="grid"></div><div id="tint"></div>
 <div id="stage"></div>
-<div class="disc" id="disc"></div>
+<div class="disc" id="disc"></div><div id="badge"></div>
 <div id="vign"></div>
 <script>
 const P=new URLSearchParams(location.search); const NAME=P.get('v');
@@ -167,6 +170,7 @@ window.render=function(t){
       if(it.shake){ e.style.transform+=` translateX(${Math.sin(t*36)*it.shake*seg(lt,x.at+0.4,x.at+0.8)}px)`; }
     });
   });
+  const BG=document.getElementById('badge'); if(V.badge){ if(!BG.innerHTML) BG.innerHTML='<span>'+V.badge+'</span>'; BG.style.opacity=clamp(t/0.4)*(1-seg(t,SC[SC.length-1].a-0.3,SC[SC.length-1].a)); }
   document.getElementById('tint').style.background=`radial-gradient(ellipse at 50% 30%, ${TINT[tint]||TINT.none}, transparent 75%)`;
   const D=document.getElementById('disc'); D.textContent=discT; D.style.opacity=disc;
   document.body.style.opacity=clamp((DUR-t)/0.3);
