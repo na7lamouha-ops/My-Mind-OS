@@ -105,6 +105,9 @@ export function creerBoucle({ maison, agents = [], telegram = () => null, claude
   const sauver = st => { const t = fichier(st.id) + '.tmp'; fs.writeFileSync(t, JSON.stringify(st, null, 1)); fs.renameSync(t, fichier(st.id)); };
   const portes = () => lireJ(FICHIER_PORTES, {});
   const histo = (st, quoi) => { st.historique = [...(st.historique || []), { t: new Date(horloge()).toISOString(), quoi }].slice(-40); };
+  // le bureau s'est éteint PENDANT un cycle : l'agent n'est plus « en_cours » (personne ne le fait tourner) ; il garde son pas,
+  // et l'horloge le reprend à la minute suivante, au pas où il s'était arrêté
+  for (const a of agents) { const st = charger(a.contrat.id); if (st.etat === 'en_cours') { st.etat = 'repos'; st.prochaine = horloge(); histo(st, 'كمّل من بعد الانقطاع'); sauver(st); } }
 
   /** Un message au client : la première ligne dit QUI parle (« 🔍 المفتّش »). Sans Telegram, il va dans la boîte (la page le montre). */
   async function dire(id, lignes, { boutons = null } = {}) {
@@ -411,9 +414,10 @@ export function creerBoucle({ maison, agents = [], telegram = () => null, claude
     for (const [id, a] of parId) {
       const st = charger(id);
       if (st.arrete || ['attend_reponse', 'attend_naam', 'bloque', 'en_cours'].includes(st.etat)) continue;
-      if (a.contrat.cadence.type === 'evenement') continue;
-      if (st.prochaine === null || st.prochaine === undefined) { st.prochaine = prochaineEcheance(a.contrat.cadence, maintenant); sauver(st); continue; }
-      if (st.prochaine <= maintenant) { lances.push(id); await cycle(id, { declencheur: 'horloge' }); }
+      const enSuspens = !!st.pas && st.pas !== 'fin'; // un cycle coupé (ou une erreur à réessayer) reprend, même sans cadence
+      if (a.contrat.cadence.type === 'evenement' && !enSuspens) continue;
+      if ((st.prochaine === null || st.prochaine === undefined) && !enSuspens) { st.prochaine = prochaineEcheance(a.contrat.cadence, maintenant); sauver(st); continue; }
+      if (st.prochaine === null || st.prochaine === undefined || st.prochaine <= maintenant) { lances.push(id); await cycle(id, { declencheur: enSuspens ? 'reprise' : 'horloge' }); }
     }
     return lances;
   }

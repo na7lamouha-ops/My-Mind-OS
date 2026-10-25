@@ -193,7 +193,14 @@ export async function epreuveAgents({ etape }) {
     const c2 = essai({ questions: false }); const z2 = monter(m2, [c2.agent]);
     await z2.b.cycle('tajriba', { humain: true });
     if (c2.compte.lire !== 0 || c2.compte.executer !== 0 || z2.b.etat('tajriba').etat !== 'repos' || !z2.b.etat('tajriba').dernierRapport) throw new Error(`lire ${c2.compte.lire}, executer ${c2.compte.executer}`);
-    return 'question répondue après coupure · reprise au pas « rapport »';
+    // coupure PENDANT un cycle (état « en_cours » sur le disque) : au redémarrage l'horloge le reprend au pas gardé
+    const m3 = maisonTemp(); const c3 = essai({ questions: false }); const w = monter(m3, [c3.agent]);
+    await w.b.cycle('tajriba', { humain: true }); const f3 = path.join(m3, 'carnet', 'etat', 'tajriba.json'); const s3 = JSON.parse(fs.readFileSync(f3, 'utf8')); fs.writeFileSync(f3, JSON.stringify({ ...s3, etat: 'en_cours', pas: 'executer', lecture: { lu: true } }));
+    const c4 = essai({ questions: false }); const w2 = monter(m3, [c4.agent]);
+    if (w2.b.etat('tajriba').etat !== 'repos') throw new Error('« en_cours » resté après le redémarrage');
+    await w2.b.tick();
+    if (c4.compte.lire !== 0 || c4.compte.executer !== 1 || w2.b.etat('tajriba').etat !== 'repos' || w2.b.etat('tajriba').pas !== null) throw new Error(`reprise par l'horloge : lire ${c4.compte.lire}, executer ${c4.compte.executer}`);
+    return 'question répondue après coupure · reprise au pas « rapport » · coupé « en_cours » → l\'horloge reprend au pas « executer »';
   });
 
   await etape('0.5.0 boucle : « حبس » arrête un agent (cycle, carte et réponse refusés) ; « حبس الكل » arrête tout ; « شعّل » rallume ; le plafond de cycles par jour tient (contrôles négatifs)', async () => {
