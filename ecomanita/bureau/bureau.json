@@ -1,0 +1,410 @@
+{
+  "nom": "ecom manita",
+  "version": "0.4.2",
+  "port": 4620,
+  "modele": "sonnet",
+  "dureeMaxSecondes": 300,
+  "langue": "darija",
+  "centre": {
+    "id": "manager",
+    "nom": "MANAGER",
+    "nomAr": "المانجر",
+    "role": "Commande la chaîne, lit Tassyir et Meta, écrit le carnet. Ne parle jamais au client.",
+    "skill": "skills/manager/SKILL.md"
+  },
+  "cerveau": {
+    "id": "carnet",
+    "nom": "LE CARNET",
+    "nomAr": "الكارني",
+    "role": "La mémoire du client : fiches produit, mesures du jour, décisions datées. Rien n'en sort."
+  },
+  "departements": [
+    {
+      "id": "editeur",
+      "ordre": 1,
+      "nom": "ÉDITEUR",
+      "nomAr": "المونتاج",
+      "couleur": "#e07a5f",
+      "role": "Du lien Drive aux créas : trie par mannequin et couleur, monte dix vidéos, sort les photos web.",
+      "skill": "skills/editeur/SKILL.md",
+      "outilPython": "1-EDITEUR/manita.py",
+      "connecteurs": [],
+      "web": false,
+      "postes": [
+        {
+          "id": "trieur",
+          "nom": "TRIEUR",
+          "nomAr": "الترتيب",
+          "role": "Range les rushes par modèle, mannequin et couleur. Ne supprime jamais rien."
+        },
+        {
+          "id": "monteur",
+          "nom": "MONTEUR",
+          "nomAr": "المونتور",
+          "role": "Dix vidéos par mannequin, scènes et musiques différentes, aucune scène répétée."
+        },
+        {
+          "id": "photographe",
+          "nom": "PHOTOS WEB",
+          "nomAr": "التصاور",
+          "role": "Quatre à cinq visuels par couleur, entre 150 et 300 Ko."
+        },
+        {
+          "id": "verif-editeur",
+          "nom": "VÉRIFICATEUR",
+          "nomAr": "المراقب",
+          "role": "Relit chaque vidéo et chaque photo écrite avant de dire que c'est fait."
+        }
+      ],
+      "ecriture": []
+    },
+    {
+      "id": "page",
+      "ordre": 2,
+      "nom": "PAGE PRODUIT + SKU",
+      "nomAr": "الصفحة",
+      "couleur": "#3d405b",
+      "role": "La page Tassyir, publiée dès qu'elle est prête et relue : un SKU par couleur et par taille, description photo / texte alternée.",
+      "skill": "skills/page/SKILL.md",
+      "outilPython": "2-PAGE-PRODUIT-SKU/manita-produit.py",
+      "connecteurs": [
+        "tassyir"
+      ],
+      "web": false,
+      "postes": [
+        {
+          "id": "sku",
+          "nom": "SKU",
+          "nomAr": "الـSKU",
+          "role": "Un SKU par couleur et par taille ; le stock toujours par taille."
+        },
+        {
+          "id": "redacteur",
+          "nom": "DESCRIPTION",
+          "nomAr": "الوصف",
+          "role": "Cinq angles, description alternée photo / texte, jamais deux photos de la même couleur qui se suivent."
+        },
+        {
+          "id": "brouillon",
+          "nom": "BROUILLON TASSYIR",
+          "nomAr": "البروويون",
+          "role": "Crée la page sur Tassyir et la publie dès qu'elle est prête et relue (la description envoyée seule, relue avant)."
+        }
+      ],
+      "ecriture": [
+        "tassyir"
+      ]
+    },
+    {
+      "id": "testing",
+      "ordre": 3,
+      "nom": "TESTING",
+      "nomAr": "التيست",
+      "couleur": "#81b29a",
+      "role": "La porte de rentabilité avant toute dépense, puis la campagne Meta préparée EN PAUSE.",
+      "skill": "skills/testing/SKILL.md",
+      "outilPython": "3-TESTING/manita-testing.py",
+      "connecteurs": [
+        "meta"
+      ],
+      "web": false,
+      "postes": [
+        {
+          "id": "porte",
+          "nom": "PORTE DE RENTABILITÉ",
+          "nomAr": "الباب",
+          "role": "Calcule la perte AVANT : sommet du coût par lead, prix minimum, livraison minimum."
+        },
+        {
+          "id": "campagne",
+          "nom": "CAMPAGNE EN PAUSE",
+          "nomAr": "الكامباني",
+          "role": "Un modèle = une campagne, une vidéo = un ad set, ABO broad, tout EN PAUSE."
+        },
+        {
+          "id": "textes",
+          "nom": "TEXTES",
+          "nomAr": "النصوص",
+          "role": "Les cinq angles de la page produit, jamais réinventés."
+        },
+        {
+          "id": "surveillance",
+          "nom": "SURVEILLANCE 72 H",
+          "nomAr": "المراقبة",
+          "role": "Suit la dépense et les confirmées ; disjoncteur si la dépense monte sans commande (aucun plafond de dépense)."
+        }
+      ],
+      "ecriture": [
+        "meta"
+      ]
+    },
+    {
+      "id": "scaling",
+      "ordre": 4,
+      "nom": "SCALING",
+      "nomAr": "السكالينغ",
+      "couleur": "#f2cc8f",
+      "role": "Monter sur le gagnant : la créa gagnante sur les LIVRÉES, le stock qui donne le budget.",
+      "skill": "skills/scaling/SKILL.md",
+      "outilPython": "4-SCALING/manita-scaling.py",
+      "connecteurs": [
+        "meta",
+        "tassyir"
+      ],
+      "web": false,
+      "postes": [
+        {
+          "id": "classement",
+          "nom": "CLASSEMENT DES ANGLES",
+          "nomAr": "الترتيب",
+          "role": "Bénéfice net par colis expédié, angle par angle, jamais sur les clics."
+        },
+        {
+          "id": "audiences",
+          "nom": "AUDIENCES",
+          "nomAr": "الجمهور",
+          "role": "Custom audiences include et exclude d'abord, lookalikes ensuite, tests en parallèle."
+        },
+        {
+          "id": "budget",
+          "nom": "BUDGET = STOCK",
+          "nomAr": "الميزانية",
+          "role": "Le stock donne le budget, jamais l'inverse ; on descend par paliers, on ne coupe pas."
+        }
+      ],
+      "ecriture": [
+        "meta"
+      ]
+    },
+    {
+      "id": "coach",
+      "ordre": 5,
+      "nom": "COACH",
+      "nomAr": "الكوتش",
+      "couleur": "#5b8def",
+      "role": "La seule voix que le client entend : le rapport quotidien en cinq blocs, la porte du scaling, les réponses sur le vêtement.",
+      "skill": "skills/coach/SKILL.md",
+      "outilPython": "5-COACH-ERP/manita-coach.py",
+      "connecteurs": [
+        "tassyir"
+      ],
+      "web": false,
+      "voix": true,
+      "postes": [
+        {
+          "id": "rapport",
+          "nom": "RAPPORT DU JOUR",
+          "nomAr": "التقرير",
+          "role": "واش شفنا · وين شفناه · القرار · ثلاث اختيارات · الخطوة الجاية."
+        },
+        {
+          "id": "porte-scaling",
+          "nom": "PORTE DU SCALING",
+          "nomAr": "باب السكالينغ",
+          "role": "Cinq conditions, un seul non la ferme : confirmation, livraison, colis livrés, coût par livrée, stock."
+        },
+        {
+          "id": "questions",
+          "nom": "QUESTIONS VÊTEMENT",
+          "nomAr": "الأسئلة",
+          "role": "Répond avec la méthode de la masterclass, jamais avec une promesse de vente."
+        },
+        {
+          "id": "decisions",
+          "nom": "DÉCISIONS DU CLIENT",
+          "nomAr": "القرارات",
+          "role": "Note dans le carnet la réponse du client, la date et ce qu'il savait."
+        }
+      ],
+      "ecriture": []
+    },
+    {
+      "id": "inspecteur",
+      "ordre": 6,
+      "nom": "INSPECTEUR",
+      "nomAr": "المفتّش",
+      "couleur": "#e9b949",
+      "role": "Le contrôle médical du compte Tassyir avant tout test : erreurs d'information et de business, une note sur 100, un devoir à la fois, la porte « جاهز للتاست ». Lecture seule.",
+      "skill": "skills/inspecteur/SKILL.md",
+      "connecteurs": [
+        "tassyir"
+      ],
+      "web": false,
+      "postes": [
+        {
+          "id": "lecture",
+          "nom": "LECTURE",
+          "nomAr": "القراية",
+          "role": "Lit le compte Tassyir outil par outil, sans rien écrire."
+        },
+        {
+          "id": "devoirs",
+          "nom": "DEVOIRS",
+          "nomAr": "الواجبات",
+          "role": "Un devoir à la fois : le titre, علاش, et l'écran exact où cliquer."
+        },
+        {
+          "id": "porte",
+          "nom": "PORTE",
+          "nomAr": "الباب",
+          "role": "Ouvre « جاهز للتاست » quand il n'y a plus aucun point rouge."
+        }
+      ],
+      "ecriture": []
+    }
+  ],
+  "reception": {
+    "id": "telegram",
+    "nom": "TELEGRAM",
+    "nomAr": "تيليغرام",
+    "role": "L'entrée et la sortie : le lien du client arrive ici, les questions à boutons repartent ici."
+  },
+  "controles": [
+    "outil",
+    "source",
+    "auditeur"
+  ],
+  "motsQuiLancent": [
+    "lance",
+    "lancer",
+    "لانسي",
+    "لانسيها",
+    "أطلق",
+    "launch"
+  ],
+  "connecteurs": {
+    "tassyir": {
+      "lecture": [
+        "whoami",
+        "list_stores",
+        "get_store",
+        "list_products",
+        "get_product",
+        "list_categories",
+        "list_brands",
+        "list_product_tags",
+        "list_product_highlights",
+        "get_inventory",
+        "list_orders",
+        "get_order",
+        "get_order_stats",
+        "list_order_tracking",
+        "list_returns",
+        "list_custom_statuses",
+        "list_delivery_agents",
+        "list_delivery_fees",
+        "lookup_town",
+        "get_analytics_overview",
+        "get_marketing_analytics",
+        "get_utm_analytics",
+        "get_variant_analytics",
+        "get_employee_analytics",
+        "get_finance_summary",
+        "list_finance_transactions",
+        "list_expenses",
+        "list_commissions",
+        "list_activity_logs",
+        "list_landing_pages",
+        "list_domains",
+        "list_integrations",
+        "get_import_status",
+        "get_design",
+        "list_design_versions",
+        "validate_design",
+        "render_preview",
+        "get_design_guide",
+        "get_builder_schema",
+        "get_store_builder_config",
+        "get_domain_instructions",
+        "search_stock_images",
+        "inspect_website",
+        "list_employees",
+        "list_roles",
+        "get_billing_subscription",
+        "get_billing_payments",
+        "list_offers"
+      ],
+      "ecriture": [
+        "create_product",
+        "create_products",
+        "update_product",
+        "update_products",
+        "upload_image",
+        "set_quantity_offers",
+        "create_category",
+        "update_category",
+        "adjust_inventory",
+        "add_order_comment",
+        "update_order"
+      ],
+      "signature": [
+        "list_orders",
+        "create_product",
+        "upload_image"
+      ]
+    },
+    "meta": {
+      "lecture": [
+        "ads_get_ad_accounts",
+        "ads_get_ad_entities",
+        "ads_get_ad_account_pages",
+        "ads_get_user_pages",
+        "ads_get_pages_for_business",
+        "ads_get_ig_accounts",
+        "ads_get_ig_media",
+        "ads_get_creatives",
+        "ads_get_creative_ads",
+        "ads_get_ad_images",
+        "ads_get_ad_videos",
+        "ads_get_ad_preview",
+        "ads_get_custom_audience",
+        "ads_get_ad_account_custom_audiences",
+        "ads_get_custom_audience_adsets",
+        "ads_get_customconversions",
+        "ads_get_datasets",
+        "ads_get_dataset_details",
+        "ads_get_dataset_quality",
+        "ads_get_dataset_stats",
+        "ads_get_errors",
+        "ads_get_field_context",
+        "ads_get_help_article",
+        "ads_get_opportunity_score",
+        "ads_insights_advertiser_context",
+        "ads_insights_anomaly_signal",
+        "ads_insights_auction_ranking_benchmarks",
+        "ads_insights_industry_benchmark",
+        "ads_insights_performance_trend",
+        "ads_library_search",
+        "ads_account_get_activity_logs",
+        "ads_experiment_list_tests",
+        "ads_experiment_abtest_get_test",
+        "ads_experiment_lift_get_test",
+        "ads_experiment_check_eligibility",
+        "ads_pixel_event_read",
+        "ads_pixel_parameter_read",
+        "ads_catalog_list_catalogs",
+        "ads_catalog_list_products",
+        "ads_catalog_list_product_sets",
+        "ads_catalog_list_product_feeds",
+        "ads_catalog_get_diagnostics"
+      ],
+      "ecriture": [
+        "ads_create_campaign",
+        "ads_create_ad_set",
+        "ads_create_creative",
+        "ads_create_ad",
+        "ads_creative_upload_media",
+        "ads_create_custom_audience",
+        "ads_update_custom_audience",
+        "ads_update_entity",
+        "ads_activate_entity"
+      ],
+      "signature": [
+        "ads_get_ad_entities",
+        "ads_create_campaign",
+        "ads_creative_upload_media"
+      ]
+    }
+  },
+  "regle": "Un agent ne fait que SA tâche : aucun Bash, aucun fichier, aucun sous-agent ; ses connecteurs en LECTURE seulement pendant le travail ; l'ÉCRITURE (créer, modifier, activer) n'est ouverte qu'après le mot « lance » du client, et seulement pour les départements listés."
+}

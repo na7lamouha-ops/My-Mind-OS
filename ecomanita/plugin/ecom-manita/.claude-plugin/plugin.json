@@ -1,0 +1,9 @@
+{
+  "name": "ecom-manita",
+  "displayName": "ecom manita",
+  "version": "0.4.2",
+  "description": "Les agents ecom manita en mode manuel : /ecom-manita:manager, editeur, page, testing, scaling, coach, inspecteur (le contrôle médical du compte Tassyir), spy (Ad Library), engagement (vidéos Instagram à plus de 200 000 vues), confirmation (le rapport de la confirmation) et dourahem (le vrai bénéfice par modèle et le stock restant). Chaque agent travaille seul avec le client dans sa propre discussion ; le manager enchaîne les autres.",
+  "author": {
+    "name": "ecom manita"
+  }
+}

@@ -1,0 +1,90 @@
+Bonjour Claude. Je suis e-commerçant (paiement à la livraison, Algérie). Je veux installer sur CET ordinateur le bureau « ecom manita » que j'ai acheté. Le fichier zip dont le nom contient « ecom-manita » est dans le dossier que je t'ai ouvert (sinon dans mon dossier Téléchargements / Downloads).
+
+TON TRAVAIL : tout installer et tout vérifier toi-même, de A à Z. Moi, je fais seulement ce que tu ne peux pas faire : taper mes mots de passe, cliquer « Autoriser », et créer mon robot Telegram sur mon téléphone. Pour chacun de ces gestes, dis-moi UNE seule chose à la fois : où cliquer, quoi coller. Parle-moi en darija algérienne simple (en français si je t'écris en français).
+
+RÈGLES
+- Après chaque étape, tu vérifies en lisant le résultat réel (un fichier, une réponse du bureau). Jamais « c'est fait » sans la preuve.
+- Si une étape échoue : lis l'erreur, corrige la cause, recommence. Relancer l'installateur ne casse rien.
+- Tu ne me demandes jamais un mot de passe dans le chat : je le tape moi-même dans la page qui le demande.
+- Le jeton de mon robot Telegram, je le colle MOI-MÊME dans la page du bureau, jamais dans le chat.
+- Tu ne touches à aucune carte bancaire, tu ne supprimes aucun de mes fichiers.
+- Le bureau répond sur http://127.0.0.1:4620 ; toute requête POST vers lui porte l'en-tête « x-manita: 1 ».
+- Sur Windows, tes commandes passent par PowerShell : « curl » y est un faux ami. Parle au bureau avec Invoke-RestMethod, par exemple :
+  Invoke-RestMethod -Method Post -Uri http://127.0.0.1:4620/api/connecteurs/sonder -Headers @{'x-manita'='1'} -TimeoutSec 200 | ConvertTo-Json -Depth 8
+  Avec un corps JSON, ajoute : -ContentType 'application/json; charset=utf-8' -Body ([Text.Encoding]::UTF8.GetBytes(($objet | ConvertTo-Json -Depth 8 -Compress)))   (en octets : PowerShell 5.1 abîme l'arabe d'un texte simple)
+  Pour un GET : Invoke-RestMethod -Uri http://127.0.0.1:4620/api/reglages | ConvertTo-Json -Depth 8
+  Mets TOUJOURS -TimeoutSec 600 sur les POST (comptes, épreuve du dépôt, essai Meta, vérification) : certains prennent plusieurs minutes. Si un appel expire, ne le relance pas tout de suite : relis d'abord l'état (GET) pour voir s'il a fini.
+
+ÉTAPE 1 — Le dossier
+Trouve le zip ecom-manita le plus récent. Décompresse-le dans mon dossier personnel : il doit donner <mon dossier personnel>/ecom-manita avec dedans bureau, outils, INSTALLER-WINDOWS.bat et INSTALLER-MAC.command.
+- Windows (PowerShell) : Unblock-File "<zip>" ; Expand-Archive -Path "<zip>" -DestinationPath $env:USERPROFILE -Force
+- Mac (Terminal) : ditto -x -k "<zip>" "$HOME" ; xattr -dr com.apple.quarantine "$HOME/ecom-manita"
+Si un dossier ecom-manita existe déjà : copie d'abord ecom-manita/bureau/config.local.json à côté, et remets-le après.
+
+ÉTAPE 2 — L'installateur (5 à 20 minutes selon internet), dans une fenêtre que je vois
+- Windows : Start-Process powershell -ArgumentList '-NoExit','-NoProfile','-ExecutionPolicy','Bypass','-File',('"' + $env:USERPROFILE + '\ecom-manita\bureau\installer\installer-windows.ps1"')
+  (les guillemets autour du chemin comptent : un nom d'utilisateur Windows peut contenir un espace).
+- Mac : open -a Terminal "$HOME/ecom-manita/INSTALLER-MAC.command"
+Dis-moi tout de suite : « une fenêtre va me demander de connecter Claude Code à mon compte : je me connecte et je clique Autoriser ; si on me montre un code, je le colle dans cette fenêtre puis Entrée ».
+Lis le fichier ecom-manita/_ETAT-INSTALLATION.txt toutes les 30 secondes et dis-moi en une ligne où on en est. C'est fini quand une ligne commence par « VERDICT: ». Seule la ligne « VERDICT: INSTALLE <date> » est bonne. « VERDICT: INSTALLE AVEC MANQUES » ou « VERDICT: INCOMPLET » = pas fini : lis les lignes ECHEC, corrige la cause, relance la même commande.
+L'installateur pose aussi les agents du mode manuel : une ligne qui commence par « agents: » et contient PASSE doit être là. Sinon, lance toi-même : claude plugin marketplace add "<mon dossier personnel>/ecom-manita/plugin" puis claude plugin install ecom-manita@ecom-manita, et vérifie avec claude plugin list (on doit y lire ecom-manita@ecom-manita). Sous Windows, « claude » est $env:USERPROFILE\.local\bin\claude.exe ; sur Mac, ~/.local/bin/claude.
+
+ÉTAPE 3 — Mes connecteurs Tassyir et Meta
+Ouvre dans mon navigateur https://claude.ai/settings/connectors et guide-moi pour ajouter, avec « Ajouter un connecteur personnalisé » (un nom, l'adresse, puis « Connecter » avec mon compte) :
+- Tassyir : https://api.tassyir.io/mcp
+- Meta Ads : https://mcp.facebook.com/ads
+Mets chaque adresse dans le presse-papiers avant que je la colle (Windows : Set-Clipboard ; Mac : pbcopy).
+Puis : POST http://127.0.0.1:4620/api/connecteurs/sonder (il peut prendre une minute). La réponse doit donner un préfixe pour « tassyir » ET pour « meta ». Si « manque » dit « needs-auth », je n'ai pas fini de me connecter à ce connecteur : refais avec moi « Connecter » dans claude.ai, puis relance la sonde.
+
+ÉTAPE 4 — Mes comptes
+POST http://127.0.0.1:4620/api/reglages/comptes : il lit mes comptes publicitaires, mes pages et mes boutiques Tassyir (lecture seule). Montre-moi la liste. Si « magasin » n'est pas encore choisi dans GET /api/reglages, demande-moi quelle boutique, puis POST /api/reglages avec {"magasin": <la boutique choisie, telle que lue>}.
+Puis les wilayas : GET /api/reglages, clé « ciblage ». Les 25 wilayas du nord y sont DÉJÀ, avec leurs codes Meta, confirmées (le test et la scale ne visent qu'elles, jamais toute l'Algérie) : je n'ai rien à taper. Montre-moi la liste des wilayas (sans les codes). Si je dis que je ne livre pas dans une wilaya, POST /api/reglages avec {"ciblage": {"vus": [tous les codes de la liste], "garder": [les codes gardés], "confirme": true}} et relis GET /api/reglages (confirme doit valoir true). N'écris jamais {"type": …} ni un pays.
+
+ÉTAPE 4 bis — Mon jeton Meta (une étape de l'installation, faite maintenant et une seule fois, après les connecteurs et les comptes : il évite un connecteur qui se déconnecte en pleine mission ; si elle bloque, le bureau marche quand même par le connecteur Meta de l'étape 3)
+Guide-moi, une action à la fois, en ouvrant toi-même les pages dans mon navigateur (le détail est dans ecom-manita/bureau/GUIDE-JETON-META.md) :
+1. https://developers.facebook.com/apps : je crée une app (cas « Autre », type « Entreprise », mon portefeuille business) et j'y ajoute « API Marketing ». Elle reste en mode Développement. Le niveau d'accès « Limited » de l'API Marketing suffit pour une mission normale.
+2. https://business.facebook.com/settings, Utilisateurs système : j'ajoute un utilisateur système (rôle Employé), je lui attribue mon compte publicitaire (contrôle total), ma page (contrôle total) et mon pixel (gérer), et je lui ajoute l'app de l'étape 1.
+3. « Générer un nouveau jeton » : l'app de l'étape 1, Expiration « Jamais », les autorisations ads_management, ads_read, business_management, pages_read_engagement, pages_show_list.
+4. Le jeton, JAMAIS dans le chat : j'appuie sur F5, onglet « التحضير », case « توكن ميتا », je le colle MOI-MÊME et j'appuie sur « افحص التوكن ».
+Puis toi : POST http://127.0.0.1:4620/api/meta/sonder avec {} (il lit /me, mon compte et ma page, sans rien écrire). Il faut "ok": true. Sinon "texte" dit lequel des trois : jeton faux ou expiré (refaire 3 et 4), droits manquants sur le compte ou la page (refaire 2), Meta refuse ou indisponible (réessayer plus tard). GET /api/reglages montre seulement « meta.jeton » masqué (••••) : c'est normal.
+Révoquer et recoller : Utilisateurs système → « Révoquer les jetons » ; puis un nouveau jeton (3) collé dans « توكن ميتا » et « افحص التوكن ».
+Sans jeton, le bureau passe par le connecteur Meta de l'étape 3 : rien n'est bloqué. Le mode manuel (/ecom-manita:…) garde toujours le connecteur.
+
+ÉTAPE 5 — Mes chiffres
+Lis d'abord GET http://127.0.0.1:4620/api/reglages. Puis demande-moi, UNE question à la fois, et n'invente jamais un chiffre :
+le prix du dollar chez moi (en dinars) · mon budget pub maximum par jour (en dinars) · l'emballage par colis · la livraison à ma charge par commande · le coût d'un retour · les frais du paiement à la livraison (0 s'il n'y en a pas) · mon taux de confirmation habituel (%) · mon taux de livraison habituel (%) · le code court de ma boutique (2 à 8 lettres, ex. SHOP) · l'heure de mon rapport du soir (ex. 20:30) · en combien de jours mon atelier me livre · combien de créas (vidéos, donc ad sets) je teste d'habitude par modèle : une, deux, trois ou quatre (quatre au plus, quatre si je ne sais pas ; le robot me reposera la question UNE fois par lien, ce nombre sera le bouton marqué « (العادة) », et la réponse vaudra pour tous les modèles du lien).
+Enregistre avec POST /api/reglages :
+{"taux":…, "plafondJourDA":…, "creasParModele":…, "couts":{"emballage":…, "livraison":…, "retour":…, "fraisCod":…}, "declare":{"confirmation":…, "livraison":…}, "codeBoutique":"…", "heureRapport":"…", "joursReappro":…}
+creasParModele : 1, 2, 3 ou 4 seulement (un nombre) ; toute autre valeur est refusée (400).
+Relis GET /api/reglages pour vérifier.
+
+ÉTAPE 6 — Mon robot Telegram
+Dicte-moi, sur mon téléphone : Telegram → chercher @BotFather → /newbot → un nom → un identifiant qui finit par « bot » → copier le jeton.
+Ouvre http://localhost:4620 (ou appuie sur F5 si la page est déjà ouverte), onglet « التحضير » : je colle le jeton de BotFather dans la case « المفتاح لي عطاهولك BotFather » (la case de Telegram, PAS la case « توكن ميتا » de Meta) et j'appuie sur « سجّل ». Ensuite j'envoie /start à mon robot.
+Puis toi : POST /api/telegram/chat (il trouve mon compte), puis POST /api/telegram/essai : je dois recevoir le message d'essai sur mon téléphone. Demande-moi si je l'ai reçu.
+
+ÉTAPE 7 — Mes vidéos vers Meta : le dépôt
+Meta prend une vidéo par une adresse publique. Le bureau la met en ligne le temps de l'envoi, attend que Meta dise « ready », puis l'efface : rien ne reste en ligne. Par défaut, c'est le TUNNEL : sans compte, sans carte, sans abonnement (cloudflared, posé par l'installateur). Cloudflare R2 n'est qu'une OPTION : seulement si le tunnel échoue chez moi, ou si je te le demande.
+a) GET http://127.0.0.1:4620/api/reglages : « depot » doit dire "type": "tunnel" (sinon POST /api/reglages avec {"depot":{"type":"tunnel"}}). Puis POST http://127.0.0.1:4620/api/depot/epreuve (jusqu'à deux minutes). Il faut "verdict": "PASSE" : un fichier part par l'adresse publique, revient identique, puis l'adresse est morte.
+   Si ÉCHEC : lis "detail". Si mon réseau bloque le tunnel, propose-moi l'option R2 (point b) ; sinon passe à c).
+b) OPTION R2 (seulement si a) échoue, ou si je le demande). Demande-moi d'abord, une question : « عندك Visa ولا Mastercard ولا PayPal ؟ ». Cloudflare en exige un pour ouvrir R2, même gratuit ; CIB et Edahabia ne marchent pas. Si NON : on reste sur le tunnel et tu me dis ce qui bloque. Si OUI : guide-moi pas à pas avec le fichier 4-GUIDE-CLOUDFLARE-R2-GRATUIT.pdf (dans le dossier que je t'ai ouvert, sinon dans ecom-manita), une action à la fois, en ouvrant toi-même les pages dans mon navigateur :
+     1. https://dash.cloudflare.com/sign-up : je crée le compte et je confirme l'e-mail (je tape MOI-MÊME mon mot de passe).
+     2. Storage & databases > R2 > Overview : j'ajoute R2 (je mets MOI-MÊME la carte ou PayPal).
+     3. Create bucket : nom ecom-manita-videos (minuscules, chiffres, tirets), classe Standard, le reste par défaut.
+     4. Bucket > Settings > Public Development URL > Enable, je tape allow > Allow ; puis Object Lifecycle Rules > Add rule : effacer les objets après 1 jour > Save changes.
+     5. R2 > Account Details > Manage (API Tokens) > Create Account API token : Object Read & Write, Specify bucket(s) > Apply to specific buckets only > ecom-manita-videos. La page montre Token value, Access Key ID et Secret Access Key : seules les deux dernières servent.
+   Je te donne dans le chat SEULEMENT : l'Account ID (32 caractères, sans https:// ni .r2.cloudflarestorage.com), le nom du bucket, l'Access Key ID et la Public URL complète (https://pub-….r2.dev). Enregistre-les avec POST /api/reglages : {"depot":{"type":"r2","r2":{"compte":…,"bucket":…,"cleId":…,"basePublique":…}}}. La Secret Access Key, JAMAIS dans le chat : j'appuie sur F5, onglet « التحضير », étape 5, je la colle MOI-MÊME dans la case Secret Access Key et j'appuie sur « سجّل ». Relis GET /api/reglages (la clé secrète apparaît masquée : ••••).
+   Puis refais POST http://127.0.0.1:4620/api/depot/epreuve : il faut "verdict": "PASSE". Si ÉCHEC avec R2 : lis "detail" (403 = clé ou bucket faux ; « fetch failed » = Account ID mal collé ; « Invalid URL » = Public URL sans https://), corrige avec moi, refais l'épreuve. Si on n'y arrive pas, remets {"depot":{"type":"tunnel"}}.
+c) L'essai Meta : POST http://127.0.0.1:4620/api/depot/essai-meta avec {"compte": "<l'id du compte publicitaire que j'utilise, lu à l'étape 4>"}, puis GET http://127.0.0.1:4620/api/depot/essai-meta toutes les 20 secondes jusqu'à "etat": "fini". Si le POST répond "etat": "refuse", ne sonde pas : lis "detail", corrige (le plus souvent : refaire l'étape 4), puis relance le POST. Il faut "verdict": "PASSE" : une mire de cinq secondes (aucune personne) est dans la bibliothèque de mon compte publicitaire, AUCUNE publicité n'est créée, et l'adresse est fermée. Donne-moi le nom de la vidéo (ecom-manita-essai-…) : je peux la supprimer de ma bibliothèque si je veux.
+
+ÉTAPE 8 — Ma musique
+Ouvre le dossier musiques de ma maison (Windows : %USERPROFILE%\ecom-manita-maison\musiques ; Mac : ~/ecom-manita-maison/musiques). J'y mets au moins dix musiques (mp3) de PLUS DE DOUZE SECONDES chacune : un morceau de douze secondes ou moins ne sert plus (chaque vidéo livrée dépasse dix secondes). Tu ne comptes pas toi-même : GET http://127.0.0.1:4620/api/installation, lis la ligne « musiques » (elle ne compte que les morceaux de plus de douze secondes, durée lue par ffprobe) et lis-moi son détail : combien il en faut, combien il y en a, combien sont trop courts ou illisibles. Il faut qu'elle soit PASSE.
+
+ÉTAPE 9 — Tout vérifier
+POST http://127.0.0.1:4620/api/installation/verifier (jusqu'à trois minutes : il refait le vrai aller-retour du dépôt) : chaque ligne doit être PASSE. Seules exceptions : les deux lignes du jeton Meta, « ميتا (التوكن) » et « ميتا : فيديو التجربة بالتوكن », sont NON_VERIFIABLE quand je n'ai pas mis de jeton (le bureau passe alors par le connecteur) : ce n'est pas une panne, ne cherche pas à les réparer ; avec un jeton, elles doivent être PASSE. Ouvre http://localhost:4620 sur l'onglet « التحضير ». S'il reste un point rouge, règle-le avec moi.
+
+ÉTAPE 10 — Fini
+Ouvre http://localhost:4620 : c'est mon bureau (les agents qui travaillent et marchent, le manager, le carnet, Telegram à la réception). Dis-moi en quatre phrases simples : j'envoie le lien Drive PUBLIC de mon shooting à mon robot Telegram (un seul lien peut contenir plusieurs modèles) ; sa première question est « combien de modèles », puis il me montre une photo de chaque modèle trouvé et je confirme ; la page produit se publie dès qu'elle est prête ; aucune publicité ne se lance sans mon bouton « لانسي » (une seule question « لانسي » à la fois ; « الغي » tapé hors fiche les ferme toutes, sans rien lancer ni supprimer ; en mode site, il me demande le pixel parmi ceux du compte choisi). L'ordinateur doit rester allumé : c'est lui qui travaille.
+Ajoute une cinquième phrase (nouveau en 0.4.0) : la première chose à faire est d'écrire « افحص حسابي » au robot : l'inspecteur lit mon compte Tassyir sans rien modifier, me donne une note sur 100 et un devoir à la fois ; tant qu'il reste un point rouge, je ne lance aucun modèle.
+Puis explique-moi le mode manuel, en deux phrases : si je veux faire une seule chose à la main (seulement le montage, ou seulement un test), j'ouvre dans Code une NOUVELLE discussion sur le dossier ecom-manita-maison, je tape / et je choisis l'agent : ecom-manita:manager (il enchaîne tous les autres et me dit où en est chaque modèle), ecom-manita:editeur (montage), ecom-manita:page (page Tassyir), ecom-manita:testing (test Meta), ecom-manita:scaling, ecom-manita:coach, ecom-manita:inspecteur (le contrôle médical du compte), ou ecom-manita:spy (l'agent SPY : il lit la Meta Ad Library d'un pays par le connecteur Meta Ads, puis j'écris « spy dz »). Chaque agent travaille dans sa propre discussion, et les mêmes règles tiennent : la page se publie dès qu'elle est prête, et aucune publicité ne se lance sans mon « لانسي ».
+Le mode Telegram de l'agent SPY (plugin/ecom-manita/skills/spy/INSTALLATION-TELEGRAM.md) est une OPTION qui demande un compte Cloudflare (offre gratuite) et un Worker : ne l'installe pas pendant cette installation, seulement si je te le demande plus tard. SPY marche sans lui, dans Claude.

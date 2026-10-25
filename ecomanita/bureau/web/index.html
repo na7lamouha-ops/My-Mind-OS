@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>المكتب تاع ecom manita</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 3 30 11v10L16 29 2 21V11z' fill='%23e07a5f'/%3E%3Cpath d='M16 3 30 11 16 19 2 11z' fill='%23f2cc8f'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="haut" id="haut">
+  <h1 class="titre">المكتب تاع <span class="latin" dir="ltr">ecom manita</span> <span class="version latin" id="version" dir="ltr"></span></h1>
+  <div class="haut-connecteurs">
+    <span class="etiquette">متصل بـ</span>
+    <span class="pastilles" id="connecteurs"><span class="pastille-vide">والو مازال</span></span>
+  </div>
+  <div class="haut-usage" title="tokens استهلكهم المكتب في نافذة خمس سوايع، والمجموع من البداية">
+    <span class="etiquette">استهلاك المكتب</span>
+    <span class="chiffres latin" dir="ltr"><b id="usage-fenetre">0</b><small>/ 5 h</small></span>
+    <span class="chiffres latin" dir="ltr"><b id="usage-total">0</b><small>total</small></span>
+  </div>
+  <div class="haut-droite">
+    <span class="heure latin" id="heure" dir="ltr">--:--</span>
+    <button class="telegram-etat" id="haut-telegram" type="button" title="تيليغرام">
+      <span class="point" id="telegram-point"></span>
+      <span>تيليغرام</span>
+    </button>
+    <span class="lien" id="lien-etat" hidden>المكتب ما يجاوبش</span>
+  </div>
+</header>
+
+<main class="app" id="app">
+  <section class="bureau" id="bureau" aria-label="المكتب">
+    <div class="bureau-outils">
+      <button type="button" class="bouton-mini" id="bouton-plier" aria-expanded="true">اطوي المكتب</button>
+    </div>
+    <div class="bureau-scene" id="scene">
+      <p class="chargement" id="bureau-chargement">المكتب راه يتحضّر</p>
+    </div>
+    <div class="bureau-bas">
+      <div class="legende" aria-label="المفتاح">
+        <span><i class="lg lg-libre"></i>فارغ</span>
+        <span><i class="lg lg-encours"></i>راهي تخدم</span>
+        <span><i class="lg lg-attente"></i>تستنى كلمتك</span>
+        <span><i class="lg lg-echec"></i>ما كملاتش</span>
+      </div>
+      <!-- par défaut : seulement les travailleurs ; ce bouton rallume les scènes pour rire (gardé dans le navigateur) -->
+      <button type="button" class="bouton-mini bouton-vie" id="bouton-vie" title="الهدرة بين العمال، ريم والقلوب&#10;شيكم، الدبزة، والبوس الجيعان&#10;غير للضحك، ماشي خدمة حقيقية">ورّي الهدرة والضحك</button>
+    </div>
+  </section>
+
+  <aside class="panneau" id="panneau">
+    <nav class="onglets" role="tablist" aria-label="الأقسام تاع اللوحة">
+      <button type="button" role="tab" class="onglet" data-onglet="missions" aria-selected="false">الموديلات <span class="compte latin" id="compte-missions" hidden>0</span></button>
+      <button type="button" role="tab" class="onglet actif" data-onglet="taches" aria-selected="true">الخدمات <span class="compte latin" id="compte-attente" hidden>0</span></button>
+      <button type="button" role="tab" class="onglet" data-onglet="coach" aria-selected="false">الكوتش</button>
+      <button type="button" role="tab" class="onglet" data-onglet="carnet" aria-selected="false">الكارني</button>
+      <button type="button" role="tab" class="onglet" data-onglet="routines" aria-selected="false">الروتين</button>
+      <button type="button" role="tab" class="onglet" data-onglet="journal" aria-selected="false">الجورنال</button>
+      <button type="button" role="tab" class="onglet" data-onglet="reglages" aria-selected="false">الإعدادات</button>
+      <button type="button" role="tab" class="onglet" data-onglet="installation" aria-selected="false">التحضير <span class="compte latin" id="compte-installation" hidden>0</span></button>
+    </nav>
+
+    <!-- الموديلات : la chaîne, du lien Drive à la publicité -->
+    <section class="vue" id="vue-missions" role="tabpanel" hidden>
+      <p class="mission-aide">باش تبدا موديل جديد : ابعث لينك الدوسي تاع درايف للروبو تاعك في تيليغرام، وهو يسقسيك. هنا تشوف وين وصلت كل خدمة.</p>
+      <div id="liste-missions" class="missions"><p class="vide">مازال حتى موديل</p></div>
+    </section>
+
+    <!-- التحضير : la liste à cocher de l'installation (ce que la vidéo d'activation fait cocher) -->
+    <section class="vue" id="vue-installation" role="tabpanel" hidden>
+      <div class="barre">
+        <div class="barre-ligne barre-bas"><strong>واش راه واجد</strong><button type="button" class="bouton principal" id="ins-tout">افحص كلش</button></div>
+        <ul class="liste-installation" id="liste-installation"><li class="vide">راني نقرا</li></ul>
+        <small class="etiquette" id="ins-date"></small>
+      </div>
+      <form class="barre reglages" id="formulaire-chaine" autocomplete="off">
+        <fieldset class="bloc">
+          <legend>الخطوة الأولى : الكونيكتورات تاع Claude</legend>
+          <small>زيد « تسيير » و « ميتا » في claude.ai، الإعدادات، Connectors. ومن بعد اضغط هنا.</small>
+          <div class="barre-ligne"><button type="button" class="bouton" id="ins-sonder">افحص الكونيكتورات</button><span class="etiquette latin" id="ins-sonde" dir="ltr"></span></div>
+          <div class="barre-ligne"><button type="button" class="bouton" id="ins-comptes">جيب الكونتات و الصفحات</button><span class="etiquette" id="ins-comptes-etat"></span></div>
+          <div id="ins-comptes-liste" class="comptes"></div>
+          <small>التيست و السكيل يخدمو على خمسة و عشرين ولاية تاع الشمال. الكود تاع كل ولاية نجيبوه من ميتا، ومن بعد تأكّدهم في « الإعدادات ».</small>
+          <div class="barre-ligne"><button type="button" class="bouton" id="ins-wilayas">جيب الولايات</button><span class="etiquette" id="ins-wilayas-etat"></span></div>
+        </fieldset>
+        <fieldset class="bloc">
+          <legend>ميتا بالتوكن (اختياري)</legend>
+          <small>التوكن تاع الـ utilisateur système، لصقو هنا برك، عمرك ما تبعثو في الشات. بلا توكن، ميتا تخدم بالكونيكتور.</small>
+          <div class="champ"><label for="ch-meta-jeton">توكن ميتا</label><input type="password" id="ch-meta-jeton" class="latin" dir="ltr" autocomplete="new-password" spellcheck="false"></div>
+          <div class="barre-ligne"><button type="button" class="bouton" id="ch-meta-sonder">افحص التوكن</button><span class="etiquette" id="ch-meta-jeton-etat"></span></div>
+        </fieldset>
+        <fieldset class="bloc">
+          <legend>الخطوة الثانية : الروبو تاع تيليغرام</legend>
+          <div class="champ"><label for="ch-tg-token">المفتاح لي عطاهولك BotFather</label><input type="password" id="ch-tg-token" class="latin" dir="ltr" autocomplete="new-password" spellcheck="false"></div>
+          <small>سجّل المفتاح، ومن بعد ابعث « /start » للروبو تاعك، واضغط :</small>
+          <div class="barre-ligne"><button type="button" class="bouton" id="ch-tg-chat">لقا الحساب تاعي</button><button type="button" class="bouton" id="ch-tg-essai">جرّب تيليغرام</button><span class="etiquette latin" id="ch-tg-etat" dir="ltr"></span></div>
+        </fieldset>
+        <fieldset class="bloc">
+          <legend>الخطوة الثالثة : الحسابات تاع البيزنس</legend>
+          <div class="trois">
+            <div class="champ"><label for="ch-taux">الدولار بقداش <span class="latin">DA</span></label><input type="number" id="ch-taux" class="latin" dir="ltr" min="50" max="500" step="any"></div>
+            <div class="champ"><label for="ch-plafond">أكبر بودجي في النهار <span class="latin">DA</span></label><input type="number" id="ch-plafond" class="latin" dir="ltr" min="0" step="any"></div>
+            <div class="champ"><label for="ch-cod">مصاريف الخلاص عند الاستلام <span class="latin">DA</span></label><input type="number" id="ch-cod" class="latin" dir="ltr" min="0" step="any"></div>
+          </div>
+          <div class="trois">
+            <div class="champ"><label for="ch-code">الكود تاع البوتيك <span class="latin">(SKU)</span></label><input type="text" id="ch-code" class="latin" dir="ltr" maxlength="8" placeholder="SHOP"></div>
+            <div class="champ"><label for="ch-heure">ساعة التقرير</label><input type="time" id="ch-heure" class="latin" dir="ltr"></div>
+            <div class="champ"><label for="ch-reappro">أيام باش تجيك السلعة</label><input type="number" id="ch-reappro" class="latin" dir="ltr" min="1" max="60"></div>
+          </div>
+          <small>التغليف، التوصيل، الرجوع و النسب : في « الإعدادات ».</small>
+        </fieldset>
+        <fieldset class="bloc">
+          <legend>الخطوة الرابعة : الموسيقى و الأدوات</legend>
+          <div class="champ"><label for="ch-musiques">دوسي الموسيقى (عشرة فوق اثناش ثانية)</label><input type="text" id="ch-musiques" class="latin" dir="ltr" spellcheck="false"></div>
+          <div class="trois">
+            <div class="champ"><label for="ch-python">Python</label><input type="text" id="ch-python" class="latin" dir="ltr" spellcheck="false"></div>
+            <div class="champ"><label for="ch-ffmpeg">FFmpeg (le dossier)</label><input type="text" id="ch-ffmpeg" class="latin" dir="ltr" spellcheck="false"></div>
+            <div class="champ"><label for="ch-cloudflared">cloudflared</label><input type="text" id="ch-cloudflared" class="latin" dir="ltr" spellcheck="false"></div>
+          </div>
+          <small>المنصّب يعمّرهم وحدو. ما تبدّلهمش إذا كلش مليح.</small>
+        </fieldset>
+        <fieldset class="bloc">
+          <legend>الخطوة الخامسة : كيفاش تروح الفيديوات لميتا و تسيير</legend>
+          <div class="barre-ligne"><label><input type="radio" name="ch-depot" value="tunnel"> تونال (بلا حتى حساب)</label><label><input type="radio" name="ch-depot" value="r2"> R2 تاع Cloudflare تاعك</label></div>
+          <div id="ch-r2" class="trois" hidden>
+            <div class="champ"><label for="ch-r2-compte">Account ID</label><input type="text" id="ch-r2-compte" class="latin" dir="ltr" spellcheck="false"></div>
+            <div class="champ"><label for="ch-r2-bucket">Bucket</label><input type="text" id="ch-r2-bucket" class="latin" dir="ltr" spellcheck="false"></div>
+            <div class="champ"><label for="ch-r2-id">Access Key ID</label><input type="text" id="ch-r2-id" class="latin" dir="ltr" spellcheck="false"></div>
+            <div class="champ"><label for="ch-r2-secret">Secret Access Key</label><input type="password" id="ch-r2-secret" class="latin" dir="ltr" autocomplete="new-password" spellcheck="false"></div>
+            <div class="champ"><label for="ch-r2-base">Public URL (r2.dev)</label><input type="text" id="ch-r2-base" class="latin" dir="ltr" spellcheck="false" placeholder="https://pub-….r2.dev"></div>
+          </div>
+          <div class="barre-ligne"><button type="button" class="bouton" id="ch-depot-epreuve">جرّب الدوبو</button><span class="etiquette latin" id="ch-depot-etat" dir="ltr"></span></div>
+          <div class="barre-ligne"><select id="ch-meta-compte" class="latin" dir="ltr" aria-label="الكونت تاع البوب"></select><button type="button" class="bouton" id="ch-depot-meta">ابعث فيديو تجربة لميتا</button><span class="etiquette latin" id="ch-meta-etat" dir="ltr"></span></div>
+          <small>الفيديو تاع التجربة يروح لمكتبة الكونت تاع البوب برك : ماشي بوب، ما يتنشرش. كي ميتا تقول « ready »، الدوبو يتسكّر وحدو وما يبقى والو في الإنترنت.</small>
+        </fieldset>
+        <div class="barre-ligne barre-bas"><span class="etiquette" id="ch-etat"></span><button type="submit" class="bouton principal" id="ch-sauver">سجّل</button></div>
+      </form>
+      <p class="mission-aide"><a href="/boussole/" target="_blank" rel="noopener">بوصلة التاجر</a> — الحساب تاع الهدف تاعك.</p>
+    </section>
+
+    <!-- الخدمات -->
+    <section class="vue actif" id="vue-taches" role="tabpanel">
+      <form class="barre" id="formulaire-tache" autocomplete="off">
+        <div class="barre-ligne">
+          <select id="tache-departement" aria-label="القسم">
+            <option value="">يختار المانجر</option>
+          </select>
+          <select id="tache-modele" aria-label="النموذج" class="latin">
+            <option value="sonnet">sonnet</option>
+            <option value="opus">opus</option>
+            <option value="fable">fable</option>
+          </select>
+        </div>
+        <textarea id="tache-texte" rows="1" placeholder="اكتب الخدمة ولا الصق لينك Drive تاع الشوتينغ" required></textarea>
+        <div class="barre-ligne barre-bas">
+          <label class="case"><input type="checkbox" id="tache-besoin-ok"> لازم كلمتي قبل</label>
+          <button type="submit" class="bouton principal" id="bouton-zid">زيد</button>
+        </div>
+      </form>
+      <div class="puces" id="puces-etats"></div>
+      <div class="liste" id="liste-taches">
+        <p class="vide">ما كاين حتى خدمة مازال</p>
+      </div>
+    </section>
+
+    <!-- الكوتش -->
+    <section class="vue" id="vue-coach" role="tabpanel" hidden>
+      <p class="note-coach">المانجر والعمال ما يهدروش مع الكليان — الكوتش برك</p>
+      <div class="conversation" id="conversation"><p class="vide">مازال ما هدرتوش</p></div>
+      <p class="ecrit" id="coach-ecrit" hidden>الكوتش راه يكتب<span class="points"><i></i><i></i><i></i></span></p>
+      <form class="saisie" id="formulaire-coach" autocomplete="off">
+        <textarea id="coach-texte" rows="1" placeholder="اسأل الكوتش" required></textarea>
+        <button type="submit" class="bouton principal" id="bouton-ab3ath">ابعث</button>
+      </form>
+    </section>
+
+    <!-- الكارني -->
+    <section class="vue" id="vue-carnet" role="tabpanel" hidden>
+      <div class="volet" id="volet-note" hidden>
+        <div class="volet-tete">
+          <strong id="volet-titre" dir="auto"></strong>
+          <button type="button" class="bouton-mini" id="volet-fermer">سكّر</button>
+        </div>
+        <div class="texte-livrable" id="volet-contenu"></div>
+      </div>
+      <h2 class="h2">المنتوجات</h2>
+      <div class="table-cadre" id="carnet-produits"><p class="vide">ما كاين حتى منتوج في الكارني</p></div>
+      <h2 class="h2">النوطات</h2>
+      <div class="notes" id="carnet-notes"><p class="vide">الكارني فارغ مازال</p></div>
+      <h2 class="h2">الغراف تاع النوطات</h2>
+      <div class="graphe-cadre" id="carnet-graphe"><p class="vide">ما كاين حتى نوطة</p></div>
+      <h2 class="h2">الدروس تاع كل قسم</h2>
+      <div class="lecons" id="carnet-lecons"></div>
+    </section>
+
+    <!-- الروتين -->
+    <section class="vue" id="vue-routines" role="tabpanel" hidden>
+      <div class="liste" id="liste-routines"><p class="vide">ما كاين حتى روتين</p></div>
+      <form class="barre" id="formulaire-routine" autocomplete="off">
+        <h2 class="h2">زيد روتين</h2>
+        <div class="barre-ligne">
+          <select id="routine-departement" aria-label="القسم" required></select>
+          <input type="time" id="routine-heure" value="18:00" class="latin" aria-label="الساعة" required>
+          <select id="routine-jours" aria-label="الأيام">
+            <option value="tous">كل يوم</option>
+            <option value="semaine">أيام الخدمة برك</option>
+          </select>
+        </div>
+        <textarea id="routine-texte" rows="1" placeholder="واش يدير هاذ الروتين" required></textarea>
+        <div class="barre-ligne barre-bas">
+          <label class="case"><input type="checkbox" id="routine-besoin-ok" checked> لازم كلمتي قبل</label>
+          <button type="submit" class="bouton principal">زيد</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- الجورنال -->
+    <section class="vue" id="vue-journal" role="tabpanel" hidden>
+      <pre class="journal latin" id="journal" dir="ltr"></pre>
+      <h3 class="titre-bavardages">واش هدرو في المكتب</h3>
+      <div class="bavardages" id="bavardages"></div>
+      <a class="bouton-mini telecharger-bavardages" href="/api/bavardages?format=txt" download="bavardages-bureau.txt">نحمّل كامل الهدرة</a>
+    </section>
+
+    <!-- الإعدادات : كل كليان يريّح المكتب على البيزنس تاعو -->
+    <section class="vue" id="vue-reglages" role="tabpanel" hidden>
+      <form class="barre reglages" id="formulaire-reglages" autocomplete="off">
+        <p class="reglages-intro">ريّح المكتب على البيزنس تاعك — كلش يتسجّل في الجهاز تاعك برك</p>
+        <div class="champ">
+          <label for="reg-nom">اسم البيزنس تاعك</label>
+          <input type="text" id="reg-nom" dir="auto" required maxlength="80">
+        </div>
+        <div class="champ">
+          <label for="reg-modele">الموديل</label>
+          <select id="reg-modele" class="latin">
+            <option value="sonnet">sonnet</option>
+            <option value="opus">opus</option>
+            <option value="fable">fable</option>
+          </select>
+        </div>
+        <div class="lecture-seule">
+          <div><span class="etiquette">البورت</span><span class="latin chiffre" id="reg-port" dir="ltr">—</span></div>
+          <div><span class="etiquette">الدار تاع المكتب</span><span class="latin chemin" id="reg-maison" dir="ltr">—</span></div>
+        </div>
+
+        <fieldset class="bloc">
+          <legend>تيليغرام</legend>
+          <div class="champ">
+            <label for="reg-tg-token">المفتاح تاع الروبو (BotFather)</label>
+            <input type="password" id="reg-tg-token" class="latin" dir="ltr" autocomplete="new-password" spellcheck="false">
+          </div>
+          <div class="champ">
+            <label for="reg-tg-chat">chat_id</label>
+            <input type="text" id="reg-tg-chat" class="latin" dir="ltr" inputmode="numeric" spellcheck="false">
+            <small>الرقم تاعك، يعطيهولك @userinfobot</small>
+          </div>
+          <small class="secret-note">المفتاح يبقى في الجهاز تاعك برك</small>
+          <div class="barre-ligne">
+            <button type="button" class="bouton" id="reg-tg-essai" disabled>جرّب تيليغرام</button>
+            <button type="button" class="bouton-mini" id="reg-tg-effacer" hidden>امسح المفتاح</button>
+            <span class="etiquette" id="reg-tg-etat"></span>
+          </div>
+        </fieldset>
+
+        <fieldset class="bloc">
+          <legend>التكاليف الثابتة تاعك</legend>
+          <div class="trois">
+            <div class="champ"><label for="reg-emballage">التغليف <span class="latin">DA</span></label><input type="number" id="reg-emballage" class="latin" dir="ltr" inputmode="decimal" min="0" step="any"></div>
+            <div class="champ"><label for="reg-retour">الرجوع <span class="latin">DA</span></label><input type="number" id="reg-retour" class="latin" dir="ltr" inputmode="decimal" min="0" step="any"></div>
+            <div class="champ"><label for="reg-livraison">التوصيل <span class="latin">DA</span></label><input type="number" id="reg-livraison" class="latin" dir="ltr" inputmode="decimal" min="0" step="any"></div>
+          </div>
+        </fieldset>
+
+        <fieldset class="bloc">
+          <legend>النسب اللي تعرفها</legend>
+          <div class="trois deux">
+            <div class="champ"><label for="reg-confirmation">التأكيد <span class="latin">%</span></label><input type="number" id="reg-confirmation" class="latin" dir="ltr" inputmode="decimal" min="0" max="100" step="any"></div>
+            <div class="champ"><label for="reg-livraison-pct">التوصيل <span class="latin">%</span></label><input type="number" id="reg-livraison-pct" class="latin" dir="ltr" inputmode="decimal" min="0" max="100" step="any"></div>
+          </div>
+        </fieldset>
+
+        <fieldset class="bloc" id="reg-ciblage">
+          <legend>الولايات تاع التيست و السكيل</legend>
+          <small>هاذو الولايات لي جبناهم من ميتا (الشمال). نحّي لي ما توصلش ليها، ومن بعد أكّد. بلا تأكيد ما يتبعث والو لميتا.</small>
+          <div class="wilayas" id="reg-wilayas-liste"><p class="vide">مازال ما جبناش الولايات : التحضير، « جيب الولايات »</p></div>
+          <small id="reg-wilayas-manquent" hidden></small>
+          <div class="barre-ligne">
+            <select id="reg-wilaya-ajout" aria-label="الولاية" class="latin" dir="ltr"></select>
+            <input type="text" id="reg-wilaya-cle" class="latin" dir="ltr" inputmode="numeric" spellcheck="false" placeholder="key Meta" aria-label="الكود تاع ميتا">
+            <button type="button" class="bouton-mini" id="reg-wilaya-zid">زيد</button>
+          </div>
+          <label class="case"><input type="checkbox" id="reg-wilayas-ok"> نأكّد هاذ الولايات</label>
+        </fieldset>
+        <fieldset class="bloc" id="reg-creas-bloc">
+          <legend>الكريات تاع التيست</legend>
+          <div class="champ">
+            <label for="reg-creas">شحال من كريا لكل موديل (العادة)</label>
+            <select id="reg-creas">
+            <option value="1">واحد</option>
+            <option value="2">زوج</option>
+            <option value="3">ثلاثة</option>
+            <option value="4">أربعة</option>
+            </select>
+            <small>الروبو يسقسيك مرة وحدة على كل لينك، وهاذي هي العادة تاعك. أربعة على الأكثر.</small>
+          </div>
+        </fieldset>
+        <fieldset class="bloc" id="reg-ecart-bloc">
+          <legend>ساعات البداية تاع البوب في اللوط</legend>
+          <div class="champ">
+            <label for="reg-ecart-meta">الفرق بين موديل و موديل (بالساعات)</label>
+            <select id="reg-ecart-meta" class="latin" dir="ltr">
+            <option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="8">8</option><option value="12">12</option>
+            </select>
+            <small>كي تقول لانسي للوط، الموديل الأول يبدا في أول ساعة مدوّرة بعد نص ساعة، والباقي كل واحد بعد هاذ الفرق. صفر : كامل في نفس الساعة. الساعة تأخّر المصروف، ما تحبسوش.</small>
+          </div>
+        </fieldset>
+        <div class="champ">
+          <label for="reg-atelier">الأتيلي</label>
+          <input type="text" id="reg-atelier" class="latin" dir="ltr" spellcheck="false">
+          <small>الدوسي وين راهم الأدوات تاع Python</small>
+        </div>
+        <div class="barre-ligne barre-bas">
+          <span class="etiquette" id="reg-etat"></span>
+          <button type="submit" class="bouton principal" id="reg-sauver">سجّل</button>
+        </div>
+      </form>
+    </section>
+  </aside>
+</main>
+
+<!-- فيش القسم -->
+<dialog class="fiche" id="fiche-dept">
+  <form method="dialog" class="fiche-tete">
+    <div>
+      <h2 id="fiche-nomAr"></h2>
+      <p class="latin fiche-nom" id="fiche-nom" dir="ltr"></p>
+    </div>
+    <button class="bouton-mini" type="submit" aria-label="سكّر">✕</button>
+  </form>
+  <div class="fiche-corps">
+    <p class="fiche-role" id="fiche-role" dir="auto"></p>
+    <div class="fiche-ligne"><span class="etiquette">الخدمات</span><span class="latin" id="fiche-compte" dir="ltr"></span></div>
+    <h3>البوسطات</h3>
+    <ul class="fiche-postes" id="fiche-postes"></ul>
+    <h3>السكيل</h3>
+    <p class="latin chemin" id="fiche-skill" dir="ltr"></p>
+    <h3>الأداة تاع Python</h3>
+    <div class="fiche-outil">
+      <p class="latin chemin" id="fiche-outil" dir="ltr"></p>
+      <p id="fiche-outil-present"></p>
+      <button type="button" class="bouton" id="fiche-verifier">تحقّق من الأداة</button>
+      <div class="verdict-cadre" id="fiche-verdict" hidden></div>
+    </div>
+    <h3>الكونيكتورات</h3>
+    <p class="pastilles" id="fiche-connecteurs"></p>
+    <p class="fiche-chat" id="fiche-chat" hidden><button type="button" class="bouton principal" id="fiche-ouvrir-chat">اهدر مع الكوتش</button></p>
+  </div>
+</dialog>
+
+<!-- تيليغرام -->
+<dialog class="fiche" id="fiche-telegram">
+  <form method="dialog" class="fiche-tete">
+    <div>
+      <h2>تيليغرام</h2>
+      <p class="latin fiche-nom" dir="ltr">TELEGRAM</p>
+    </div>
+    <button class="bouton-mini" type="submit" aria-label="سكّر">✕</button>
+  </form>
+  <div class="fiche-corps" id="telegram-corps"></div>
+</dialog>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<script src="bureau.js"></script>
+<script src="chaine.js"></script>
+</body>
+</html>

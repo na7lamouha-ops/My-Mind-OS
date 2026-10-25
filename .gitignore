@@ -25,3 +25,8 @@
 .vercel
 next-env.d.ts
 tsconfig.tsbuildinfo
+
+# ecomanita
+__pycache__/
+ecomanita/bureau/config.local.json
+ecomanita/bureau/_dernier-tour-reel.json

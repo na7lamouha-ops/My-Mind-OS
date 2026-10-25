@@ -1,0 +1,177 @@
+{
+  "version": "0.4.2",
+  "_role": "LE FICHIER DE RÈGLES UNIQUE (ecomanita 0.4.0) : tous les agents le lisent, aucun ne le recopie. Une règle change ici, et nulle part ailleurs.",
+  "argent": {
+    "dollar": "le taux du CLIENT (réglage « taux ») ; aucun taux écrit en dur ne sert de repli : sans taux, l'agent demande",
+    "montants": "tout montant en dinars ET en dollars ; les gros montants en « مليون » (1 000 000 DA = 100 مليون)"
+  },
+  "definitions": {
+    "tauxConfirmation": "confirmées (y compris livrées depuis) ÷ commandes passées sur la période ; paniers abandonnés exclus (définition de Tassyir, get_analytics_overview)",
+    "tauxLivraison": "livrées ÷ (livrées + retournées) ; un colis en route ne compte pas (définition de Tassyir, get_analytics_overview)",
+    "benefice": "sur les colis LIVRÉS seulement ; le stock restant n'est pas du bénéfice en mode « cash »",
+    "gagnantCreative": "la créa qui donne le coût par CONFIRMÉE le plus bas (utm_content dans l'écran marketing de Tassyir), jamais l'achat du pixel"
+  },
+  "pertes": "une seule table : celle de la boussole (cap et zeroLeadStop de boussala_testweek) ; ni « 1,5 fois » ni « 3 fois » écrits ailleurs",
+  "motMontee": [
+    "طلّع",
+    "monte"
+  ],
+  "interdits": {
+    "texte": [
+      "le mot COD",
+      "les témoignages et étoiles inventés",
+      "un prix barré inventé",
+      "un chiffre dans une ligne arabe",
+      "les promesses (مضمون، 100%)",
+      "les mots marocains et français dans la darija"
+    ],
+    "urgence": [
+      "تخفيض محدود المدة",
+      "قبل نفاد الكمية",
+      "عرض نهاية مخزون",
+      "الكمية محدودة",
+      "آخر فرصة"
+    ],
+    "actions": [
+      "confirmer, envoyer, annuler une commande (le client ou son équipe le fait)",
+      "créer une dépense",
+      "lancer sans « لانسي »",
+      "supprimer quoi que ce soit"
+    ]
+  },
+  "etapes": {
+    "_role": "chaque modèle porte UN tag d'étape dans Tassyir ; l'étape change la mesure, le script, la pub et l'atelier",
+    "ordre": [
+      "CANDIDAT",
+      "TEST",
+      "FIX",
+      "VALIDE",
+      "DESTOCK",
+      "STOP"
+    ],
+    "CANDIDAT": {
+      "ar": "مرشّح",
+      "mesure": null,
+      "script": null,
+      "pub": "rien",
+      "atelier": "rien"
+    },
+    "TEST": {
+      "ar": "تاست",
+      "mesure": "coût par CONFIRMÉE lu dans Tassyir (pas le pixel), plus les leads et les indicateurs de la campagne",
+      "script": "test",
+      "pub": "limites de la boussole ; arrêt seul à cap et zeroLeadStop",
+      "atelier": "pas de stock ; la commande de test est une commande CONFIRMÉE (pas de statut d'attente) ; si l'atelier prend des jours, la date est programmée (schedule_order) et la cliente la connaît"
+    },
+    "FIX": {
+      "ar": "يتصلّح",
+      "mesure": "comme TEST",
+      "script": "test corrigé",
+      "pub": "continue sous les limites",
+      "atelier": "pas de stock"
+    },
+    "VALIDE": {
+      "ar": "ناجح",
+      "mesure": "stock 0 dans Tassyir : coût par CONFIRMÉE ; stock > 0 : coût par LIVRÉE, avec la RAISON de chaque retour (#R-01…10) par wilaya, variante et annonce",
+      "script": "valide",
+      "pub": "pas de hausse avant la porte 1 ; ensuite la PORTE DU SCALE (4 conditions, voir « scale ») puis le « نعم » du client ; +20 ou +30 % par 48 h sous le plafond stock et cash",
+      "atelier": "ordre par parts de couleur et de taille ; point de commande = vitesse × jours atelier + 3 jours"
+    },
+    "DESTOCK": {
+      "ar": "تصفية",
+      "mesure": "bénéfice par pièce face au stock restant",
+      "script": "destock",
+      "pub": "baisse, ou vers le modèle qui a le stock",
+      "atelier": "pas de nouvelle production"
+    },
+    "STOP": {
+      "ar": "واقف",
+      "mesure": null,
+      "script": null,
+      "pub": "en pause",
+      "atelier": "rien"
+    }
+  },
+  "scripts": {
+    "_role": "le script de BASE par étape ; le client peut ajouter le sien (bibliothèque), vérifié contre ces règles, mesuré, le meilleur devient le défaut",
+    "test": {
+      "but": "confirmer le MODÈLE d'abord : taille, couleur, adresse, prix et délai",
+      "ordre": [
+        "le modèle et la couleur",
+        "la taille",
+        "le délai AVANT le prix",
+        "le prix",
+        "l'adresse"
+      ],
+      "levier": "une phrase : « راهي في مرحلة اختيار الكوليكسيون الجديدة، إذا تحبي تزيدي لمسة قوليلي »",
+      "noter": "la touche de la cliente dans le commentaire de la commande, code #L-"
+    },
+    "valide": {
+      "but": "confirmer ; stock en route : la date de l'atelier ; stock là : appeler d'abord les clientes CONFIRMÉES du test avec l'offre promise",
+      "offre": "l'offre doit exister dans Tassyir AVANT l'appel"
+    },
+    "destock": {
+      "but": "orienter vers la variante en stock, ou un autre modèle de la même couleur et taille"
+    }
+  },
+  "page": {
+    "_role": "règles de PAGE (0.4.1) : les produits arrivent APRÈS SPY ; une boutique vide au départ est normale",
+    "tailles": "sur la page d'atterrissage chaque taille est un choix séparé ; dans le stock les tailles sont regroupées (PAGE s'en occupe)",
+    "avis": "aucun avis ni nom de cliente inventé, même venu du thème par défaut ; la section avis reste cachée tant qu'il n'y a pas de vrais avis",
+    "promesses": "aucune promesse du thème par défaut (« الأكثر مبيعاً », délai de livraison fixe) sans preuve"
+  },
+  "tassyir": {
+    "commandeTest": "confirmée ; date programmée si besoin (schedule_order) ; jamais un statut d'attente",
+    "codeRetour": "#R-",
+    "codeTouche": "#L-",
+    "sku": "BOUTIQUE-MODELE-COUL-TAILLE par défaut ; le format suit la réponse du client à la QUESTION OBLIGATOIRE de PAGE, produit par produit : un code par taille (--mode par-taille) ou un code pour deux tailles (--mode groupe2, ex. HIVE-KABYLE-VRT-ML pour M et L). PAGE décide avec le client, jamais une autre règle",
+    "retour": "le coût d'un retour = l'offre du transporteur (ex. Navex 50 DA), écrit dans Tassyir : Livraison → Agents → … → معدلات الاسترجاع. Tant que ce tableau est vide (« لم تحدد بعد »), Tassyir compte 200 DA par retour. L'inspecteur le signale et demande au CLIENT de confirmer le prix avec son transporteur (gratuit = 0) puis de l'écrire lui-même ; l'agent ne l'écrit jamais. OBLIGATOIRE (0.4.2) : point rouge pour toute boutique, même neuve, tant que le client n'a pas écrit le prix dans les réglages du bureau (« الرجوع ») ; rouge aussi si Tassyir compte un autre prix"
+  },
+  "inspecteur": {
+    "_role": "le contrôle médical avant tout test (0.4.0) : lecture seule, une tâche à la fois, la porte « جاهز للتاست »",
+    "poids": {
+      "stop": 15,
+      "warn": 5,
+      "info": 1
+    },
+    "porte": "aucun point rouge"
+  },
+  "test": {
+    "_role": "0.4.2 : le média buyer — la structure SORT DU FICHIER qu'il reçoit, le lien caché, le jugement",
+    "structure": "part = budget du jour écrit par le client ÷ vidéos ; pour juger une vidéo seule = 15 leads × plus haut coût par lead ÷ 3 jours. Part ≥ ce minimum → ABO (un ad set par vidéo) ; 3 $ ≤ part < minimum → CBO (Meta répartit, 3 $ au moins par ad set : daily_min_spend_target) ; part < 3 $ → on enlève des vidéos ; une vidéo sous 3 $ → rien ne part. Le client peut imposer sa structure ; le bureau montre alors l'écart",
+    "videos": "de 1 à 4 vidéos par modèle (jamais 5)",
+    "lienCache": "le MÊME lien dans chaque annonce : la page + utm_source=facebook&utm_medium=paid&utm_campaign={{campaign.id}}&utm_content={{ad.id}} ; Meta remplace les accolades par les numéros ; jamais un nom écrit à la main (CAMPAIGN_NAME, ANGLE-A1) ; la clé anti-doublon reste dans le NOM de la campagne ; le nom de l'annonce = celui de son ad set (V01…)",
+    "uneCampagneParModele": "une campagne = un modèle : Tassyir ne coupe pas la dépense par produit ni par boutique (« gated »), la dépense de la campagne EST celle du modèle",
+    "juger": "la vidéo sous 15 leads = « ما تقاستش », jamais « خاسرة » ; le verdict sur les CONFIRMÉES de Tassyir, jamais sur les achats du pixel",
+    "renouvellement": "une petite série de nouvelles vidéos CHAQUE SEMAINE dans la campagne de test du modèle ; un signal de fatigue l'avance, il ne la remplace pas ; une seule chose change d'une vidéo à l'autre (accroche, ou couleur…)"
+  },
+  "suivi": {
+    "_role": "0.4.2 : les quatre contrôles AVANT le verdict par vidéo (controles-suivi.mjs)",
+    "lienAbsent": "une annonce qui dépense sans aucune visite dans Tassyir : le lien caché manque — rouge, pas de verdict",
+    "sansTicket": "plus de 10 % de commandes sans lien (« زيارات عضوية » / not set) : chiffres incomplets — jaune, on juge seulement les commandes liées ; ces commandes ne sont JAMAIS données à une annonce",
+    "depense": "la dépense de Meta ≠ celle que Tassyir relie (> 5 %) : on attend — rouge",
+    "pixel": "achats du pixel ≠ commandes de Tassyir (double comptage, ou pixel qui rate) : on le dit, on ne juge jamais au pixel — jaune",
+    "lienNonRemplace": "une valeur qui n'est pas un numéro de Meta ({{campaign.id}} tel quel, un nom) : rouge"
+  },
+  "scale": {
+    "_role": "0.4.2 : la deuxième phase — rien ne monte sans le « نعم » du client",
+    "porte": "4 conditions : 1) bénéfice RÉEL par colis livré > 0 (encaissé − pub − marchandise − retour) ; 2) la courbe n'est pas dans le rouge ; 3) le stock couvre les jours de hausse et l'atelier suit ; 4) le cash revenu couvre la marche suivante sans toucher la réserve",
+    "carte": "le bureau envoie : le modèle, le bénéfice par colis, la livraison, la première raison de retour, le stock en jours, la marche (+25 %) — puis attend « نعم »",
+    "marches": "+20 à +30 % par 48 h, jamais après un jour perdant ; recul quand le bénéfice par colis sur 3 jours passe sous le seuil"
+  },
+  "levier": "le coût fixe d'un colis livré (pub + retour) se paie UNE fois : deux pièces dans le même colis (offre de quantité) ou un prix plus haut — les deux offres de la boussole",
+  "stock": {
+    "_role": "0.4.2 : le stock restant, toujours avec le bénéfice",
+    "rapport": "chaque rapport produit donne trois lignes : le stock au PRIX D'ACHAT (jamais la valeur de Tassyir si elle diffère), les jours de couverture, et le cash net",
+    "commande": "aucune nouvelle production quand la couverture dépasse 30 jours",
+    "destock": "au-delà de 45 jours : proposer DESTOCK (deux pièces, prix plus bas, couleur avec couleur)",
+    "cash": "un bénéfice n'en est un qu'une fois encaissé (mode « cash »)",
+    "disponible": "stock disponible = totalItems − delivered − inTransit − damaged (get_inventory), ou « Sellable » de l'écran Inventaire ; totalItems = tout ce qui est entré, JAMAIS le stock"
+  },
+  "confirmation": {
+    "_role": "0.4.2 : le rapport quotidien de la confirmation (22:00, résumé à 15:00)",
+    "contenu": "commandes, confirmées, annulées, restantes — par produit, par VARIANTE et par confirmatrice ; les raisons d'annulation (objectif : zéro annulation sans raison) ; la VITESSE du premier appel (médiane, part sous 30 minutes, confirmation selon la vitesse) ; tentatives avant confirmation ; meilleures heures ; offre de deux pièces proposée / acceptée ; trois remarques pour demain",
+    "vitesse": "le levier le moins cher : appeler en moins de 30 minutes",
+    "scripts": "un fichier par situation (test, stock, deux pièces, cliente qui a déjà retourné, destock, wilayas difficiles) ; le client les modifie, l'agent les LIT et n'écrit jamais dessus"
+  }
+}

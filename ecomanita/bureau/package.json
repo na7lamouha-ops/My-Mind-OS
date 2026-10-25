@@ -1,0 +1,10 @@
+{
+  "name": "ecom-manita-bureau",
+  "version": "0.4.2",
+  "description": "ecom manita — le bureau : des agents e-commerce COD qui travaillent sur l'abonnement Claude du client, avec trois contrôles par livrable et Telegram pour l'accord.",
+  "type": "module",
+  "private": true,
+  "license": "UNLICENSED",
+  "engines": { "node": ">=20" },
+  "scripts": { "start": "node serveur.mjs", "verifier": "node verifier.mjs", "verifier:reel": "MANITA_REEL=1 node verifier.mjs" }
+}
