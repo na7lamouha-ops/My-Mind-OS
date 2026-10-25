@@ -1,0 +1,215 @@
+{
+ "_doc": "الأرقام الحقيقية نهار بنهار (كل نهار وحدو، ماشي تراكمي). مثال تجريبي.",
+ "team": {
+  "confirmers": 1
+ },
+ "actuals": [
+  {
+   "product": "روب لينا",
+   "date": "2026-10-23",
+   "adSpendUsd": 44,
+   "leads": 22,
+   "confirmed": 12,
+   "delivered": 0,
+   "returned": 0,
+   "abandoned": 3,
+   "recovered": 0,
+   "stockOnHand": 180
+  },
+  {
+   "product": "طقم لينا",
+   "date": "2026-10-23",
+   "adSpendUsd": 30,
+   "leads": 20,
+   "confirmed": 10,
+   "delivered": 0,
+   "returned": 0,
+   "abandoned": 2,
+   "stockOnHand": 140
+  },
+  {
+   "product": "روب لينا",
+   "date": "2026-10-24",
+   "adSpendUsd": 50,
+   "leads": 26,
+   "confirmed": 14,
+   "delivered": 0,
+   "returned": 0,
+   "abandoned": 4,
+   "recovered": 0,
+   "stockOnHand": 166
+  },
+  {
+   "product": "طقم لينا",
+   "date": "2026-10-24",
+   "adSpendUsd": 38,
+   "leads": 24,
+   "confirmed": 12,
+   "delivered": 0,
+   "returned": 0,
+   "abandoned": 3,
+   "stockOnHand": 128
+  },
+  {
+   "product": "روب لينا",
+   "date": "2026-10-25",
+   "adSpendUsd": 58,
+   "leads": 30,
+   "confirmed": 17,
+   "delivered": 0,
+   "returned": 0,
+   "abandoned": 4,
+   "recovered": 0,
+   "stockOnHand": 152
+  },
+  {
+   "product": "طقم لينا",
+   "date": "2026-10-25",
+   "adSpendUsd": 47,
+   "leads": 28,
+   "confirmed": 14,
+   "delivered": 0,
+   "returned": 0,
+   "abandoned": 3,
+   "stockOnHand": 116
+  },
+  {
+   "product": "روب لينا",
+   "date": "2026-10-26",
+   "adSpendUsd": 64,
+   "leads": 34,
+   "confirmed": 19,
+   "delivered": 0,
+   "returned": 0,
+   "abandoned": 5,
+   "recovered": 0,
+   "stockOnHand": 138
+  },
+  {
+   "product": "طقم لينا",
+   "date": "2026-10-26",
+   "adSpendUsd": 56,
+   "leads": 30,
+   "confirmed": 15,
+   "delivered": 0,
+   "returned": 0,
+   "abandoned": 4,
+   "stockOnHand": 104
+  },
+  {
+   "product": "روب لينا",
+   "date": "2026-10-27",
+   "adSpendUsd": 76,
+   "leads": 40,
+   "confirmed": 22,
+   "delivered": 6,
+   "returned": 6,
+   "abandoned": 6,
+   "recovered": 0,
+   "stockOnHand": 124
+  },
+  {
+   "product": "طقم لينا",
+   "date": "2026-10-27",
+   "adSpendUsd": 62,
+   "leads": 32,
+   "confirmed": 16,
+   "delivered": 5,
+   "returned": 5,
+   "abandoned": 4,
+   "stockOnHand": 92
+  },
+  {
+   "product": "روب لينا",
+   "date": "2026-10-28",
+   "adSpendUsd": 84,
+   "leads": 44,
+   "confirmed": 24,
+   "delivered": 7,
+   "returned": 8,
+   "abandoned": 6,
+   "recovered": 0,
+   "stockOnHand": 110
+  },
+  {
+   "product": "طقم لينا",
+   "date": "2026-10-28",
+   "adSpendUsd": 70,
+   "leads": 34,
+   "confirmed": 17,
+   "delivered": 6,
+   "returned": 6,
+   "abandoned": 4,
+   "stockOnHand": 80
+  },
+  {
+   "product": "روب لينا",
+   "date": "2026-10-29",
+   "adSpendUsd": 92,
+   "leads": 48,
+   "confirmed": 26,
+   "delivered": 8,
+   "returned": 9,
+   "abandoned": 7,
+   "recovered": 1,
+   "stockOnHand": 96
+  },
+  {
+   "product": "طقم لينا",
+   "date": "2026-10-29",
+   "adSpendUsd": 72,
+   "leads": 34,
+   "confirmed": 17,
+   "delivered": 7,
+   "returned": 7,
+   "abandoned": 4,
+   "stockOnHand": 68
+  },
+  {
+   "product": "روب لينا",
+   "date": "2026-10-30",
+   "adSpendUsd": 100,
+   "leads": 52,
+   "confirmed": 29,
+   "delivered": 9,
+   "returned": 10,
+   "abandoned": 7,
+   "recovered": 1,
+   "stockOnHand": 82
+  },
+  {
+   "product": "طقم لينا",
+   "date": "2026-10-30",
+   "adSpendUsd": 76,
+   "leads": 35,
+   "confirmed": 18,
+   "delivered": 8,
+   "returned": 8,
+   "abandoned": 4,
+   "stockOnHand": 56
+  },
+  {
+   "product": "روب لينا",
+   "date": "2026-10-31",
+   "adSpendUsd": 106,
+   "leads": 56,
+   "confirmed": 31,
+   "delivered": 10,
+   "returned": 12,
+   "abandoned": 8,
+   "recovered": 1,
+   "stockOnHand": 68
+  },
+  {
+   "product": "طقم لينا",
+   "date": "2026-10-31",
+   "adSpendUsd": 80,
+   "leads": 36,
+   "confirmed": 18,
+   "delivered": 8,
+   "returned": 8,
+   "abandoned": 4,
+   "stockOnHand": 44
+  }
+ ]
+}
