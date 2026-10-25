@@ -28,6 +28,9 @@ const controles = await import('./controles.mjs');
 const telegram = await import('./telegram.mjs');
 const routines = await import('./routines.mjs');
 
+/* ---------- 0.5.0 : les agents en boucle (boucle.mjs, agents/<id>), la boussole dans le bureau, les petites règles ---------- */
+{ const A = await import('./verifier-agents.mjs'); await A.epreuveAgents({ etape }); await A.epreuveServeurAgents({ etape }); }
+
 /* ---------- 0.4.0 : l'inspecteur (المفتّش) et le fichier de règles unique ---------- */
 const inspecteurM = await import('./inspecteur.mjs');
 await etape('0.4.0 : regles.json se lit, il porte les six étapes, la commande de test CONFIRMÉE (aucun statut d\'attente), les règles de PAGE et les poids de l\'inspecteur', () => {
