@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>البوصلة</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23F5C542'/%3E%3Cpath d='M16 5l4 11-4 11-4-11z' fill='%2308070c'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="logo" aria-hidden="true">🧭</span><div><b>البوصلة</b><small>البوصلة ما تعدكش — ترسم المسار</small></div></div>
+  <span id="demoBadge" class="badge gray" hidden>بيانات تجريبية</span>
+</header>
+<nav class="tabs" id="tabs">
+  <a href="#home">البيزنس اليوم</a>
+  <a href="#products">المنتجات</a>
+  <a href="#stock">الستوك</a>
+  <a href="#levers">الروافع</a>
+  <a href="#report">التقرير</a>
+</nav>
+<main id="app" aria-live="polite"><p class="muted">نحسبو…</p></main>
+<div id="toast" role="status" hidden></div>
+<script type="module" src="/app.js"></script>
+</body>
+</html>

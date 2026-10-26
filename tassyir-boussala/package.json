@@ -1,0 +1,15 @@
+{
+  "name": "tassyir-boussala",
+  "version": "0.1.0",
+  "private": true,
+  "description": "البوصلة — مساعد التاجر داخل تسيير (Tassyir App)",
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "start": "node server/server.js",
+    "demo": "BOUSSALA_DEMO=1 node server/server.js",
+    "test": "node --test test/*.test.js",
+    "test:ui": "node test/ui-360.mjs",
+    "report:tests": "node test/write-report.mjs"
+  }
+}
