@@ -794,6 +794,53 @@ export function productAlerts(p, prod, business, policy = DEFAULT_POLICY) {
   return A;
 }
 
+
+// ─────────────────────────────── مؤشرات الفترة (كيما Analytics تسيير) ───────────────────────────────
+// الفترة الحالية = آخر `days` نهار، والسابقة = اللي قبلها بنفس الطول. نفس التعاريف تاع تسيير:
+// التأكيد = المؤكّدة ÷ الطلبيات • التوصيل = الموصّلة ÷ (الموصّلة + الراجعة). القبض = الكاش اللي دخل بالصح.
+export function periodKpis(products, usdRate, today, days) {
+  const byDate = new Map();
+  for (const p of products) {
+    for (const d of p.daily || []) {
+      const r = byDate.get(d.date) || { orders: 0, confirmed: 0, delivered: 0, returned: 0, cash: 0, ads: 0, costs: 0, abandoned: 0 };
+      r.orders += d.leads || 0;
+      r.confirmed += d.confirmed || 0;
+      r.delivered += d.delivered || 0;
+      r.returned += d.returned || 0;
+      r.cash += d.collected || 0;
+      r.ads += (d.spendUsd || 0) * (usdRate || 0);
+      r.costs += (d.cogsDelivered || 0) + (d.returns || 0) + (d.packing || 0) + (d.commission || 0);
+      r.abandoned += d.abandoned || 0;
+      byDate.set(d.date, r);
+    }
+  }
+  const dayIso = (k) => new Date(Date.parse(today) - k * 86400000).toISOString().slice(0, 10);
+  const window = (from, len) => {
+    const rows = [];
+    for (let k = from + len - 1; k >= from; k--) rows.push({ date: dayIso(k), ...(byDate.get(dayIso(k)) || { orders: 0, confirmed: 0, delivered: 0, returned: 0, cash: 0, ads: 0, costs: 0, abandoned: 0 }) });
+    const t = (f) => sum(rows.map((r) => r[f]));
+    const profit = t('cash') - t('ads') - t('costs');
+    return {
+      orders: t('orders'), confirmed: t('confirmed'), delivered: t('delivered'), returned: t('returned'), abandoned: t('abandoned'),
+      confRate: t('orders') ? t('confirmed') / t('orders') : null,
+      delRate: t('delivered') + t('returned') ? t('delivered') / (t('delivered') + t('returned')) : null,
+      cash: t('cash'), ads: t('ads'), profit,
+      series: rows.map((r) => ({ date: r.date, orders: r.orders, profit: r.cash - r.ads - r.costs, cash: r.cash })),
+    };
+  };
+  const cur = window(0, days);
+  const prev = window(days, days);
+  const change = (a, b) => (isNum(a) && isNum(b) && b !== 0 ? (a - b) / Math.abs(b) : null);
+  const points = (a, b) => (isNum(a) && isNum(b) ? a - b : null);
+  return {
+    days, cur, prev,
+    delta: {
+      orders: change(cur.orders, prev.orders), cash: change(cur.cash, prev.cash), ads: change(cur.ads, prev.ads), profit: change(cur.profit, prev.profit),
+      confRate: points(cur.confRate, prev.confRate), delRate: points(cur.delRate, prev.delRate),
+    },
+  };
+}
+
 // ─────────────────────────────── التحليل الكامل (عقل واحد) ───────────────────────────────
 export function analyzeBusiness(data, today) {
   const business = data.business;
@@ -879,6 +926,7 @@ export function analyzeBusiness(data, today) {
     today, business: { name: business.name, usdRate: business.usdRate, reserve: business.reserve, payoutDays: business.payoutDays },
     policy, trust, split, splitYesterday, equity, alerts, levers, leversTotal, firstProblem, today3, products, byStage,
     source: sourceSuccess(data.products, policy), curvePos,
+    kpis: Object.fromEntries([1, 7, 30].map((d) => [d, periodKpis(data.products, business.usdRate, today, d)])),
   };
 }
 

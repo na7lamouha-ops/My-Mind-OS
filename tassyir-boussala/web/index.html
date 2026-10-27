@@ -11,16 +11,17 @@
 </head>
 <body>
 <header class="top">
-  <div class="brand"><span class="logo" aria-hidden="true">🧭</span><div><b>البوصلة</b><small>البوصلة ما تعدكش — ترسم المسار</small></div></div>
+  <div class="brand"><span class="logo" aria-hidden="true">🧭</span><div><b>البوصلة</b><small>ما تعدكش — ترسم المسار</small></div></div>
   <span id="demoBadge" class="badge gray" hidden>بيانات تجريبية</span>
 </header>
-<nav class="tabs" id="tabs">
-  <a href="#home">البيزنس اليوم</a>
-  <a href="#products">المنتجات</a>
-  <a href="#stock">الستوك</a>
-  <a href="#levers">الروافع</a>
-  <a href="#report">التقرير</a>
-</nav>
+<div class="bar">
+  <nav class="tabs" id="tabs" aria-label="الشاشات">
+    <a href="#home">نظرة عامة</a>
+    <a href="#products">المنتجات</a>
+    <a href="#report">التقرير</a>
+  </nav>
+  <div class="seg" id="period" role="group" aria-label="الفترة"></div>
+</div>
 <main id="app" aria-live="polite"><p class="muted">نحسبو…</p></main>
 <div id="toast" role="status" hidden></div>
 <script type="module" src="/app.js"></script>
