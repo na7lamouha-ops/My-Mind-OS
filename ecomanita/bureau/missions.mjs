@@ -1857,7 +1857,7 @@ ${JSON.stringify(charge)}
 2. get_product { productId: "${pid}" } ensuite : relis seulement que c'est bien actif (ne renvoie rien d'après cette lecture). get_store si tu n'as pas le sous-domaine.
 Rends {productId, actif (relu), variantesVisibles (nombre relu), urlProduit "https://<sous-domaine>.tassyir.io/product/<slug>"}.`;
     const outils = ['tassyir.get_product', 'tassyir.update_product', 'tassyir.get_store'];
-    let r = await tourClaude(m, 'publication', { dept: 'page', outils, schema: schemaPub, message: consigne(`La page est prête : publie le produit ${pid} (boutique ${p.storeId}) — règle du vendeur, une page prête est publiée tout de suite.`) });
+    let r = await tourClaude(m, 'publication', { dept: 'page', outils, schema: schemaPub, message: consigne(`La page est prête : publie le produit ${pid} (boutique ${p.storeId}) — le client a dit « نشرها » sur sa page masquée (1.0 : c'est lui qui décide la publication).`) });
     let fl = fautesListeEnvoyee(r.appels, pid, liste);
     if (fl.refusCorrige && !fl.fautes.length) histoire(m, `publication : Tassyir avait refusé un envoi de variantes (-32602, ${VARIANTES_INCOMPLETES}), corrigé dans le même tour`);
     if (fl.fautes.length) {
@@ -2641,8 +2641,10 @@ Rends {productId}.` });
       m.d.produit = { storeId: s.storeId, productId: s.productId, slug: s.slug || '', urlProduit: /^https:\/\/[a-z0-9-]+\.tassyir\.io\/product\//.test(s.urlProduit || '') ? s.urlProduit : '', previewUrl: s.previewUrl || '', apercus, apercuFidele: s.apercuFidele === true, existaitDeja: !!s.existaitDeja };
     },
     async 'page-ok'(m) {
-      // règle du vendeur (06/10/2026) : la page est publiée dès qu'elle est prête, sans attendre « نشرها ».
-      // On montre quand même au client ses photos (l'aperçu FIDÈLE de Tassyir, sinon les vraies photos de la page).
+      // « الطالب 1.0 » (fix 8) : la page naît MASQUÉE (une MASQUÉE = un brouillon) et c'est le CLIENT qui décide de la publier :
+      // ses photos (l'aperçu FIDÈLE de Tassyir, sinon les vraies photos de la page), puis « نشرها ؟ » ; « نشرها » → l'étape
+      // publication (la même mécanique, relue) ; « خليها مخبية » → elle reste masquée, la question revient. (06/10 → 27/10 :
+      // la publication directe du vendeur est remplacée par la décision du client, comme toute écriture.)
       const st = m.etapes['page-ok'];
       // st.demande : une mission d'avant (v0.3.7) attendait « نشرها » — son aperçu et le lien sont déjà partis, on ne les
       // renvoie pas ; elle passe à la publication comme les autres (le lien publié suit)
@@ -2652,8 +2654,9 @@ Rends {productId}.` });
         if (tg && vues.length) { try { await tg.envoyerAlbum(vues, legende(m)); } catch (e) { histoire(m, 'photos de la page non envoyées : ' + e.message); } }
         st.photosEnvoyees = maintenant();
       }
-      st.reponse = 'oui';
-      return undefined;
+      if (st.reponse === 'oui') return undefined;
+      if (!st.demande) { const p = m.d.produit || {}; await envoyer(m, M.pagePrete(m.id, p.previewUrl || p.urlProduit || 'https://app.tassyir.io/')); st.demande = maintenant(); }
+      return ATTENTE;
     },
     async publication(m) {
       const p = m.d.produit;
@@ -2665,7 +2668,7 @@ Rends {productId}.` });
       if (paquetV && Array.isArray(paquetV.variants) && paquetV.variants.length) return publierAvecListe(m, p, paquetV, schemaPub);
       let r = await tourClaude(m, 'publication', { dept: 'page', outils: ['tassyir.get_product', 'tassyir.update_product', 'tassyir.get_store'],
         schema: schemaPub,
-        message: `La page est prête : publie le produit ${p.productId} (boutique ${p.storeId}) — règle du vendeur, une page prête est publiée tout de suite.
+        message: `La page est prête : publie le produit ${p.productId} (boutique ${p.storeId}) — le client a dit « نشرها » sur sa page masquée (1.0 : c'est lui qui décide la publication).
 1. get_product : lis les variantes (leurs id, leur price et leurs selectedOptions).
 2. update_product : isActive true, isVisible true, et CHAQUE variante isHidden false (en gardant son id).
 2 bis. VARIANTES COMPLÈTES (Tassyir refuse sinon, erreur -32602) : chaque variante envoyée porte son id, son price et ses selectedOptions EXACTEMENT tels que get_product les a rendus (même prix, mêmes name/value), plus isHidden false. Jamais une variante avec son id seul ; ne change JAMAIS un prix à la publication.
@@ -4018,9 +4021,23 @@ Ne touche à rien d'autre : ni les ad sets (en CBO, ils n'ont pas de budget), ni
       noterDecision(m, 'continuer malgre une perte lourde annoncee', pv ? `rapport du ${pv.date} : depense ${pv.depense_da} DA, ${pv.commandes} commandes, ${pv.confirmees} confirmees, ${pv.livrees} livrees ; cout par ${pv.stock === 'stock' ? 'colis attendu' : 'commande'} ${pv.cout} DA pour une limite de ${pv.limite} DA` : 'une perte lourde annoncee par la lecture du soir'); // une note : elle suit, le bouton n'attend pas la file des outils
       return { connu: true, texte: 'تمام، تبقى تخدم' };
     }
-    // règle du vendeur (06/10/2026) : la page se publie seule dès qu'elle est prête. Un vieux bouton « نشرها » / « خليها مخبية »
-    // (un message d'avant la mise à jour) ne fait plus RIEN — surtout pas « الصفحة باقية مخبية » pour une page qui se publie
-    if (cle === 'page') return { connu: true, texte: 'هاذ السؤال فات' };
+    // « الطالب 1.0 » (fix 8) : « نشرها » / « خليها مخبية » sur la question de la page. Seule la question OUVERTE compte : un vieux
+    // bouton (page déjà publiée, autre étape) ne fait rien.
+    if (cle === 'page') {
+      const st = m.etapes['page-ok'];
+      if (m.attente !== 'page-ok' || !st || st.reponse === 'oui') return { connu: true, texte: 'هاذ السؤال فات' };
+      if (val === 'oui') {
+        st.reponse = 'oui'; st.repondu = maintenant(); st.etat = 'encours'; m.attente = null;
+        noterDecision(m, 'publier la page', 'le client a appuyé « نشرها » sur sa page masquée');
+        histoire(m, 'page-ok : le client publie (« نشرها »)'); sauver(m); avancer(m);
+        return { connu: true, texte: 'وصلني' };
+      }
+      // « خليها مخبية » : rien n'est publié ; la question revient avec ses boutons (le client corrige dans Tassyir puis « نشرها »)
+      histoire(m, 'page-ok : le client garde la page masquée'); sauver(m);
+      await envoyer(m, M.pageMasquee());
+      const p = m.d.produit || {}; await envoyer(m, M.pagePrete(m.id, p.previewUrl || p.urlProduit || 'https://app.tassyir.io/'));
+      return { connu: true, texte: 'وصلني' };
+    }
     // [porte-groupee] LA PORTE DU LOT (« mis:<un modèle prêt>:lanceg:<gen>.oui|non|neuve ») ; un vieux « لانسي » PAR MODÈLE
     // d'un lot (une question d'avant la porte groupée) ne lance plus rien : il n'existe jamais deux portes pour un lot
     if (cle === 'lanceg') return await boutonPorteLot(m, val);

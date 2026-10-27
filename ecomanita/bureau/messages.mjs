@@ -95,7 +95,7 @@ export const M = {
       'التصوير تاع هاذ الموديل قصير بزاف', 'شوفهم مليح قبل البوب'] : []),
     'هاذو شوية منهم تحت', 'إذا ما عجبوكش اضغط : حبس'].join('\n') }),
   boutonStop: idMission => [[{ texte: 'حبس', data: `mis:${idMission}:stop:1` }]],
-  /** Plus envoyé par la chaîne (publication directe, règle du vendeur du 06/10/2026), ni pageMasquee : gardés pour la loi de forme. */
+  /** « الطالب 1.0 » (fix 8) : la page masquée attend la décision du client (« نشرها » / « خليها مخبية »), comme en 0.3.7. */
   pagePrete: (idMission, lien) => ({
     texte: ['الصفحة واجدة في تسيير', 'وراهي مخبية على الناس', 'شوفها من هاذ اللينك :', urlLisible(lien), 'نشرها للزبونات ؟'].join('\n'),
     boutons: [[{ texte: 'نشرها', data: `mis:${idMission}:page:oui` }, { texte: 'خليها مخبية', data: `mis:${idMission}:page:non` }]]
