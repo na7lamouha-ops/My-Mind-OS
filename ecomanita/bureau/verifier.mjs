@@ -400,6 +400,65 @@ await etape('accueil : la PREMIÈRE question est « شحال من موديل ؟ 
   if (fautes.length) throw new Error('hors loi de forme : ' + JSON.stringify(fautes));
   return `${tous.length} messages conformes · demande identique (11 réponses) comptée par un lot d'UN modèle · seul → « الخدمة بدات » · « 3 » tapé → lot`;
 });
+/* ---------- repris de 0.3.9-windows en 0.5.0 : photos du shooting, erreurs Meta, outils sans figer, renommer sous Windows ---------- */
+await etape('photos de la page : les PHOTOS DU SHOOTING d\'abord ([v0.3.9-photos]) — la couleur lue dans le NOM du fichier (le dernier mot de couleur gagne, synonymes, couleur voisine quand le client n\'a pas les deux), aucune couleur ou deux couleurs du client possibles → photo écartée ; la préparation (EXIF, 2000 px, JPEG ≤ 450 Ko, trop petite ou illisible écartée) ; le message au client, loi de forme (contrôles négatifs)', async () => {
+  const mm = await import('./missions.mjs'); const { M } = await import('./messages.mjs');
+  const cas = [['Ensemble-Col-V-Manches-Evasees_M-A_bleu-marine_01.jpg', ['Noir', 'Bleu'], 'Bleu'], ['Ensemble-Basque-Passepoil-Creme_M-A_noir_01.jpg', ['Noir', 'Marine'], 'Noir'],
+    ['Ensemble-Basque-Passepoil-Creme_M-A_bleu-marine_02.jpg', ['Noir', 'Marine'], 'Marine'], ['abaya-noire-02.JPG', ['Noir', 'Blanc'], 'Noir'], ['robe_creme_01.jpg', ['Noir', 'Beige'], 'Beige'],
+    ['IMG_1234.jpg', ['Noir'], null], ['robe_bleu_01.jpg', ['Bleu', 'Marine'], 'Bleu'], ['robe_navy_01.jpg', ['Bleu', 'Marine'], 'Marine'], ['robe_rouge_01.jpg', ['Noir', 'Beige'], null]];
+  const faux = cas.filter(([f, n, att]) => mm.couleurDePhoto(f, n) !== att).map(([f, n, att]) => `${f} → ${mm.couleurDePhoto(f, n)} (attendu ${att})`);
+  if (faux.length) throw new Error('couleurs : ' + faux.join(' ; '));
+  const d = fs.mkdtempSync(path.join(os.tmpdir(), 'manita-shooting-')); fs.mkdirSync(path.join(d, 'Photos')); fs.writeFileSync(path.join(d, 'Photos', 'a_noir_01.jpg'), 'x'); fs.writeFileSync(path.join(d, '.cache.jpg'), 'x'); fs.writeFileSync(path.join(d, 'video.mp4'), 'x');
+  if (JSON.stringify(mm.listerPhotos(d).map(f => path.relative(d, f))) !== JSON.stringify([path.join('Photos', 'a_noir_01.jpg')])) throw new Error('listerPhotos : ' + JSON.stringify(mm.listerPhotos(d)));
+  // la préparation, par le VRAI Python (Pillow) : une grande photo couchée par EXIF, une trop petite, une illisible
+  const src = fs.readFileSync(path.join(RACINE, 'missions.mjs'), 'utf8').match(/const code = \[([\s\S]*?)\]\.join\('\\n'\);\n    const r = await outil\(m, 'photos-shooting'/);
+  if (!src) throw new Error('le code de préparation des photos est introuvable dans missions.mjs');
+  const code = eval('[' + src[1] + ']').join('\n');
+  const py = travauxM.trouverPython('');
+  const fab = spawnSync(py, ['-X', 'utf8', '-c', `from PIL import Image\nim=Image.new('RGB',(3840,5760),(10,10,10))\nex=im.getexif(); ex[274]=6\nim.save(r'${path.join(d, 'g_noir_01.jpg')}', exif=ex, quality=95)\nImage.new('RGB',(600,400)).save(r'${path.join(d, 'p_noir_02.jpg')}')`], { encoding: 'utf8' });
+  if (fab.status !== 0) return 'couleurs (' + cas.length + ' cas) · Pillow absent ici : préparation non jouée — ' + String(fab.stderr).slice(0, 80);
+  const liste = path.join(d, 'l.json'); fs.writeFileSync(liste, JSON.stringify(['g_noir_01', 'p_noir_02', 'a_noir_01'].map((n, i) => ({ src: n === 'a_noir_01' ? path.join(d, 'Photos', n + '.jpg') : path.join(d, n + '.jpg'), dst: path.join(d, `o${i}.jpg`), nom: 'Noir' }))));
+  const r = spawnSync(py, ['-X', 'utf8', '-c', code, liste], { encoding: 'utf8' }); const j = JSON.parse(String(r.stdout).trim().split('\n').pop()).photos;
+  const [g, p, a] = j;
+  if (!g.ok || g.l !== 2000 || g.h !== 1333 || g.o > 450000 || p.ok || p.pourquoi !== 'trop petite' || a.ok) throw new Error('préparation : ' + JSON.stringify(j));
+  for (const t of [M.photosDesVideos(null, []).texte, M.photosDesVideos(3, ['Marine']).texte, M.photosDesVideos(2, []).texte]) { const f = telegram.fautesDeForme(t); if (f.length) throw new Error('message hors loi de forme : ' + f.join(' ; ')); }
+  return `${cas.length} noms de fichier → la bonne couleur (ou écartés) · 5760 × 3840 tournée par EXIF → 2000 × 1333, ${Math.round(g.o / 1000)} Ko · trop petite et illisible écartées · messages conformes`;
+});
+await etape('ERREURS META CONNUES ([v0.3.9-meta]) — « No Payment Method » (lu dans la réponse brute), impayé, compte désactivé, limite de dépense, droits : reconnus, dits en darija avec l\'action (loi de forme, boutons عاود / حبس) ; une phrase de Claude sans cause connue n\'est PAS reconnue ; un compte bloqué est refusé dès la question du compte (contrôles négatifs)', async () => {
+  const mm = await import('./missions.mjs'); const { M } = await import('./messages.mjs');
+  const cas = [['{"error_category":"VALIDATION","error_message":"No Payment Method: Update payment method: Visit the Billing and payment center to add a valid payment method"}', 'paiement'],
+    ['The ad account has an outstanding balance (unsettled)', 'impaye'], ['Ad account has been disabled', 'desactive'], ['Your account spending limit has been reached', 'limite'],
+    ['(#200) Requires ads_management permission', 'droits'], ['Meta a refusé la création des 4 annonces (ads_create_ad), erreur identique', null], ['(#17) User request limit reached', null]];
+  const faux = cas.filter(([t, c]) => mm.erreurMetaConnue(t) !== c).map(([t, c]) => `${t.slice(0, 40)} → ${mm.erreurMetaConnue(t)} (attendu ${c})`);
+  if (faux.length) throw new Error(faux.join(' ; '));
+  for (const k of ['paiement', 'impaye', 'desactive', 'limite', 'droits']) { const x = M.erreurMeta('abc123', k, 'deuxeme'); const f = telegram.fautesDeForme(x.texte); if (f.length || !JSON.stringify(x.boutons).includes('mis:abc123:reprendre:1')) throw new Error(`${k} : ${f.join(' ; ')}`); }
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'manita-compte-bloque-'));
+  const A = accueil.ouvrirAccueil({ dossier: dir, listes: () => ({ comptes: [{ id: 'act_1', nom: 'Bloque', statut: 'DISABLED' }, { id: 'act_2', nom: 'Bon', statut: 'ACTIVE' }], pages: [{ id: 'p', nom: 'P' }], creasParModele: 4 }) });
+  const { b } = pilote(A, []);
+  A.commencer(lienEssai); b('n', '2'); b('stock', 'test'); let r = b('compte', '0');
+  if (r[0].texte !== accueil.TEXTES.compteBloque.join('\n') || !/سؤال : الكونت/.test(r[1].texte)) throw new Error('compte DISABLED accepté : ' + JSON.stringify(r).slice(0, 200));
+  r = b('compte', '1'); if (!/سؤال : الصفحة/.test(r[0].texte)) throw new Error('compte ACTIVE refusé : ' + r[0].texte);
+  A.annuler();
+  return `${cas.length - 2} causes reconnues (dont « No Payment Method » brut), 2 phrases non reconnues · 5 messages conformes avec عاود / حبس · compte DISABLED refusé, ACTIVE accepté`;
+});
+await etape('ffmpeg / ffprobe SANS FIGER LE BUREAU ([v0.3.9-async], repris de 0.3.9-windows en 0.5.0) — executer() rend comme spawnSync (status, stdout, stderr), arrête au délai, dit « introuvable » ; l\'horloge du bureau tourne PENDANT un outil lent ; renommerSur() renomme (hors Windows : un essai, comme avant) (contrôles négatifs)', async () => {
+  const mm = await import('./missions.mjs');
+  const ok = await mm.executer(process.execPath, ['-e', 'process.stdout.write("bonjour"); process.stderr.write("x"); process.exit(3)']);
+  if (ok.status !== 3 || ok.stdout !== 'bonjour' || ok.stderr !== 'x') throw new Error('rendu : ' + JSON.stringify(ok));
+  let tic = 0; const minuteur = setInterval(() => tic++, 50);
+  const lent = await mm.executer(process.execPath, ['-e', 'setTimeout(() => {}, 5000)'], { timeout: 600 });
+  clearInterval(minuteur);
+  if (lent.status !== null || lent.error?.code !== 'ETIMEDOUT') throw new Error('délai : ' + JSON.stringify(lent));
+  if (tic < 5) throw new Error(`le bureau a figé pendant l'outil (${tic} tics en 600 ms)`);
+  const absent = await mm.executer(path.join(os.tmpdir(), 'pas-de-ffmpeg-ici'), ['-v']);
+  if (absent.error?.code !== 'ENOENT') throw new Error('outil absent : ' + JSON.stringify(absent));
+  const d = fs.mkdtempSync(path.join(os.tmpdir(), 'manita-renommer-')); fs.writeFileSync(path.join(d, 'a.tmp'), 'neuf'); fs.writeFileSync(path.join(d, 'a.json'), 'vieux');
+  mm.renommerSur(path.join(d, 'a.tmp'), path.join(d, 'a.json'));
+  if (fs.readFileSync(path.join(d, 'a.json'), 'utf8') !== 'neuf' || fs.existsSync(path.join(d, 'a.tmp'))) throw new Error('renommerSur');
+  let refus = null; try { mm.renommerSur(path.join(d, 'absent.tmp'), path.join(d, 'b.json')); } catch (e) { refus = e.code; }
+  if (refus !== 'ENOENT') throw new Error('une vraie erreur doit sortir : ' + refus);
+  return `status/stdout/stderr comme spawnSync · délai 600 ms tenu, ${tic} tics pendant l'outil · absent → ENOENT · renommerSur`;
+});
 await etape('accueil (lot) : N = 2 → communes → analyse → photo de chaque modèle à confirmer → questions par modèle (vieux bouton d\'un autre modèle refusé, nom en double refusé) → résumé → budget trop court refusé → « ابدا » → deux modèles ; « الغي », « ماشي صحيح », K ≠ N et échec (contrôles négatifs)', () => {
   const tous = []; let plafond = 1000; // 0.4.2 : le plancher est 3 $ par modèle (1 000 DA / 2 = 500 DA < 765 DA)
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'manita-acclot-'));

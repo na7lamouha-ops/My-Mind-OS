@@ -152,7 +152,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
-import { spawnSync } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { M, PALETTE, da, usd, enteteModele, couleurProche, nomLatin, urlLisible, nommerSansFusion, hexCouleur } from './messages.mjs';
 import { creasDe, CREAS_MAXI, TEXTES as TEXTES_ACCUEIL } from './accueil.mjs';
@@ -229,10 +229,33 @@ export const REGLE_IMPURETES = `CE QUI N'EST PAS LE VÊTEMENT : EXCLURE (règle 
 - Dans le doute sur un BORD (début, fin, transition de quelques secondes), exclus-le : un instant gardé à tort gâche une vidéo. Mais le vêtement qu'on voit en entier se garde, même dehors, près d'une piscine, en marche ou s'il change de couleur : jamais un long passage où il se voit.
 - Exclure un passage ne retire pas le modèle : son groupe reste dans le modèle par ce qui y est net.`;
 const EXT_VIDEO = ['.mp4', '.mov', '.m4v', '.avi', '.mkv'];
+/** [v0.3.9-meta] LES ERREURS META CONNUES (constaté le 24/10/2026 : « No Payment Method » coupé, en français, avec « عاود »
+ *  qui ne pouvait que rééchouer, et deux essais perdus). Une erreur de CONFIGURATION du compte : dite en darija avec
+ *  l'action à faire, aucun essai consommé, la mission attend le « عاود » du client. Lue dans le message ET dans les réponses
+ *  brutes des outils (la phrase de Claude ne la cite pas toujours). */
+export const ERREURS_META = [
+  { cle: 'paiement', motif: /no payment method|update payment method|add a valid payment method|payment method (is )?(required|missing)|funding source/i },
+  { cle: 'impaye', motif: /unsettled|outstanding balance|payment (has )?failed|account (is )?in (a )?grace period|balance due/i },
+  { cle: 'desactive', motif: /ad account (has been |is )?(disabled|closed|restricted)|account_status["':\s]*(2|101|DISABLED|CLOSED)|ad account is not active|account (is )?disabled/i },
+  { cle: 'limite', motif: /spend(ing)? (cap|limit)|account spending limit|spend_cap (reached|exceeded)|reached (its|the) spend/i },
+  { cle: 'droits', motif: /\(#200\)|does not have (the )?permission|not authorized to|requires (the )?.{0,40}permission|user doesn'?t have (the )?permission|page .{0,40}not .{0,20}(allowed|authorized)/i }
+];
+export function erreurMetaConnue(texte) { const t = String(texte || ''); const e = ERREURS_META.find(x => x.motif.test(t)); return e ? e.cle : null; }
 const lireJSON = f => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch { return null; } };
 const extrait = (t, n = 300) => String(t || '').trim().split(/\r?\n/).filter(Boolean).slice(-4).join(' | ').slice(-n);
 const definitive = msg => Object.assign(new Error(msg), { definitif: true });
 const maintenant = () => new Date().toISOString();
+// [v0.3.9-renommer] Windows : renommer par-dessus un fichier qu'un autre programme tient ouvert (antivirus, indexation)
+//   échoue un instant (EPERM, EACCES, EBUSY) : on réessaie, comme graceful-fs. Ailleurs, rien ne change.
+export function renommerSur(t, f) {
+  for (let i = 0; ; i++) {
+    try { return fs.renameSync(t, f); }
+    catch (e) {
+      if (process.platform !== 'win32' || !['EPERM', 'EACCES', 'EBUSY'].includes(e.code) || i >= 20) throw e;
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 25 * (i + 1));
+    }
+  }
+}
 
 export function listerVideos(dossier) {
   const out = [];
@@ -244,21 +267,88 @@ export function listerVideos(dossier) {
 
 /** ffprobe : durée, flux vidéo / audio, taille de l'image. Mesuré, jamais deviné. */
 export function sonder(ffprobe, fichier) {
-  const r = spawnSync(ffprobe, ['-v', 'error', '-show_entries', 'format=duration:stream=codec_type,width,height', '-of', 'json', fichier], { encoding: 'utf8', windowsHide: true, timeout: 120000 });
+  return lireSonde(spawnSync(ffprobe, [...ARGS_SONDE, fichier], { encoding: 'utf8', windowsHide: true, timeout: 120000 }));
+}
+
+/** [v0.3.9-async] ffmpeg / ffprobe SANS figer le bureau : spawnSync arrêtait TOUT (l'écoute Telegram, la page, les minuteurs)
+ *  pendant chaque appel, et un délai Telegram expirait pendant le blocage. Même résultat que spawnSync (status, stdout,
+ *  stderr, error), arrêté au bout de timeout. */
+export function executer(bin, args, { timeout = 120000, env = process.env, cwd } = {}) {
+  return new Promise(res => {
+    let p; try { p = spawn(bin, args, { windowsHide: true, env, cwd, stdio: ['ignore', 'pipe', 'pipe'] }); } catch (error) { return res({ status: null, stdout: '', stderr: '', error }); }
+    let stdout = '', stderr = '', fini = false;
+    const fin = r => { if (!fini) { fini = true; clearTimeout(minuteur); res({ stdout, stderr, ...r }); } };
+    const minuteur = setTimeout(() => { try { p.kill(); } catch {} fin({ status: null, error: Object.assign(new Error('délai dépassé'), { code: 'ETIMEDOUT' }) }); }, timeout);
+    p.stdout.on('data', d => { stdout += d; }); p.stderr.on('data', d => { stderr += d; });
+    p.on('error', error => fin({ status: null, error }));
+    p.on('close', status => fin({ status }));
+  });
+}
+const lireSonde = r => {
   if (r.status !== 0) return { ok: false, raison: extrait(r.stderr || r.error?.message || 'ffprobe a échoué') };
   let j; try { j = JSON.parse(r.stdout); } catch { return { ok: false, raison: 'ffprobe illisible' }; }
   const flux = j.streams || [];
   const v = flux.find(s => s.codec_type === 'video');
   return { ok: true, duree: +(j.format?.duration || 0), video: !!v, audio: flux.some(s => s.codec_type === 'audio'), largeur: v?.width || 0, hauteur: v?.height || 0 };
-}
+};
+const ARGS_SONDE = ['-v', 'error', '-show_entries', 'format=duration:stream=codec_type,width,height', '-of', 'json'];
+/** sonder(), sans figer le bureau. */
+export async function sonderA(ffprobe, fichier) { return lireSonde(await executer(ffprobe, [...ARGS_SONDE, fichier], { timeout: 120000 })); }
+const choisirMoteur = (videos, durees) => {
+  durees = durees.sort((a, b) => a - b);
+  const med = durees[Math.floor(durees.length / 2)] || 0;
+  return (videos.length <= 4 && med >= 120) ? { moteur: 'scenes', raison: `${videos.length} fichier(s), médiane ${Math.round(med)} s : longues prises` } : { moteur: 'rushes', raison: `${videos.length} fichier(s), médiane ${Math.round(med)} s : rushes déjà coupés` };
+};
+/** quelMoteur(), sans figer le bureau. */
+export async function quelMoteurA(ffprobe, videos) { const durees = []; for (const f of videos) durees.push((await sonderA(ffprobe, f)).duree || 0); return choisirMoteur(videos, durees); }
 
 /** Le moteur de montage, MESURÉ (comme le gardien de la maison) : peu de longues prises → découper les scènes ; sinon des rushes déjà coupés. */
 export function quelMoteur(ffprobe, videos) {
-  const durees = videos.map(f => sonder(ffprobe, f).duree || 0).sort((a, b) => a - b);
-  const med = durees[Math.floor(durees.length / 2)] || 0;
-  return (videos.length <= 4 && med >= 120) ? { moteur: 'scenes', raison: `${videos.length} fichier(s), médiane ${Math.round(med)} s : longues prises` } : { moteur: 'rushes', raison: `${videos.length} fichier(s), médiane ${Math.round(med)} s : rushes déjà coupés` };
+  return choisirMoteur(videos, videos.map(f => sonder(ffprobe, f).duree || 0));
 }
 
+/** [v0.3.9-photos] LES PHOTOS DU SHOOTING (constaté le 23/10/2026 : la page prenait des images tirées des vidéos, 1080 × 1920,
+ *  floues, alors que le Drive avait les photos du shooting en 24 Mpx, nommées par couleur « …_bleu-marine_01.jpg »).
+ *  La couleur d'une photo se lit dans son NOM : les mots de chaque couleur de la palette (et leurs synonymes), le dernier
+ *  trouvé dans le nom gagne (le nom du modèle vient d'abord : « …-Creme_M-A_noir_01 » est noire). */
+export const EXT_PHOTO = /\.(jpe?g|png|webp)$/i;
+export const MOTS_COULEUR = {
+  Noir: ['noir', 'noire', 'black', 'k7al', 'kahla', 'akhal'], Blanc: ['blanc', 'blanche', 'white', 'abyad', 'ecru'],
+  Beige: ['beige', 'creme', 'cream', 'nude', 'sable', 'ivoire'], Gris: ['gris', 'grise', 'grey', 'gray', 'anthracite'],
+  Marron: ['marron', 'brown', 'chocolat', 'choco', 'maron', 'taupe'], Camel: ['camel', 'caramel', 'cognac'],
+  Bleu: ['bleu', 'blue', 'ciel', 'jean', 'denim'], Marine: ['bleu marine', 'marine', 'navy'],
+  Vert: ['vert', 'verte', 'green', 'emeraude', 'sapin'], Kaki: ['kaki', 'khaki', 'olive'], Rouge: ['rouge', 'red'],
+  Bordeaux: ['bordeaux', 'bordo', 'burgundy', 'grenat'], Rose: ['rose', 'pink', 'poudre', 'fuchsia'],
+  Mauve: ['mauve', 'violet', 'violette', 'lilas', 'purple', 'lavande', 'parme'], Jaune: ['jaune', 'yellow', 'moutarde'],
+  Orange: ['orange', 'corail']
+};
+/** Les couleurs voisines : une photo « bleu-marine » va à la couleur que le client a nommée « Bleu » quand il n'a pas les deux. */
+const VOISINES = [['Bleu', 'Marine'], ['Beige', 'Camel', 'Blanc'], ['Marron', 'Camel'], ['Vert', 'Kaki'], ['Rouge', 'Bordeaux'], ['Rose', 'Mauve'], ['Noir', 'Gris']];
+const motsDe = t => ' ' + String(t || '').normalize('NFKD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim() + ' ';
+/** La couleur de palette d'un texte (un nom de fichier, un nom de couleur du client) : la DERNIÈRE trouvée, null sinon. */
+export function couleurDuTexte(texte) {
+  const t = motsDe(texte); let mieux = null, pos = -1;
+  for (const [c, mots] of Object.entries(MOTS_COULEUR)) for (const w of mots) { const i = t.lastIndexOf(' ' + w + ' '); if (i >= 0 && (i > pos || (i === pos && w.includes(' ')))) { mieux = c; pos = i; } }
+  // « bleu marine » : « marine » est plus loin que « bleu », il gagne déjà ; un « bleu » seul reste Bleu
+  return mieux;
+}
+/** À quelle couleur du client va une photo (son nom de fichier) ; null : on ne sait pas, la photo ne sert pas. */
+export function couleurDePhoto(fichier, nomsClient) {
+  const c = couleurDuTexte(path.basename(String(fichier)).replace(EXT_PHOTO, '')); if (!c) return null;
+  const parNom = nomsClient.map(n => ({ n, c: couleurDuTexte(n) || n }));
+  const exact = parNom.filter(x => x.c === c); if (exact.length === 1) return exact[0].n;
+  if (exact.length > 1) return null;
+  const groupe = VOISINES.find(g => g.includes(c)); if (!groupe) return null;
+  const proches = parNom.filter(x => groupe.includes(x.c)); return proches.length === 1 ? proches[0].n : null;
+}
+/** Les photos d'un dossier du Drive, en descendant dans les sous-dossiers (« Photos », « Mannequin-A »…). */
+export function listerPhotos(dossier) {
+  const out = [];
+  const marcher = d => { let e = []; try { e = fs.readdirSync(d, { withFileTypes: true }); } catch { return; }
+    for (const x of e) { if (x.name.startsWith('.') || x.name.startsWith('_')) continue; const f = path.join(d, x.name);
+      if (x.isDirectory()) marcher(f); else if (EXT_PHOTO.test(x.name)) out.push(f); } };
+  marcher(dossier); return out.sort();
+}
 /** Les photos de la page : on alterne les couleurs (jamais deux fois la même à la suite), 6 à 15. */
 /** LES MUSIQUES DE L'INSTALLATION (09/10/2026) : seuls les morceaux de PLUS de MUSIQUE_MIN_S secondes comptent (chaque
  *  vidéo livrée dépasse dix secondes : un morceau plus court ne sert plus) ; il en faut MUSIQUES_MIN. La durée est lue par
@@ -282,6 +372,32 @@ export function compterMusiques(dossier, ffprobe = 'ffprobe', cache = {}, env = 
     if (vu && vu.mtime === st.mtimeMs && vu.taille === st.size) duree = vu.duree;
     else {
       const p = spawnSync(ffprobe, ['-v', 'error', '-show_entries', 'format=duration', '-of', 'default=nw=1:nk=1', f], { encoding: 'utf8', windowsHide: true, timeout: 20000, env });
+      if (p.error && p.error.code === 'ENOENT') { r.ffprobe = false; continue; } // ffprobe absent : rien en cache, rien ne compte
+      r.relus++;
+      const d = parseFloat(String(p.stdout || '').trim());
+      duree = p.status === 0 && Number.isFinite(d) && d > 0 ? d : null; // bloqué (timeout), erreur, durée absente : illisible
+    }
+    r.cache[n] = { mtime: st.mtimeMs, taille: st.size, duree };
+    if (duree === null || duree === undefined) r.illisibles++;
+    else if (duree > MUSIQUE_MIN_S) r.longues++;
+    else r.courtes++;
+  }
+  return r;
+}
+/** [v0.3.9-async] compterMusiques(), sans figer le bureau (même règle, même cache). */
+export async function compterMusiquesA(dossier, ffprobe = 'ffprobe', cache = {}, env = process.env) {
+  const r = { dossier, existe: false, ffprobe: true, longues: 0, courtes: 0, illisibles: 0, total: 0, relus: 0, cache: {} };
+  let noms;
+  try { noms = fs.readdirSync(dossier, { withFileTypes: true }).filter(e => e.isFile() && !e.name.startsWith('._') && EXT_MUSIQUE.test(e.name)).map(e => e.name); }
+  catch { return r; }
+  r.existe = true; r.total = noms.length;
+  for (const n of noms.sort()) {
+    const f = path.join(dossier, n); let st; try { st = fs.statSync(f); } catch { r.illisibles++; continue; }
+    const vu = cache[n];
+    let duree;
+    if (vu && vu.mtime === st.mtimeMs && vu.taille === st.size) duree = vu.duree;
+    else {
+      const p = await executer(ffprobe, ['-v', 'error', '-show_entries', 'format=duration', '-of', 'default=nw=1:nk=1', f], { timeout: 20000, env });
       if (p.error && p.error.code === 'ENOENT') { r.ffprobe = false; continue; } // ffprobe absent : rien en cache, rien ne compte
       r.relus++;
       const d = parseFloat(String(p.stdout || '').trim());
@@ -1450,7 +1566,7 @@ export function ouvrirMissions(deps) {
   const enMarche = new Set();
   const scaleEnCours = new Set(); // une activation de scale à la fois par mission (deux pressions sur « لانسي »)
   const dossier = m => path.join(RACINE, m.id);
-  const sauver = m => { const f = path.join(dossier(m), 'mission.json'); fs.mkdirSync(dossier(m), { recursive: true }); const t = f + '.tmp'; fs.writeFileSync(t, JSON.stringify(m, null, 1)); fs.renameSync(t, f); };
+  const sauver = m => { const f = path.join(dossier(m), 'mission.json'); fs.mkdirSync(dossier(m), { recursive: true }); const t = f + '.tmp'; fs.writeFileSync(t, JSON.stringify(m, null, 1)); renommerSur(t, f); };
   const histoire = (m, quoi) => { m.historique.push({ quand: maintenant(), quoi }); if (m.historique.length > 300) m.historique = m.historique.slice(-300); journal(`mission ${m.id} : ${quoi}`); };
   const R = () => reglages() || {};
   const ffprobe = () => (R().ffmpegDossier ? path.join(R().ffmpegDossier, process.platform === 'win32' ? 'ffprobe.exe' : 'ffprobe') : 'ffprobe');
@@ -1474,7 +1590,7 @@ export function ouvrirMissions(deps) {
   // <maison>/chaine.json : survit à une coupure du PC. quota = { depuis, reprise, prevenu } ; connecteurs = { cles, prevenu, sondes, prochaineSonde }
   const FICHIER_CHAINE = path.join(maison, 'chaine.json');
   const chaine = lireJSON(FICHIER_CHAINE) || {};
-  const sauverChaine = () => { try { const t = FICHIER_CHAINE + '.tmp'; fs.writeFileSync(t, JSON.stringify(chaine, null, 1)); fs.renameSync(t, FICHIER_CHAINE); } catch (e) { journal('chaine.json : ' + e.message); } };
+  const sauverChaine = () => { try { const t = FICHIER_CHAINE + '.tmp'; fs.writeFileSync(t, JSON.stringify(chaine, null, 1)); renommerSur(t, FICHIER_CHAINE); } catch (e) { journal('chaine.json : ' + e.message); } };
   const QUOTA_MIN_MS = 60000, QUOTA_MAX_MS = 6 * 3600000, QUOTA_SANS_HEURE_MS = 30 * 60000;
   /** Le verrou de la limite d'usage : tant qu'il court, aucun tour ne part (sauf une PAUSE : arrêter reste toujours libre). */
   const verrouQuota = (t = Date.now()) => (chaine.quota && Date.parse(chaine.quota.reprise) > t ? chaine.quota : null);
@@ -1667,7 +1783,11 @@ export function ouvrirMissions(deps) {
     if (!r.structure) throw new Error(`Claude n'a pas rendu le JSON demandé (${etape}) : ${extrait(r.texte, 200)}`);
     // arretClaude : Claude a DIT qu'il ne pouvait pas (sa réponse est là), ce n'est pas une panne de la machine. Un champ
     // « erreur » rempli pour dire qu'il n'y en a pas (« aucune », « none », « - »…) n'est pas un arrêt (06/10/2026)
-    if (r.structure.erreur && !ERREUR_VIDE.test(String(r.structure.erreur).trim())) throw Object.assign(new Error(`Claude s'est arrêté (${etape}) : ${String(r.structure.erreur).slice(0, 300)}`), { arretClaude: true });
+    if (r.structure.erreur && !ERREUR_VIDE.test(String(r.structure.erreur).trim())) {
+      // [v0.3.9-meta] la cause réelle de Meta, cherchée aussi dans les réponses brutes des outils du tour
+      const metaConnue = erreurMetaConnue(String(r.structure.erreur) + ' ' + (r.appels || []).map(a => a.sortie || '').join(' '));
+      throw Object.assign(new Error(`Claude s'est arrêté (${etape}) : ${String(r.structure.erreur).slice(0, 300)}`), { arretClaude: true, ...(metaConnue ? { metaConnue } : {}) });
+    }
     return r;
   }
   /** La fin de la publication (commune aux deux chemins) : actif relu brut sur CE produit, aucun autre produit activé, la
@@ -1980,6 +2100,60 @@ Rends {productId, actif (relu), variantesVisibles (nombre relu), urlProduit "htt
   }
   /** Le plan du lot et le nom du modèle DANS ce plan (le client a pu donner un autre nom à la page : MONTER-10 lit celui du
    *  plan). Une mission d'un lot d'avant la phase 2 n'a ni l'un ni l'autre : le plan du lot, et le modèle de son rang. */
+  /** [v0.3.9-photos] Le dossier du Drive de CE modèle : un lot → le dossier commun des rushes du modèle dans le plan (jamais la
+   *  racine d'un lot de plusieurs modèles : on ne saurait pas à qui sont les photos) ; une mission seule → tout son Drive. */
+  function dossierDriveDuModele(m) {
+    // une mission seule : le Drive descendu tel quel (rangé en sous-dossiers), sinon celui du lot d'UN modèle (N = 1 compté),
+    // sinon ses rushes (un Drive plat garde ses photos à côté des vidéos)
+    if (!m.lot) { for (const d of [m.d.rushesDrive, m.demande?.rushesLot, m.d.rushes, path.join(dossier(m), 'rushes')]) if (d && fs.existsSync(d) && listerPhotos(d).length) return d; return null; }
+    let p, md;
+    try { const { plan } = planDuLot(m); p = lireJSON(plan); md = p && p.modeles.find(x => x && x.nom === (m.lot.modelePlan || '')) || (p && p.modeles[(m.lot.rangPlan || m.lot.rang) - 1]); } catch { return null; }
+    if (!p || !md) return null;
+    const racine = p.rushes && fs.existsSync(p.rushes) ? p.rushes : path.join(maison, 'lots', m.lot.id, 'rushes');
+    const rel = [...new Set((md.segments || []).map(s => String(s.rush || '').replace(/\\/g, '/').split('/').slice(0, -1)).map(x => x.join('/')))];
+    if (!rel.length) return null;
+    const parts = rel.map(r => r.split('/').filter(Boolean)); const commun = [];
+    for (let i = 0; parts.every(x => x[i] !== undefined && x[i] === parts[0][i]); i++) commun.push(parts[0][i]);
+    if (!commun.length && (p.modeles || []).length > 1) return null;
+    // un dossier « Videos » du modèle : ses photos sont à côté (« …/Mannequin-A/Videos » → « …/Mannequin-A »)
+    while (commun.length && /^(videos?|vids?|rushes?|clips?)$/i.test(commun[commun.length - 1])) commun.pop();
+    if (!commun.length && (p.modeles || []).length > 1) return null;
+    return path.join(racine, ...commun);
+  }
+  /** Les photos du shooting, PRÊTES pour la page : remises droites (EXIF), sans EXIF, 2000 px au plus sur le grand côté,
+   *  JPEG qualité 85 (moins si elles dépassent 450 Ko), les trop petites écartées (moins de 800 px). { nom couleur: [fichiers] } */
+  async function photosDuShooting(m, noms) {
+    const d = dossierDriveDuModele(m); if (!d) return { parCouleur: {}, vues: 0, raison: 'dossier du modèle introuvable dans le Drive' };
+    const brutes = listerPhotos(d); if (!brutes.length) return { parCouleur: {}, vues: 0, raison: 'aucune photo dans le Drive' };
+    const avecCouleur = brutes.map(f => ({ f, nom: couleurDePhoto(f, noms) })).filter(x => x.nom);
+    if (!avecCouleur.length) return { parCouleur: {}, vues: brutes.length, raison: `${brutes.length} photo(s) dans le Drive, aucune couleur lue dans leurs noms` };
+    const sortie = path.join(dossier(m), 'photos-shooting'); fs.rmSync(sortie, { recursive: true, force: true }); fs.mkdirSync(sortie, { recursive: true });
+    const liste = path.join(sortie, 'liste.json');
+    fs.writeFileSync(liste, JSON.stringify(avecCouleur.map((x, i) => ({ src: x.f, dst: path.join(sortie, `photo-${String(i + 1).padStart(2, '0')}.jpg`), nom: x.nom }))));
+    const code = [
+      'import json, os, sys', 'from PIL import Image, ImageOps',
+      'out = []',
+      'for x in json.load(open(sys.argv[1], encoding="utf-8")):',
+      '    try:',
+      '        im = ImageOps.exif_transpose(Image.open(x["src"])).convert("RGB")',
+      '        if min(im.size) < 800:',
+      '            out.append({**x, "ok": False, "pourquoi": "trop petite"}); continue',
+      '        im.thumbnail((2000, 2000), Image.LANCZOS)',
+      '        for q in (85, 80, 75, 70):',
+      '            im.save(x["dst"], "JPEG", quality=q, optimize=True, progressive=True)',
+      '            if os.path.getsize(x["dst"]) <= 450000: break',
+      '        out.append({**x, "ok": True, "l": im.size[0], "h": im.size[1], "o": os.path.getsize(x["dst"])})',
+      '    except Exception as e:',
+      '        out.append({**x, "ok": False, "pourquoi": str(e)[:120]})',
+      'print(json.dumps({"quoi": "photos", "photos": out}))'].join('\n');
+    const r = await outil(m, 'photos-shooting', null, [liste], { code, dureeMaxMs: 600000, inactiviteMaxMs: 300000 });
+    const j = jsonOutil(r, 'photos');
+    if (r.code !== 0 || !j) return { parCouleur: {}, vues: brutes.length, raison: `préparation des photos impossible (code ${r.code}) : ${extrait(r.sortie, 160)}` };
+    const parCouleur = {};
+    for (const x of j.photos || []) if (x.ok && fs.existsSync(x.dst)) (parCouleur[x.nom] = parCouleur[x.nom] || []).push(x.dst);
+    const gardees = Object.values(parCouleur).flat().length;
+    return { parCouleur, vues: brutes.length, lues: avecCouleur.length, gardees, dossier: d, ...(gardees ? {} : { raison: `${avecCouleur.length} photo(s) avec couleur, aucune utilisable (trop petites ou illisibles)` }) };
+  }
   function planDuLot(m) {
     // le chemin écrit dans la mission est ABSOLU : une maison déplacée (autre dossier, autre PC, Windows réinstallé) le
     // rend faux, alors que le plan est toujours là, dans le lot de CETTE maison
@@ -2105,7 +2279,7 @@ Rends {productId, actif (relu), variantesVisibles (nombre relu), urlProduit "htt
       // [relecture] 10/10/2026 : seules les musiques de PLUS de 12 s comptent (la loi du 09/10, celle de l'installation et de
       // MONTER-10, qui écarte les autres) — avant, tout fichier audio comptait (« ._ » d'un disque Mac et morceaux courts
       // compris) : le contrôle exigeait le son sur des vidéos que MONTER-10 avait montées sans musique
-      const nbMus = musiques ? compterMusiques(musiques, ffprobe()).longues : 0;
+      const nbMus = musiques ? (await compterMusiquesA(musiques, ffprobe())).longues : 0;
       m.d.musiques = nbMus;
       fs.mkdirSync(creas, { recursive: true });
       const duree = { dureeMaxMs: 4 * 3600000, inactiviteMaxMs: 30 * 60000 };
@@ -2127,7 +2301,7 @@ Rends {productId, actif (relu), variantesVisibles (nombre relu), urlProduit "htt
         // (06/10/2026). manita.py ne reste que pour moins de quatre rushes (MONTER-10 en exige quatre), ou en repli si
         // MONTER-10 ne sort aucune vidéo.
         const videos = listerVideos(m.d.rushes);
-        ({ moteur, raison } = quelMoteur(ffprobe(), videos));
+        ({ moteur, raison } = await quelMoteurA(ffprobe(), videos));
         // moins de quatre rushes : MONTER-10 les monte maintenant lui-même (un plan d'UN modèle : rythme 1,6 / 3 s, coupes évitées) ;
         // manita.py (sans le rythme du vendeur, marqué A REGARDER) ne sert plus qu'en repli, s'il ne sort aucune vidéo
         if (n < 2 && moteur === 'rushes') raison += ' ; une seule couleur : MONTER-10 --couleurs 1 (3 s partout, natif)';
@@ -2157,7 +2331,7 @@ Rends {productId, actif (relu), variantesVisibles (nombre relu), urlProduit "htt
       const avecMusique = (m.d.musiques || 0) > 0;
       const bonnes = [], refus = [];
       for (const f of fichiers) {
-        const s = sonder(ffprobe(), f); const taille = fs.statSync(f).size; const rf = conforme.get(path.basename(f));
+        const s = await sonderA(ffprobe(), f); const taille = fs.statSync(f).size; const rf = conforme.get(path.basename(f));
         // le contrôle anti-mélange de MONTER-10 (--plan) a relu chaque bloc : une vidéo qui porte deux modèles ne part jamais
         // LOI DES DIX SECONDES (08/10/2026) : chaque vidéo livrée dépasse STRICTEMENT 10 s, mesurée ici par ffprobe (et une
         // vidéo que l'outil a marquée « trop_courte » ne part jamais) — jetée comme une vidéo à deux modèles
@@ -2189,7 +2363,29 @@ Rends {productId, actif (relu), variantesVisibles (nombre relu), urlProduit "htt
     },
     async photos(m) {
       for (const c of m.d.couleurs) c.captures = (c.captures || []).filter(f => fs.existsSync(f)); // jamais une photo fantôme au dépôt
-      let choix = photosAlternees(m.d.couleurs, 15);
+      // [v0.3.9-photos] les PHOTOS DU SHOOTING d'abord (le Drive, par couleur lue dans le nom du fichier) ; les images tirées
+      // des vidéos seulement en dernier recours (aucune photo, ou une couleur sans photo), et le client le lit
+      const noms = [...new Set(m.d.couleurs.filter(c => !c.exclue).map(c => c.nom).filter(Boolean))];
+      let choix = null;
+      try {
+        const sh = await photosDuShooting(m, noms);
+        m.d.photosShooting = { vues: sh.vues || 0, gardees: sh.gardees || 0, raison: sh.raison || null };
+        if (sh.gardees) {
+          const avecPhotos = noms.map(n => ({ nom: n, exclue: false, captures: sh.parCouleur[n] || [] }));
+          const seules = photosAlternees(avecPhotos, 15);
+          const manquent = noms.filter(n => !(sh.parCouleur[n] || []).length);
+          if (seules.length >= PHOTOS_PAGE && !manquent.length) { choix = seules; histoire(m, `photos : ${seules.length} photo(s) du shooting (${sh.gardees} prêtes sur ${sh.vues} dans le Drive), aucune image tirée des vidéos`); }
+          else {
+            // les photos d'abord, puis les images des vidéos de la même couleur pour compléter
+            const melange = noms.map(n => ({ nom: n, exclue: false, captures: [...(sh.parCouleur[n] || []), ...m.d.couleurs.filter(c => !c.exclue && c.nom === n).flatMap(c => c.captures)] }));
+            choix = photosAlternees(melange, 15);
+            const deVideo = choix.filter(c => !String(c.fichier).startsWith(path.join(dossier(m), 'photos-shooting'))).length;
+            histoire(m, `photos : ${choix.length - deVideo} photo(s) du shooting + ${deVideo} image(s) des vidéos${manquent.length ? ` (sans photo : ${manquent.join(', ')})` : ''}`);
+            if (deVideo) await envoyer(m, M.photosDesVideos(deVideo, manquent));
+          }
+        } else { histoire(m, `photos : ${sh.raison} — les images des vidéos servent`); if (sh.vues && /aucune couleur lue/.test(sh.raison || '')) await envoyer(m, M.photosDesVideos(null, [])); }
+      } catch (e) { histoire(m, `photos du shooting : ${String(e.message || e).slice(0, 200)} — les images des vidéos servent`); choix = null; }
+      if (!choix) choix = photosAlternees(m.d.couleurs, 15);
       // moins de six : une mission capturée avant la relance serrée (bloquée ici, « عاود ») ou des couleurs retirées par le
       // client — les captures repassent serrées pour les couleurs gardées, avant de déclarer l'échec (07/10/2026)
       if (choix.length < PHOTOS_PAGE) { await completerPhotos(m); sauver(m); choix = photosAlternees(m.d.couleurs, 15); }
@@ -2228,7 +2424,7 @@ Rends {productId, actif (relu), variantesVisibles (nombre relu), urlProduit "htt
       const rep = m.demande.reponses;
       const couleurs = [...new Set(m.d.couleurs.filter(c => !c.exclue).map(c => c.nom))];
       const images = [];
-      for (const c of m.d.couleurs.filter(c => !c.exclue).slice(0, 4)) { const v = vignette(m, c.captures[0], `vignette-${c.rang}.jpg`); if (v) images.push({ media_type: 'image/jpeg', data: fs.readFileSync(v).toString('base64') }); }
+      for (const c of m.d.couleurs.filter(c => !c.exclue).slice(0, 4)) { const v = await vignette(m, c.captures[0], `vignette-${c.rang}.jpg`); if (v) images.push({ media_type: 'image/jpeg', data: fs.readFileSync(v).toString('base64') }); }
       let script; try { script = lireScriptAngles(); } catch (e) { throw definitive(`le script d'angles du vendeur est illisible (${path.basename(FICHIER_SCRIPT_ANGLES)}) : ${e.message}`); }
       const consigne = m.d.consigneTextes ? `\nCORRECTION DEMANDÉE PAR LE CONTRÔLE AUTOMATIQUE (à appliquer, le reste peut rester) : ${m.d.consigneTextes}\n` : '';
       const action = rep.mode === 'message' ? 'ابعثيلنا ميساج' : 'اطلبي من الرابط';
@@ -2546,7 +2742,8 @@ Rends {productId, actif (relu), variantesVisibles (nombre relu), urlProduit "htt
         histoire(m, `videos : ${vids.length} vidéo(s) déjà chez Meta reprises (${m.d.metaVideos.map(v => v.video_id).join(', ')}), aucun envoi`);
         return undefined;
       } const d = path.join(dossier(m), 'meta'); fs.mkdirSync(d, { recursive: true });
-      const vignettes = vids.map((v, i) => { const f = path.join(d, `vignette-${String(i + 1).padStart(2, '0')}.jpg`); if (!fs.existsSync(f)) spawnSync(ffmpeg(), ['-y', '-v', 'error', '-ss', '0.15', '-i', v.fichier, '-frames:v', '1', '-q:v', '2', f], { windowsHide: true, timeout: 120000 }); return f; });
+      const vignettes = [];
+      for (const [i, v] of vids.entries()) { const f = path.join(d, `vignette-${String(i + 1).padStart(2, '0')}.jpg`); if (!fs.existsSync(f)) await executer(ffmpeg(), ['-y', '-v', 'error', '-ss', '0.15', '-i', v.fichier, '-frames:v', '1', '-q:v', '2', f], { timeout: 120000 }); vignettes.push(f); }
       if (vignettes.some(f => !fs.existsSync(f))) throw new Error('vignette impossible à tirer (ffmpeg)');
       const compte = String(m.demande.reponses.compte?.id || '').replace(/^act_/, '');
       if (!compte) throw definitive('compte publicitaire inconnu');
@@ -3595,14 +3792,17 @@ Ne touche à rien d'autre : ni les ad sets (en CBO, ils n'ont pas de budget), ni
   /* ---------------------------------------- le moteur ---------------------------------------- */
   const codeBoutique = () => String(R().codeBoutique || 'SHOP').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8) || 'SHOP';
   const prochaine = m => ETAPES.map(([id]) => id).find(id => !['fini', 'saute'].includes((m.etapes[id] || {}).etat));
-  function vignette(m, source, nom) {
+  async function vignette(m, source, nom) {
     if (!source || !fs.existsSync(source)) return null;
     const d = path.join(dossier(m), 'textes'); fs.mkdirSync(d, { recursive: true }); const f = path.join(d, nom);
-    if (!fs.existsSync(f)) spawnSync(ffmpeg(), ['-y', '-v', 'error', '-i', source, '-vf', 'scale=512:-2', '-q:v', '4', f], { windowsHide: true, timeout: 60000 });
+    if (!fs.existsSync(f)) await executer(ffmpeg(), ['-y', '-v', 'error', '-i', source, '-vf', 'scale=512:-2', '-q:v', '4', f], { timeout: 60000 });
     return fs.existsSync(f) ? f : null;
   }
 
-  async function avancer(m) {
+  // [v0.3.9-avancer] avancer() est souvent lancée sans await : une erreur qui sort (un sauver() qui échoue) est écrite
+  //   au journal au lieu d'arrêter le serveur par une promesse rejetée que personne ne rattrape
+  function avancer(m) { return avancerTour(m).catch(e => { try { journal(`mission ${m.id} : erreur hors étape — ${String(e?.stack || e?.message || e).slice(0, 400)}`); } catch {} }); }
+  async function avancerTour(m) {
     if (enMarche.has(m.id)) return; enMarche.add(m.id);
     try {
       while (m.etat === 'encours') {
@@ -3629,6 +3829,14 @@ Ne touche à rien d'autre : ni les ad sets (en CBO, ils n'ont pas de budget), ni
             st.etat = 'afaire'; st.erreur = String(e.message || e).slice(0, 300); m.etat = 'connecteur'; m.connecteur = { cles: clesDe(e), statuts: e.connecteur.statuts || [], depuis: maintenant(), etape: id };
             histoire(m, `${id} : connecteur à reconnecter (${(m.connecteur.statuts.length ? m.connecteur.statuts : m.connecteur.cles).join(', ')}) — la mission attend, aucun essai perdu`); sauver(m);
             await signalerConnecteur(m.connecteur.cles, m); break;
+          }
+          // [v0.3.9-meta] une erreur de CONFIGURATION du compte Meta : aucun essai consommé, le client lit quoi faire en darija
+          const metaConnue = e.metaConnue || erreurMetaConnue(e.message);
+          if (metaConnue) {
+            st.etat = 'echec'; st.erreur = String(e.message || e).slice(0, 500); m.etat = 'bloquee'; m.d.erreurMeta = { cle: metaConnue, etape: id, le: maintenant() };
+            histoire(m, `${id} : Meta refuse — ${metaConnue} (configuration du compte : aucun essai consommé, la mission attend « عاود »)`); sauver(m);
+            await envoyer(m, M.erreurMeta(m.id, metaConnue, m.demande?.reponses?.compte?.nom || ''));
+            break;
           }
           st.essais = (st.essais || 0) + 1; st.erreur = String(e.message || e).slice(0, 500);
           histoire(m, `${id} : ÉCHEC (${st.essais}) — ${st.erreur}`);
@@ -3939,7 +4147,7 @@ Ne touche à rien d'autre : ni les ad sets (en CBO, ils n'ont pas de budget), ni
   for (const d of fs.readdirSync(RACINE_LOTS)) { const l = lireJSON(path.join(RACINE_LOTS, d, 'lot.json')); if (l && l.id) lots.set(l.id, l); }
   const dossierLot = l => path.join(RACINE_LOTS, l.id);
   const sepLot = l => path.join(dossierLot(l), 'separation');
-  const sauverLot = l => { const f = path.join(dossierLot(l), 'lot.json'); fs.mkdirSync(dossierLot(l), { recursive: true }); const t = f + '.tmp'; fs.writeFileSync(t, JSON.stringify(l, null, 1)); fs.renameSync(t, f); };
+  const sauverLot = l => { const f = path.join(dossierLot(l), 'lot.json'); fs.mkdirSync(dossierLot(l), { recursive: true }); const t = f + '.tmp'; fs.writeFileSync(t, JSON.stringify(l, null, 1)); renommerSur(t, f); };
   const histoireLot = (l, quoi) => { l.historique.push({ quand: maintenant(), quoi }); if (l.historique.length > 200) l.historique = l.historique.slice(-200); journal(`lot ${l.id} : ${quoi}`); };
   const outilLot = (l, nom, script, args, o = {}) => travaux.lancer({ nom: `lot-${l.id}/${nom}`, script: script ? path.join(atelier, script) : null, code: o.code || null,
     args, cwd: dossierLot(l), env: null, journalFichier: path.join(dossierLot(l), 'journal', `${nom}.log`), dureeMaxMs: o.dureeMaxMs || 3600000, inactiviteMaxMs: o.inactiviteMaxMs || 900000 });
@@ -3960,32 +4168,32 @@ Ne touche à rien d'autre : ni les ad sets (en CBO, ils n'ont pas de budget), ni
 
   /** Une planche trop lourde, ou trop grande (l'API refuse un côté de plus de 8 000 px), est réduite (ffmpeg) dans une boîte
    *  de 2 000 px ; sinon elle part telle quelle. reduire : toutes réduites (la requête entière a une limite de taille). */
-  function imagePourClaude(source, sortie, reduire = false) {
-    const s = sonder(ffprobe(), source); // sans ffprobe on ne sait pas mesurer : on garde la règle du poids seul
+  async function imagePourClaude(source, sortie, reduire = false) {
+    const s = await sonderA(ffprobe(), source); // sans ffprobe on ne sait pas mesurer : on garde la règle du poids seul
     const tailleOk = !s.ok || (s.largeur <= 7900 && s.hauteur <= 7900);
     if (!reduire && tailleOk && fs.statSync(source).size <= 3.5e6 && /\.jpe?g$/i.test(source)) return source;
     fs.mkdirSync(path.dirname(sortie), { recursive: true }); fs.rmSync(sortie, { force: true }); // jamais l'image d'un passage d'avant
-    spawnSync(ffmpeg(), ['-y', '-v', 'error', '-i', source, '-vf', 'scale=\'min(2000,iw)\':\'min(2000,ih)\':force_original_aspect_ratio=decrease', '-q:v', '4', sortie], { windowsHide: true, timeout: 120000 });
+    await executer(ffmpeg(), ['-y', '-v', 'error', '-i', source, '-vf', 'scale=\'min(2000,iw)\':\'min(2000,ih)\':force_original_aspect_ratio=decrease', '-q:v', '4', sortie], { timeout: 120000 });
     if (!fs.existsSync(sortie) || fs.statSync(sortie).size > 4.5e6) throw new Error(`planche trop lourde pour la lecture : ${path.basename(source)}`);
     return sortie;
   }
   /** La photo qu'un client confirme : faite DEPUIS le dossier plat du modèle (ce qui servira vraiment), six vidéos au plus. */
-  function photoModele(dossierVideos, sortie) {
+  async function photoModele(dossierVideos, sortie) {
     const v = listerVideos(dossierVideos).slice(0, 6); if (!v.length) return null;
     const tmp = sortie + '.d'; fs.rmSync(tmp, { recursive: true, force: true }); fs.mkdirSync(tmp, { recursive: true });
     try {
       const images = [];
       for (const f of v) {
-        const s = sonder(ffprobe(), f); const t = s.ok && s.duree > 0 ? s.duree * 0.4 : 0;
+        const s = await sonderA(ffprobe(), f); const t = s.ok && s.duree > 0 ? s.duree * 0.4 : 0;
         const o = path.join(tmp, `i${String(images.length).padStart(2, '0')}.jpg`);
-        spawnSync(ffmpeg(), ['-y', '-v', 'error', '-ss', t.toFixed(2), '-i', f, '-frames:v', '1', '-vf', 'scale=360:640:force_original_aspect_ratio=decrease,pad=360:640:(ow-iw)/2:(oh-ih)/2:white', '-q:v', '3', o], { windowsHide: true, timeout: 120000 });
+        await executer(ffmpeg(), ['-y', '-v', 'error', '-ss', t.toFixed(2), '-i', f, '-frames:v', '1', '-vf', 'scale=360:640:force_original_aspect_ratio=decrease,pad=360:640:(ow-iw)/2:(oh-ih)/2:white', '-q:v', '3', o], { timeout: 120000 });
         if (fs.existsSync(o) && fs.statSync(o).size > 0) images.push(o);
       }
       if (!images.length) return null;
       const col = images.length === 4 ? 2 : Math.min(3, images.length), lig = Math.ceil(images.length / col);
       // une case vide reste BLANCHE (une image répétée ferait croire à une vidéo de plus)
-      while (images.length < col * lig) { const o = path.join(tmp, `i${String(images.length).padStart(2, '0')}.jpg`); spawnSync(ffmpeg(), ['-y', '-v', 'error', '-f', 'lavfi', '-i', 'color=c=white:s=360x640', '-frames:v', '1', o], { windowsHide: true, timeout: 60000 }); if (!fs.existsSync(o)) fs.copyFileSync(images[images.length - 1], o); images.push(o); }
-      spawnSync(ffmpeg(), ['-y', '-v', 'error', '-framerate', '1', '-start_number', '0', '-i', path.join(tmp, 'i%02d.jpg'), '-vf', `tile=${col}x${lig}:padding=6:color=white`, '-frames:v', '1', '-q:v', '3', sortie], { windowsHide: true, timeout: 120000 });
+      while (images.length < col * lig) { const o = path.join(tmp, `i${String(images.length).padStart(2, '0')}.jpg`); await executer(ffmpeg(), ['-y', '-v', 'error', '-f', 'lavfi', '-i', 'color=c=white:s=360x640', '-frames:v', '1', o], { timeout: 60000 }); if (!fs.existsSync(o)) fs.copyFileSync(images[images.length - 1], o); images.push(o); }
+      await executer(ffmpeg(), ['-y', '-v', 'error', '-framerate', '1', '-start_number', '0', '-i', path.join(tmp, 'i%02d.jpg'), '-vf', `tile=${col}x${lig}:padding=6:color=white`, '-frames:v', '1', '-q:v', '3', sortie], { timeout: 120000 });
       return fs.existsSync(sortie) && fs.statSync(sortie).size > 0 ? sortie : null;
     } finally { fs.rmSync(tmp, { recursive: true, force: true }); }
   }
@@ -4287,11 +4495,11 @@ Ne touche à rien d'autre : ni les ad sets (en CBO, ils n'ont pas de budget), ni
     const derniere = l.d.lectures[l.d.lectures.length - 1] || null;
     const apercu = (l.d.apercu || []).filter(f => fs.existsSync(f)).map((f, i, tout) => ({ f, nom: tout.length > 1 ? `apercu (page ${i + 1}/${tout.length})` : 'apercu' }));
     const pages = [...apercu, ...l.d.groupes.flatMap(g => (g.pages || [g.planche]).map((f, i, tout) => ({ f, nom: tout.length > 1 ? `${g.id} (page ${i + 1}/${tout.length})` : g.id })))];
-    const pourClaude = reduire => pages.map((p, i) => imagePourClaude(p.f, path.join(L, 'pour-claude', `${i + 1}.jpg`), reduire));
-    let fichiers = pourClaude(false);
+    const pourClaude = async reduire => { const r = []; for (const [i, p] of pages.entries()) r.push(await imagePourClaude(p.f, path.join(L, 'pour-claude', `${i + 1}.jpg`), reduire)); return r; };
+    let fichiers = await pourClaude(false);
     // toutes ensemble sous la limite d'une requête ; et au-delà de VINGT images dans une requête, l'API n'accepte plus un côté
     // de plus de 2 000 px (l'aperçu en plus des 20 pages permises, 06/10/2026) : toutes réduites dans la boîte de 2 000 px
-    if (fichiers.length > 20 || fichiers.reduce((n, f) => n + fs.statSync(f).size, 0) > 20e6) fichiers = pourClaude(true);
+    if (fichiers.length > 20 || fichiers.reduce((n, f) => n + fs.statSync(f).size, 0) > 20e6) fichiers = await pourClaude(true);
     const images = fichiers.map(f => ({ media_type: 'image/jpeg', data: fs.readFileSync(f).toString('base64') }));
     // la LISTE : la seule source des noms (les planches les écrivent sans accents) ; chaque tronçon garde son id T# et sa vidéo R#
     const liste = l.d.groupes.map(g => ({ groupe: g.id, ...(g.raison ? { raison: g.raison } : {}), troncons: g.troncons.map(t => ({ ...(t.id ? { troncon: t.id } : {}), ...(t.video ? { video: t.video } : {}), rush: t.rush, de: t.de, a: t.a })) }));
@@ -4563,7 +4771,7 @@ Si les images sont illisibles, remplis « erreur » au lieu de deviner.${recompt
       for (const md of modeles) {
         const g = l.d.groupes.find(G => md.groupes.includes(G.id)) || l.d.groupes.find(G => G.troncons.some(t => t.rush === plan.modeles[md.rang - 1].segments[0].rush));
         const outilPhoto = path.join(P, `modele-${md.rang}.jpg`);
-        md.photo = (rp.code === 0 && fs.existsSync(outilPhoto) ? outilPhoto : null) || photoModele(md.dossier, path.join(L, `modele-${md.rang}.jpg`)) || (g && !l.d.lectureSeule ? g.planche : null);
+        md.photo = (rp.code === 0 && fs.existsSync(outilPhoto) ? outilPhoto : null) || (await photoModele(md.dossier, path.join(L, `modele-${md.rang}.jpg`))) || (g && !l.d.lectureSeule ? g.planche : null);
       }
       // [casse-6] UNE SEULE LECTURE VÉRIFIÉE : la photo est la SEULE vérification humaine. Avant, un modèle sans photo à lui
       // partait avec la planche d'un groupe de pixels (qui peut mêler deux vêtements : c'est le doute même), ou en TEXTE seul —

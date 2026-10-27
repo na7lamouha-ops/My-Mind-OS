@@ -231,6 +231,11 @@ export const M = {
   }),
   /** Les photos de la page : moins de six, même après les relances serrées des captures (prises trop courtes, modèle jamais
    *  en entier). Dit TÔT (juste après les captures, avant le montage) et en clair (07/10/2026). */
+  /** [v0.3.9-photos] La page prend des images tirées des vidéos : toutes (n null, le Drive a des photos mais sans couleur
+   *  lisible dans leur nom), ou n pour compléter les couleurs sans photo (manquent : leurs noms, lignes latines). */
+  photosDesVideos: (n, manquent = []) => ({ texte: [n === null ? 'التصاور تاع الدرايف ما عرفتش لونهم' : 'شي تصاور تاع الصفحة', n === null ? 'سمّي التصاور باللون، مثلا :' : 'خذيتهم من الفيديوات :',
+    n === null ? 'Robe_noir_01.jpg' : `${n} photo(s)`, ...(manquent.length ? ['اللونات لي ما عندهمش تصاور :', ...lignesLatines(manquent)] : []),
+    n === null ? 'هاذ المرة خذيت تصاور الفيديوات' : 'التصاور تاع الشوتينغ أحسن', 'تقدر تبدّلهم من بعد في تسيير'].join('\n') }),
   photosCourtes: (idMission, n) => ({
     texte: ['ما خرجوش تصاور كافيين للصفحة', 'الصفحة لازمها ستة تصاور', 'التصاور لي قدرت نخرّج :', `${n} / 6 photos`, 'الفيديوات قصار بزاف،', 'ولا الموديلة ما تبانش كاملة', 'ابعث فيديوات أطول في لينك جديد', 'وهاذا الموديل اضغط : حبس'].join('\n'),
     boutons: [[{ texte: 'عاود', data: `mis:${idMission}:reprendre:1` }, { texte: 'حبس', data: `mis:${idMission}:stop:1` }]]
@@ -349,6 +354,19 @@ export const M = {
   /** L'heure de début n'a pas été posée (ou pas relue) avant l'activation : la pub peut dépenser dès maintenant. */
   heureNonPosee: idMission => ({ texte: ['ردّ بالك، الساعة ما تحطّتش', 'البوب تقدر تبدا تصرف دروك', 'شوف الساعة في ميتا', 'وإذا تحب حبسها اضغط : حبس'].join('\n'),
     boutons: [[{ texte: 'حبس', data: `mis:${idMission}:stop:1` }]] }),
+  /** [v0.3.9-meta] Une erreur de configuration du compte Meta, dite en darija avec l'action (cle : erreurMetaConnue). */
+  erreurMeta: (idMission, cle, compte = '') => {
+    const nom = nomL(compte);
+    const dit = {
+      paiement: ['الكونت تاع البوبليسيتي', ...(nom ? [nom] : []), 'ما فيهش كارطة دفع', 'زيد كارطة في ميتا، في :', 'Facturation et paiements'],
+      impaye: ['الكونت تاع البوبليسيتي', ...(nom ? [nom] : []), 'عندو خلاص ما تخلّصش', 'خلّصو في ميتا، في :', 'Facturation et paiements'],
+      desactive: ['الكونت تاع البوبليسيتي', ...(nom ? [nom] : []), 'ميتا حبساتو ولا سكّراتو', 'شوف في ميتا، في :', 'Qualité du compte', 'ولا اختار كونت آخر في لينك جديد'],
+      limite: ['الكونت تاع البوبليسيتي', ...(nom ? [nom] : []), 'وصل الحد تاع المصروف', 'بدّل الحد في ميتا، في :', 'Limite de dépenses du compte'],
+      droits: ['ميتا ما عطاتش الحق', 'على الكونت ولا الصفحة', 'شوف الأدوار في ميتا، في :', 'Paramètres de l entreprise']
+    }[cle] || ['ميتا رفضت الخدمة'];
+    return { texte: ['ميتا رفضت، والسبب معروف :', ...dit, 'ما ضاعت حتى محاولة', 'كي تصلّح، اضغط عاود'].join('\n'),
+      boutons: [[{ texte: 'عاود', data: `mis:${idMission}:reprendre:1` }, { texte: 'حبس', data: `mis:${idMission}:stop:1` }]] };
+  },
   echec: (idMission, etapeAr, raison) => ({
     texte: ['صرا مشكل في الخدمة', 'المرحلة : ' + etapeAr, 'السبب :', ...decoupeLatin(raison), 'نعاودو ؟'].join('\n'),
     boutons: [[{ texte: 'عاود', data: `mis:${idMission}:reprendre:1` }, { texte: 'حبس', data: `mis:${idMission}:stop:1` }]]

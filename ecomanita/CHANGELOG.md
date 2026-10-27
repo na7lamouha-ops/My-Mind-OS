@@ -2,6 +2,21 @@
 
 ## 0.5.0 (en construction, agent par agent)
 
+### Repris de 0.3.9-windows (branche parallèle, jamais fusionnée dans 0.4.x)
+- **ffmpeg / ffprobe sans figer le bureau** (`missions.executer`, `sonderA`, `quelMoteurA`, `compterMusiquesA`) : le montage,
+  les vignettes, la lecture des planches et la photo du modèle ne bloquent plus l'écoute Telegram ni la page.
+- **Renommer sous Windows** (`renommerSur`) : un antivirus qui tient le fichier un instant (EPERM / EACCES / EBUSY) ne casse
+  plus `mission.json`, `chaine.json` ni `lot.json`. Ailleurs, rien ne change.
+- **Les erreurs Meta connues** (`erreurMetaConnue`) : paiement, impayé, compte désactivé, limite de dépense, droits — dites en
+  darija avec l'action, aucun essai consommé, la mission attend « عاود » ; un compte que Meta dit bloqué est refusé à la
+  question du compte, avant le montage.
+- **Les photos du shooting pour la page** (`couleurDePhoto`, `listerPhotos`) : la couleur lue dans le nom du fichier, les photos
+  préparées (EXIF, 2000 px, ≤ 450 Ko) ; les images tirées des vidéos seulement en complément, et le client le lit.
+- Et `avancer()` ne fait plus tomber le serveur sur une erreur hors étape (même hunk que l'async).
+- **Pas repris** (en attente d'une décision) : réseau Telegram (réessais, écoute non bloquante), « ids » de Meta v26, vidéos sans
+  POV, « كيما المرة اللي فاتت », temps du montage, qualité des vidéos, couleurs des planches, guide à l'écran, DNS Cloudflare,
+  et le reste de l'installeur Windows.
+
 ### Étape 0 — les fondations + le القائد
 - **La boussole 29.18 dans le bureau** : `bureau/boussala/` (copiée telle quelle de `chantier/ecomanita-masar/boussala`, CommonJS,
   `package.json` local `type: commonjs`). Le pont `boussala/pont.mjs` rejoue le golden dans le processus (6/6), appelle les

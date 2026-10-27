@@ -231,6 +231,8 @@ export const PIXELS_MAXI_BOUTONS = 8;
 export const BOUTON_PIXEL_MESSAGE = 'بدّل للميساج';
 /** [v19-trois] Deux noms de pixel égaux sans la casse ni les espaces (la même règle que la campagne). */
 export const memeNomPixel = (a, b) => { const n = x => String(x ?? '').normalize('NFKC').replace(/\s+/g, '').toLowerCase(); return n(a) !== '' && n(a) === n(b); };
+/** [v0.3.9-meta] Les statuts Meta d'un compte qui ne peut pas lancer de publicité (nom ou numéro d'account_status). */
+export const STATUT_BLOQUANT = /^(2|3|7|8|9|100|101|DISABLED|UNSETTLED|PENDING_RISK_REVIEW|PENDING_SETTLEMENT|IN_GRACE_PERIOD|PENDING_CLOSURE|CLOSED|ANY_CLOSED)$/i;
 export const PAR_MODELE = ['choixnom', 'type', 'nom', 'gros', 'detail', 'tailles', 'sku'];
 /** [meme-prix] 23/10/2026 — la question du lot (N ≥ 2), une fois, au 1er modèle avant son gros ; la réponse est gardée dans
  *  conv.reponses.memeprix (jamais dans le lot final). Ce qui est repris du 1er modèle quand c'est « واه ». */
@@ -349,6 +351,8 @@ export const TEXTES = {
   dejaLanceUn: ['هاذ الزر تاع موديل بدا', 'الخدمة راهي تمشي، نعلمك', 'ما تعاودش تبعث نفس اللينك'],
   zarFat: ['هاذ الزر تاع سؤال فات', 'جاوب على السؤال الأخير', 'لي راهو تحت'],
   /** [v19-trois] Un nom de pixel tapé qui n'est pas un pixel du compte choisi : REFUS, la question revient avec ses boutons. */
+  // [v0.3.9-meta] un compte que Meta dit désactivé, fermé ou impayé : refusé AVANT le montage (la campagne y échouerait)
+  compteBloque: ['الكونت هاذا ماشي خدام عند ميتا', 'محبوس، مسكّر ولا عندو خلاص', 'ما يقدرش يطلق البوب', 'صلّحو في ميتا ولا اختار واحد آخر'],
   pixelAbsent: ['هاذ البيكسل ماكانش في الكونت', 'لي ختارت، والو ما تبدّل', 'اختار من الأزرار تحت', 'ولا اكتب الاسم بالضبط'],
   pasDeComptes: ['ما لقيتش الكونتات تاعك', 'روح للمكتب، الإعدادات،', 'واضغط : جيب الكونتات', 'ومن بعد عاود ابعث اللينك'],
   demandeOk: ['تمام، الخدمة بدات', 'نجيبو الفيديوات من الدرايف', 'نعلمك في كل مرحلة'],
@@ -719,6 +723,10 @@ export function ouvrirAccueil({ dossier, listes = () => ({ comptes: [], pages: [
         // un bouton vaut le nom — jamais un nom déjà pris dans la fiche (deux boutons identiques comme deux noms tapés)
         if (valeur !== 'auto' && nomsPris().some(n => cleNom(n) === cleNom(valeur))) return [msg(TEXTES.nomPris), message(q)];
         reponses()[q.cle] = valeur; delete porteur().nomLibre;
+      }
+      else if (q.cle === 'compte' && STATUT_BLOQUANT.test(String(((listes().comptes || [])[+valeur] || {}).statut ?? '').trim())) {
+        journal(`accueil ${conv.id} : compte refusé (statut Meta ${((listes().comptes || [])[+valeur] || {}).statut})`);
+        return [msg(TEXTES.compteBloque), message(q)];
       }
       else {
         reponses()[q.cle] = valeur;
