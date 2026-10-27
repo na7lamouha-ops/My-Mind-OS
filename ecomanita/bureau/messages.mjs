@@ -148,16 +148,24 @@ export const M = {
       ...(idBouton ? { boutons: [[{ texte: 'عاود', data: `mis:${idBouton}:cnx:1` }]] } : {}) };
   },
   connecteurRevenu: () => ({ texte: ['الكونيكتور رجع يخدم', 'الخدمة رجعت تمشي وحدها', 'ما ضاع والو'].join('\n') }),
-  /** La base du verdict (règle du vendeur, 08/10/2026) : la réponse « السلعة » — sans stock les confirmées, avec stock les
-   *  colis qu'on attend (livrés + en route à trente pour cent + confirmées pas encore parties au taux déclaré). */
+  /** « الطالب 1.0 » (fix 9) : les leads arrêtent, les confirmées jugent (la boussole) ; après VALIDE, les colis livrés. Avant 1.0 :
+   *  la réponse « السلعة » changeait la base (les colis attendus avec stock). r.chiffres : des lignes latines (leads, plafond). */
   rapportJour: (r, taux) => ({ texte: [
     'التقرير تاع اليوم', 'المصروف :', da(r.depense_da, taux),
     'الكوموندات :', `recues ${r.commandes} · confirmees ${r.confirmees}`, `livrees ${r.livrees} · retours ${r.retours}`,
-    ...(r.stock === 'stock'
-      ? ['السلعة عندك، نحكمو على', 'الكوليات لي نستناو يوصلو :', ...(r.base != null ? [`attendus ${Math.round(r.base * 100) / 100}`] : [])]
-      : ['تيست برك، نحكمو على', 'الكوموندات المأكدة']),
-    'الحكم تاع اليوم :', ...decoupe(r.decision_ar || 'نستناو شوية، مازال بكري'), ].join('\n') }),
-  disjoncteur: () => ({ texte: ['حبسنا البوب وحدنا', 'صرفت بزاف وما جابت والو', 'بدّل الفيديو ولا الصفحة', 'ومن بعد نعاودو'].join('\n') }),
+    ...(r.valide ? ['التاست VALIDE، دروك نحكمو', 'على الكوليات الموصلة'] : ['الليدات يوقفو التاست', 'والمأكدة هي اللي تحكم']),
+    ...(r.chiffres || []), 'الحكم تاع البوصلة :', ...decoupe(r.decision_ar || 'نستناو شوية، مازال بكري') ].join('\n') }),
+  /** ECHEC (ECHEC-ADS / ECHEC-CONF) : la pause automatique, relue, dite au client (décision 1.0). */
+  disjoncteur: (tag = 'ECHEC-ADS') => ({ texte: ['حبسنا البوب وحدنا', `البوصلة حكمات : ${tag}`,
+    ...(tag === 'ECHEC-CONF' ? ['التأكيد ما يخلّيش الربح', 'المؤكّد يعيّط ويقول الحقيقة', 'ونقراو أسباب الإلغاء'] : ['الإعلان ما جابش ليدات', 'بسومة تخلّي الربح', 'بدّل الفيديو ولا الزاوية']),
+    'ومن بعد نعاودو'].join('\n') }),
+  verdictValide: () => ({ texte: ['البوصلة حكمات : VALIDE', 'الموديل هاذا راهو يربح', 'حتى في أسوأ حالة', 'التاغ : VALIDE', 'دروك نحكمو على الكوليات', 'اللي توصل للزبون', 'والسكايل كي يتحل الباب'].join('\n') }),
+  verdictFix: () => ({ texte: ['البوصلة حكمات : FIX', 'نربحو بصح التأكيد ضعيف', 'صلّح حاجة وحدة برك :', 'السعر في الفيديو', 'ولا الصفحة', 'ولا السكريبت تاع التأكيد', 'البوب تكمّل تخدم'].join('\n') }),
+  /** RESERVE : le plafond du test est dépensé sans verdict sûr ; même boutons que l'ancienne « perte lourde ». */
+  verdictReserve: idMission => ({ texte: ['البوصلة حكمات : RESERVE', 'وصلنا للحد تاع التاست', 'الكوموند تحت السقف', 'بصح ماشي مضمونة', 'نخدمو الطلبيات، ما نكبّروش', 'نحبسو البوب ؟'].join('\n'),
+    boutons: [[{ texte: 'حبس البوب', data: `mis:${idMission}:perte:stop` }, { texte: 'خليها تخدم', data: `mis:${idMission}:perte:go` }]] }),
+  /** La porte du scale (portes.mjs) est fermée : ce qui manque, une fois (jusqu'à ce qu'elle s'ouvre). */
+  porteScaleFermee: conditions => ({ texte: ['باب السكايل مازال مسكّر', 'واش ناقص :', ...(conditions || []).filter(k => !k.ok).map(k => '❌ ' + k.ar), 'ما نطلّعو والو قبل', 'نعاودو نشوفو غدوة'].join('\n') }),
   /** Le scaling du vendeur (06/10/2026) : le gagnant du test dans une campagne de SCALE en CBO, par son post ID,
    *  créée EN PAUSE — le client la lance (comme le « لانسي » du test). */
   scalePrete: (idMission, budgetUsd, taux, nbAdSets) => ({
@@ -187,9 +195,10 @@ export const M = {
   scaleFermee: () => ({ texte: ['الأرقام تبدّلو من بعد', 'الباب تاع السكيل تسكّر', 'ما شعّلنا والو، ما طلّعنا والو', 'كي يتحل الباب نبعثلك'].join('\n') }),
   /** La hausse porte sur le budget de la CAMPAGNE de scale (CBO), jamais sur ses ad sets. jeton : le nouveau budget en
    *  centimes, dans le bouton — le « واه، طلّع » d'une hausse d'AVANT ne pose jamais la hausse d'aujourd'hui. */
+  /** 1.0 (fix 10) : le bouton dit « طلّع », le seul mot de la hausse (avant : « واه، طلّع » ; « واه » seul ne vaut rien). */
   porteScaling: (idMission, budgetActuel, budgetNouveau, taux, jeton) => ({
     texte: ['السكيل راهو يربح', 'الشروط تاع الزيادة كاملة', 'البودجي تاع الكامباني دروك :', usd(budgetActuel, taux), 'البودجي الجديد :', usd(budgetNouveau, taux), 'نطلّعو البودجي ؟'].join('\n'),
-    boutons: [[{ texte: 'واه، طلّع', data: `mis:${idMission}:monte:oui.${jeton}` }, { texte: 'لا، استنى', data: `mis:${idMission}:monte:non.${jeton}` }]]
+    boutons: [[{ texte: 'طلّع', data: `mis:${idMission}:monte:oui.${jeton}` }, { texte: 'لا، استنى', data: `mis:${idMission}:monte:non.${jeton}` }]]
   }),
   /** La hausse a calé (Meta, relecture) : la même question, les mêmes boutons — jamais le « حبس » qui arrête tout. */
   hausseRatee: (idMission, raison, jeton) => ({

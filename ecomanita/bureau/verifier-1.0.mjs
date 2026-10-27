@@ -184,6 +184,103 @@ export async function epreuveBoussole10({ etape }) {
   });
 }
 
+/** « الطالب 1.0 » (fix 9) : le verdict du test par la boussole, jamais « le jour 3 » ; la porte du scale par portes.mjs. Données inventées. */
+export async function epreuveVerdict10({ etape }) {
+  const pont = await import('./boussala/pont.mjs');
+  const P = { prix: 6900, gros: 2300, emballage: 100, livraison: 0, retour: 400, confirmation: 60, livraisonPct: 70, taux: 255 };
+  await etape('1.0 (fix 9) : le VERDICT du test sort de la boussole (testweek decide, 50 leads, 90 % ; arrêt anticipé de test_ads) — 30 leads → TEST sans tag ; 60 leads à 2 $ → VALIDE ; 0 lead et 16 $ → ECHEC-ADS ; 25 leads à 8,80 $ → ECHEC-ADS par l\'arrêt anticipé ; 60 leads, 10 confirmées → ECHEC-CONF ; 15 confirmées sur 60 sous le sommet → FIX sans tag ; 340 $ dépensés sous le sommet → RESERVE ; sans taux du client → refus ; la commande verdict.mjs rend le même verdict (contrôles négatifs)', async () => {
+    const cas = [['test', [60, 30, 20, 20], 'TEST', null, null], ['valide', [120, 60, 45, 50], 'VALIDE', 'VALIDE', 'VALIDE'], ['zero', [16, 0, 0, 0], 'ECHEC-ADS', 'ECHEC', 'ECHEC-ADS'],
+      ['anticipe', [220, 25, 20, 25], 'ECHEC-ADS', 'ECHEC', 'ECHEC-ADS'], ['conf', [300, 60, 10, 60], 'ECHEC-CONF', 'ECHEC', 'ECHEC-CONF'], ['fix', [150, 60, 15, 60], 'FIX', 'FIX', null],
+      ['reserve', [340, 45, 31, 45], 'ECHEC-RESERVE', 'RESERVE', 'RESERVE']];
+    const vus = [];
+    for (const [nom, [spendUsd, leads, confirmed, processed], tag, verdict, etiquette] of cas) {
+      const v = pont.verdictProduit({ ...P, spendUsd, leads, confirmed, processed });
+      if (v.tag !== tag || v.verdict !== verdict || v.etiquette !== etiquette) throw new Error(`${nom} : ${JSON.stringify({ tag: v.tag, verdict: v.verdict, etiquette: v.etiquette, pourquoi: v.pourquoi })}`);
+      if ((nom === 'anticipe') !== (v.anticipe === 'lead_cher')) throw new Error(`${nom} : arrêt anticipé ${v.anticipe}`);
+      vus.push(`${nom} ${v.tag}`);
+    }
+    // l'arrêt anticipé lit ses règles DANS le moteur (25 leads, 1,3 ×) : un dollar de moins, testweek laisse tourner
+    if (pont.verdictProduit({ ...P, spendUsd: 219, leads: 25, confirmed: 20, processed: 25 }).tag !== 'TEST') throw new Error('219 $ : la frontière de 1,3 × le lead maximum');
+    let refus = null; try { pont.verdictProduit({ ...P, taux: null, spendUsd: 10, leads: 1, confirmed: 0 }); } catch (e) { refus = e; }
+    if (!refus || refus.taux !== false) throw new Error('sans taux du client : refus attendu');
+    const { spawnSync } = await import('node:child_process');
+    const r = spawnSync(process.execPath, [path.join(ICI, 'boussala', 'verdict.mjs'), '--prix', 6900, '--gros', 2300, '--emballage', 100, '--retour', 400, '--confirmation', 60, '--livraison-pct', 70, '--taux', 255, '--depense-usd', 120, '--leads', 60, '--confirmees', 45, '--traitees', 50].map(String), { encoding: 'utf8' });
+    const j = JSON.parse((/MANITA_JSON (.*)/.exec(r.stdout) || [])[1] || '{}');
+    if (r.status !== 0 || j.tag !== 'VALIDE' || j.leads_min !== 50) throw new Error('verdict.mjs : ' + r.stdout + r.stderr);
+    const r2 = spawnSync(process.execPath, [path.join(ICI, 'boussala', 'verdict.mjs'), '--prix', '6900', '--gros', '2300', '--confirmation', '60', '--livraison-pct', '70', '--depense-usd', '1', '--leads', '1', '--confirmees', '0'], { encoding: 'utf8' });
+    if (r2.status !== 2 || !/taux du dollar du client manque/.test(r2.stdout)) throw new Error('verdict.mjs sans taux : ' + r2.stdout);
+    return vus.join(' · ') + ' · 219 $ → TEST · sans taux → refus · verdict.mjs = VALIDE, code 2 sans taux';
+  });
+  await etape('1.0 (fix 9) : les skills testing, coach, scaling et manager (bureau ET plugin) portent le bloc « RÈGLES 1.0 » — la boussole juge, jamais le jour 3, verdict.mjs, quatre verdicts, la porte de portes.mjs', () => {
+    const f = [];
+    for (const d of ['testing', 'coach', 'scaling', 'manager']) for (const base of [path.join(ICI, 'skills'), path.join(ICI, '..', 'plugin', 'ecom-manita', 'skills')]) {
+      const t = fs.readFileSync(path.join(base, d, 'SKILL.md'), 'utf8');
+      for (const x of ['## RÈGLES 1.0', 'JAMAIS « LE JOUR 3 »', 'boussala/verdict.mjs', 'VALIDE / FIX / ECHEC / RESERVE', 'portes.mjs']) if (!t.includes(x)) f.push(`${path.relative(path.join(ICI, '..'), base)}/${d} : « ${x} »`);
+      if (t.indexOf('## RÈGLES 1.0') > t.indexOf('## RÈGLES 0.4.2') && t.includes('## RÈGLES 0.4.2')) f.push(`${d} : le bloc 1.0 doit passer AVANT 0.4.2`);
+    }
+    if (f.length) throw new Error(f.join(' · '));
+    return '8 skills : bloc RÈGLES 1.0 en tête';
+  });
+  await etape('1.0 (fix 9) : la PORTE DU SCALE du suivi du soir est celle de portes.mjs — un modèle VALIDE dont le colis livré coûte plus qu\'il ne rapporte : porte fermée, le client lit ce qui manque UNE fois (loi de forme), aucune scale préparée, aucun outil Python de porte ; le même soir rejoué ne redit rien (contrôles négatifs)', async () => {
+    const missionsM = await import('./missions.mjs'), telegram = await import('./telegram.mjs');
+    const maison = fs.mkdtempSync(path.join(os.tmpdir(), 'manita-porte10-'));
+    const envoyes = [], lances = [], tours = [];
+    const x = { commandes: 80, confirmees: 60, annulees: 5, expediees: 50, livrees: 10, retours: 30, stock: 40, depense_totale: 300, depense_jour: 30, devise: 'USD', budget_jour_actuel: 14, test_actif: true };
+    const Ms = missionsM.ouvrirMissions({ maison, atelier: path.join(maison, 'pas-d-atelier'), depot: {}, pauseReessaiMs: 0,
+      travaux: { lancer: async s => { lances.push(s.nom); return { code: 0, sortie: '', json: [], dureeMs: 1, raison: '' }; } },
+      telegram: () => ({ envoyer: async (t, o = {}) => { envoyes.push({ t, b: o.boutons || null }); return { envoye: true }; } }),
+      reglages: () => ({ heureRapport: '00:00', taux: 255, couts: { emballage: 100, livraison: 0, retour: 400, fraisCod: 0 }, declare: { confirmation: 60, livraison: 70 } }),
+      claude: async a => { tours.push(a.message.split('\n')[0]); return { structure: x, tokens: 0, appels: [{ nom: 'mcp__claude_ai_X__ads_get_ad_entities', entree: {}, sortie: JSON.stringify({ data: [{ id: 'C1', amount_spent: '300.00' }] }) }] }; } });
+    const m = Ms.creer({ id: 'porte10', lien: 'https://drive.google.com/drive/folders/1AbCdEfGhIjKlMnOp', reponses: { mode: 'site', detail: 6900, gros: 2300 } }, null, { demarrer: false });
+    m.etat = 'suivi'; Object.assign(m.d, { lanceLe: new Date(Date.now() - 6 * 86400000).toISOString(), campagne: { id: 'C1', adSets: [], ads: [] }, produit: { productId: 'P1', storeId: 'S1' }, be: { par_commande: 1818 } }); Ms._sauver(m);
+    await Ms._suivreJour(m);
+    const S = m.d.suivi, ferme = envoyes.filter(e => /باب السكايل مازال مسكّر/.test(e.t));
+    if (S.dernierEchec) throw new Error('lecture : ' + S.dernierEchec.erreur);
+    if (!S.valide || !S.porte || S.porte.ouverte || !/portes\.mjs/.test(S.porte.source) || S.porte.controles.find(c => c.id === 'benefice').ok) throw new Error('porte : ' + JSON.stringify(S.porte));
+    if (ferme.length !== 1 || telegram.fautesDeForme(ferme[0].t).length || !/الربح الحقيقي على الطرد/.test(ferme[0].t)) throw new Error('message de la porte : ' + JSON.stringify(ferme.map(e => e.t)));
+    if (S.scale || tours.some(t => /^ETAPE: (gagnant|scale)/.test(t)) || lances.some(n => /coach-(porte|break-even)|scaling-plafond/.test(n))) throw new Error('une scale ou un outil de porte est parti : ' + JSON.stringify({ tours, lances }));
+    S.dernierJour = null; const n = envoyes.length; await Ms._suivreJour(m);
+    if (envoyes.slice(n).some(e => /باب السكايل مازال مسكّر/.test(e.t))) throw new Error('la porte fermée est redite chaque soir');
+    fs.rmSync(maison, { recursive: true, force: true });
+    return `VALIDE puis porte fermée (bénéfice ${S.porte.controles.find(c => c.id === 'benefice').detail}) · dit une fois · aucune scale, aucun outil de porte`;
+  });
+}
+
+/** « الطالب 1.0 » (fix 10) : la voix du LEADER (القائد) et les noms des onze joueurs ; les seuls mots « لانسي » et « طلّع ». */
+export async function epreuveNoms10({ etape }) {
+  const B = JSON.parse(fs.readFileSync(path.join(ICI, 'bureau.json'), 'utf8')), R = JSON.parse(fs.readFileSync(path.join(ICI, 'regles.json'), 'utf8'));
+  await etape('1.0 (fix 10) : les NOMS des onze joueurs dans le bureau — le centre (manager) = القائد, le coach = la voix du القائد, testing et scaling = الميديا باير, المفتّش, المونتاج, الصفحة ; l\'ordre = le chemin (المفتّش d\'abord, la voix avant le scale) ; plus « المانجر » ni « الكوتش » dans la page du bureau, ses scripts, ses messages Telegram ni la conversation (contrôles négatifs)', () => {
+    const f = [], nom = id => (B.departements.find(d => d.id === id) || {}).nomAr || '';
+    if (B.centre.nomAr !== 'القائد') f.push('centre : ' + B.centre.nomAr);
+    const attendu = { inspecteur: /^المفتّش$/, editeur: /^المونتاج$/, page: /^الصفحة$/, testing: /^الميديا باير/, scaling: /^الميديا باير/, coach: /^القائد/ };
+    for (const [id, re] of Object.entries(attendu)) if (!re.test(nom(id))) f.push(`${id} : ${nom(id)}`);
+    const ordre = [...B.departements].sort((a, b) => a.ordre - b.ordre).map(d => d.id);
+    if (ordre[0] !== 'inspecteur' || ordre.indexOf('coach') > ordre.indexOf('scaling') || ordre.indexOf('testing') > ordre.indexOf('coach')) f.push('ordre : ' + ordre.join(' → '));
+    for (const fi of ['web/index.html', 'web/bureau.js', 'messages.mjs', 'missions.mjs', 'accueil.mjs', 'inspecteur.mjs']) {
+      const t = fs.readFileSync(path.join(ICI, fi), 'utf8');
+      for (const mot of ['المانجر', 'الكوتش']) if (t.includes(mot)) f.push(`${fi} dit encore « ${mot} »`);
+    }
+    if (!/tu es la VOIX du LEADER \(القائد/.test(fs.readFileSync(path.join(ICI, 'serveur.mjs'), 'utf8'))) f.push('la conversation ne parle pas comme القائد');
+    if (f.length) throw new Error(f.join(' · '));
+    return ordre.map(nom).join(' → ') + ' · centre ' + B.centre.nomAr;
+  });
+  await etape('1.0 (fix 10) : UN mot lance, UN mot monte — regles.json motLance [لانسي], motMontee [طلّع] ; les boutons du bureau disent « لانسي » et « طلّع » (plus « واه، طلّع ») ; aucune skill n\'enseigne plus « lance » ni « monte » comme mot du client (contrôles négatifs)', async () => {
+    const f = [];
+    if (JSON.stringify(R.motLance) !== '["لانسي"]' || JSON.stringify(R.motMontee) !== '["طلّع"]') f.push('regles.json : ' + JSON.stringify({ l: R.motLance, m: R.motMontee }));
+    const { M } = await import('./messages.mjs');
+    const h = M.porteScaling('abc123', 20, 24, 250, 2400).boutons[0][0], l = M.scalePrete('abc123', 21, 250, 3).boutons[0][0];
+    if (h.texte !== 'طلّع' || !/:monte:oui\.2400$/.test(h.data) || l.texte !== 'لانسي') f.push('boutons : ' + JSON.stringify({ h, l }));
+    const skills = ['testing', 'scaling', 'manager', 'coach'].flatMap(d => [path.join(ICI, 'skills', d, 'SKILL.md'), path.join(ICI, '..', 'plugin', 'ecom-manita', 'skills', d, 'SKILL.md')]);
+    for (const fi of skills) {
+      const t = fs.readFileSync(fi, 'utf8').replace(/ni « lance »|ni « monte »/g, '');
+      for (const re of [/« lance »/, /« monte »/, /(?<!attente )`lance`/, /le mot : lance\b/, /اكتب : lance/, /\(ou « monte »\)/, /`monte`\)/]) if (re.test(t)) f.push(`${path.relative(path.join(ICI, '..'), fi)} : ${re}`);
+      if (!t.includes('LES MOTS') && !/Seul « لانسي » active/.test(t)) f.push(`${path.relative(path.join(ICI, '..'), fi)} : la règle des mots manque`);
+    }
+    if (f.length) throw new Error(f.join(' · '));
+    return 'motLance [لانسي] · motMontee [طلّع] · boutons « لانسي » / « طلّع » · 8 skills sans « lance » ni « monte »';
+  });
+}
+
 /** Le bureau ENTIER (serveur.mjs) avec un faux Telegram : le cerveau lu au démarrage, la ligne « العقل » de التحضير. */
 export async function epreuveServeur10({ etape }) {
   const http = await import('node:http');
@@ -229,6 +326,8 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   await epreuve10({ etape });
   await epreuveInspecteur10({ etape });
   await epreuveBoussole10({ etape });
+  await epreuveVerdict10({ etape });
+  await epreuveNoms10({ etape });
   if (!process.argv.includes('--sans-serveur')) await epreuveServeur10({ etape });
   console.log(`\n${ko ? '✗' : '✓'} ${ok}/${ok + ko} contrôles 1.0 passés`);
   process.exit(ko ? 1 : 0);

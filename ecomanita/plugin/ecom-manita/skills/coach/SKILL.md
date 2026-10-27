@@ -3,6 +3,25 @@ name: coach
 description: "À ouvrir avec /ecom-manita:coach dans une discussion neuve quand le client veut parler à son coach seul : lire les vrais taux et le ROAS sur les colis livrés d'un test, tenir la porte de production et celle du scaling, auditer Tassyir et Meta sans rien y écrire sans son oui, ou répondre à ses questions sur le vêtement (tissu, taille, atelier, prix, gamme)."
 ---
 
+## RÈGLES 1.0 (« الطالب 1.0 », 27/10/2026) — elles PRIMENT sur tout le texte plus bas, règles 0.4.2 comprises
+
+1. **LE VERDICT DU TEST EST CELUI DE LA BOUSSOLE, JAMAIS « LE JOUR 3 ».** Les leads arrêtent, les confirmées jugent :
+   `node <bureau>/boussala/verdict.mjs --prix P --gros G --emballage E --livraison L --retour R --confirmation C --livraison-pct D --taux <le taux du client> --depense-usd S --leads N --confirmees K --traitees T`
+   (boussala_testweek decide : 50 leads, confiance 90 % ; arrêt anticipé de boussala_test_ads : dès 25 leads le lead au-dessus
+   de 1,3 × le lead maximum, ou 3 × le lead maximum dépensés sans un lead). Le bureau appelle la même fonction chaque soir.
+2. **QUATRE VERDICTS** : VALIDE / FIX / ECHEC / RESERVE. Un tag (VALIDE, ECHEC-ADS, ECHEC-CONF, RESERVE) ne s'écrit qu'APRÈS ce verdict ;
+   avant, le produit garde TEST. ECHEC met la pub en pause (dit au client) ; RESERVE : on sert les commandes, on ne monte pas.
+3. Là où le texte plus bas juge au troisième jour (TROP_TOT, la décision de `manita-testing.py --lecture` ou de
+   `manita-coach.py --lecture`, « le jour du verdict »), ce jugement ne vaut plus : les outils Python restent pour les chiffres.
+   « 15 leads » et le rythme de 72 heures ne valent QUE pour la bibliothèque des créas.
+4. **APRÈS VALIDE**, on juge les colis LIVRÉS et leurs raisons de retour ; la porte du scale est celle de `portes.mjs`
+   (bénéfice réel par colis livré, courbe contre le cône de la boussole, stock, cash revenu) — plus `--porte`.
+5. **LES MOTS** (regles.json › motLance, motMontee) : seul « لانسي » active (ni « lance », ni « ok », ni « واه ») ; seul « طلّع »
+   monte un budget (ni « monte », ni un autre mot). Tout naît EN PAUSE.
+6. **LES NOMS DE 1.0** (les onze joueurs du cours) : manager + la voix du coach = **القائد** ; testing + scaling = **الميديا باير** ;
+   l'inspecteur = **المفتّش** ; l'éditeur = **المونتاج** ; la page = **الصفحة** ; engagement = un outil du **الجاسوس** ; la boussole = **le
+   juge**, pas un joueur. Au client, on dit ces noms.
+
 ## RÈGLES 0.4.2 (25/10/2026) — elles PRIMENT sur tout le texte plus bas
 
 1. **LES QUATRE CONTRÔLES AVANT TOUT VERDICT PAR VIDÉO** (`regles.json` › `suivi`, calculés par le bureau dans
@@ -343,17 +362,17 @@ L'agent Testing ecrit le mode dans le fichier de passage. Deux modes :
 | La cliente | remplit le formulaire de la page | ECRIT sur Messenger ou en direct sur Instagram |
 | La commande | entre toute seule | la fille de la confirmation la cree a la main |
 | Le lien marque par angle | oui | **il n'y en a pas** |
-| La main t'est rendue | au soir du troisieme jour | au soir du troisieme jour aussi |
+| La main t'est rendue | au verdict VALIDE de la boussole — RÈGLES 1.0 | pareil (avant 1.0 : au soir du troisieme jour) |
 | On passe a la lecture sur le LIVRE (l'outil) | au dixieme jour | au douzieme jour |
 
-Le test dure TROIS jours dans les deux modes : c'est la regle du vendeur.
+(Avant 1.0 : « le test dure TROIS jours dans les deux modes ». En 1.0 il dure jusqu'au verdict de la boussole.)
 Ce qui change encore avec le mode : une cliente qui ecrit repond le soir, le
 lendemain, parfois deux jours apres. Tout arrive en retard, donc l'outil passe
 a la lecture sur le livre plus tard en message (il l'affiche). Appliquer le
 calendrier du site a un test message, c'est condamner un modele qui n'a pas
 fini de parler.
 
-### Le verdict du troisieme jour — REGLE DU VENDEUR (08/10/2026)
+### (Avant 1.0, remplacé par les RÈGLES 1.0) Le verdict du troisieme jour — REGLE DU VENDEUR (08/10/2026)
 
 Le verdict du TEST (l'outil de l'agent Testing, `manita-testing.py --lecture`)
 ne prend plus sa base dans le mode : il la prend dans la reponse « السلعة » du

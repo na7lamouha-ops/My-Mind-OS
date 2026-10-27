@@ -13,8 +13,7 @@
   },
   "pertes": "une seule table : celle de la boussole (cap et zeroLeadStop de boussala_testweek) ; ni « 1,5 fois » ni « 3 fois » écrits ailleurs",
   "motMontee": [
-    "طلّع",
-    "monte"
+    "طلّع"
   ],
   "interdits": {
     "texte": [
@@ -40,35 +39,22 @@
     ]
   },
   "etapes": {
-    "_role": "chaque modèle porte UN tag d'étape dans Tassyir ; l'étape change la mesure, le script, la pub et l'atelier",
+    "_role": "« الطالب 1.0 » : chaque modèle porte UN tag dans Tassyir, écrit SEULEMENT après un verdict de la boussole (avant 1.0 : CANDIDAT → TEST → FIX → VALIDE → DESTOCK → STOP). FIX est un verdict, pas un tag : le produit reste TEST",
     "ordre": [
-      "CANDIDAT",
       "TEST",
-      "FIX",
       "VALIDE",
+      "SCALE",
       "DESTOCK",
-      "STOP"
+      "ECHEC-ADS",
+      "ECHEC-CONF",
+      "RESERVE"
     ],
-    "CANDIDAT": {
-      "ar": "مرشّح",
-      "mesure": null,
-      "script": null,
-      "pub": "rien",
-      "atelier": "rien"
-    },
     "TEST": {
       "ar": "تاست",
       "mesure": "coût par CONFIRMÉE lu dans Tassyir (pas le pixel), plus les leads et les indicateurs de la campagne",
       "script": "test",
       "pub": "limites de la boussole ; arrêt seul à cap et zeroLeadStop",
       "atelier": "pas de stock ; la commande de test est une commande CONFIRMÉE (pas de statut d'attente) ; si l'atelier prend des jours, la date est programmée (schedule_order) et la cliente la connaît"
-    },
-    "FIX": {
-      "ar": "يتصلّح",
-      "mesure": "comme TEST",
-      "script": "test corrigé",
-      "pub": "continue sous les limites",
-      "atelier": "pas de stock"
     },
     "VALIDE": {
       "ar": "ناجح",
@@ -77,6 +63,13 @@
       "pub": "pas de hausse avant la porte 1 ; ensuite la PORTE DU SCALE (4 conditions, voir « scale ») puis le « نعم » du client ; +20 ou +30 % par 48 h sous le plafond stock et cash",
       "atelier": "ordre par parts de couleur et de taille ; point de commande = vitesse × jours atelier + 3 jours"
     },
+    "SCALE": {
+      "ar": "سكايل",
+      "mesure": "coût par LIVRÉE et bénéfice réel par colis livré (la porte du scale, portes.mjs)",
+      "script": "valide",
+      "pub": "la campagne de SCALE (CBO), créée EN PAUSE, lancée au « لانسي », montée au « طلّع » : +20 à +30 % par 48 h",
+      "atelier": "ordre par parts de couleur et de taille"
+    },
     "DESTOCK": {
       "ar": "تصفية",
       "mesure": "bénéfice par pièce face au stock restant",
@@ -84,12 +77,26 @@
       "pub": "baisse, ou vers le modèle qui a le stock",
       "atelier": "pas de nouvelle production"
     },
-    "STOP": {
-      "ar": "واقف",
+    "ECHEC-ADS": {
+      "ar": "الإعلان ما جابش",
       "mesure": null,
       "script": null,
-      "pub": "en pause",
+      "pub": "en pause (verdict ECHEC de la boussole : même le lead le moins cher possible est au-dessus du lead maximum)",
       "atelier": "rien"
+    },
+    "ECHEC-CONF": {
+      "ar": "التأكيد ما جابش",
+      "mesure": null,
+      "script": null,
+      "pub": "en pause (verdict ECHEC de la boussole : même la confirmée la moins chère possible est au-dessus du sommet)",
+      "atelier": "rien ; le confirmateur dit la vérité et on lit les raisons d'annulation"
+    },
+    "RESERVE": {
+      "ar": "احتياطي",
+      "mesure": "comme VALIDE",
+      "script": "valide",
+      "pub": "le plafond du test est dépensé sans verdict sûr : on sert ses commandes, on ne monte pas ; le client choisit de laisser tourner ou d'arrêter",
+      "atelier": "seulement les commandes confirmées"
     }
   },
   "scripts": {
@@ -129,7 +136,7 @@
   },
   "inspecteur": {
     "_role": "le contrôle médical avant tout test (0.4.0) : lecture seule, une tâche à la fois, la porte « جاهز للتاست »",
-"note": "1.0 : la méthode de l'académie — vert 1, orange 0,5, rouge 0, sur les fiches LUES (regles-masar.noteInspecteur) ; les anciens poids (15 / 5 / 1) ne servent plus",
+    "note": "1.0 : la méthode de l'académie — vert 1, orange 0,5, rouge 0, sur les fiches LUES (regles-masar.noteInspecteur) ; les anciens poids (15 / 5 / 1) ne servent plus",
     "nonCommence": "zéro produit dans le magasin = « ما بداش », sans note",
     "porte": "aucun point rouge ET aucun inconnu (une question pas répondue, une fiche rouge pas lue)"
   },
@@ -170,5 +177,22 @@
     "contenu": "commandes, confirmées, annulées, restantes — par produit, par VARIANTE et par confirmatrice ; les raisons d'annulation (objectif : zéro annulation sans raison) ; la VITESSE du premier appel (médiane, part sous 30 minutes, confirmation selon la vitesse) ; tentatives avant confirmation ; meilleures heures ; offre de deux pièces proposée / acceptée ; trois remarques pour demain",
     "vitesse": "le levier le moins cher : appeler en moins de 30 minutes",
     "scripts": "un fichier par situation (test, stock, deux pièces, cliente qui a déjà retourné, destock, wilayas difficiles) ; le client les modifie, l'agent les LIT et n'écrit jamais dessus"
-  }
+  },
+  "verdict": {
+    "_role": "« الطالب 1.0 » : UN verdict, celui de la boussole (boussala_testweek decide, pont.mjs › verdictProduit, verdict.mjs en mode manuel). Jamais « le jour 3 »",
+    "base": "les LEADS arrêtent, les CONFIRMÉES jugent ; après VALIDE, les colis LIVRÉS et leurs raisons de retour",
+    "regle": "50 leads (l'apprentissage de Meta), confiance 90 % ; arrêt anticipé (boussala_test_ads) : dès 25 leads le lead au-dessus de 1,3 × le lead maximum, ou 3 × le lead maximum dépensés sans un lead",
+    "verdicts": [
+      "VALIDE",
+      "FIX",
+      "ECHEC",
+      "RESERVE"
+    ],
+    "tags": "VALIDE → VALIDE ; ECHEC → ECHEC-ADS ou ECHEC-CONF ; RESERVE → RESERVE ; FIX → le produit reste TEST",
+    "quinzeLeads": "« 15 leads » ne vaut QUE pour la bibliothèque des créas (le verdict par vidéo), au rythme de 72 h puis chaque semaine",
+    "echec": "ECHEC met la publicité en pause tout seul, relu, et le dit au client (décision 1.0)"
+  },
+  "motLance": [
+    "لانسي"
+  ]
 }

@@ -7,9 +7,9 @@
   "langue": "darija",
   "centre": {
     "id": "manager",
-    "nom": "MANAGER",
-    "nomAr": "المانجر",
-    "role": "Commande la chaîne, lit Tassyir et Meta, écrit le carnet. Ne parle jamais au client.",
+    "nom": "LEADER",
+    "nomAr": "القائد",
+    "role": "« الطالب 1.0 » : le LEADER (manager + la voix du coach). Commande la chaîne, lit Tassyir et Meta, écrit le carnet ; c'est lui qui parle au client, avec les verdicts de la boussole (le juge, pas un joueur).",
     "skill": "skills/manager/SKILL.md"
   },
   "cerveau": {
@@ -21,7 +21,7 @@
   "departements": [
     {
       "id": "editeur",
-      "ordre": 1,
+      "ordre": 2,
       "nom": "ÉDITEUR",
       "nomAr": "المونتاج",
       "couleur": "#e07a5f",
@@ -60,7 +60,7 @@
     },
     {
       "id": "page",
-      "ordre": 2,
+      "ordre": 3,
       "nom": "PAGE PRODUIT + SKU",
       "nomAr": "الصفحة",
       "couleur": "#3d405b",
@@ -97,9 +97,9 @@
     },
     {
       "id": "testing",
-      "ordre": 3,
-      "nom": "TESTING",
-      "nomAr": "التيست",
+      "ordre": 4,
+      "nom": "MEDIA BUYER · TEST",
+      "nomAr": "الميديا باير : التيست",
       "couleur": "#81b29a",
       "role": "La porte de rentabilité avant toute dépense, puis la campagne Meta préparée EN PAUSE.",
       "skill": "skills/testing/SKILL.md",
@@ -140,9 +140,9 @@
     },
     {
       "id": "scaling",
-      "ordre": 4,
-      "nom": "SCALING",
-      "nomAr": "السكالينغ",
+      "ordre": 6,
+      "nom": "MEDIA BUYER · SCALE",
+      "nomAr": "الميديا باير : السكايل",
       "couleur": "#f2cc8f",
       "role": "Monter sur le gagnant : la créa gagnante sur les LIVRÉES, le stock qui donne le budget.",
       "skill": "skills/scaling/SKILL.md",
@@ -179,10 +179,10 @@
     {
       "id": "coach",
       "ordre": 5,
-      "nom": "COACH",
-      "nomAr": "الكوتش",
+      "nom": "LEADER · VOIX",
+      "nomAr": "القائد : الصوت",
       "couleur": "#5b8def",
-      "role": "La seule voix que le client entend : le rapport quotidien en cinq blocs, la porte du scaling, les réponses sur le vêtement.",
+      "role": "1.0 : la VOIX du leader (القائد) — il dit au client le verdict de la boussole et la porte du scale (portes.mjs) ; il ne juge plus seul « au jour 3 ».",
       "skill": "skills/coach/SKILL.md",
       "outilPython": "5-COACH-ERP/manita-coach.py",
       "connecteurs": [
@@ -220,7 +220,7 @@
     },
     {
       "id": "inspecteur",
-      "ordre": 6,
+      "ordre": 1,
       "nom": "INSPECTEUR",
       "nomAr": "المفتّش",
       "couleur": "#e9b949",

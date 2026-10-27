@@ -77,7 +77,7 @@
   const ORIGINES = { bureau: 'المكتب', telegram: 'تيليغرام', routine: 'روتين', 'routine (en retard)': 'روتين متأخر', 'routine (à la demande)': 'روتين دروك' };
   const CONTROLES = [['outil', 'الأداة'], ['source', 'المصدر'], ['auditeur', 'المدقق']];
   const dept = id => (etat.bureau?.departements || []).find(d => d.id === id) || null;
-  const nomDept = id => id === 'manager' ? etat.bureau?.centre?.nomAr || id : (dept(id)?.nomAr || id || 'يختار المانجر');
+  const nomDept = id => id === 'manager' ? etat.bureau?.centre?.nomAr || id : (dept(id)?.nomAr || id || 'يختار القائد');
   const nomPoste = (d, p) => (dept(d)?.postes || []).find(x => x.id === p)?.nomAr || p || '';
   const classeVerdict = v => v === 'PASSE' ? 'passe' : v === 'ECHEC' ? 'echec' : '';
 
@@ -562,7 +562,7 @@
   }
   /* ===================== deux collègues qui discutent ===================== */
   // Toujours une discussion en cours : un agent va voir un collègue assis, ils parlent 30 s (bulles qui alternent), puis il revient.
-  const REPLIQUES = ['شفت الكومندات تاع البارح ؟', 'الكارني راهو معمّر', 'نزيدو زاوية جديدة ؟', 'التيست راهو يمشي مليح', 'الصور واجدين للمونتاج', 'الكوتش قال نستناو شوية', 'واش قال المانجر ؟', 'الليفريزون تاع وهران تأخرات', 'نشوفو الروتور مع بعض', 'صحّا، نكمّلو', 'الوصف لازم يتصحّح', 'الجمهور هذا خدم مليح', 'نستناو الكلمة تاعو قبل', 'الستوك باقي ولا كمل ؟', 'هاذي فكرة مليحة', 'إيه، صح', 'لا لا، نعاودو نشوفو', 'خلّيني نكمّل هذي ونجيك'];
+  const REPLIQUES = ['شفت الكومندات تاع البارح ؟', 'الكارني راهو معمّر', 'نزيدو زاوية جديدة ؟', 'التيست راهو يمشي مليح', 'الصور واجدين للمونتاج', 'القائد قال نستناو شوية', 'واش قال القائد ؟', 'الليفريزون تاع وهران تأخرات', 'نشوفو الروتور مع بعض', 'صحّا، نكمّلو', 'الوصف لازم يتصحّح', 'الجمهور هذا خدم مليح', 'نستناو الكلمة تاعو قبل', 'الستوك باقي ولا كمل ؟', 'هاذي فكرة مليحة', 'إيه، صح', 'لا لا، نعاودو نشوفو', 'خلّيني نكمّل هذي ونجيك'];
   const DUREE_DISCUSSION = 30000;
   /* ----- le vrai travail : chaque agent dit ce qu'il a fait et ce qu'il lui faut, depuis les vraies tâches du bureau ----- */
   // Par défaut, le métier du poste (sa skill) ; dès qu'une vraie tâche existe, c'est elle qui parle (titre, état, contrôles).
@@ -582,7 +582,7 @@
     'scaling/audiences': { fait: 'نحضّر الجماهير، اللي ندخلوهم واللي نخرجوهم', besoin: 'الليستات تاع الكليان من تاسيير' },
     'scaling/budget': { fait: 'نحسب الميزانية على حساب الستوك', besoin: 'الستوك الحقيقي من تاسيير' },
     'coach/rapport': { fait: 'نكتب التقرير تاع اليوم للكليان', besoin: 'الأرقام تاع البارح من تاسيير' },
-    'coach/porte-scaling': { fait: 'نشوف الشروط قبل ما نفتحو السكالينغ', besoin: 'التأكيد والليفريزون الحقيقيين' },
+    'coach/porte-scaling': { fait: 'نشوف الشروط قبل ما نفتحو السكايل', besoin: 'التأكيد والليفريزون الحقيقيين' },
     'coach/questions': { fait: 'نجاوب الكليان على اللبسة بالميطود', besoin: 'السؤال تاع الكليان' },
     'coach/decisions': { fait: 'نكتب في الكارني واش قرر الكليان', besoin: 'الجواب تاع الكليان في تيليغرام' }
   };
@@ -782,9 +782,9 @@
   const ESPION = { nom: 'شيكم Pro Max', femme: false, latin: true, peau: '#d9a57a', cheveux: '#111111', pantalon: '#7a0d12', espion: true };
   const COMPLOTS = [ // ce que la victime prépare, et comment l'espion le raconte (accordé au féminin si c'est une collègue)
     ['نديرو إضراب غدوة ؟', (n, f) => `${n} ${f ? 'راهي تحضّر' : 'راهو يحضّر'} إضراب`],
-    ['المانجر ما يعرف والو', (n, f) => `${n} ${f ? 'قالت' : 'قال'} بلي المانجر ما يعرف والو`],
+    ['القائد ما يعرف والو', (n, f) => `${n} ${f ? 'قالت' : 'قال'} بلي القائد ما يعرف والو`],
     ['نطلبو زيادة في الخلصة', (n, f) => `${n} ${f ? 'حابة' : 'حاب'} زيادة في الخلصة`],
-    ['نقلبو عليه الطاولة', (n, f, chez) => `${n} ${f ? 'راهي تحضّر' : 'راهو يحضّر'} انقلاب ${chez === 'boss' ? 'على المانجر' : 'عليك'}`],
+    ['نقلبو عليه الطاولة', (n, f, chez) => `${n} ${f ? 'راهي تحضّر' : 'راهو يحضّر'} انقلاب ${chez === 'boss' ? 'على القائد' : 'عليك'}`],
     ['نخبّيو الكارني عليه', (n, f) => `${n} ${f ? 'حابة تخبّي' : 'حاب يخبّي'} الكارني`]
   ];
   const MODELES_ESPION = [
@@ -805,7 +805,7 @@
     ['بلي ما تخدم والو', 'بلي ما تخدمي والو', 'بلي ما نخدم والو'],
     ['بلي ترقد في الخدمة', 'بلي ترقدي في الخدمة', 'بلي نرقد في الخدمة'],
     ['بلي تخبّي الكارني', 'بلي تخبّي الكارني', 'بلي نخبّي الكارني'],
-    ['بلي المانجر ما يحبكش', 'بلي المانجر ما يحبكش', 'بلي المانجر ما يحبنيش'],
+    ['بلي القائد ما يحبكش', 'بلي القائد ما يحبكش', 'بلي القائد ما يحبنيش'],
     ['بلي تحكي على البوس', 'بلي تحكي على البوس', 'بلي نحكي على البوس'],
     ['بلي راك تقلّب على خدمة أخرى', 'بلي راكي تقلّبي على خدمة أخرى', 'بلي راني نقلّب على خدمة أخرى']
   ];
@@ -1163,7 +1163,7 @@
   // ce que le Boss reproche quand Shikem lui a rapporté un complot (accordé au féminin si c'est une collègue)
   const ACCUSATIONS = {
     'نديرو إضراب غدوة ؟': f => `سمعت بلي ${f ? 'راكي تحضّري' : 'راك تحضّر'} إضراب !`,
-    'المانجر ما يعرف والو': f => `سمعت بلي ${f ? 'تقولي' : 'تقول'} المانجر ما يعرف والو !`,
+    'القائد ما يعرف والو': f => `سمعت بلي ${f ? 'تقولي' : 'تقول'} القائد ما يعرف والو !`,
     'نطلبو زيادة في الخلصة': f => `سمعت بلي ${f ? 'حابة' : 'حاب'} زيادة ! الخدمة قبل الدراهم !`,
     'نقلبو عليه الطاولة': f => `سمعت بلي ${f ? 'راكي تحضّري' : 'راك تحضّر'} انقلاب !`,
     'نخبّيو الكارني عليه': f => `سمعت بلي ${f ? 'راكي حابة تخبّي' : 'راك حاب تخبّي'} الكارني !`
@@ -1242,8 +1242,8 @@
     ['شفت ريم ؟', 'إيه، شابة بزاف اليوم', 'اللبسة الروز لايقتلها', 'صحّا، نرجعو للخدمة'],
     ['هاديك ريم فاتت', 'ما شاء الله عليها', 'والحلّاب ديما موراها', 'هههه ركّز في الكارني'],
     ['ريم شابة بزاف', 'حتى أنا قلتها', 'ما نقدرش نركّز كي تفوت', 'يا خو كمّل الخدمة'],
-    ['شفت الحلّاب يتبع فيها ؟', 'باين طاح فيها', 'معاه الحق، شابة', 'كمّلو قبل ما يجي المانجر'],
-    ['الحلّاب ما خدم حتى حاجة اليوم', 'غير يتبع ريم', 'المانجر ما شافوش ؟', 'شيكم شافو، أكيد']
+    ['شفت الحلّاب يتبع فيها ؟', 'باين طاح فيها', 'معاه الحق، شابة', 'كمّلو قبل ما يجي القائد'],
+    ['الحلّاب ما خدم حتى حاجة اليوم', 'غير يتبع ريم', 'القائد ما شافوش ؟', 'شيكم شافو، أكيد']
   ];
   const ecart = (p, q) => Math.hypot(p.x - q.x, p.y - q.y);
   // un poste qui travaille vraiment (ou attend la parole du client) garde son agent assis : sa couleur et ses marches de tâche restent visibles
@@ -2128,7 +2128,7 @@
       etat.coachOccupe = true; $('#bouton-ab3ath').disabled = true; $('#coach-ecrit').hidden = false;
       ta.value = ''; autoGrandir(ta);
       try { await api('/api/chat/coach', { method: 'POST', body: { texte } }); majCoach(await api('/api/chat/coach')); }
-      catch (err) { toast('الكوتش ما جاوبش', { erreur: true, brut: err.message }); }
+      catch (err) { toast('القائد ما جاوبش', { erreur: true, brut: err.message }); }
       finally { etat.coachOccupe = false; $('#bouton-ab3ath').disabled = false; $('#coach-ecrit').hidden = true; }
     });
     $('#coach-texte').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); $('#formulaire-coach').requestSubmit(); } });

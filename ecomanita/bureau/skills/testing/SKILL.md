@@ -3,6 +3,25 @@ name: testing-manita
 description: "Lancer le premier test publicitaire d'un modele COD algerien sur Meta : une campagne par modele, la structure tiree du fichier (ABO ou CBO selon le budget du client), Broad sur les 25 wilayas du nord, en Reels et Story, budget calcule dans la devise du compte, le lien cache (numeros de Meta) pour savoir quelle video vend, textes du script d'angles du vendeur en darija, aucun plafond de depense, verdict au troisieme jour dans les deux modes. L'outil manita-testing.py calcule ; la connexion Meta du client cree. Tout nait en PAUSE. Rien ne part sans le mot du client."
 ---
 
+## RÈGLES 1.0 (« الطالب 1.0 », 27/10/2026) — elles PRIMENT sur tout le texte plus bas, règles 0.4.2 comprises
+
+1. **LE VERDICT DU TEST EST CELUI DE LA BOUSSOLE, JAMAIS « LE JOUR 3 ».** Les leads arrêtent, les confirmées jugent :
+   `node <bureau>/boussala/verdict.mjs --prix P --gros G --emballage E --livraison L --retour R --confirmation C --livraison-pct D --taux <le taux du client> --depense-usd S --leads N --confirmees K --traitees T`
+   (boussala_testweek decide : 50 leads, confiance 90 % ; arrêt anticipé de boussala_test_ads : dès 25 leads le lead au-dessus
+   de 1,3 × le lead maximum, ou 3 × le lead maximum dépensés sans un lead). Le bureau appelle la même fonction chaque soir.
+2. **QUATRE VERDICTS** : VALIDE / FIX / ECHEC / RESERVE. Un tag (VALIDE, ECHEC-ADS, ECHEC-CONF, RESERVE) ne s'écrit qu'APRÈS ce verdict ;
+   avant, le produit garde TEST. ECHEC met la pub en pause (dit au client) ; RESERVE : on sert les commandes, on ne monte pas.
+3. Là où le texte plus bas juge au troisième jour (TROP_TOT, la décision de `manita-testing.py --lecture` ou de
+   `manita-coach.py --lecture`, « le jour du verdict »), ce jugement ne vaut plus : les outils Python restent pour les chiffres.
+   « 15 leads » et le rythme de 72 heures ne valent QUE pour la bibliothèque des créas.
+4. **APRÈS VALIDE**, on juge les colis LIVRÉS et leurs raisons de retour ; la porte du scale est celle de `portes.mjs`
+   (bénéfice réel par colis livré, courbe contre le cône de la boussole, stock, cash revenu) — plus `--porte`.
+5. **LES MOTS** (regles.json › motLance, motMontee) : seul « لانسي » active (ni « lance », ni « ok », ni « واه ») ; seul « طلّع »
+   monte un budget (ni « monte », ni un autre mot). Tout naît EN PAUSE.
+6. **LES NOMS DE 1.0** (les onze joueurs du cours) : manager + la voix du coach = **القائد** ; testing + scaling = **الميديا باير** ;
+   l'inspecteur = **المفتّش** ; l'éditeur = **المونتاج** ; la page = **الصفحة** ; engagement = un outil du **الجاسوس** ; la boussole = **le
+   juge**, pas un joueur. Au client, on dit ces noms.
+
 ## RÈGLES 0.4.2 (25/10/2026) — elles PRIMENT sur tout le texte plus bas
 
 1. **LA STRUCTURE SORT DU FICHIER** (budget du jour écrit par le client, vidéos de 1 à 4, plus haut coût par lead de la porte) :
@@ -191,8 +210,8 @@ dans `mes-decisions.txt` : la date, le texte exact de l'avertissement qu'il
 a lu, les chiffres qu'il avait sous les yeux, et son mot. A partir de la
 c'est sa decision, ecrite et datee.
 
-Mais `نكمّل` ne remplace pas `lance`. Il assume le risque du produit ; il
-devra quand meme ecrire `lance` pour que quoi que ce soit demarre.
+Mais `نكمّل` ne remplace pas `لانسي`. Il assume le risque du produit ; il
+devra quand meme ecrire `لانسي` pour que quoi que ce soit demarre.
 
 ## ETAPE 3 — les questions obligatoires, avant chaque test
 
@@ -230,7 +249,7 @@ Quatre questions, a chaque test, jamais sautees :
 | Le lien | marque, un par angle | **il n'y en a pas** |
 | Assez pour parler | dix commandes recues | dix discussions ET cinq confirmees |
 | La base du verdict | la reponse « السلعة » : sans stock les **confirmees**, avec stock les **livraisons attendues** | la meme |
-| Le verdict se prend | au **troisieme** jour | au **troisieme** jour aussi |
+| Le verdict se prend | par la **boussole** (50 leads, 90 %), jamais un jour — RÈGLES 1.0 | pareil (avant 1.0 : au troisieme jour) |
 
 **Tu ne devines JAMAIS le mode. Tu le demandes.** Et tu le passes ensuite a
 toutes les commandes avec `--mode`. L'outil refuse de lire sans lui, et
@@ -250,7 +269,7 @@ d'une discussion ouverte, mais ce n'est pas un verdict : c'est une jauge.
 Un modele qui fait beaucoup ecrire et qui ne vend rien est le piege
 classique de ce mode.
 
-**Le jour du verdict est le meme dans les deux modes : le troisieme** (regle
+**(Avant 1.0 — remplacé par les RÈGLES 1.0 : le verdict est celui de la boussole.) Le jour du verdict est le meme dans les deux modes : le troisieme** (regle
 du vendeur du 06/10/2026). Le retard des clientes qui ecrivent n'est plus
 compense par deux jours de depense en plus : il est tenu par les seuils de
 l'outil (assez de discussions ET assez de confirmees pour juger, sinon
@@ -640,7 +659,7 @@ sur son disque n'est pas un identifiant.
 | lire ses videos deja envoyees | `ads_get_ad_videos` |
 | lire la devise et l'etat du compte | `ads_get_ad_accounts` |
 | lire le pixel | `ads_get_datasets` |
-| ACTIVER, quand il dit « lance » | `ads_activate_entity` |
+| ACTIVER, quand il dit « لانسي » | `ads_activate_entity` |
 | mettre en pause | `ads_update_entity` |
 
 **ACTIVER LE PARENT N'ACTIVE PAS LES ENFANTS.** Tu actives la campagne, PUIS
@@ -681,13 +700,13 @@ les wilayas et le format retenus
 Puis :
 
 > « كلش واجد وموقّف. حتى دينار ما يتصرف حتى تقولي انت.
->   كي تكون واجد، اكتب : lance »
+>   كي تكون واجد، اكتب : لانسي »
 
 Et tu attends. Le mot est **lance**. « ok », « d'accord », « oui » ne valent
-PAS « lance ». Un « lance » = UNE activation, il ne vaut pas pour demain ni
+PAS « لانسي ». Un « لانسي » = UNE activation, il ne vaut pas pour demain ni
 pour une autre campagne.
 
-## ETAPE 9 — quand il dit « lance »
+## ETAPE 9 — quand il dit « لانسي »
 
 ```
 1. tu relis les DIX controles de la derniere section de ce fichier
@@ -892,7 +911,7 @@ livraison faible par une bonne confirmation. Un seul « non » ferme la porte.
 3. une autorisation d'administrateur
 4. supprimer un de ses fichiers
 5. flouter une image
-6. ACTIVER une campagne — seulement sur le mot « lance »
+6. ACTIVER une campagne — seulement sur le mot « لانسي »
 7. TOUCHER a une campagne qui tourne deja
 8. MONTER un budget
 9. ENVOYER des numeros de ses clientes a Meta
@@ -908,7 +927,7 @@ Tu relis dans Meta ce qui a ete CREE, pas ce que tu as envoye :
 [ ] la campagne existe, une seule fois, et porte la cle
 [ ] aucun plafond de depense (ni campaign_spend_cap, ni daily/lifetime_spend_cap),
     meme sur une campagne reprise (relue dans Meta)
-[ ] elle est en PAUSE (ou ACTIVE seulement s'il a dit « lance »)
+[ ] elle est en PAUSE (ou ACTIVE seulement s'il a dit « لانسي »)
 [ ] un ad set par video, pas un de plus
 [ ] le budget est sur l'AD SET, pas sur la campagne
 [ ] le budget est le bon nombre de centimes

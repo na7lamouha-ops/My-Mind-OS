@@ -27,7 +27,7 @@ export function porteScale(e = {}) {
     { id: 'benefice', ok: benef > 0, ar: 'الربح الحقيقي على الطرد', detail: `${Math.round(benef)} DA par colis livré` },
     { id: 'courbe', ok: e.courbe === 'vert' || e.courbe === 'jaune', ar: 'المنحنى ماشي في الأحمر', detail: `courbe ${e.courbe || '?'}` },
     { id: 'stock', ok: joursStock >= jh && e.atelierSuit !== false, ar: 'الستوك يلحق والورشة تتبع', detail: `${Number.isFinite(joursStock) ? joursStock.toFixed(1) : '∞'} jours au rythme +25 %${e.atelierSuit === false ? ', atelier en retard' : ''}` },
-    { id: 'cash', ok: n(e.cashRevenu) - marche >= n(e.reserve), ar: 'الكاش يغطي الخطوة بلا ما نمسّو الاحتياط', detail: `cash ${Math.round(n(e.cashRevenu))} DA − marche ${Math.round(marche)} DA ≥ réserve ${Math.round(n(e.reserve))} DA ?` },
+    { id: 'cash', ok: n(e.cashRevenu) - marche >= n(e.reserve), ar: 'الكاش اللي رجع يغطي الخطوة', detail: `cash ${Math.round(n(e.cashRevenu))} DA − marche ${Math.round(marche)} DA ≥ réserve ${Math.round(n(e.reserve))} DA ?` },
   ];
   // le stock trop gros n'empêche pas de monter (monter le vend), mais la marche part avec l'offre de deux pièces
   const couverture = lpj > 0 ? n(e.stockPieces) / lpj : null;

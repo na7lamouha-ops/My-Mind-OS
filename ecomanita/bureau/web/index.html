@@ -55,7 +55,7 @@
     <nav class="onglets" role="tablist" aria-label="الأقسام تاع اللوحة">
       <button type="button" role="tab" class="onglet" data-onglet="missions" aria-selected="false">الموديلات <span class="compte latin" id="compte-missions" hidden>0</span></button>
       <button type="button" role="tab" class="onglet actif" data-onglet="taches" aria-selected="true">الخدمات <span class="compte latin" id="compte-attente" hidden>0</span></button>
-      <button type="button" role="tab" class="onglet" data-onglet="coach" aria-selected="false">الكوتش</button>
+      <button type="button" role="tab" class="onglet" data-onglet="coach" aria-selected="false">القائد</button>
       <button type="button" role="tab" class="onglet" data-onglet="carnet" aria-selected="false">الكارني</button>
       <button type="button" role="tab" class="onglet" data-onglet="routines" aria-selected="false">الروتين</button>
       <button type="button" role="tab" class="onglet" data-onglet="journal" aria-selected="false">الجورنال</button>
@@ -146,7 +146,7 @@
       <form class="barre" id="formulaire-tache" autocomplete="off">
         <div class="barre-ligne">
           <select id="tache-departement" aria-label="القسم">
-            <option value="">يختار المانجر</option>
+            <option value="">يختار القائد</option>
           </select>
           <select id="tache-modele" aria-label="النموذج" class="latin">
             <option value="sonnet">sonnet</option>
@@ -166,13 +166,13 @@
       </div>
     </section>
 
-    <!-- الكوتش -->
+    <!-- القائد (1.0 : le coach devient la voix du leader) -->
     <section class="vue" id="vue-coach" role="tabpanel" hidden>
-      <p class="note-coach">المانجر والعمال ما يهدروش مع الكليان — الكوتش برك</p>
+      <p class="note-coach">العمال ما يهدروش مع الكليان — القائد برك</p>
       <div class="conversation" id="conversation"><p class="vide">مازال ما هدرتوش</p></div>
-      <p class="ecrit" id="coach-ecrit" hidden>الكوتش راه يكتب<span class="points"><i></i><i></i><i></i></span></p>
+      <p class="ecrit" id="coach-ecrit" hidden>القائد راه يكتب<span class="points"><i></i><i></i><i></i></span></p>
       <form class="saisie" id="formulaire-coach" autocomplete="off">
-        <textarea id="coach-texte" rows="1" placeholder="اسأل الكوتش" required></textarea>
+        <textarea id="coach-texte" rows="1" placeholder="اسأل القائد" required></textarea>
         <button type="submit" class="bouton principal" id="bouton-ab3ath">ابعث</button>
       </form>
     </section>
@@ -356,7 +356,7 @@
     </div>
     <h3>الكونيكتورات</h3>
     <p class="pastilles" id="fiche-connecteurs"></p>
-    <p class="fiche-chat" id="fiche-chat" hidden><button type="button" class="bouton principal" id="fiche-ouvrir-chat">اهدر مع الكوتش</button></p>
+    <p class="fiche-chat" id="fiche-chat" hidden><button type="button" class="bouton principal" id="fiche-ouvrir-chat">اهدر مع القائد</button></p>
   </div>
 </dialog>
 

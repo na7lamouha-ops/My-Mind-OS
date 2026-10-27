@@ -160,7 +160,8 @@ import { REGLES_MAISON } from './routeur.mjs';
 import { ouvrirCarnet, ecrireNote, listerNotes, refusDeContenu } from './carnet.mjs';
 import { ecrirePorte, effacerPorte, ecrireTicketPause, effacerTicketPause, ouvrirTourPorte, fermerTourPorte } from './meta-mcp.mjs';
 import { controlesSuivi, messageControles } from './controles-suivi.mjs';
-import { limitesProduit } from './boussala/pont.mjs'; // 1.0 : le sommet et le pire cas, par la boussole 29.18
+import { limitesProduit, verdictProduit } from './boussala/pont.mjs'; // 1.0 : le sommet, le pire cas et le verdict, par la boussole 29.18
+import { porteScale } from './portes.mjs';
 import { ficheVideo, ligneResultat, resumeParEtiquette, ajouterLignes, lireBibliotheque, messageBibliotheque } from './bibliotheque.mjs';
 
 export const ETAPES = [
@@ -662,9 +663,15 @@ export function choisirVideosTest(saines, n) {
   return (saines || []).filter((_, i) => pris.has(i));
 }
 
-/** Le jour du verdict (règle du vendeur, 06/10/2026) : le troisième, dans les DEUX modes. La même règle que
- *  JOURS_LECTURE de manita-testing.py (le vérificateur recoupe les deux). */
-export const JOUR_VERDICT = { site: 3, message: 3 };
+/** « الطالب 1.0 » (fix 9) : il n'y a plus de « jour du verdict » — le verdict du modèle est celui de la boussole (50 leads,
+ *  confiance 90 %). Il reste le RYTHME DE LA BIBLIOTHÈQUE des créas : 72 h, puis chaque semaine (avant 1.0 : la constante du
+ *  « jour du verdict », le troisième jour, qui jugeait aussi le modèle). */
+export const JOUR_BIBLIOTHEQUE = 3;
+/** Le verdict du soir dans le rapport (une ligne arabe sans chiffre ; les chiffres partent sur leurs lignes). */
+export const DECISION_DU_TAG = {
+  TEST: 'مازال نكمّلو، الأرقام ما كفاوش باش نحكمو', VALIDE: 'VALIDE : يربح حتى في أسوأ حالة', FIX: 'FIX : صلّح حاجة وحدة برك',
+  'ECHEC-ADS': 'ECHEC-ADS : الإعلان هو المشكل', 'ECHEC-CONF': 'ECHEC-CONF : التأكيد هو المشكل', 'ECHEC-RESERVE': 'RESERVE : تحت السقف بصح ماشي مضمون',
+};
 
 /* ---------------------------------- les WILAYAS du test et de la scale ---------------------------------- */
 // Décision du vendeur : le test (et la scale) visent les 25 WILAYAS DU NORD, jamais toute l'Algérie (07/10/2026 : sans
@@ -3052,7 +3059,7 @@ Rends {campaign_id, ad_sets:[{id, nom}], ads:[{id, ad_set_id, angle}], existaitD
       try {
         r = await tourClaude(m, 'activation', { dept: 'testing', outils: ['meta.ads_activate_entity', 'meta.ads_get_ad_entities', ...(heureMs !== null ? ['meta.ads_update_entity'] : [])], porte: objets, adSetsPorte: heureMs !== null ? adSetsTest : [], porteExistante: porteLot,
           schema: { type: 'object', properties: { statuts: { type: 'array', items: { type: 'object', properties: { id: { type: 'string' }, niveau: { type: 'string' }, statut: { type: 'string' } }, required: ['id', 'statut'] } }, erreur: { type: 'string' } }, required: ['statuts'] },
-          message: `${consigneHeure}Le client a pressé « لانسي » (= le mot « lance ») pour CE test et seulement lui. Active, dans cet ordre : la campagne ${c.id}, PUIS chaque ad set ${JSON.stringify(c.adSets.map(a => a.id))}, PUIS chaque annonce ${JSON.stringify(c.ads.map(a => a.id))} (ads_activate_entity). Si elle est en BROUILLON (draft), publie-la D'ABORD avec object_ids = exactement ces objets ${JSON.stringify(objets)} et AUCUN autre (un autre brouillon du compte ne part jamais avec elle), entity_id = la campagne et publish_as_active true ; puis active chacun de ces objets resté en pause (la publication n'allume que la campagne). Ne touche à rien d'autre : aucune autre campagne, aucun budget. Puis RELIS dans Meta (ads_get_ad_entities, object_state « live » puis « draft ») le statut effectif de chacun. Si Meta répond PUBLISHING (compte en mode brouillon : la publication est en cours), c'est NORMAL : ne réactive rien, relis et rends les statuts tels quels — le bureau relira lui-même plus tard.
+          message: `${consigneHeure}Le client a pressé « لانسي » (le seul mot qui lance, règle 1.0) pour CE test et seulement lui. Active, dans cet ordre : la campagne ${c.id}, PUIS chaque ad set ${JSON.stringify(c.adSets.map(a => a.id))}, PUIS chaque annonce ${JSON.stringify(c.ads.map(a => a.id))} (ads_activate_entity). Si elle est en BROUILLON (draft), publie-la D'ABORD avec object_ids = exactement ces objets ${JSON.stringify(objets)} et AUCUN autre (un autre brouillon du compte ne part jamais avec elle), entity_id = la campagne et publish_as_active true ; puis active chacun de ces objets resté en pause (la publication n'allume que la campagne). Ne touche à rien d'autre : aucune autre campagne, aucun budget. Puis RELIS dans Meta (ads_get_ad_entities, object_state « live » puis « draft ») le statut effectif de chacun. Si Meta répond PUBLISHING (compte en mode brouillon : la publication est en cours), c'est NORMAL : ne réactive rien, relis et rends les statuts tels quels — le bureau relira lui-même plus tard.
 Rends {statuts:[{id, niveau, statut}]} avec les statuts RELUS (ACTIVE, IN_PROCESS, PENDING_REVIEW, PUBLISHING, DRAFT, DISAPPROVED…).` });
       } catch (e) {
         delete m.d.activationEnVol;
@@ -3266,57 +3273,67 @@ Rends les nombres EXACTS lus ; si une lecture est impossible, mets la réponse b
       const avant = S.cumul || { commandes: 0, confirmees: 0, expediees: 0, livrees: 0, retours: 0, depense_da: 0 };
       const flux = k => Math.max(0, (k === 'depense_da' ? depenseDa : x[k]) - (avant[k] || 0));
       await outilCarnet(m, 'carnet-mesure', ['--mesure', '--date', aujourdhui, '--produit', m.code, '--depense', Math.round(flux('depense_da')), '--commandes', flux('commandes'), '--confirmees', flux('confirmees'), '--expediees', flux('expediees'), '--livrees', flux('livrees'), '--refusees', flux('retours'), '--en-route', Math.max(0, enRoute)]);
-      // la lecture du testing : les seuils du mode, la BASE de la réponse « السلعة » (règle du vendeur, 08/10/2026) — sans
-      // stock les confirmées, avec stock les livrées + en route à trente pour cent + confirmées pas encore parties au taux
-      // déclaré, contre le break even par livrée. Une mission d'avant, sans réponse, vaut « test ».
+      // « الطالب 1.0 » (fix 9) : LE VERDICT DE LA BOUSSOLE, jamais « le jour 3 ». Les leads arrêtent, les confirmées jugent
+      // (boussala_testweek decide : 50 leads, confiance 90 % ; arrêt anticipé de boussala_test_ads). Après VALIDE, le verdict
+      // ne se refait plus : on juge les colis LIVRÉS (la porte du scale). Avant 1.0 : manita-testing.py --lecture et son TROP_TOT.
       const stock = rep.stock === 'stock' ? 'stock' : 'test';
-      const lect = await outil(m, 'lecture', '3-TESTING/manita-testing.py', ['--lecture', '--mode', rep.mode, '--stock', stock, '--jour', jour, '--spend', x.depense_totale, '--devise', x.devise, '--taux-dinar', taux, '--commandes', x.commandes, '--confirmees', x.confirmees,
-        '--livrees', x.livrees, '--expediees', x.expediees, '--en-route', Math.max(0, enRoute), '--retours', x.retours,
-        '--prix', rep.detail, '--cout-produit', rep.gros, '--emballage', cts.emballage, '--livraison', cts.livraison, '--frais-cod', cts.fraisCod || 0, '--cout-retour', cts.retour, '--taux-confirmation', (+dcl.confirmation / 100).toFixed(4), '--taux-livraison', (+dcl.livraison / 100).toFixed(4), ...(rep.mode === 'message' ? ['--messages', x.conversations || 0] : [])], { dureeMaxMs: 60000 });
-      const L = jsonOutil(lect, 'lecture') || {};
-      const jourS = { date: aujourdhui, jour, ...x, en_route: enRoute, depense_da: Math.round(depenseDa), decision: L.decision || '?', stock, base: L.base ?? null };
-      S.jours.push(jourS); S.cumul = { commandes: x.commandes, confirmees: x.confirmees, expediees: x.expediees, livrees: x.livrees, retours: x.retours, depense_da: depenseDa }; S.dernierJour = aujourdhui; sauver(m);
-      const DECISION_AR = { DONNEES_INSUFFISANTES: 'مازال ما كاينش بزاف كوموندات باش نحكمو', RENTABLE: 'الكوموند تكلّف أقل من الحد تاعك، مليح', PERTE_LEGERE: 'راك تخسر شوية في كل كوموند، نشوفو غدوة', PERTE_LOURDE: 'راك تخسر بزاف في كل كوموند', CORRIGER_UNE_CREA: 'تصرف وما تجيبش، لازم نبدّلو الفيديو', DISJONCTEUR: 'صرفت بزاف بلا حتى كوموند مأكدة', TROP_TOT: 'مازال بكري باش نحكمو، نستناو' };
-      // avec stock on juge le COLIS attendu ; sous une livraison attendue, ce n'est jamais une perte
-      if (stock === 'stock') Object.assign(DECISION_AR, { DONNEES_INSUFFISANTES: 'مازال ما كاينش بزاف كوليات باش نحكمو', RENTABLE: 'الكولي يكلّف أقل من الحد تاعك، مليح', PERTE_LEGERE: 'راك تخسر شوية في كل كولي، نشوفو غدوة',
-        PERTE_LOURDE: L.cout_par_commande > 0 ? 'راك تخسر بزاف في كل كولي' : 'ما كاين حتى كولي نستناوه يوصل' });
-      const decisionAr = L.pourquoi === 'base attendue sous une livraison' ? 'الكوليات لي نستناو أقل من كولي، مازال ما نحكموش، ماشي خسارة' : DECISION_AR[L.decision];
-      await envoyer(m, M.rapportJour({ depense_da: depenseDa, commandes: x.commandes, confirmees: x.confirmees, livrees: x.livrees, retours: x.retours, stock, base: L.base, decision_ar: decisionAr || 'ما قدرتش نحكم اليوم' }, taux));
+      const versUsd = versDollarsDuClient(x.devise, taux);
+      let V = null;
+      if (!S.valide) {
+        if (!versUsd) throw new Error(`la dépense est en ${x.devise} et le taux du client manque : la boussole ne juge pas sans lui`);
+        V = verdictProduit({ nom: m.code, prix: rep.detail, gros: rep.gros, emballage: cts.emballage, livraison: (+cts.livraison || 0) + (+cts.fraisCod || 0), retour: cts.retour,
+          confirmation: dcl.confirmation, livraisonPct: dcl.livraison, taux, spendUsd: versUsd(x.depense_totale), leads: x.commandes, confirmed: x.confirmees,
+          processed: Number.isInteger(x.annulees) ? x.confirmees + x.annulees : null });
+      }
+      const tagDuSoir = S.valide ? 'VALIDE' : V.tag;
+      const jourS = { date: aujourdhui, jour, ...x, en_route: enRoute, depense_da: Math.round(depenseDa), decision: tagDuSoir, stock, ...(V ? { cpl_usd: V.cpl, cpc_usd: V.cpc } : {}) };
+      S.jours.push(jourS); S.cumul = { commandes: x.commandes, confirmees: x.confirmees, expediees: x.expediees, livrees: x.livrees, retours: x.retours, depense_da: depenseDa }; S.dernierJour = aujourdhui;
+      if (V && V.verdict) { m.d.verdictBoussole = { date: aujourdhui, tag: V.tag, verdict: V.verdict, etiquette: V.etiquette, pourquoi: V.pourquoi, source: V.source }; histoire(m, `verdict de la boussole : ${V.tag} — ${V.pourquoi}`); }
+      if (V && V.tag === 'VALIDE') S.valide = aujourdhui;
+      sauver(m);
+      const leadsMin = V?.limites?.minLeads;
+      await envoyer(m, M.rapportJour({ depense_da: depenseDa, commandes: x.commandes, confirmees: x.confirmees, livrees: x.livrees, retours: x.retours, valide: !!S.valide && !(V && V.tag === 'VALIDE'),
+        decision_ar: S.valide && !V ? 'VALIDE، دروك نحكمو على الكوليات الموصلة' : DECISION_DU_TAG[tagDuSoir] || 'ما قدرتش نحكم اليوم',
+        chiffres: V && V.tag === 'TEST' && leadsMin ? [`leads ${x.commandes} / ${leadsMin}`, `max ${V.limites.cap} $`] : [] }, taux));
       // 0.4.2 : les contrôles qui ne passent pas partent juste après le rapport (le verdict du MODÈLE reste sur les commandes
       // du produit dans Tassyir ; ce sont les verdicts PAR VIDÉO qui attendent des chiffres complets)
       if (ctrl && ctrl.alertes.length) { const t = messageControles(ctrl); if (t) await envoyer(m, { texte: t }); histoire(m, `contrôles du soir : ${ctrl.alertes.map(a => `${a.id} (${a.detail})`).join(' · ')}`); }
-      // 0.4.2 : LA BIBLIOTHÈQUE DES CRÉAS — le jour du verdict (72 h) puis chaque semaine, une ligne par vidéo (sa fiche de
-      // l'éditeur + ce que Tassyir dit de SON annonce) ; seulement quand les contrôles laissent juger les vidéos
-      const jv = JOUR_VERDICT[rep.mode] || 3;
+      // 0.4.2 : LA BIBLIOTHÈQUE DES CRÉAS — au bout de 72 h puis chaque semaine, une ligne par vidéo (sa fiche de l'éditeur + ce
+      // que Tassyir dit de SON annonce) ; seulement quand les contrôles laissent juger les vidéos. 1.0 : ce rythme (et « 15 leads »)
+      // ne vaut QUE pour la bibliothèque — le verdict du modèle, c'est la boussole ci-dessus.
+      const jv = JOUR_BIBLIOTHEQUE;
       if (ctrl && ctrl.verdictPermis && jour >= jv && (jour - jv) % 7 === 0 && S.biblioJour !== jour) {
-        const lignes = lignesBibliotheque(m, x, r, taux, jour, stock === 'stock' ? 'VALIDE' : 'TEST', aujourdhui);
+        const lignes = lignesBibliotheque(m, x, r, taux, jour, S.valide ? 'VALIDE' : 'TEST', aujourdhui);
         if (lignes.length) {
           ajouterLignes(maison, lignes); S.biblioJour = jour; sauver(m);
           histoire(m, `bibliothèque des créas : ${lignes.length} vidéo(s) notée(s) (${lignes.map(l => `${l.adset || l.ad_id} ${l.statut}`).join(', ')})`);
           if (jour > jv) for (const et of ['mannequin', 'angle']) { const rs = resumeParEtiquette(lireBibliotheque(maison), et); if (rs.length >= 2) await envoyer(m, { texte: messageBibliotheque(rs, et) }); }
         }
       }
-      if (L.decision === 'DISJONCTEUR') {
-        // la pause est RELUE dans les appels bruts (seulement les objets de cette mission, seulement status PAUSED, chaque
-        // campagne servie) : une pause qui n'est pas passée n'est jamais annoncée comme faite
+      if (V && V.verdict === 'ECHEC') {
+        // ECHEC (ECHEC-ADS / ECHEC-CONF) : la pause automatique, DITE au client (décision 1.0 ; mettre en pause reste toujours
+        // libre). La pause est RELUE dans les appels bruts (seulement les objets de cette mission, seulement status PAUSED,
+        // chaque campagne servie) : une pause qui n'est pas passée n'est jamais annoncée comme faite
         let p;
         try {
           const rp = await tourClaude(m, 'pause', { dept: 'testing', outils: ['meta.ads_update_entity', 'meta.ads_get_ad_entities'], schema: { type: 'object', properties: { statut: { type: 'string' }, erreur: { type: 'string' } }, required: ['statut'] },
-            message: `DISJONCTEUR de l'outil (dépense sans aucune confirmée) : mets en PAUSE la campagne ${c.id}${sc ? ` ET la campagne de scale ${sc.id}` : ''} (ads_update_entity entity_type "campaign", fields {"status":"PAUSED"}, rien d'autre ; même une campagne déjà en pause reçoit sa pause : le bureau la relit), relis ${sc ? 'leurs statuts' : 'son statut'}, rends {statut}. Ne touche à aucun autre objet.` });
+            message: `VERDICT DE LA BOUSSOLE ${V.tag} (${V.pourquoi}) : mets en PAUSE la campagne ${c.id}${sc ? ` ET la campagne de scale ${sc.id}` : ''} (ads_update_entity entity_type "campaign", fields {"status":"PAUSED"}, rien d'autre ; même une campagne déjà en pause reçoit sa pause : le bureau la relit), relis ${sc ? 'leurs statuts' : 'son statut'}, rends {statut}. Ne touche à aucun autre objet.` });
           p = relirePause(m, rp, [c.id, sc?.id]);
         } catch (e) { p = { fautes: [`la pause n'est pas passée, mets la pub en pause dans Meta : ${e.message}`], pausee: false }; }
-        // la mission s'arrête : une question ouverte (une hausse, une perte) se ferme avec elle — son vieux bouton ne fait plus rien
-        m.etat = 'arretee'; m.attente = null; S.hausseDemandee = null; histoire(m, p.fautes.length ? `disjoncteur : pause relue — ${p.fautes.join(' ; ')}` : 'disjoncteur : publicité mise en pause'); sauver(m);
-        if (p.pausee) await envoyer(m, M.disjoncteur());
+        // la mission s'arrête : une question ouverte (une hausse, une réserve) se ferme avec elle — son vieux bouton ne fait plus rien
+        m.etat = 'arretee'; m.attente = null; S.hausseDemandee = null; histoire(m, p.fautes.length ? `verdict ${V.tag} : pause relue — ${p.fautes.join(' ; ')}` : `verdict ${V.tag} : publicité mise en pause`); sauver(m);
+        if (p.pausee) await envoyer(m, M.disjoncteur(V.tag));
         if (p.fautes.length) await envoyer(m, M.echec(m.id, 'حبس البوب', p.fautes[0])); // « حبس » refait la pause
         return;
       }
-      if (L.decision === 'PERTE_LOURDE' && !S.perteDemandee) { S.perteDemandee = aujourdhui; m.attente = 'perte';
-        // ce que le client SAIT quand il répond (le carnet le note avec sa décision)
-        S.perteVue = { date: aujourdhui, depense_da: Math.round(depenseDa), commandes: x.commandes, confirmees: x.confirmees, livrees: x.livrees, stock, cout: Math.round(L.cout_par_commande || 0), limite: Math.round(L.repere || m.d.be.par_commande || 0) }; sauver(m); await envoyer(m, M.perteLourde(m.id, L.cout_par_commande || 0, L.repere || m.d.be.par_commande, taux, stock)); }
-      // le coach : à partir du jour du verdict (le TROISIÈME dans les deux modes, règle du vendeur), dès qu'il y a des colis partis
-      const jourVerdict = JOUR_VERDICT[rep.mode] || 3;
-      if (jour >= jourVerdict && x.expediees > 0 && x.livrees > 0) await coachEtScaling(m, x, depenseDa, jour);
+      // RESERVE : le plafond du test est dépensé sans verdict sûr — on sert ses commandes, on ne monte pas ; le client choisit
+      if (V && V.verdict === 'RESERVE' && !S.reserveDemandee) { S.reserveDemandee = aujourdhui; m.attente = 'perte';
+        S.perteVue = { date: aujourdhui, depense_da: Math.round(depenseDa), commandes: x.commandes, confirmees: x.confirmees, livrees: x.livrees, verdict: V.tag }; sauver(m); await envoyer(m, M.verdictReserve(m.id)); }
+      // FIX : une seule chose à corriger ; la pub continue, le client le sait une fois
+      if (V && V.verdict === 'FIX' && !S.fixDit) { S.fixDit = aujourdhui; sauver(m); await envoyer(m, M.verdictFix()); }
+      if (V && V.tag === 'VALIDE') await envoyer(m, M.verdictValide());
+      // après VALIDE : la porte du scale, sur les colis LIVRÉS (portes.mjs)
+      if (S.valide && x.expediees > 0 && x.livrees > 0) await coachEtScaling(m, x, depenseDa, jour);
     } catch (e) {
       // la limite d'usage de Claude, ou un connecteur à reconnecter : la lecture ATTEND, aucun essai du soir consommé, un seul
       // message ; elle repart toute seule (la limite passée : l'horloge ; le connecteur revenu : la sonde)
@@ -3346,13 +3363,33 @@ Rends les nombres EXACTS lus ; si une lecture est impossible, mets la réponse b
   }
   async function coachEtScaling(m, x, depenseDa, jour) {
     const S = m.d.suivi, rep = m.demande.reponses, cts = R().couts || {}, taux = +R().taux || 0;
-    // le break even avec les taux MESURÉS (un taux mesuré écrase un taux déclaré)
+    // le break even avec les taux MESURÉS (un taux mesuré écrase un taux déclaré) — 1.0 : par la boussole (avant : manita-coach.py --break-even)
     const tConf = x.confirmees / Math.max(1, x.commandes), tLiv = (x.livrees + Math.max(0, x.expediees - x.livrees - x.retours) * 0.3) / Math.max(1, x.expediees);
-    const be = jsonOutil(await outil(m, 'coach-break-even', '5-COACH-ERP/manita-coach.py', ['--break-even', '--prix', rep.detail, '--cout-produit', rep.gros, '--emballage', cts.emballage, '--livraison', cts.livraison, '--frais-cod', cts.fraisCod || 0, '--cout-retour', cts.retour, '--declare-confirmation', tConf.toFixed(4), '--declare-livraison', Math.max(0.01, Math.min(1, tLiv)).toFixed(4), '--devise', 'DZD'], { dureeMaxMs: 60000 }), 'break_even');
-    if (!be) return histoire(m, 'coach : break even mesuré illisible');
-    const porte = jsonOutil(await outil(m, 'coach-porte', '5-COACH-ERP/manita-coach.py', ['--porte', '--commandes', x.commandes, '--confirmees', x.confirmees, '--expediees', x.expediees, '--livrees', x.livrees, '--retours', x.retours, '--stock', x.stock || 0,
-      '--be-livree', be.par_livree.toFixed(2), '--cout-livree', (depenseDa / Math.max(1, x.livrees)).toFixed(2), '--devise-depenses', 'DZD', '--devise', 'DZD'], { dureeMaxMs: 60000 }), 'porte');
-    S.porte = porte ? { date: jourLocal(), ouverte: !!porte.ouverte, controles: porte.controles || null } : null;
+    const produit = { nom: m.code, prix: rep.detail, gros: rep.gros, emballage: cts.emballage, livraison: (+cts.livraison || 0) + (+cts.fraisCod || 0), retour: cts.retour, taux };
+    let Lm, Ld;
+    try {
+      Lm = limitesProduit({ ...produit, confirmation: Math.max(1, Math.round(tConf * 1000) / 10), livraisonPct: Math.max(1, Math.min(100, Math.round(tLiv * 1000) / 10)) });
+      Ld = limitesProduit({ ...produit, confirmation: (R().declare || {}).confirmation, livraisonPct: (R().declare || {}).livraison });
+    } catch (e) { return histoire(m, 'porte du scale : la boussole ne calcule pas — ' + e.message); }
+    if (!Lm.ok || !Ld.ok) return histoire(m, 'porte du scale : la boussole ne rend pas de limite');
+    const be = { par_commande: Lm.parCommandeDa, par_livree: Lm.parLivreeDa, source: Lm.source };
+    // LA PORTE DU SCALE (portes.mjs, regles.json › scale) : 1) le bénéfice RÉEL par colis livré ; 2) la courbe (le coût par colis
+    // livré contre le cône de la boussole : sous le pire cas vert, sous le sommet jaune, au-dessus rouge) ; 3) le stock couvre deux
+    // jours de hausse ; 4) le cash REVENU du test (encaissé − dépensé : pub, colis, retours) paie la marche — la réserve du client
+    // n'est donc jamais touchée (reserve 0 : la marche ne se paie qu'avec le cash revenu). Avant 1.0 : manita-coach.py --porte.
+    const livrees = Math.max(1, x.livrees), coutLivree = depenseDa / livrees;
+    const pireLivree = Ld.pireParConfirmeeDa / Math.max(0.01, (Ld.limites.delWorst || Ld.limites.del) / 100);
+    const courbe = coutLivree <= pireLivree ? 'vert' : coutLivree <= Ld.parLivreeDa ? 'jaune' : 'rouge';
+    const coutColis = (+rep.gros || 0) + (+cts.emballage || 0) + (+cts.livraison || 0) + (+cts.fraisCod || 0);
+    const joursEcoules = Math.max(1, jour);
+    const cashRevenu = x.livrees * (+rep.detail || 0) - depenseDa - x.livrees * coutColis - x.retours * (+cts.retour || 0);
+    const budgetJourDa = x.budget_jour_actuel > 0 ? (String(x.devise).toUpperCase() === 'DZD' ? x.budget_jour_actuel : x.budget_jour_actuel * taux) : (m.d.budget?.total_usd || 0) * taux;
+    const P = porteScale({ encaisseParColis: +rep.detail || 0, pubParColis: coutLivree, marchandiseParColis: coutColis, retourParColis: x.retours * (+cts.retour || 0) / livrees,
+      courbe, stockPieces: x.stock || 0, livreesParJour: x.livrees / joursEcoules, cashRevenu, budgetJourDa, reserve: 0, controlesOk: S.controles?.date === jourLocal() ? S.controles.verdictPermis !== false : undefined });
+    const porte = { ouverte: P.ouverte, controles: P.conditions, beneficeParColis: P.beneficeParColis, marcheDa: P.marcheDa, courbe };
+    S.porte = { date: jourLocal(), ouverte: !!porte.ouverte, controles: porte.controles, source: 'portes.mjs + ' + be.source };
+    if (!porte.ouverte && !S.porteDite) { S.porteDite = jourLocal(); sauver(m); await envoyer(m, M.porteScaleFermee(porte.controles)); }
+    if (porte.ouverte) delete S.porteDite;
     // pas de stock : la porte reste fermée par le stock → le coach donne le bon de l'atelier, une fois
     if (!(x.stock > 0) && !S.production && (x.confirmees_par_couleur || []).length) {
       const bon = jsonOutil(await outil(m, 'coach-bon', '5-COACH-ERP/manita-coach.py', ['--bon-de-commande', '--par-reference', x.confirmees_par_couleur.filter(k => k.n > 0).map(k => `${String(k.couleur).replace(/[:,]/g, ' ')}:${k.n}`).join(','), '--devise', 'DZD'], { dureeMaxMs: 60000 }), 'bon_de_commande');
@@ -3761,7 +3798,7 @@ Rends {statuts:[{id, niveau, statut}]} avec le statut effectif RELU de chacun.` 
     const compte = String(m.demande.reponses.compte?.id || '').replace(/^act_/, '');
     const r = await tourClaude(m, 'hausse', { dept: 'scaling', outils: ['meta.ads_get_ad_entities', 'meta.ads_update_entity'],
       schema: { type: 'object', properties: { campagne: { type: 'object', properties: { id: { type: 'string' }, avant: { type: 'integer' }, apres: { type: 'integer' } }, required: ['id', 'avant', 'apres'] }, erreur: { type: 'string' } }, required: ['campagne'] },
-      message: `Le client a pressé « واه، طلّع » : monte le budget de la CAMPAGNE de scale ${h.campagne} (compte ${compte}, CBO), calculé par l'outil du scaling (+${Math.round((h.hausse || 0.2) * 100)} % : ${h.de_da} DA → ${h.vers_da} DA par jour).
+      message: `Le client a pressé « طلّع » : monte le budget de la CAMPAGNE de scale ${h.campagne} (compte ${compte}, CBO), calculé par l'outil du scaling (+${Math.round((h.hausse || 0.2) * 100)} % : ${h.de_da} DA → ${h.vers_da} DA par jour).
 1. LIS son daily_budget (ads_get_ad_entities level "campaign", plus petite unité de la devise du compte) : il doit valoir ${h.de_centimes}. S'il vaut DÉJÀ ${h.vers_centimes} (cette hausse a été posée, puis le PC s'est coupé avant de la noter), ne pose RIEN et rends avant = apres = ${h.vers_centimes}. S'il vaut autre chose, ne change RIEN et mets ce que tu as lu dans « erreur ».
 2. ads_update_entity { entity_type "campaign", entity_id "${h.campagne}", fields {"daily_budget": ${h.vers_centimes}} } — le champ s'appelle daily_budget (pas campaign_daily_budget).
 3. RELIS-le dans Meta.
@@ -4015,10 +4052,11 @@ Ne touche à rien d'autre : ni les ad sets (en CBO, ils n'ont pas de budget), ni
     if (cle === 'perte') {
       if (m.attente !== 'perte') return { connu: true, texte: 'هاذ السؤال فات' };
       m.attente = null; sauver(m);
-      if (val === 'stop') { await arreter(m, 'perte lourde : le client a choisi d\'arrêter'); return { connu: true, texte: 'حبسنا' }; }
-      histoire(m, 'perte lourde : le client continue (décision notée)');
-      const pv = m.d.suivi?.perteVue;
-      noterDecision(m, 'continuer malgre une perte lourde annoncee', pv ? `rapport du ${pv.date} : depense ${pv.depense_da} DA, ${pv.commandes} commandes, ${pv.confirmees} confirmees, ${pv.livrees} livrees ; cout par ${pv.stock === 'stock' ? 'colis attendu' : 'commande'} ${pv.cout} DA pour une limite de ${pv.limite} DA` : 'une perte lourde annoncee par la lecture du soir'); // une note : elle suit, le bouton n'attend pas la file des outils
+      // 1.0 : la question vient du verdict RESERVE de la boussole (une mission d'avant : de l'ancienne « perte lourde » de T.py)
+      const pv = m.d.suivi?.perteVue, quoi = pv && pv.verdict ? `verdict ${pv.verdict}` : 'perte lourde';
+      if (val === 'stop') { await arreter(m, `${quoi} : le client a choisi d'arrêter`); return { connu: true, texte: 'حبسنا' }; }
+      histoire(m, `${quoi} : le client continue (décision notée)`);
+      noterDecision(m, pv && pv.verdict ? `continuer apres le verdict ${pv.verdict} de la boussole` : 'continuer malgre une perte lourde annoncee', pv ? `rapport du ${pv.date} : depense ${pv.depense_da} DA, ${pv.commandes} commandes, ${pv.confirmees} confirmees, ${pv.livrees} livrees${pv.verdict ? '' : ` ; cout par ${pv.stock === 'stock' ? 'colis attendu' : 'commande'} ${pv.cout} DA pour une limite de ${pv.limite} DA`}` : 'une question de la lecture du soir'); // une note : elle suit, le bouton n'attend pas la file des outils
       return { connu: true, texte: 'تمام، تبقى تخدم' };
     }
     // « الطالب 1.0 » (fix 8) : « نشرها » / « خليها مخبية » sur la question de la page. Seule la question OUVERTE compte : un vieux

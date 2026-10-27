@@ -29,16 +29,19 @@ const telegram = await import('./telegram.mjs');
 const routines = await import('./routines.mjs');
 
 /* ---------- « الطالب 1.0 » : les dix fixes (verifier-1.0.mjs) ---------- */
-{ const A = await import('./verifier-1.0.mjs'); await A.epreuve10({ etape }); await A.epreuveInspecteur10({ etape }); await A.epreuveBoussole10({ etape }); await A.epreuveServeur10({ etape }); }
+{ const A = await import('./verifier-1.0.mjs'); await A.epreuve10({ etape }); await A.epreuveInspecteur10({ etape }); await A.epreuveBoussole10({ etape }); await A.epreuveVerdict10({ etape }); await A.epreuveNoms10({ etape }); await A.epreuveServeur10({ etape }); }
 
 /* ---------- 0.4.0 : l'inspecteur (المفتّش) et le fichier de règles unique ---------- */
 const inspecteurM = await import('./inspecteur.mjs');
-await etape('0.4.0 : regles.json se lit, il porte les six étapes, la commande de test CONFIRMÉE (aucun statut d\'attente), les règles de PAGE et les poids de l\'inspecteur', () => {
+await etape('0.4.0 : regles.json se lit, il porte les tags de 1.0 (avant : les six étapes), le verdict de la boussole, les seuls mots « لانسي » et « طلّع », la commande de test CONFIRMÉE (aucun statut d\'attente), les règles de PAGE et les poids de l\'inspecteur', () => {
   const R = JSON.parse(fs.readFileSync(path.join(RACINE, 'regles.json'), 'utf8'));
-  const e = R.etapes && R.etapes.ordre; if (JSON.stringify(e) !== JSON.stringify(['CANDIDAT', 'TEST', 'FIX', 'VALIDE', 'DESTOCK', 'STOP'])) throw new Error('étapes : ' + JSON.stringify(e));
+  // 1.0 (fix 10) : les six étapes de 0.4.0 (CANDIDAT, TEST, FIX, VALIDE, DESTOCK, STOP) deviennent les tags de 1.0 (PROMPT.md : TEST / VALIDE /
+  // SCALE / DESTOCK / ECHEC-ADS / ECHEC-CONF, plus RESERVE, décision du 27/10) ; FIX est un verdict, pas un tag ; une section « verdict » porte la règle.
+  const e = R.etapes && R.etapes.ordre; if (JSON.stringify(e) !== JSON.stringify(['TEST', 'VALIDE', 'SCALE', 'DESTOCK', 'ECHEC-ADS', 'ECHEC-CONF', 'RESERVE'])) throw new Error('étapes : ' + JSON.stringify(e));
+  if (!R.verdict || JSON.stringify(R.verdict.verdicts) !== '["VALIDE","FIX","ECHEC","RESERVE"]' || !/Jamais « le jour 3 »/.test(R.verdict._role) || JSON.stringify(R.motMontee) !== '["طلّع"]' || JSON.stringify(R.motLance) !== '["لانسي"]') throw new Error('verdict ou mots : ' + JSON.stringify({ v: R.verdict, m: R.motMontee, l: R.motLance }));
   if (R.tassyir.statutAttente !== undefined || !/confirmée/.test(R.tassyir.commandeTest) || !R.page || !R.page.tailles || !R.page.avis || !/académie/.test(R.inspecteur.note || '') /* 1.0 (fix 3) : la note de l'académie remplace les poids 15/5/1 */) throw new Error('commande de test, PAGE ou poids');
   if (!R.interdits.urgence.includes('قبل نفاد الكمية')) throw new Error('urgence');
-  return `${e.length} étapes · ${R.interdits.urgence.length} formules d'urgence interdites`;
+  return `${e.length} tags · ${R.interdits.urgence.length} formules d'urgence interdites`;
 });
 const suiviM = await import('./controles-suivi.mjs');
 await etape('0.4.2 : les QUATRE CONTRÔLES avant le verdict par vidéo (lien caché absent, commandes sans ticket > 10 %, dépense Meta ≠ Tassyir, pixel ≠ Tassyir, lien non remplacé) ; le message passe la loi de forme ; regles.json porte test, suivi, scale, stock, confirmation (contrôles négatifs)', () => {
@@ -241,7 +244,7 @@ await etape('messages au client : chacun passe la loi de forme (darija, ≤ 36 c
   const tous = { drive: M.driveFini(12, '0.83'), couleur: M.couleurQuestion('abc123', 2, 3), page: M.pagePrete('abc123', 'https://app.tassyir.io/preview/abc'), porteOk: M.porteOk({ par_commande: 1785 }, t), porteF: M.porteFermee('abc123', { par_commande: -120 }, { prix: 3500 }, t),
     lance: M.campagnePrete('abc123', { total_usd: 20 }, t, 'site', 'story_reels', 4), rapport: M.rapportJour({ depense_da: 15300, commandes: 22, confirmees: 15, livrees: 3, retours: 1, decision_ar: 'الكوموند تكلّف أقل من الحد تاعك' }, t),
     scaling: M.porteScaling('abc123', 20, 24, t, 2400), monte: M.budgetMonte(24, t), hausseRatee: M.hausseRatee('abc123', 'budget relu 2100 au lieu de 2730 (ou absent de la relecture brute de Meta)', 2730), scaleFermee: M.scaleFermee(), scalePret: M.scalePrete('abc123', 21, t, 3), scalePret1: M.scalePrete('abc123', 7, t, 1), scalePas: M.scalePasEncore('abc123'), scaleLance: M.scaleLance(),
-    scaleRate: M.scaleRate('abc123', 'ads_activate_entity : (#100) Invalid parameter 120200000000001'), scaleEchec: M.scaleEchec('le post de l annonce gagnante 120211 est illisible (absent)'), wilayasTest: M.wilayasManquent('abc123'), wilayasScale: M.wilayasManquentScale(), production: M.production([{ reference: 'Noir', pieces: 20 }, { reference: 'Beige', pieces: 15 }, { reference: 'Gris', pieces: 10 }, { reference: 'Rose', pieces: 10 }], false), echec: M.echec('abc123', 'الكامباني', 'Meta a refuse le champ promoted_object (code 100)'), disj: M.disjoncteur(),
+    scaleRate: M.scaleRate('abc123', 'ads_activate_entity : (#100) Invalid parameter 120200000000001'), scaleEchec: M.scaleEchec('le post de l annonce gagnante 120211 est illisible (absent)'), wilayasTest: M.wilayasManquent('abc123'), wilayasScale: M.wilayasManquentScale(), production: M.production([{ reference: 'Noir', pieces: 20 }, { reference: 'Beige', pieces: 15 }, { reference: 'Gris', pieces: 10 }, { reference: 'Rose', pieces: 10 }], false), echec: M.echec('abc123', 'الكامباني', 'Meta a refuse le champ promoted_object (code 100)'), disj: M.disjoncteur(), disjConf: M.disjoncteur('ECHEC-CONF'), valide10: M.verdictValide(), fix10: M.verdictFix(), reserve10: M.verdictReserve('abc123'), porteScale10: M.porteScaleFermee([{ ok: false, ar: 'الربح الحقيقي على الطرد' }, { ok: false, ar: 'المنحنى ماشي في الأحمر' }, { ok: false, ar: 'الستوك يلحق والورشة تتبع' }, { ok: false, ar: 'الكاش اللي رجع يغطي الخطوة' }, { ok: false, ar: 'الأرقام ماشي صحاح' }]), rapportTest10: M.rapportJour({ depense_da: 15300, commandes: 22, confirmees: 15, livrees: 0, retours: 0, decision_ar: missionsM.DECISION_DU_TAG.TEST, chiffres: ['leads 22 / 50', 'max 338 $'] }, t), rapportValide10: M.rapportJour({ depense_da: 15300, commandes: 60, confirmees: 45, livrees: 12, retours: 2, valide: true, decision_ar: 'VALIDE، دروك نحكمو على الكوليات الموصلة' }, t), ...Object.fromEntries(Object.entries(missionsM.DECISION_DU_TAG).map(([k, d]) => ['rapport' + k, M.rapportJour({ depense_da: 15300, commandes: 22, confirmees: 15, livrees: 0, retours: 0, decision_ar: d }, t)])),
     lotDrive: M.lotDrive(8, '1.82'), couleursAuto: M.couleursAuto(['Noir', 'Beige', 'Bordeaux', 'Marine', 'Camel', 'Rose', 'Vert']),
     budgetLot: M.budgetCourt(3, 1166, t), budgetSeul: M.budgetCourt(1, 1500, t),
     lectureRatee: M.lectureRatee('abc123', 'lecture refusée par le contrôle intégré : dépense 12.5 introuvable dans la réponse brute de Meta (DA)'), photosCourtes: M.photosCourtes('abc123', 4), echecDA: M.echec('abc123', 'البودجي', 'le budget maximum (1500 DA) ne paie meme pas un ad set a 7 $ (DA)'),
@@ -2132,14 +2135,20 @@ await etape('skills et LISEZ-MOI (08/10/2026) : l\'éditeur du bureau, l\'édite
   if (fautes.length) throw new Error(fautes.join(' ; '));
   return Object.keys(fichiers).join(', ') + ' : revérification, N = 1 vérifié, dix secondes, aucun repli';
 });
-await etape('coach : la règle des TROIS jours dans les deux modes — manita-coach.py JOUR_PASSAGE_MODE = JOUR_VERDICT du bureau (site 3, message 3), et son auto-test le dit (deuxième méthode)', async () => {
-  const T = travauxM.creerTravaux({ python: () => travauxM.trouverPython(''), env: () => travauxM.envOutil({}) });
-  const lu = await T.lancer({ nom: 'coach-jours', args: [path.resolve(RACINE, '..', 'outils', '5-COACH-ERP', 'manita-coach.py')], dureeMaxMs: 60000, code: "import importlib.util, json, sys\nsys.dont_write_bytecode = True\ns = importlib.util.spec_from_file_location('co', sys.argv[1]); co = importlib.util.module_from_spec(s); s.loader.exec_module(co)\nprint('MANITA_JSON ' + json.dumps({'quoi': 'coach-jours', 'passage': co.JOUR_PASSAGE_MODE, 'jour': co.JOUR_PASSAGE, 'verdict': co.JOUR_VERDICT_MODE}))" });
-  const j = lu.json.find(y => y.quoi === 'coach-jours');
-  if (!j || JSON.stringify(j.passage) !== JSON.stringify(missionsM.JOUR_VERDICT) || j.jour !== 3) throw new Error('manita-coach.py : ' + JSON.stringify(j || lu.sortie.slice(-300)));
-  const src = fs.readFileSync(path.resolve(RACINE, '..', 'outils', '5-COACH-ERP', 'manita-coach.py'), 'utf8');
-  if (!/les deux modes rendent la main a la fin du jour trois/.test(src) || /le mode message rend la main plus tard/.test(src)) throw new Error('l\'auto-test du coach dit encore « message plus tard »');
-  return `JOUR_PASSAGE_MODE ${JSON.stringify(j.passage)} = JOUR_VERDICT du bureau · verdict par mode inchangé ${JSON.stringify(j.verdict)}`;
+// « الطالب 1.0 » (fix 9) : cette épreuve vérifiait que le bureau et manita-coach.py passaient la main « au jour trois » (JOUR_VERDICT).
+// La règle a changé (PROMPT.md, fix 9) : le verdict est celui de la boussole, jamais un jour. L'épreuve vérifie maintenant l'inverse
+// (deuxième méthode : la source) ; le verdict lui-même est rejoué dans verifier-1.0.mjs (epreuveVerdict10).
+await etape('1.0 · plus de « jour 3 » dans le bureau : missions.mjs n\'a plus JOUR_VERDICT ni l\'appel --lecture de manita-testing.py ni --porte de manita-coach.py ; le verdict passe par verdictProduit (la boussole), la porte par porteScale (portes.mjs) ; le rythme 72 h ne reste QUE pour la bibliothèque (contrôles négatifs)', async () => {
+  const src = fs.readFileSync(path.join(RACINE, 'missions.mjs'), 'utf8'), f = [];
+  if (missionsM.JOUR_VERDICT !== undefined || /\bJOUR_VERDICT\b/.test(src)) f.push('JOUR_VERDICT existe encore');
+  if (/'--lecture'/.test(src)) f.push('le suivi appelle encore manita-testing.py --lecture');
+  if (/'--porte'/.test(src)) f.push('le suivi appelle encore manita-coach.py --porte');
+  if (/'coach-break-even'/.test(src)) f.push('le break even mesuré vient encore de manita-coach.py');
+  if (!/V = verdictProduit\(/.test(src) || !/const P = porteScale\(/.test(src)) f.push('verdictProduit ou porteScale absent du suivi');
+  if (missionsM.JOUR_BIBLIOTHEQUE !== 3 || (src.match(/JOUR_BIBLIOTHEQUE/g) || []).length !== 2) f.push('JOUR_BIBLIOTHEQUE doit servir à la seule bibliothèque');
+  if (/jour >= jourVerdict/.test(src)) f.push('le coach se déclenche encore au jour du verdict');
+  if (f.length) throw new Error(f.join(' ; '));
+  return 'JOUR_VERDICT, --lecture, --porte, coach-break-even : absents · verdictProduit + porteScale · JOUR_BIBLIOTHEQUE = 3 (bibliothèque seule)';
 });
 /* ---------- 1 ter. v0.3.8 phase 2 : les décisions du vendeur du 06/10/2026 (sans serveur) ---------- */
 /** Une réponse du script d'angles, à la forme du schéma de l'étape textes, JUSTE ; les contrôles négatifs la cassent. */
@@ -3032,7 +3041,7 @@ await etape('INSTALLATEUR WINDOWS (lu, 23/10/2026) : l\'épreuve verifier.mjs vo
   for (const [nom, b] of [['sans Path ffmpeg', sansPath], ['appel sans $ffmpeg', sansArg], ['sans BOM', sansBom]]) if (!fautesPs1(b).length) throw new Error(`contrôle négatif « ${nom} » accepté`);
   return 'ffmpeg devant le Path avant l\'épreuve (comme Mac) · BOM UTF-8 · .bat CRLF · 3 négatifs refusés';
 });
-await etape('page MASQUÉE jusqu\'au « نشرها » du client (1.0, fix 8 ; avant : publiée directement), aperçu « démo » jamais montré, vieux boutons de la page sans effet, un produit « du même nom » qui n\'est pas celui de la chaîne ni repris ni publié ; campagne de test SANS plafond (les VRAIS noms des champs Meta : campaign_spend_cap, campaign_daily_budget…, même dans un JSON en texte) qui reprend, RELIT et complète la campagne de la clé (jamais de copie, ni ailleurs, ni d\'id inventé ; un plafond d\'une ancienne version arrête) ; structure ABO (une vidéo par ad set, budget de l\'outil sur l\'ad set, aucun budget de campagne) ; verdict au 3e jour dans les deux modes, le même que manita-testing.py (contrôles négatifs)', async () => {
+await etape('page MASQUÉE jusqu\'au « نشرها » du client (1.0, fix 8 ; avant : publiée directement), aperçu « démo » jamais montré, vieux boutons de la page sans effet, un produit « du même nom » qui n\'est pas celui de la chaîne ni repris ni publié ; campagne de test SANS plafond (les VRAIS noms des champs Meta : campaign_spend_cap, campaign_daily_budget…, même dans un JSON en texte) qui reprend, RELIT et complète la campagne de la clé (jamais de copie, ni ailleurs, ni d\'id inventé ; un plafond d\'une ancienne version arrête) ; structure ABO (une vidéo par ad set, budget de l\'outil sur l\'ad set, aucun budget de campagne) ; (1.0 : plus de « verdict au 3e jour », voir l\'épreuve « plus de jour 3 ») (contrôles négatifs)', async () => {
   const maisonP = fs.mkdtempSync(path.join(os.tmpdir(), 'manita-phase2-'));
   let rendre = null; const vus = [], albums = [], textes = [];
   const tg = { envoyer: async (t, o = {}) => { textes.push({ t, b: o.boutons || null }); return { envoye: true }; }, envoyerAlbum: async (f, l) => { albums.push({ f, l }); return { envoye: true }; }, envoyerPhoto: async () => ({ envoye: true }), envoyerVideo: async () => ({ envoye: true }) };
@@ -3146,15 +3155,9 @@ await etape('page MASQUÉE jusqu\'au « نشرها » du client (1.0, fix 8 ; av
   rendre = () => ({ structure: juste({ existaitDeja: true, note: 'une autre campagne porte la clé : pas touchée' }), appels: [relue([{ id: 'S-a', daily_budget: '700', lifetime_spend_cap: '0' }, { id: 'A-a', adset_id: 'S-a' }], { spend_cap: '0' }), creerSet('S-b'), creerAd('A-b', 'S-b')] });
   await Ms._etapes.campagne(m);
   if (!m.d.campagne.existaitDeja || !m.historique.some(h => /pas touchée/.test(h.quoi))) throw new Error('reprise d\'une campagne incomplète : ' + JSON.stringify(m.d.campagne));
-  // le jour du verdict : 3 dans les deux modes, le MÊME que l'outil (deuxième méthode : on lit JOURS_LECTURE dans manita-testing.py)
-  if (JSON.stringify(missionsM.JOUR_VERDICT) !== '{"site":3,"message":3}') throw new Error('JOUR_VERDICT : ' + JSON.stringify(missionsM.JOUR_VERDICT));
-  const T = travauxM.creerTravaux({ python: () => travauxM.trouverPython(''), env: () => travauxM.envOutil({}) });
-  const lu = await T.lancer({ nom: 'jours', args: [path.resolve(RACINE, '..', 'outils', '3-TESTING', 'manita-testing.py')], dureeMaxMs: 60000, code: "import importlib.util, json, sys\nsys.dont_write_bytecode = True\ns = importlib.util.spec_from_file_location('t', sys.argv[1]); t = importlib.util.module_from_spec(s); s.loader.exec_module(t)\nbe = t.break_even(5900, 1500, 100, 0, 0, 600, 0.5, 0.45)\nl = t.lecture(9000, 0, 7, be['par_commande'], mode='message', messages=40, be_par_confirmee=be['par_confirmee'], jour=3)\nprint('MANITA_JSON ' + json.dumps({'quoi': 'jours', 'jours': t.JOURS_LECTURE, 'decision': l['decision']}))" });
-  const j = lu.json.find(x => x.quoi === 'jours');
-  if (!j || JSON.stringify(j.jours) !== JSON.stringify(missionsM.JOUR_VERDICT) || j.decision === 'TROP_TOT') throw new Error('manita-testing.py : ' + JSON.stringify(j || lu.sortie.slice(-200)));
-  const src = fs.readFileSync(path.join(RACINE, 'missions.mjs'), 'utf8');
-  if (/rep\.mode === 'message' \? 5/.test(src) || !/const jourVerdict = JOUR_VERDICT\[rep\.mode\]/.test(src)) throw new Error('le suivi du soir n\'appelle pas le coach au jour 3 en mode message');
-  return `aperçu démo écarté, page-ok passe (vraies photos, une fois) · vieux boutons « نشرها » / « خليها مخبية » sans effet, mission d'avant sans 2e album · produit du même nom sans SKU du paquet ✗, celui d'avant la coupure repris · campagne (vrais champs Meta) : sans plafond, ABO, reprise relue + complétée, ${nRefus} refus · verdict jour 3 = JOURS_LECTURE ${JSON.stringify(j.jours)} (message jour 3 : ${j.decision})`;
+  // 1.0 (fix 9) : la vérification « jour du verdict = 3 = JOURS_LECTURE de manita-testing.py » est retirée d'ici : le verdict n'a plus de
+  // jour (la boussole). L'épreuve « 1.0 · plus de « jour 3 » dans le bureau » vérifie l'absence ; verifier-1.0.mjs rejoue le verdict.
+  return `aperçu démo écarté, page-ok passe (vraies photos, une fois) · vieux boutons « نشرها » / « خليها مخبية » sans effet, mission d'avant sans 2e album · produit du même nom sans SKU du paquet ✗, celui d'avant la coupure repris · campagne (vrais champs Meta) : sans plafond, ABO, reprise relue + complétée, ${nRefus} refus`;
 });
 await etape('scaling comme le vendeur (VRAIS outils coach + scaling) : la porte ouverte → le gagnant (le résultat le moins cher, lu annonce par annonce) → une campagne de SCALE dédiée en CBO (campaign_daily_budget de l\'outil, 1 à 3 ad sets broad sans budget), l\'annonce RECRÉÉE sur son POST ID, tout EN PAUSE → « لانسي » du client → hausse du budget de la CAMPAGNE (+30 % sur une bonne marge, 72 h après le lancement, le test servi d\'abord) sur « واه، طلّع », relue ; jamais de copie, de plafond, de budget d\'ad set, de nouveau post ; vieux bouton de hausse sur les ad sets sans effet ; l\'arrêt met aussi la scale en pause (contrôles négatifs)', async () => {
   const py = travauxM.trouverPython(''), atelier = path.resolve(RACINE, '..', 'outils');
@@ -3572,14 +3575,16 @@ await etape('montage en style NATIF : une mission seule → MONTER-10 --rushes -
   if (mc.d.creas.length !== 2 || !mc.d.creasRefusees.some(x => x.fichier === 'variante_02.mp4' && /deux modèles/.test(x.pourquoi))) throw new Error('contrôle : ' + JSON.stringify({ bonnes: mc.d.creas.map(b => path.basename(b.fichier)), refus: mc.d.creasRefusees }));
   return 'seule : --rushes --style natif · une couleur : --couleurs 1 natif (repli manita.py écrit, trois rushes → MONTER-10 puis manita.py en repli) · moins de quatre rushes → MONTER-10 en premier · familles nommées → --familles (couleur retirée marquée), mission ancienne → --couleurs N · deux couleurs, rien sorti → repli écrit · lot : --plan du lot --modele « Robe droite » --style natif (sans musique : pas de --musiques) · mission d\'avant : modèle de son rang · maison déplacée : plan d\'ici · plan absent ✗ · modèle hors plan ✗ · variante à deux modèles refusée au contrôle';
 });
-await etape('skills du bureau (phase 2) : page (1.0 : masquée jusqu\'au « نشرها » du client, script d\'angles en darija), testing (aucun plafond, verdict au 3e jour, clé reprise et complétée, script d\'angles), coach et manager (3 jours, page publiée, pas de plafond, natif, lot, stratégie) ; aucune n\'est coupée par la chaîne (60 000 caractères) ; plus aucun montage « bande » (contrôles négatifs)', () => {
+await etape('skills du bureau (phase 2) : page (1.0 : masquée jusqu\'au « نشرها » du client, script d\'angles en darija), testing (aucun plafond, 1.0 : verdict de la boussole et plus « au 3e jour », clé reprise et complétée, script d\'angles), coach et manager (1.0 : la boussole, plus les 3 jours ; page publiée, pas de plafond, natif, lot, stratégie) ; aucune n\'est coupée par la chaîne (60 000 caractères) ; plus aucun montage « bande » (contrôles négatifs)', () => {
   const lire = d => fs.readFileSync(path.join(RACINE, 'skills', d, 'SKILL.md'), 'utf8');
   const doit = (d, t, oui, non) => { for (const x of oui) if (!(x instanceof RegExp ? x.test(t) : t.includes(x))) throw new Error(`${d} : il manque ${x}`); for (const x of non) if (x instanceof RegExp ? x.test(t) : t.includes(x)) throw new Error(`${d} : il reste ${x}`); };
   const page = lire('page'), testing = lire('testing'), coach = lire('coach'), manager = lire('manager');
   doit('page', page, ['SCRIPT-ANGLES-MARKETING.json', 'DARIJA ALGERIENNE', 'PUBLIER APRÈS « نشرها »', 'banque de', 'strategie.json', 'page de DEMONSTRATION', 'aucune ligne vide ni « --- » DEDANS', 'jamais « cod », meme colle dans un mot'], [/PUBLIER tout de suite/, /PUBLIÉE DIRECTEMENT/] /* 1.0 (fix 8) : la publication directe du 06/10 est remplacée par le « نشرها » du client */);
-  doit('testing', testing, ['AUCUN plafond', 'COMPLETES', 'au **troisieme** jour aussi', 'SCRIPT-ANGLES-MARKETING.json', 'DARIJA ALGERIENNE', 'faux avis', 'PAS de campaign_spend_cap', 'publiees ET en brouillon', 'Une campagne REPRISE d\'une ancienne version'], [/Pose-les/, /tu poses daily_spend_cap/, /la douleur evitee/, /\| plus tot \| plus tard \|/]);
-  doit('coach', coach, ['au **troisieme** jour aussi', 'strategie.txt', 'AUCUN plafond', 'PUBLIEE', 'TON verdict sur le LIVRE (`manita-coach.py --lecture`) | au dixieme jour | au douzieme jour'], [/\| plus tot \| plus tard \|/, /\| Le verdict se prend \| au \*\*troisieme\*\* jour/]);
-  doit('manager', manager, ['شحال من موديل', '--style natif', 'une seule couleur : `--couleurs 1`', '--plan <lot>/plan.json', 'APRES le bouton « نشرها » du client', 'AUCUN plafond', 'TROISIEME jour', 'strategie.json'], [/DES QU'ELLE EST PRETE/, /sans bouton « نشرها »/] /* 1.0 (fix 8) */);
+  // 1.0 (fix 9) : « au **troisieme** jour aussi » était exigé (le verdict au 3e jour) ; la règle a changé : le bloc RÈGLES 1.0 et verdict.mjs
+  // sont exigés, et la ligne du tableau qui jugeait au 3e jour est refusée.
+  doit('testing', testing, ['AUCUN plafond', 'COMPLETES', '## RÈGLES 1.0', 'boussala/verdict.mjs', 'JAMAIS « LE JOUR 3 »', 'SCRIPT-ANGLES-MARKETING.json', 'DARIJA ALGERIENNE', 'faux avis', 'PAS de campaign_spend_cap', 'publiees ET en brouillon', 'Une campagne REPRISE d\'une ancienne version'], [/Pose-les/, /tu poses daily_spend_cap/, /la douleur evitee/, /\| plus tot \| plus tard \|/, /\| Le verdict se prend \| au \*\*troisieme\*\* jour/]);
+  doit('coach', coach, ['## RÈGLES 1.0', 'boussala/verdict.mjs', 'strategie.txt', 'AUCUN plafond', 'PUBLIEE', 'TON verdict sur le LIVRE (`manita-coach.py --lecture`) | au dixieme jour | au douzieme jour'], [/\| plus tot \| plus tard \|/, /\| Le verdict se prend \| au \*\*troisieme\*\* jour/, /\| Le verdict du TEST \(l'agent Testing\) \| au \*\*troisieme\*\*/]);
+  doit('manager', manager, ['شحال من موديل', '--style natif', 'une seule couleur : `--couleurs 1`', '--plan <lot>/plan.json', 'APRES le bouton « نشرها » du client', 'AUCUN plafond', 'TROISIEME jour', 'strategie.json', '## RÈGLES 1.0'], [/DES QU'ELLE EST PRETE/, /sans bouton « نشرها »/] /* 1.0 (fix 8) */);
   for (const [d, t] of Object.entries({ page, testing, coach, manager })) if (t.length > 60000) throw new Error(`${d} : ${t.length} caractères, la chaîne en coupe la fin (60 000)`);
   const src = fs.readFileSync(path.join(RACINE, 'missions.mjs'), 'utf8');
   if (/'--style', 'bande'/.test(src) || (src.match(/'--style', 'natif'/g) || []).length !== 2) throw new Error('le bureau monte encore en style bande');
@@ -3733,38 +3738,45 @@ await etape('protection (09/10/2026) : 3 colis en route, rien livré, tout expé
   if (porte.code !== 3 || !/43\.6 %/.test(porte.sortie)) throw new Error('la porte : code ' + porte.code + ' ' + porte.sortie.slice(0, 300));
   return 'base 0,9 → DONNEES_INSUFFISANTES sans coût · base 1 → 15300 DA · base 0 → PERTE_LOURDE · sources de la porte intactes, 43,6 %';
 });
-await etape('suivi du soir (missions.mjs + le VRAI manita-testing.py) : la mission passe la réponse « السلعة » (--stock) et les livrées / expédiées / en route / retours lus dans Tassyir ; avec stock → base 10,3, verdict « كولي » ; une mission d\'AVANT sans réponse → « test » ; tout revenu → base 0, PERTE_LOURDE, la question de perte sans « 0 DA » ; base 0,9 → « ماشي خسارة », aucune question de perte ; chaque message passe la loi de forme (contrôles négatifs)', async () => {
+// « الطالب 1.0 » (fix 9) : cette épreuve vérifiait la BASE de la réponse « السلعة » passée à manita-testing.py --lecture (avec stock :
+// les colis attendus ; PERTE_LOURDE ; DONNEES_INSUFFISANTES). La règle a changé (PROMPT.md : les leads arrêtent, les confirmées jugent,
+// un seul verdict, celui de la boussole) : la réponse « السلعة » ne change plus la base, et T.py --lecture n'est plus appelé.
+// Mêmes soirs, mêmes réglages inventés ; les verdicts sont ceux du moteur (boussala_testweek decide + l'arrêt anticipé de test_ads).
+await etape('1.0 · suivi du soir (missions.mjs + la VRAIE boussole) : le verdict vient de verdictProduit, jamais de manita-testing.py --lecture ; la réponse « السلعة » ne change plus la base ; 30 leads → TEST (le rapport dit « leads 30 / 50 », aucune question) ; 60 leads à 2 $ → VALIDE (verdictBoussole écrit, message VALIDE) ; 0 lead et 16 $ → ECHEC-ADS (la pause demandée ; sans relecture, jamais « حبسنا البوب وحدنا ») ; 25 leads à 8,80 $ → ECHEC-ADS par l\'arrêt anticipé ; le plafond dépensé sous le sommet → RESERVE (la question, ses deux boutons) ; chaque message passe la loi de forme (contrôles négatifs)', async () => {
   const py = travauxM.trouverPython(''), atelier = path.resolve(RACINE, '..', 'outils');
   const maisonS = fs.mkdtempSync(path.join(os.tmpdir(), 'manita-base-'));
   const T = travauxM.creerTravaux({ python: () => py, env: () => travauxM.envOutil({ maison: maisonS }) });
-  const lances = [], envoyes = []; let x = null;
+  const lances = [], envoyes = [], tours = []; let x = null;
   const Ms = missionsM.ouvrirMissions({ maison: maisonS, atelier, depot: {}, pauseReessaiMs: 0,
     travaux: { lancer: spec => { lances.push(spec); return T.lancer(spec); } },
     telegram: () => ({ envoyer: async (texte, o = {}) => { envoyes.push({ texte, boutons: o.boutons || null }); return { envoye: true }; } }),
     reglages: () => ({ heureRapport: '00:00', taux: 255, couts: { emballage: 100, livraison: 0, retour: 400, fraisCod: 0 }, declare: { confirmation: 60, livraison: 70 } }),
-    claude: async () => ({ structure: x, tokens: 0, appels: [appel('ads_get_ad_entities', { level: 'campaign' }, { ad_entities: [{ id: '120200000000001', amount_spent: '60.00' }] })] }) });
+    claude: async a => { tours.push(a.message.split('\n')[0]); return { structure: x, tokens: 0, appels: [appel('ads_get_ad_entities', { level: 'campaign' }, { ad_entities: [{ id: '120200000000001', amount_spent: String(x.depense_totale.toFixed(2)) }] })] }; } });
   const soir = async (id, reponses, xx) => {
     const m = Ms.creer({ id, lien: lienEssai, reponses: { mode: 'site', detail: 6900, gros: 2300, ...reponses } }, null, { demarrer: false });
     m.etat = 'suivi'; Object.assign(m.d, { lanceLe: new Date(Date.now() - 2 * 86400000 - 3600000).toISOString(), campagne: { id: '120200000000001', adSets: [], ads: [] }, produit: { productId: 'P1', storeId: 'S1' }, be: { par_commande: 1818 } }); Ms._sauver(m);
-    x = { annulees: 0, devise: 'USD', depense_totale: 60, depense_jour: 20, ...xx }; const n0 = envoyes.length;
+    x = { expediees: 0, livrees: 0, retours: 0, devise: 'USD', depense_jour: 20, ...xx }; const n0 = envoyes.length, t0 = tours.length;
     await Ms._suivreJour(m);
-    const lect = lances.filter(s => /\/lecture$/.test(s.nom)).pop(), a = (lect?.args || []).map(String), v = k => a[a.indexOf(k) + 1];
     const msgs = envoyes.slice(n0), jourS = m.d.suivi.jours[m.d.suivi.jours.length - 1];
     if (m.d.suivi.dernierEchec && !jourS) throw new Error(`${id} : ${m.d.suivi.dernierEchec.erreur}`);
     for (const e of msgs) { const f = telegram.fautesDeForme(e.texte); if (f.length) throw new Error(`${id} : message hors loi de forme (${f.join(' ; ')}) :\n${e.texte}`); }
-    return { m, a, v, msgs, jourS, rapport: msgs.find(e => /التقرير تاع اليوم/.test(e.texte))?.texte || '' };
+    return { m, msgs, jourS, tours: tours.slice(t0), rapport: msgs.find(e => /التقرير تاع اليوم/.test(e.texte))?.texte || '' };
   };
-  const s1 = await soir('base01', { stock: 'stock' }, { commandes: 30, confirmees: 20, expediees: 14, livrees: 4, retours: 3 });
-  if (s1.v('--stock') !== 'stock' || s1.v('--livrees') !== '4' || s1.v('--expediees') !== '14' || s1.v('--en-route') !== '7' || s1.v('--retours') !== '3') throw new Error('avec stock, arguments : ' + s1.a.join(' '));
-  if (s1.jourS?.stock !== 'stock' || Math.abs(s1.jourS.base - 10.3) > 1e-9 || s1.jourS.decision !== 'RENTABLE' || !/السلعة عندك، نحكمو على/.test(s1.rapport) || !/الكولي يكلّف أقل/.test(s1.rapport) || /كوموند تكلّف/.test(s1.rapport)) throw new Error('avec stock : ' + JSON.stringify(s1.jourS) + '\n' + s1.rapport);
-  const s2 = await soir('base02', {}, { commandes: 30, confirmees: 20, expediees: 14, livrees: 4, retours: 3 });
-  if (s2.v('--stock') !== 'test' || s2.jourS?.stock !== 'test' || s2.jourS.base !== 20 || !/تيست برك، نحكمو على/.test(s2.rapport)) throw new Error('mission d\'avant sans réponse : ' + s2.a.join(' ') + ' ' + JSON.stringify(s2.jourS));
-  const s3 = await soir('base03', { stock: 'stock' }, { commandes: 12, confirmees: 10, expediees: 10, livrees: 0, retours: 10 });
-  const q3 = s3.msgs.find(e => /نحبسو البوب/.test(e.texte));
-  if (s3.jourS?.decision !== 'PERTE_LOURDE' || s3.jourS.base !== 0 || !q3 || /\b0 DA/.test(q3.texte) || !/حتى كولي ما وصل لدروك/.test(q3.texte) || s3.m.attente !== 'perte') throw new Error('tout revenu : ' + JSON.stringify(s3.jourS) + '\n' + (q3?.texte || 'aucune question de perte'));
-  const s4 = await soir('base04', { stock: 'stock' }, { commandes: 12, confirmees: 3, expediees: 3, livrees: 0, retours: 0 });
-  if (s4.jourS?.decision !== 'DONNEES_INSUFFISANTES' || s4.jourS.base !== 0.9 || !/ماشي خسارة/.test(s4.rapport) || s4.msgs.some(e => /نحبسو البوب/.test(e.texte)) || s4.m.attente) throw new Error('base 0,9 : ' + JSON.stringify(s4.jourS) + '\n' + s4.rapport);
-  return 'avec stock → --stock stock --livrees 4 --expediees 14 --en-route 7 --retours 3, base 10,3, « الكولي » · sans réponse → test · tout revenu → perte sans « 0 DA » · base 0,9 → « ماشي خسارة », aucune question';
+  const s1 = await soir('base01', { stock: 'stock' }, { commandes: 30, confirmees: 20, annulees: 0, depense_totale: 60 });
+  if (s1.jourS?.decision !== 'TEST' || s1.m.d.verdictBoussole || s1.m.attente || !/leads 30 \/ 50/.test(s1.rapport) || !/والمأكدة هي اللي تحكم/.test(s1.rapport) || /السلعة عندك/.test(s1.rapport)) throw new Error('30 leads avec stock : ' + JSON.stringify(s1.jourS) + '\n' + s1.rapport);
+  const s2 = await soir('base02', {}, { commandes: 30, confirmees: 20, annulees: 0, depense_totale: 60 });
+  if (s2.jourS?.decision !== 'TEST' || s2.rapport.replace(/\d/g, '') !== s1.rapport.replace(/\d/g, '')) throw new Error('la réponse « السلعة » change encore le verdict : ' + s2.rapport);
+  const s3 = await soir('base03', { stock: 'stock' }, { commandes: 60, confirmees: 45, annulees: 5, depense_totale: 120 });
+  if (s3.jourS?.decision !== 'VALIDE' || s3.m.d.verdictBoussole?.etiquette !== 'VALIDE' || !s3.m.d.suivi.valide || !s3.msgs.some(e => /البوصلة حكمات : VALIDE/.test(e.texte)) || s3.m.etat !== 'suivi') throw new Error('VALIDE : ' + JSON.stringify({ j: s3.jourS?.decision, v: s3.m.d.verdictBoussole }));
+  const s4 = await soir('base04', {}, { commandes: 0, confirmees: 0, annulees: 0, depense_totale: 16 });
+  if (s4.jourS?.decision !== 'ECHEC-ADS' || s4.m.d.verdictBoussole?.verdict !== 'ECHEC' || s4.m.etat !== 'arretee' || !s4.tours.some(t => /^ETAPE: pause/.test(t)) || s4.msgs.some(e => /حبسنا البوب وحدنا/.test(e.texte)) || !s4.msgs.some(e => /صرا مشكل في الخدمة/.test(e.texte))) throw new Error('0 lead, 16 $ : ' + JSON.stringify({ j: s4.jourS?.decision, etat: s4.m.etat, tours: s4.tours, msgs: s4.msgs.map(e => e.texte.split('\n')[0]) }));
+  const s5 = await soir('base05', {}, { commandes: 25, confirmees: 20, annulees: 5, depense_totale: 220 });
+  if (s5.jourS?.decision !== 'ECHEC-ADS' || !/boussala_test_ads/.test(s5.m.d.verdictBoussole?.source || '') || s5.m.etat !== 'arretee') throw new Error('arrêt anticipé : ' + JSON.stringify(s5.m.d.verdictBoussole));
+  const s6 = await soir('base06', {}, { commandes: 45, confirmees: 31, annulees: 14, depense_totale: 340 });
+  const q6 = s6.msgs.find(e => /البوصلة حكمات : RESERVE/.test(e.texte));
+  if (s6.jourS?.decision !== 'ECHEC-RESERVE' || s6.m.d.verdictBoussole?.etiquette !== 'RESERVE' || s6.m.attente !== 'perte' || !q6 || JSON.stringify(q6.boutons) !== JSON.stringify([[{ texte: 'حبس البوب', data: `mis:${s6.m.id}:perte:stop` }, { texte: 'خليها تخدم', data: `mis:${s6.m.id}:perte:go` }]])) throw new Error('RESERVE : ' + JSON.stringify({ j: s6.jourS?.decision, attente: s6.m.attente, q: q6 }));
+  if (lances.some(s => /\/lecture$/.test(s.nom))) throw new Error('manita-testing.py --lecture est encore appelé');
+  return '30 leads → TEST (avec ou sans stock, même rapport) · 60 leads à 2 $ → VALIDE · 0 lead 16 $ → ECHEC-ADS, pause demandée, pas annoncée sans relecture · 25 leads à 8,80 $ → arrêt anticipé · 340 $ sous le sommet → RESERVE, deux boutons · aucun --lecture';
 });
 await etape('skills testing et coach (bureau ET plugin) : la règle du vendeur du 08/10/2026 et la MÊME commande que l\'outil (--stock test|stock --livrees --expediees --en-route --retours, chaque drapeau connu de l\'outil) ; plus de « se tromper de mode, c\'est se tromper de denominateur » (contrôle négatif)', () => {
   const aide = lancerTest(['--help']).sortie;

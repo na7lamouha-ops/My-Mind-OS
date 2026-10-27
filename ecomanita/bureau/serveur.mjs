@@ -790,7 +790,7 @@ setInterval(() => { try { const n = missions.tick(); if (n) journal(`suivi du so
 const FICHIER_CHAT = path.join(DATA, 'chat-coach.json');
 let chat = lireJSON(FICHIER_CHAT) || [];
 async function parlerAuCoach(texte) {
-  const systeme = assemblerSysteme({ racine: RACINE, bureau: BUREAU, dept: 'coach', poste: 'questions', carnet, texte, lecons: lecons('coach'), fiche: reglagesMasques() }) + '\n\nTu es en CONVERSATION avec le client : réponds court, en darija, sans « Sources lues » ni « Contrôle intégré » sauf si tu cites un chiffre du carnet.';
+  const systeme = assemblerSysteme({ racine: RACINE, bureau: BUREAU, dept: 'coach', poste: 'questions', carnet, texte, lecons: lecons('coach'), fiche: reglagesMasques() }) + '\n\nTu es en CONVERSATION avec le client : tu es la VOIX du LEADER (القائد, « الطالب 1.0 ») — tu te présentes comme القائد, jamais « الكوتش » ni « المانجر » ; réponds court, en darija, sans « Sources lues » ni « Contrôle intégré » sauf si tu cites un chiffre du carnet.';
   const contexte = chat.slice(-8).map(m => `${m.de === 'client' ? 'Client' : 'Coach'} : ${m.texte}`).join('\n');
   const message = (contexte ? `Conversation jusqu'ici :\n${contexte}\n\n` : '') + `Client : ${texte}`;
   chat.push({ de: 'client', texte, quand: new Date().toISOString() });
@@ -927,7 +927,7 @@ const serveur = http.createServer(async (req, res) => {
       catch (e) { return json(res, 500, { erreur: e.message.replace(c.telegram.token, '***') }); }
     }
     if (p === '/api/chat/coach' && m === 'GET') return json(res, 200, chat.slice(-50));
-    if (p === '/api/chat/coach' && m === 'POST') { const c = await lireCorps(req); if (!c.texte) return json(res, 400, { erreur: 'texte vide' }); if (ressembleJeton(c.texte, jetonMeta())) { journal('chat du coach : un jeton Meta collé (masqué, jamais envoyé)'); return json(res, 400, { erreur: JETON_ICI }); } let reponse; await new Promise(r => enfiler(async () => { try { reponse = await parlerAuCoach(String(c.texte)); } catch (e) { reponse = 'الكوتش ما قدرش يجاوب دروك : ' + e.message; } r(); })); return json(res, 200, { texte: reponse }); }
+    if (p === '/api/chat/coach' && m === 'POST') { const c = await lireCorps(req); if (!c.texte) return json(res, 400, { erreur: 'texte vide' }); if (ressembleJeton(c.texte, jetonMeta())) { journal('chat du coach : un jeton Meta collé (masqué, jamais envoyé)'); return json(res, 400, { erreur: JETON_ICI }); } let reponse; await new Promise(r => enfiler(async () => { try { reponse = await parlerAuCoach(String(c.texte)); } catch (e) { reponse = 'القائد ما قدرش يجاوب دروك : ' + e.message; } r(); })); return json(res, 200, { texte: reponse }); }
     if (/^\/api\/chat\//.test(p)) return json(res, 403, { erreur: 'seul le coach parle au client' });
     if (p === '/api/carnet' && m === 'GET') return json(res, 200, { notes: listerNotes(carnet).slice(0, 300), produits: produits(carnet), graphe: graphe(carnet), lecons: Object.fromEntries(BUREAU.departements.map(d => [d.id, lecons(d.id)])), mesures: lireMesures() });
     if (p === '/api/carnet/note' && m === 'GET') { try { return json(res, 200, { chemin: url.searchParams.get('chemin'), contenu: lireNote(carnet, url.searchParams.get('chemin') || '') }); } catch (e) { return json(res, 404, { erreur: e.message }); } }

@@ -74,6 +74,37 @@ export function limitesProduit({ nom = 'modele', prix, gros, emballage = 0, livr
     pireParConfirmeeDa: Math.round(L.ceilingWorst * t), arretUsd: L.cap, zeroLeadStopUsd: L.zeroLeadStop, budgetRecommandeUsd: L.budget, joursRecommandes: L.days };
 }
 
+/**
+ * « الطالب 1.0 » (fix 9) — LE VERDICT DU TEST, par la boussole seule (jamais « le jour 3 »).
+ *   les LEADS arrêtent, les CONFIRMÉES jugent : boussala_testweek mode decide (50 leads, confiance 90 %) ;
+ *   l'arrêt anticipé : les règles de boussala_test_ads (dès 25 leads, le lead au-dessus de 1,3 × le lead maximum ;
+ *   aucun lead et 3 × le lead maximum dépensés) — lues dans le moteur, pas recopiées ici.
+ * Entrée : le produit (comme limitesProduit) + spendUsd, leads, confirmed, processed (confirmées + annulées : celles déjà traitées).
+ * Sortie : { tag (celui du moteur), verdict ('VALIDE' | 'FIX' | 'ECHEC' | 'RESERVE' | null = le test continue), etiquette (le tag
+ *   Tassyir à écrire, null tant que le test continue), pourquoi, suite, limites, cpl, cpc, anticipe }.
+ */
+export const VERDICT_DU_TAG = { VALIDE: 'VALIDE', FIX: 'FIX', 'ECHEC-ADS': 'ECHEC', 'ECHEC-CONF': 'ECHEC', 'ECHEC-RESERVE': 'RESERVE' };
+export const ETIQUETTE_DU_TAG = { VALIDE: 'VALIDE', 'ECHEC-ADS': 'ECHEC-ADS', 'ECHEC-CONF': 'ECHEC-CONF', 'ECHEC-RESERVE': 'RESERVE' };
+export function verdictProduit({ nom = 'modele', prix, gros, emballage = 0, livraison = 0, retour = 0, confirmation, livraisonPct, taux, spendUsd = 0, leads = 0, confirmed = 0, processed = null } = {}) {
+  if (!(+taux > 0)) throw Object.assign(new Error('le taux du dollar du client manque (الإعدادات) : la boussole ne juge pas sans lui'), { taux: false });
+  for (const [k, v] of [['prix', prix], ['gros', gros], ['confirmation', confirmation], ['livraison %', livraisonPct]]) if (!(+v > 0)) throw new Error(`la boussole a besoin de « ${k} »`);
+  const settings = { rate: +taux, pack: +emballage || 0, delCost: +livraison || 0, retCost: +retour || 0 };
+  const res = { name: nom, sell: +prix, buy: +gros, conf: +confirmation, del: +livraisonPct, spend: +spendUsd || 0, leads: +leads || 0, confirmed: +confirmed || 0, ...(processed != null ? { processed: +processed } : {}) };
+  const d = outil('boussala_testweek', { mode: 'decide', results: [res], settings }).data.decisions[0];
+  let tag = d.tag, pourquoi = d.why, suite = d.next, anticipe = null;
+  const L = d.limits || {};
+  // l'arrêt anticipé (boussala_test_ads) : seulement quand testweek laisse encore tourner
+  if (tag === 'TEST' && L.ok) {
+    const { RULES } = require('./engine/testads.js');
+    const k = res.leads, cpl = k ? res.spend / k : null;
+    if (k === 0 && res.spend >= RULES.DEAD_X * L.maxLead) anticipe = 'sans_lead';
+    else if (k >= RULES.EARLY_LEADS && k < RULES.MIN_LEADS && cpl > RULES.EARLY_X * L.maxLead) anticipe = 'lead_cher';
+    if (anticipe) { tag = 'ECHEC-ADS'; pourquoi = anticipe === 'sans_lead' ? `${res.spend}$ مصروفين بلا حتى ليد (${RULES.DEAD_X}× الليد الأقصى ${L.maxLead}$)` : `${k} ليد والليد ${cpl.toFixed(2)}$ فوق ${RULES.EARLY_X}× الليد الأقصى ${L.maxLead}$`; suite = 'نوقفو بكري، الميدياباير يبدّل الزاوية'; }
+  }
+  return { ok: tag !== '?', tag, verdict: VERDICT_DU_TAG[tag] || null, etiquette: ETIQUETTE_DU_TAG[tag] || null, pourquoi, suite, limites: L, cpl: d.cpl ?? null, cpc: d.cpc ?? null, anticipe,
+    source: `boussala_testweek decide ${etatCerveau().version}${anticipe ? ' + boussala_test_ads (arrêt anticipé)' : ''}` };
+}
+
 export function listeOutils() { const { TOOLS } = require('./adapters/tools.js'); return TOOLS.map(t => t.name); }
 
 /** Le message Telegram quand le cerveau manque (loi de forme). */
