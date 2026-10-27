@@ -29,7 +29,7 @@ const telegram = await import('./telegram.mjs');
 const routines = await import('./routines.mjs');
 
 /* ---------- « الطالب 1.0 » : les dix fixes (verifier-1.0.mjs) ---------- */
-{ const A = await import('./verifier-1.0.mjs'); await A.epreuve10({ etape }); await A.epreuveInspecteur10({ etape }); await A.epreuveServeur10({ etape }); }
+{ const A = await import('./verifier-1.0.mjs'); await A.epreuve10({ etape }); await A.epreuveInspecteur10({ etape }); await A.epreuveBoussole10({ etape }); await A.epreuveServeur10({ etape }); }
 
 /* ---------- 0.4.0 : l'inspecteur (المفتّش) et le fichier de règles unique ---------- */
 const inspecteurM = await import('./inspecteur.mjs');
@@ -3860,23 +3860,15 @@ await etape('lot avec le VRAI separer.py : un shooting fabriqué (deux modèles 
   if (rh === haute || !(sh.hauteur <= 2000) || (await Ms._imagePourClaude(normale, path.join(maisonS, 'pour-claude', 'n.jpg'))) !== normale) throw new Error(`planches pour Claude : ${rh} ${sh.largeur}x${sh.hauteur}`);
   return `${l.d.groupes.length} groupe(s) candidats, ${vus[0].length} planche(s) lue(s) (l'aperçu en premier) · T# / R# et nom sans accents traduits · plan aux noms du disque (NFD gardé) · ${x.nom} : ${fichiersDe(x).join(', ')} · ${y.nom} : ${fichiersDe(y).join(", ")} · planche de 9 000 px réduite à ${sh.largeur}x${sh.hauteur}`;
 });
-await etape('boussole : les chiffres du guide (281 · 169 · 68 · 310 417 · 357 250), les trois corrections, un produit perdant, et la MÊME formule que les quatre outils Python (deuxième méthode)', async () => {
-  const vm = await import('node:vm');
-  const ctx = {}; vm.createContext(ctx);
-  vm.runInContext(fs.readFileSync(path.join(RACINE, 'boussole', 'calcul.js'), 'utf8'), ctx);
-  const B = ctx.Boussole;
-  const A = { objectif: 300000, prix: 9900, achat: 3500, emballage: 150, livraison: 0, fraisCod: 0, retour: 500, confirmation: 0.6, tauxLivraison: 0.4, cpl: 250, surplus: 0.2 };
-  const r = B.calculer(A);
-  const attendu = { leads: 281, confirmees: 169, livrees: 68, retours: 101, stock: 82, sommet: 1320, marge: 5500, pub: 70250, capitalTotal: 357250, benefice: 304250, recuperation: 35 };
-  for (const [k, v] of Object.entries(attendu)) if (Math.abs(r[k] - v) > 1e-6) throw new Error(`guide : ${k} = ${r[k]} au lieu de ${v}`);
-  if (Math.round(r.capitalDebut) !== 310417 || B.pourcent(r.roiTotal) !== '85,2 %' || B.pourcent(r.roiDebut) !== '98,0 %' || r.confirmees - r.livrees !== r.retours || !r.controle) throw new Error('guide : capital du début, les deux ROI ou le contrôle');
-  const p = B.calculer({ ...A, cpl: 1500 });
-  if (p.gagne || p.leads !== undefined || Math.round(p.diagnostic.manqueParLead) !== 180 || Math.round(p.diagnostic.cplMax) !== 1320 || Math.round(p.diagnostic.prixMin) !== 10650 || B.pourcent(p.diagnostic.livraisonMin) !== '44,4 %' || B.pourcent(p.diagnostic.confirmationMin) !== '68,2 %') throw new Error('produit perdant : ' + JSON.stringify(p.diagnostic));
-  if (B.calculer({ ...A, confirmation: 1.6 }).ok || B.calculer({ ...A, prix: null }).ok) throw new Error('une confirmation de 160 % ou un prix vide a été accepté');
-  if (B.lireNombre('2 300', true) !== 2300 || B.lireNombre('2.300', true) !== 2300 || B.lireNombre('1,20', false) !== 1.2 || B.lireNombre('abc', true) !== null) throw new Error('lecture des nombres tapés');
+await etape('boussole (1.0, fix 7) : la page « بوصلة التاجر » ne calcule plus (calcul.js à l\'archive) — /api/boussole rend EXACTEMENT les limites de boussala_testweek 29.18 sur quatre cas, sans taux elle refuse ; les quatre outils Python gardent entre eux la même formule de break even (deuxième méthode) (contrôles négatifs)', async () => {
+  // 1. la page n'a plus de formule : elle demande au bureau
+  const page = fs.readFileSync(path.join(RACINE, 'boussole', 'index.html'), 'utf8');
+  if (fs.existsSync(path.join(RACINE, 'boussole', 'calcul.js')) || /calcul\.js|Boussole\.calculer|B\.calculer/.test(page) || !/\/api\/boussole/.test(page)) throw new Error('la page calcule encore elle-même');
+  const pont = await import('./boussala/pont.mjs');
   // deuxième méthode : les outils de la maison (testing, coach, scaling, carnet) refont le calcul sur les mêmes cas
   const atelier = path.resolve(RACINE, '..', 'outils');
   if (!fs.existsSync(path.join(atelier, '3-TESTING', 'manita-testing.py'))) throw new Error('outils introuvables : ' + atelier);
+  const A = { objectif: 300000, prix: 9900, achat: 3500, emballage: 150, livraison: 0, fraisCod: 0, retour: 500, confirmation: 0.6, tauxLivraison: 0.4, cpl: 250, surplus: 0.2 };
   const cas = [A, { ...A, prix: 5900, achat: 1500, emballage: 100, retour: 600, confirmation: 0.65, tauxLivraison: 0.45 },
     { ...A, prix: 6900, achat: 2300, emballage: 50, livraison: 200, fraisCod: 30, retour: 150, confirmation: 0.7, tauxLivraison: 0.6 },
     { ...A, prix: 4900, achat: 2000, emballage: 0, livraison: 0, retour: 900, confirmation: 0.55, tauxLivraison: 0.35 }];
@@ -3901,13 +3893,23 @@ await etape('boussole : les chiffres du guide (281 · 169 · 68 · 310 417 · 35
   const py = (res.json.find(j => j.quoi === 'boussole') || {}).cas;
   if (res.code !== 0 || !py || py.length !== cas.length) throw new Error(`outils python : code ${res.code} · ${res.raison} · ${res.sortie.slice(-200)}`);
   const pres = (x, y) => Math.abs(x - y) < 1e-6;
+  // 2. le bureau = la boussole : mêmes entrées, mêmes limites que l'outil boussala_testweek appelé directement
   cas.forEach((e, i) => {
-    const b = B.calculer(e), o = py[i];
-    for (const outil of ['t', 'co', 'sc']) if (!pres(o[outil][0], b.sommet) || !pres(o[outil][1], b.parConfirmee) || !pres(o[outil][2], b.marge)) throw new Error(`cas ${i + 1} : ${outil} rend ${o[outil].join(' / ')}, la boussole ${b.sommet} / ${b.parConfirmee} / ${b.marge}`);
-    if (!pres(o.ca, b.sommet)) throw new Error(`cas ${i + 1} : le carnet rend ${o.ca}, la boussole ${b.sommet}`);
-    if (!pres(o.pmin, b.prixPlancher) || !pres(o.lmin, b.livraisonPlancher)) throw new Error(`cas ${i + 1} : planchers ${o.pmin} / ${o.lmin} contre ${b.prixPlancher} / ${b.livraisonPlancher}`);
+    const corps = { prix: e.prix, achat: e.achat, emballage: e.emballage, livraison: e.livraison, fraisCod: e.fraisCod, retour: e.retour, confirmation: e.confirmation * 100, tauxLivraison: e.tauxLivraison * 100, taux: 250 };
+    const r = pont.calculBoussole(corps);
+    const d = pont.outil('boussala_testweek', { mode: 'plan', models: [{ name: 'Modele', sell: e.prix, buy: e.achat, conf: e.confirmation * 100, del: e.tauxLivraison * 100 }], settings: { rate: 250, pack: e.emballage, delCost: e.livraison + e.fraisCod, retCost: e.retour } }).data.limits[0];
+    if (JSON.stringify({ ...r.limites, name: 'Modele' }) !== JSON.stringify(d)) throw new Error(`cas ${i + 1} : le bureau ≠ la boussole`);
+    if (d.ok && (r.parConfirmeeDa !== Math.round(d.ceiling * 250) || r.parCommandeDa !== Math.round(d.maxLead * 250))) throw new Error(`cas ${i + 1} : conversion au taux du client`);
   });
-  return `guide retrouvé (corrigé : 101 retours, 35 commandes pour récupérer, ROI 85,2 % et 98,0 %) · ${cas.length} cas identiques dans testing, coach, scaling, carnet`;
+  let refus = null; try { pont.calculBoussole({ prix: 9900, achat: 3500, confirmation: 60, tauxLivraison: 40 }); } catch (e) { refus = e; }
+  if (!refus || refus.taux !== false) throw new Error('sans taux du client : la boussole doit refuser');
+  // 3. deuxième méthode : les outils Python, entre eux (testing = la référence ; coach, scaling, carnet rendent la même chose)
+  cas.forEach((e, i) => {
+    const o = py[i], ref = o.t;
+    for (const outil of ['co', 'sc']) if (!o[outil].every((v, k) => pres(v, ref[k]))) throw new Error(`cas ${i + 1} : ${outil} rend ${o[outil].join(' / ')}, testing ${ref.join(' / ')}`);
+    if (!pres(o.ca, ref[0])) throw new Error(`cas ${i + 1} : le carnet rend ${o.ca}, testing ${ref[0]}`);
+  });
+  return `page sans formule · ${cas.length} cas : /api/boussole = boussala_testweek (conversion au taux du client) · sans taux → refus · testing, coach, scaling, carnet d'accord entre eux`;
 });
 
 /* ---------- 1 quinquies. défauts confirmés du 07/10/2026 (partie bureau) : chaque contrôle échouait avant sa correction ---------- */

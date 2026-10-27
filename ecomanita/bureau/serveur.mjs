@@ -21,7 +21,7 @@ import { creerTelegram } from './telegram.mjs';
 import { creerSpy, lireDemandeSpy } from './spy.mjs'; // 23/10/2026 : « spy dz » écrit au robot du bureau
 import { creerInspecteur, lireDemandeInspecteur } from './inspecteur.mjs'; // 0.4.0 : « افحص حسابي » écrit au robot du bureau
 import { ouvrirRoutines } from './routines.mjs';
-import { etatCerveau, TEXTE_SANS_CERVEAU } from './boussala/pont.mjs'; // 1.0 : la boussole 29.18, l'unique calculateur
+import { etatCerveau, TEXTE_SANS_CERVEAU, calculBoussole } from './boussala/pont.mjs'; // 1.0 : la boussole 29.18, l'unique calculateur
 import { ouvrirAccueil, TEXTES as TEXTES_ACCUEIL, creasValide, creasDe } from './accueil.mjs';
 import { pixelsDuBrut } from './missions.mjs'; // [v19-trois] les pixels de chaque compte, relus dans le brut
 import { ouvrirMissions, WILAYAS_NORD, recouperRegions, ciblageDuClient, ciblageLu, ciblageDuPaquet, compterMusiques as compterMusiquesDe, detailMusiques, MUSIQUES_MIN, ecartMetaDe, choixLectureSeule } from './missions.mjs';
@@ -869,6 +869,8 @@ const serveur = http.createServer(async (req, res) => {
     if (p === '/api/sante' && m === 'GET') return json(res, 200, sante());
     // 1.0 : l'état du cerveau (la boussole dans le bureau)
     if (p === '/api/cerveau' && m === 'GET') return json(res, 200, etatCerveau());
+    // 1.0 (fix 7) : la page « بوصلة التاجر » ne calcule plus elle-même (boussole/calcul.js est à l'archive) : le moteur 29.18 répond
+    if (p === '/api/boussole' && m === 'POST') { const c = await lireCorps(req); try { return json(res, 200, calculBoussole(c)); } catch (e) { return json(res, 200, { ok: false, erreur: e.message, cerveau: e.cerveau !== false, taux: e.taux !== false }); } }
     if (p === '/api/bureau' && m === 'GET') return json(res, 200, { ...BUREAU, maison: MAISON });
     if (p === '/api/taches' && m === 'GET') return json(res, 200, taches.slice(0, 200));
     if (p === '/api/taches' && m === 'POST') {

@@ -45,8 +45,9 @@ PORTE_LIVRAISON = 0.40
 PORTE_LIVREES = 20
 CHANCE_EN_ROUTE = 0.30        # sa regle du PIRE CAS, permanente
 
-# conversion de la regle (en dollars) vers la devise du compte
-TAUX = {"USD": 1.0, "EUR": 255.0 / 280.0, "DZD": 255.0}
+# conversion de la regle (en dollars) vers la devise du compte : « الطالب 1.0 » — AUCUN cours code en dur.
+# Le dollar (et l'euro) = le taux du CLIENT, donne par lui (--taux-dinar, --taux-euro). Sans lui, l'outil REFUSE.
+MONNAIES = ("USD", "EUR", "DZD")
 # plancher de Meta, en centimes de la devise du compte
 PLANCHER_META = {"USD": 100, "EUR": 87}
 
@@ -68,8 +69,7 @@ JOURS_TEST = 3             # la surveillance lit a 72 heures
 # ANGLE-A1) ne se relie a aucune depense.
 LIGNE_SUIVI = ("utm_source=facebook&utm_medium=paid"
                "&utm_campaign={{campaign.id}}&utm_content={{ad.id}}")
-# pour ramener une depense en dinars
-VERS_DINARS = {"USD": 255.0, "EUR": 280.0, "DZD": 1.0}
+# pour ramener une depense en dinars : vers_dinars(), au taux du client
 
 COMMANDES_MINI_POUR_LIRE = 10   # en dessous, on ne lit rien : c'est du bruit
 DISJONCTEUR_FOIS = 3.0          # coupe si depense > 3 x le break even, zero confirmee
@@ -304,13 +304,40 @@ def sortie_json(quoi, donnees):
 
 DEVISE_COMPTE = "USD"   # posee une fois par la ligne de commande
 TAUX_DINAR = None       # le taux REEL du client, donne par lui
+TAUX_EURO = None        # le taux de l'euro du client (compte publicitaire en EUR)
+
+
+class TauxManquant(ValueError):
+    """Le taux du client manque : on ne convertit PAS avec un cours invente."""
+
+
+def vers_dinars(devise):
+    """Combien de dinars pour une unite de `devise`, au taux du CLIENT. DZD = 1."""
+    d = (devise or "USD").upper()
+    if d == "DZD":
+        return 1.0
+    if d == "USD":
+        if TAUX_DINAR:
+            return float(TAUX_DINAR)
+        raise TauxManquant("REFUS : le taux du dollar du client manque (--taux-dinar). "
+                           "Aucun cours code en dur : demande-lui son taux.")
+    if d == "EUR":
+        if TAUX_EURO:
+            return float(TAUX_EURO)
+        raise TauxManquant("REFUS : compte en EUR, le taux de l'euro du client manque (--taux-euro).")
+    raise ValueError("monnaie inconnue : %s" % d)
+
+
+def taux_devise(devise):
+    """Combien d'unites de `devise` pour un dollar (la regle est en dollars)."""
+    return vers_dinars("USD") / vers_dinars(devise)
 
 
 def ligne_nombre(valeur_da, taux=None):
     """Une ligne PURE LATINE : le nombre seul, en dinars ET dans la monnaie
     du compte du client. Montrer des dollars a quelqu'un dont le compte est
     en euros, c'est lui donner un chiffre qu'il ne retrouvera nulle part."""
-    d = DEVISE_COMPTE if DEVISE_COMPTE in VERS_DINARS else "USD"
+    d = DEVISE_COMPTE if DEVISE_COMPTE in MONNAIES else "USD"
     if d == "DZD":
         return "      %d DA" % round(valeur_da)
     # LE TAUX DU CLIENT, pas un cours code en dur. Ce que sa banque lui
@@ -318,7 +345,10 @@ def ligne_nombre(valeur_da, taux=None):
     # cinquante-cinq dinars quand il en paie, par exemple, deux cent
     # quatre-vingts fait rentrer sa depense dix pour cent trop bas, et
     # toujours dans le sens qui pousse a lancer.
-    t = TAUX_DINAR if TAUX_DINAR else VERS_DINARS[d]
+    try:
+        t = vers_dinars(d)
+    except TauxManquant:
+        return "      %d DA" % round(valeur_da)   # sans le taux du client : les dinars seuls, jamais un dollar invente
     return "      %d DA   =   %.2f %s" % (round(valeur_da), valeur_da / t, d)
 
 
@@ -439,17 +469,12 @@ def plafond_en_dollars(plafond, plafond_devise):
     if not plafond:
         return 0.0
     d = (plafond_devise or "USD").upper()
-    if d not in VERS_DINARS:
+    if d not in MONNAIES:
         raise ValueError("monnaie du plafond inconnue : %s" % d)
-    en_dinars = plafond * VERS_DINARS[d]
-    en_dollars = en_dinars / VERS_DINARS["USD"]
-    # 10/10/2026 : un plafond en DINARS se convertit au taux REEL du client
-    # quand il est plus cher que le cours de la table (jamais sous lui : la
-    # meme regle que le bureau, max(taux, 255)). Au cours fixe, 3 900 DA a
-    # un taux de deux cent quatre-vingt-dix passaient pour 15,29 $ : deux
-    # videos a 7 $ depassaient son plafond en silence.
-    if d == "DZD" and TAUX_DINAR and TAUX_DINAR > VERS_DINARS["USD"]:
-        en_dollars = plafond / float(TAUX_DINAR)
+    # « الطالب 1.0 » : au taux du client, dans les deux sens (avant : un cours de la table, et max(taux, 255) pour les dinars)
+    en_dollars = plafond * vers_dinars(d) / vers_dinars("USD")
+    # (10/10/2026 : au cours fixe, 3 900 DA a un taux de deux cent quatre-vingt-dix passaient pour 15,29 $ ;
+    #  1.0 : plus aucun cours fixe, plus de plancher : SON taux, ou un refus.)
     if d in ("USD", "EUR") and plafond > 200:
         raise ValueError(
             "PLAFOND SUSPECT : %.0f %s par jour pour un test, c'est enorme. "
@@ -530,7 +555,7 @@ def budget(videos, devise, plafond_usd=0.0, un_seul_ad_set=False,
         raise ValueError("le nombre de videos doit aller de %d a %d"
                          % (VIDEOS_MINI, VIDEOS_MAXI))
     devise = devise.upper()
-    if devise not in TAUX:
+    if devise not in MONNAIES:
         raise ValueError("devise inconnue : %s" % devise)
 
     # 0.4.2 : la structure DU FICHIER (ABO ou CBO) et le budget du jour ECRIT
@@ -555,15 +580,15 @@ def budget(videos, devise, plafond_usd=0.0, un_seul_ad_set=False,
         plancher = PLANCHER_META.get(devise, 100)
         par_usd = total_usd / videos
         if structure == "ABO":
-            centimes = max(plancher, int(round(par_usd * TAUX[devise] * 100)))
+            centimes = max(plancher, int(round(par_usd * taux_devise(devise) * 100)))
             return {"videos": videos, "ad_sets": videos, "un_seul_ad_set": False,
                     "annonces": videos, "structure": "ABO",
                     "par_ad_set_usd": par_usd, "total_usd": total_usd, "devise": devise,
                     "centimes_par_ad_set": centimes, "centimes_campagne": None,
                     "centimes_min_par_ad_set": None,
                     "total_devise": centimes * videos / 100.0}
-        centimes_campagne = int(round(total_usd * TAUX[devise] * 100))
-        centimes_min = max(plancher, int(round(PLANCHER_CBO_USD * TAUX[devise] * 100)))
+        centimes_campagne = int(round(total_usd * taux_devise(devise) * 100))
+        centimes_min = max(plancher, int(round(PLANCHER_CBO_USD * taux_devise(devise) * 100)))
         return {"videos": videos, "ad_sets": videos, "un_seul_ad_set": False,
                 "annonces": videos, "structure": "CBO",
                 "par_ad_set_usd": par_usd, "total_usd": total_usd, "devise": devise,
@@ -590,7 +615,7 @@ def budget(videos, devise, plafond_usd=0.0, un_seul_ad_set=False,
                "--un-seul-ad-set.\nUn budget au lieu de %d, et on garde une "
                "annonce par angle." % videos))
 
-    converti = par_ad_set_usd * TAUX[devise]
+    converti = par_ad_set_usd * taux_devise(devise)
     centimes = int(round(converti * 100))
     plancher = PLANCHER_META.get(devise, 100)
     if centimes < plancher:
@@ -988,8 +1013,8 @@ def vue_budget(b):
         L = [BARRE, "  البودجي تاع التست", BARRE, "",
              "  الهيكل", "      1C | CBO | %d ADSET | %d AD" % (b["ad_sets"], b["annonces"]), "",
              "  ميتا تقسّم البودجي بين الفيديوهات، وكل فيديو",
-             "  ياخذ على الأقل", "      %d DA   =   %.2f USD" % (round(PLANCHER_CBO_USD * (TAUX_DINAR or VERS_DINARS["USD"])), PLANCHER_CBO_USD), "",
-             "  المجموع في النهار، على الحملة", "      %d DA   =   %.2f USD" % (round(b["total_usd"] * (TAUX_DINAR or VERS_DINARS["USD"])), b["total_usd"]), "",
+             "  ياخذ على الأقل", "      %d DA   =   %.2f USD" % (round(PLANCHER_CBO_USD * vers_dinars("USD")), PLANCHER_CBO_USD), "",
+             "  المجموع في النهار، على الحملة", "      %d DA   =   %.2f USD" % (round(b["total_usd"] * vers_dinars("USD")), b["total_usd"]), "",
              "  الحساب تاعك بالعملة", "      %s" % b["devise"], "",
              "  الرقم لي تبعث لميتا على الحملة",
              "      %d" % b["centimes_campagne"], "",
@@ -1002,9 +1027,9 @@ def vue_budget(b):
     L = [BARRE, "  البودجي تاع التست", BARRE, "",
          "  عدد الفيديوهات", "      %d" % b["videos"], "",
          "  عدد الأد ست", "      %d" % b["ad_sets"], "",
-         # 10/10/2026 : les montants en DA ET en USD (au taux du client, sinon 255)
-         "  كل أد ست ياخذ", "      %d DA   =   %.2f USD" % (round(b["par_ad_set_usd"] * (TAUX_DINAR or VERS_DINARS["USD"])), b["par_ad_set_usd"]), "",
-         "  المجموع في النهار", "      %d DA   =   %.2f USD" % (round(b["total_usd"] * (TAUX_DINAR or VERS_DINARS["USD"])), b["total_usd"]), "",
+         # les montants en DA ET en USD, au taux du client (1.0 : sans lui, l'outil refuse avant d'arriver ici)
+         "  كل أد ست ياخذ", "      %d DA   =   %.2f USD" % (round(b["par_ad_set_usd"] * vers_dinars("USD")), b["par_ad_set_usd"]), "",
+         "  المجموع في النهار", "      %d DA   =   %.2f USD" % (round(b["total_usd"] * vers_dinars("USD")), b["total_usd"]), "",
          "  الحساب تاعك بالعملة", "      %s" % b["devise"], "",
          "  الرقم لي تبعث لميتا في كل أد ست",
          "      %d" % b["centimes_par_ad_set"], "",
@@ -1462,6 +1487,12 @@ def vue_porte(r, valeurs=None):
 
 
 def verifier():
+    # « الطالب 1.0 » : les essais tournent avec un taux d'EXEMPLE, posé ici (le code, lui, n'en suppose aucun)
+    global TAUX_DINAR, TAUX_EURO
+    if not TAUX_DINAR:
+        TAUX_DINAR = 255.0
+    if not TAUX_EURO:
+        TAUX_EURO = 280.0
     print(BARRE)
     print("  CONTROLES DE L'OUTIL — version %s" % VERSION)
     print(BARRE)
@@ -1764,8 +1795,8 @@ def verifier():
                  budget(4, "USD")["total_usd"] == 20.0)
 
     # LE PIEGE DU PLAFOND EN DINARS — un garde-fou desarme en silence
-    ok &= _essai("un plafond en dinars est converti, pas pris pour des dollars",
-                 abs(plafond_en_dollars(3000, "DZD") - 3000 / 255.0) < 0.01)
+    ok &= _essai("un plafond en dinars est converti au taux du client, pas pris pour des dollars",
+                 abs(plafond_en_dollars(3000, "DZD") - 3000 / float(TAUX_DINAR)) < 0.01)
     try:
         budget(4, "USD", plafond_usd=plafond_en_dollars(3000, "DZD"))
         ok &= _essai("trois mille dinars bloquent bien vingt dollars", False,
@@ -1942,11 +1973,22 @@ def verifier():
     ok &= _essai("le jour zero est TROP TOT, pas un verdict de perte",
                  z["decision"] == "TROP_TOT", z["decision"])
 
-    # --- LE TAUX DU CLIENT : 255 dinars pour un dollar, confirme le
-    #     21/09/2026. L'ancien cours ne doit plus exister nulle part.
-    ok &= _essai("le taux du fichier est celui du client : 255",
-                 TAUX["DZD"] == 255.0 and VERS_DINARS["USD"] == 255.0,
-                 "%s / %s" % (TAUX["DZD"], VERS_DINARS["USD"]))
+    # --- « الطالب 1.0 » : AUCUN cours code en dur. Sans le taux du client, l'outil REFUSE (avant : 255 / 280 en silence).
+    _t, _e = TAUX_DINAR, TAUX_EURO
+    TAUX_DINAR, TAUX_EURO = None, None
+    try:
+        vers_dinars("USD"); _refus = False
+    except TauxManquant:
+        _refus = True
+    try:
+        vers_dinars("EUR"); _refus_e = False
+    except TauxManquant:
+        _refus_e = True
+    TAUX_DINAR, TAUX_EURO = _t, _e
+    ok &= _essai("sans le taux du client : refus (dollar et euro), jamais 255 ni 280",
+                 _refus and _refus_e and vers_dinars("DZD") == 1.0)
+    ok &= _essai("avec SON taux : la conversion suit son taux",
+                 taux_devise("DZD") == float(TAUX_DINAR) and abs(taux_devise("EUR") - TAUX_DINAR / TAUX_EURO) < 1e-9)
 
     # --- UN SEUL AD SET : le montage tient le plafond
     un = budget(4, "USD", plafond_usd=11.76, un_seul_ad_set=True)
@@ -2158,6 +2200,7 @@ def main():
     p.add_argument("--un-seul-ad-set", action="store_true",
                    help="toutes les annonces dans UN ad set : un seul budget, "
                         "une annonce par angle")
+    p.add_argument("--taux-euro", type=float, default=0.0, help="le taux de l'euro du client (compte publicitaire en EUR)")
     p.add_argument("--taux-dinar", type=float, default=0.0,
                    help="combien de dinars pour une unite de la devise du "
                         "compte — le taux REEL du client, pas un cours")
@@ -2199,10 +2242,13 @@ def main():
 
     a = p.parse_args()
 
-    global DEVISE_COMPTE, TAUX_DINAR
-    if a.devise and a.devise.upper() in VERS_DINARS:
+    global DEVISE_COMPTE, TAUX_DINAR, TAUX_EURO
+    if a.devise and a.devise.upper() in MONNAIES:
         DEVISE_COMPTE = a.devise.upper()
-    if a.taux_dinar and a.taux_dinar > 0 and DEVISE_COMPTE != "DZD":
+    # « الطالب 1.0 » : le taux du client sert AUSSI aux comptes en dinars (le budget en dollars se convertit à SON taux)
+    if a.taux_euro and a.taux_euro > 0:
+        TAUX_EURO = a.taux_euro
+    if a.taux_dinar and a.taux_dinar > 0:
         if not (50.0 <= a.taux_dinar <= 500.0):
             print("REFUS : taux suspect : %s dinars. Redemande-lui." % a.taux_dinar)
             return 2
@@ -2633,7 +2679,7 @@ def main():
         # la ou c'est PERTE_LOURDE. Le taux qu'il donne est celui que sa
         # banque lui prend : c'est le seul vrai.
         devise_spend = (a.devise or "USD").upper()
-        taux_spend = TAUX_DINAR if TAUX_DINAR else VERS_DINARS.get(devise_spend, 1.0)
+        taux_spend = vers_dinars(devise_spend)
         spend_da = a.spend * taux_spend
         if stock == "stock" and not r["par_livree"]:
             print("REFUS : le break even par livree est nul : il faut un vrai")

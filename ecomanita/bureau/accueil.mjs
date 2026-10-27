@@ -864,11 +864,12 @@ export function ouvrirAccueil({ dossier, listes = () => ({ comptes: [], pages: [
     lancerLesModeles() {
       const l = listes(); const taux = +(l.taux || 0), plafond = +(l.plafondJourDA || 0);
       // le plafond du jour est GLOBAL : chaque modèle teste avec plafond / N, il faut au moins une vidéo à 3 $ chacun (0.4.2 : la structure du fichier, plancher CBO)
-      // (même calcul que l'étape budget : floor(plafond / N) DA, au cours du client mais jamais sous 255)
-      const cours = Math.max(taux, 255);
+      // (même calcul que l'étape budget : floor(plafond / N) DA, au cours du CLIENT — 1.0 : plus de plancher à 255 ;
+      // sans taux, l'étape budget refuse elle-même avec « le taux du dollar manque »)
+      const cours = taux;
       // le serveur retire les boutons du résumé pressé : le résumé repart AVEC « ابدا », que le message dit de presser une fois
       // le budget monté (07/10/2026 : le client n'avait plus aucun « ابدا » et devait tout recommencer)
-      if (plafond > 0 && Math.floor(plafond / conv.n) / cours < 3) return [msg(TEXTES.budgetCourt(conv.n, conv.n * Math.ceil(3 * cours))), messageResumeLot()];
+      if (plafond > 0 && cours > 0 && Math.floor(plafond / conv.n) / cours < 3) return [msg(TEXTES.budgetCourt(conv.n, conv.n * Math.ceil(3 * cours))), messageResumeLot()];
       // « finie » n'est PAS écrite sur le disque : une coupure avant l'effacement laisse le résumé, que le client peut
       // represser (une conversation « finie » restée sur le disque gardait le lot « prêt » pour rien, sans rien dire)
       conv.termine = true; conv.fin = new Date().toISOString();

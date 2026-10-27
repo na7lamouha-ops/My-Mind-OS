@@ -51,7 +51,47 @@ export function outil(nom, entree = {}) {
   return callTool(nom, entree);
 }
 
+/**
+ * « الطالب 1.0 » — LE SOMMET ET LE PIRE CAS AVANT TOUT LANCEMENT, par la boussole (boussala_testweek, mode plan).
+ * Entrée en dinars et en pourcentages (le client) ; sortie : les limites du moteur ($) et leurs équivalents en dinars, au taux du CLIENT.
+ *   parConfirmeeDa = le plafond par commande CONFIRMÉE (ceiling × taux) — le juge du test
+ *   parCommandeDa  = le plafond par commande REÇUE / lead (maxLead × taux) — la structure et l'arrêt
+ *   parLivreeDa    = le plafond par colis LIVRÉ (ceiling × taux ÷ livraison) — après VALIDE
+ *   pireParConfirmeeDa = le plafond au pire cas (livraison − 8 points, ceilingWorst × taux)
+ * Sans taux du client : refus (aucun cours inventé). Moteur absent : refus « العقل ما راهوش ».
+ */
+export function limitesProduit({ nom = 'modele', prix, gros, emballage = 0, livraison = 0, retour = 0, confirmation, livraisonPct, taux, leadUsd = null } = {}) {
+  if (!(+taux > 0)) throw Object.assign(new Error('le taux du dollar du client manque (الإعدادات) : la boussole ne calcule pas sans lui'), { taux: false });
+  for (const [k, v] of [['prix', prix], ['gros', gros], ['confirmation', confirmation], ['livraison %', livraisonPct]]) if (!(+v > 0)) throw new Error(`la boussole a besoin de « ${k} »`);
+  const r = outil('boussala_testweek', { mode: 'plan', models: [{ name: nom, sell: +prix, buy: +gros, conf: +confirmation, del: +livraisonPct, ...(leadUsd ? { leadUsd: +leadUsd } : {}) }],
+    settings: { rate: +taux, pack: +emballage || 0, delCost: +livraison || 0, retCost: +retour || 0 } });
+  const L = r.data && r.data.limits && r.data.limits[0];
+  if (!L) throw new Error('la boussole n\'a rendu aucune limite');
+  if (!L.ok) return { ok: false, passe: false, limites: L, source: 'boussala_testweek ' + etatCerveau().version };
+  const t = +taux;
+  return { ok: true, passe: L.ceiling > 0, limites: L, source: 'boussala_testweek ' + etatCerveau().version,
+    parConfirmeeDa: Math.round(L.ceiling * t), parCommandeDa: Math.round(L.maxLead * t), parLivreeDa: Math.round(L.ceiling * t / (L.del / 100)),
+    pireParConfirmeeDa: Math.round(L.ceilingWorst * t), arretUsd: L.cap, zeroLeadStopUsd: L.zeroLeadStop, budgetRecommandeUsd: L.budget, joursRecommandes: L.days };
+}
+
 export function listeOutils() { const { TOOLS } = require('./adapters/tools.js'); return TOOLS.map(t => t.name); }
 
 /** Le message Telegram quand le cerveau manque (loi de forme). */
 export const TEXTE_SANS_CERVEAU = ['🧭 البوصلة', 'العقل ما راهوش : المحرّك ما خدمش', 'الوكلاء اللي يحسبو راهم حابسين', 'شوف التحضير في المكتب'].join('\n');
+
+/** La page « بوصلة التاجر » (fix 7) : les champs de la page → les limites de testweek (le test) et le texte du guide (le chemin).
+ *  Le paragraphe « 🧪 التاست = 100 ليد… » du guide est retiré : il contredit testweek (50 événements par groupe), la règle de 1.0 ;
+ *  la page montre le plan de testweek à la place (écart signalé au moteur pour 1.1). */
+export function calculBoussole(e = {}) {
+  const n = v => (v === null || v === undefined || v === '' ? null : Number(String(v).replace(/[\s ]/g, '').replace(',', '.')));
+  const taux = n(e.taux), cpl = n(e.cpl);
+  const L = limitesProduit({ nom: String(e.nom || 'Modele').slice(0, 40), prix: n(e.prix), gros: n(e.achat), emballage: n(e.emballage) || 0, livraison: (n(e.livraison) || 0) + (n(e.fraisCod) || 0),
+    retour: n(e.retour) || 0, confirmation: n(e.confirmation), livraisonPct: n(e.tauxLivraison), taux, leadUsd: cpl && taux ? cpl / taux : null });
+  let guide = null;
+  if (L.ok && n(e.objectif) > 0) {
+    const g = outil('boussala_guide', { settings: { rate: taux, pack: n(e.emballage) || 0, delCost: (n(e.livraison) || 0) + (n(e.fraisCod) || 0), retCost: n(e.retour) || 0, target: n(e.objectif), ...(n(e.jours) > 0 ? { period: n(e.jours) } : {}), ...(n(e.surplus) >= 0 && e.surplus !== '' && e.surplus != null ? { surplus: n(e.surplus) } : {}) },
+      products: [{ name: String(e.nom || 'Modele').slice(0, 40), sell: n(e.prix), buy: n(e.achat), conf: n(e.confirmation), del: n(e.tauxLivraison), ...(cpl ? { lead: cpl } : {}) }] });
+    guide = String(g.text || '').split(/\n(?=\S)/).filter(b => !/^🧪 التاست =/.test(b)).join('\n');
+  }
+  return { ...L, guide, version: etatCerveau().version };
+}

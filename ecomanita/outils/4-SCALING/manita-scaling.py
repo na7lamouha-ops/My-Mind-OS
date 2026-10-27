@@ -132,7 +132,7 @@ FICHIER_SCALING = "scaling-en-cours.json"
 FICHIER_DECISIONS = "mes-decisions.txt"
 
 DEVISE_COMPTE = "USD"
-VERS_DINARS = {"USD": 255.0, "EUR": 280.0, "DZD": 1.0}
+VERS_DINARS = {"USD": None, "EUR": None, "DZD": 1.0}   # 1.0 : les monnaies connues ; le taux = celui du CLIENT (--taux-dinar), jamais un cours écrit ici
 TAUX_DINAR = None   # le taux REEL du client, donne par lui, pour convertir
 
 # ===========================================================================
@@ -254,8 +254,10 @@ def ligne_nombre(valeur_da):
     d = DEVISE_COMPTE if DEVISE_COMPTE in VERS_DINARS else "USD"
     if d == "DZD":
         return "      %d DA" % arrondi(valeur_da)
-    taux = TAUX_DINAR if TAUX_DINAR else VERS_DINARS[d]
-    return "      %d DA   =   %.2f %s" % (arrondi(valeur_da), valeur_da / taux, d)
+    # « الطالب 1.0 » : le taux du CLIENT ou rien — sans lui, les dinars seuls (avant : 255 / 280 de la table)
+    if not TAUX_DINAR or d != "USD":
+        return "      %d DA" % arrondi(valeur_da)
+    return "      %d DA   =   %.2f %s" % (arrondi(valeur_da), valeur_da / TAUX_DINAR, d)
 
 
 def ligne_pourcent(part):

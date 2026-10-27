@@ -277,7 +277,12 @@ def ecrire_decision(date, produit, decision, ce_quil_savait, dossier=None):
 #            (jamais de chiffre sur une ligne arabe)
 # ---------------------------------------------------------------------------
 
-def vue_carnet(r, taux=255.0):  # 10/10/2026 : 255 comme tout le paquet (avant 260), --taux-dinar pour le sien
+def _da_usd(v, taux):
+    """« الطالب 1.0 » : les dinars, et les dollars au taux du CLIENT s'il l'a donné ; sinon les dinars seuls."""
+    return "      %.0f DA / %.2f USD" % (v, v / taux) if taux else "      %.0f DA" % v
+
+
+def vue_carnet(r, taux=None):  # 1.0 : plus de 255 par défaut (avant 260, puis 255) : --taux-dinar, le sien, ou les dinars seuls
     L = [BARRE, "  الكارني — واش قالو الكولي بالصحّ", BARRE, "",
          "  المنتوج", "      %s" % r["produit"], ""]
     t = r["mesures"]
@@ -301,15 +306,12 @@ def vue_carnet(r, taux=255.0):  # 10/10/2026 : 255 comme tout le paquet (avant 2
                       t["livraison"] * 100), ""]
         if t["cout_par_commande"]:
             L += ["  واش تكلّفك كوموند وحدة",
-                  "      %.0f DA / %.2f USD" % (
-                      t["cout_par_commande"], t["cout_par_commande"] / taux), ""]
+                  _da_usd(t["cout_par_commande"], taux), ""]
     L += ["  أقصى ثمن تقدر تدفع في كوموند — على كلامك",
-          "      %.0f DA / %.2f USD" % (r["cpl_max_declare"],
-                                        r["cpl_max_declare"] / taux), ""]
+          _da_usd(r["cpl_max_declare"], taux), ""]
     if r["cpl_max_mesure"] is not None:
         L += ["  وعلى الحقيقة",
-              "      %.0f DA / %.2f USD" % (r["cpl_max_mesure"],
-                                            r["cpl_max_mesure"] / taux), ""]
+              _da_usd(r["cpl_max_mesure"], taux), ""]
         if r["assez"]:
             L += ["  نخدمو بالحقيقة، ماشي بالكلام.", ""]
         else:
@@ -432,7 +434,9 @@ def verifier():
                      "je continue" in txt and "IL SAVAIT" in txt)
 
         # --- L'AFFICHAGE
-        vue = vue_carnet(r)
+        vue = vue_carnet(r, 255.0)  # 1.0 : un taux du client d'EXEMPLE, passé ici (le code n'en suppose aucun)
+        ok &= _essai("sans le taux du client : les dinars seuls, aucun dollar inventé",
+                     "USD" not in vue_carnet(r) and "DA" in vue_carnet(r))
         arabe = re.compile(r"[؀-ۿ]")
         chiffre = re.compile(r"\d")
         fautes = [l for l in vue.split("\n")
@@ -483,8 +487,8 @@ def main():
     p.add_argument("--decision", default="")
     p.add_argument("--il-savait", default="")
     p.add_argument("--json", action="store_true")
-    p.add_argument("--taux-dinar", type=float, default=255.0,
-                   help="combien de dinars pour un dollar (le taux du client ; 255 par defaut)")
+    p.add_argument("--taux-dinar", type=float, default=0.0,
+                   help="combien de dinars pour un dollar (le taux du client ; sans lui, les dinars seuls)")
     a = p.parse_args()
 
     if a.verifier:
@@ -537,7 +541,7 @@ def main():
         if a.json:
             print(json.dumps(r, ensure_ascii=False, indent=2, default=str))
         else:
-            print(vue_carnet(r, a.taux_dinar if a.taux_dinar and a.taux_dinar > 0 else 255.0))
+            print(vue_carnet(r, a.taux_dinar if a.taux_dinar and a.taux_dinar > 0 else None))
         return 0
 
     p.print_help()

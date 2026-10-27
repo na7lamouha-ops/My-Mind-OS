@@ -155,6 +155,35 @@ export async function epreuveInspecteur10({ etape }) {
   });
 }
 
+export async function epreuveBoussole10({ etape }) {
+  const pont = await import('./boussala/pont.mjs');
+  await etape('1.0 (fix 7) : le SOMMET et le PIRE CAS avant tout lancement sortent de la boussole — un modèle qui gagne a ses trois plafonds (confirmée, commande, livrée) et un pire cas plus bas ; le miroir du plan unifié (4 900 DA, achat 2 200, lead 1,8 $, réglages inventés) est dit « ما يستاهلش التاست » par le guide ; sans le taux du client → refus (contrôles négatifs)', () => {
+    const g = pont.limitesProduit({ nom: 'Robe essai', prix: 5900, gros: 2200, emballage: 40, livraison: 0, retour: 50, confirmation: 57, livraisonPct: 44.4, taux: 250 });
+    if (!g.ok || !g.passe || !(g.pireParConfirmeeDa < g.parConfirmeeDa) || !(g.parCommandeDa < g.parConfirmeeDa) || !(g.parLivreeDa > g.parConfirmeeDa) || !/boussala_testweek 29\.18/.test(g.source)) throw new Error(JSON.stringify(g));
+    // le miroir (docs/01 : net 242 DA, ROI 0 % avec les réglages du vendeur, qu'on n'a pas) : avec des réglages INVENTÉS
+    // (confirmation 50 %, livraison 50 %, emballage 50, retour 100), le guide le dit faible et « ما يستاهلش التاست »
+    const mi = pont.outil('boussala_guide', { settings: { rate: 250, pack: 50, delCost: 0, retCost: 100 }, products: [{ name: 'Miroir', sell: 4900, buy: 2200, conf: 50, del: 50, leadUsd: 1.8 }] }).text;
+    if (!/Miroir[^\n]*ما يستاهلش التاست/.test(mi)) throw new Error('miroir : ' + mi.split('\n').slice(0, 6).join(' | '));
+    let refus = null; try { pont.limitesProduit({ prix: 5900, gros: 2200, confirmation: 57, livraisonPct: 44, taux: null }); } catch (e) { refus = e; }
+    if (!refus || refus.taux !== false) throw new Error('sans taux : refus attendu');
+    return `gagnant : ${g.parConfirmeeDa} DA par confirmée (pire ${g.pireParConfirmeeDa}), ${g.parCommandeDa} par commande, ${g.parLivreeDa} par livrée · miroir : « ما يستاهلش التاست » · sans taux → refus`;
+  });
+  await etape('1.0 (fix 7) : AUCUN taux du dollar écrit dans le code — ni 255, ni 280, ni max(taux, 255), ni « || 255 », ni l\'euro à 1,1, dans le bureau et les outils Python (lecture des fichiers ; les essais posent leur taux d\'exemple eux-mêmes) (contrôle négatif)', () => {
+    const fichiers = ['missions.mjs', 'accueil.mjs', 'serveur.mjs', 'messages.mjs', 'inspecteur.mjs'].map(f => path.join(ICI, f))
+      .concat(['3-TESTING/manita-testing.py', '5-COACH-ERP/manita-coach.py', '4-SCALING/manita-scaling.py', '0-CARNET/manita-carnet.py'].map(f => path.join(ICI, '..', 'outils', f)));
+    const motifs = [/max\(\s*taux\s*,\s*255\s*\)/i, /\|\|\s*255\b/, /"(USD|EUR)"\s*:\s*2[5-8]\d(\.0)?\b/, /\btaux\s*=\s*255(\.0)?\b/, /default\s*=\s*255(\.0)?\b/, /\*\s*1\.1\s*;/, /taux=255(\.0)?\)/];
+    const sales = [];
+    for (const f of fichiers) {
+      const lignes = fs.readFileSync(f, 'utf8').split('\n');
+      // les ESSAIS des outils (après « def verifier ») posent un taux d'exemple : c'est permis, le code au-dessus non
+      const fin = f.endsWith('.py') ? (lignes.findIndex(l => /^def verifier\(/.test(l)) + 1 || lignes.length) : lignes.length;
+      lignes.slice(0, fin).forEach((l, i) => { if (!/^\s*(#|\/\/|\*)/.test(l) && motifs.some(m => m.test(l))) sales.push(`${path.basename(f)}:${i + 1} ${l.trim().slice(0, 80)}`); });
+    }
+    if (sales.length) throw new Error(sales.join(' · '));
+    return `${fichiers.length} fichiers relus : aucun cours écrit en dur`;
+  });
+}
+
 /** Le bureau ENTIER (serveur.mjs) avec un faux Telegram : le cerveau lu au démarrage, la ligne « العقل » de التحضير. */
 export async function epreuveServeur10({ etape }) {
   const http = await import('node:http');
@@ -199,6 +228,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   const etape = async (nom, fn) => { try { const d = await fn(); ok++; console.log(`✓ ${nom}${d ? '  — ' + d : ''}`); } catch (e) { ko++; console.log(`✗ ${nom}  — ${e.message}`); } };
   await epreuve10({ etape });
   await epreuveInspecteur10({ etape });
+  await epreuveBoussole10({ etape });
   if (!process.argv.includes('--sans-serveur')) await epreuveServeur10({ etape });
   console.log(`\n${ko ? '✗' : '✓'} ${ok}/${ok + ko} contrôles 1.0 passés`);
   process.exit(ko ? 1 : 0);

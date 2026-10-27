@@ -109,7 +109,8 @@ Par défaut, la page ne montre que les travailleurs et l'état réel des tâches
 | `web-station/` | la station (méthode 2) |
 | `installer/installer-windows.ps1` | l'installateur Windows (sans administrateur) — lancé par `..\INSTALLER-WINDOWS.bat`, ou par le Claude du client |
 | `installer/installer-mac.sh` | l'installateur Mac (sans sudo ; Node, Python 3.13 portable, FFmpeg, cloudflared dans `runtime/`, launchd) — lancé par `../INSTALLER-MAC.command`, ou par le Claude du client |
-| `boussole/` | la boussole du marchand (`/boussole/`) : `calcul.js` = la formule des outils (testing, coach, scaling, carnet), avec les trois corrections (retours = confirmées − livrées, emballage dans la récupération du capital, deux ROI étiquetés) et les chemins de sortie quand le produit perd ; `index.html` = la page, remplie par les réglages du bureau |
+| `boussole/` | la page « بوصلة التاجر » (`/boussole/`) : elle ne calcule plus rien, elle demande au bureau (`/api/boussole`), qui demande à la boussole 29.18 (`boussala/`). L'ancien `calcul.js` est à l'archive (1.0) |
+| `boussala/` | la boussole 29.18, l'unique calculateur des chiffres (golden 6/6 au démarrage) ; `pont.mjs` = le pont ESM, `limitesProduit` (le sommet et le pire cas avant tout lancement) |
 | `verifier.mjs` | la barrière : plus de 190 contrôles sans token (faux claude, faux Telegram, faux tunnel, faux seau R2, chaîne jusqu'à la mission, boussole contre les outils Python, page vivante, bavardages, dépôt) |
 
 ## La maison du client

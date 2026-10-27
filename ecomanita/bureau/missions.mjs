@@ -160,6 +160,7 @@ import { REGLES_MAISON } from './routeur.mjs';
 import { ouvrirCarnet, ecrireNote, listerNotes, refusDeContenu } from './carnet.mjs';
 import { ecrirePorte, effacerPorte, ecrireTicketPause, effacerTicketPause, ouvrirTourPorte, fermerTourPorte } from './meta-mcp.mjs';
 import { controlesSuivi, messageControles } from './controles-suivi.mjs';
+import { limitesProduit } from './boussala/pont.mjs'; // 1.0 : le sommet et le pire cas, par la boussole 29.18
 import { ficheVideo, ligneResultat, resumeParEtiquette, ajouterLignes, lireBibliotheque, messageBibliotheque } from './bibliotheque.mjs';
 
 export const ETAPES = [
@@ -611,14 +612,24 @@ export function controlesDuSoir(r, x, taux) {
   const sorties = nom => ((r && r.appels) || []).filter(a => String(a.nom || '').endsWith('__' + nom) && !a.erreur).map(a => String(a.sortie ?? '')).join(' ');
   const brutT = sorties('get_marketing_analytics'), brutM = sorties('ads_get_ad_entities');
   if (!brutT) return null;
+  // 1.0 : sans le taux du client, on ne convertit pas (avant : 255, et 1,1 pour l'euro) — pas de contrôle sur un chiffre inventé
+  const versUsd = versDollarsDuClient(x.devise, taux);
+  if (!versUsd) return null;
   const vu = (brut, v) => !(+v > 0) || brut.includes(String(v)) || brut.includes((+v).toFixed(2)) || brut.includes(String(Math.round(+v * 100)));
   if (!vu(brutT, su.commandes_liees)) return null;
   const dev = String(x.devise || 'USD').toUpperCase();
-  const versUsd = v => dev === 'USD' ? +v : dev === 'DZD' ? (+v) / Math.max(1, taux || 255) : +v * 1.1;
   const annonces = su.annonces.filter(a => vu(brutM, a.depense)).map(a => ({ id: a.id, nom: a.nom, depense_usd: versUsd(+a.depense || 0), achats_meta: a.achats_meta, visites_tassyir: a.visites_tassyir, commandes_tassyir: a.commandes_tassyir }));
   const liees = Number.isInteger(su.commandes_liees) ? su.commandes_liees : null;
   return controlesSuivi({ annonces, commandesLiees: liees, commandesSansTicket: liees === null ? null : Math.max(0, (+x.commandes || 0) - liees),
     depenseMetaUsd: dev === 'USD' ? +x.depense_totale : null, depenseTassyirUsd: su.depense_tassyir_usd ?? null, valeursUtm: su.valeurs_utm || [] });
+}
+/** 1.0 : la dépense lue chez Meta → des dollars, au taux du CLIENT. USD tel quel ; DZD ÷ son taux ; EUR : on ne connaît pas son
+ *  taux de l'euro → null (on ne convertit pas). Sans taux pour un compte en dinars → null. Aucun cours écrit dans le code. */
+export function versDollarsDuClient(devise, taux) {
+  const d = String(devise || 'USD').toUpperCase();
+  if (d === 'USD') return v => +v;
+  if (d === 'DZD' && +taux > 0) return v => (+v) / (+taux);
+  return null;
 }
 /** 0.4.2 : les lignes de la bibliothèque des créas pour une mission, à partir de la lecture « suivi » (chaque annonce relue dans
  *  la réponse brute de Meta) : l'annonce → son ad set (« V0k ») → la vidéo k du test → sa fiche (le rapport de l'éditeur). */
@@ -627,8 +638,8 @@ export function lignesBibliotheque(m, x, r, taux, jour, phase, date) {
   const c = (m.d && m.d.campagne) || {}, sets = new Map((c.adSets || []).map(a => [String(a.id), String(a.nom || '')]));
   const adSetDe = new Map((c.ads || []).map(a => [String(a.id), String(a.ad_set_id)]));
   const brutM = ((r && r.appels) || []).filter(a => String(a.nom || '').endsWith('__ads_get_ad_entities') && !a.erreur).map(a => String(a.sortie ?? '')).join(' ');
-  const dev = String(x.devise || 'USD').toUpperCase(), t = Math.max(1, +taux || 255);
-  const versUsd = v => dev === 'USD' ? +v : dev === 'DZD' ? (+v) / t : +v * 1.1;
+  const t = +taux > 0 ? +taux : null, versUsd = versDollarsDuClient(x.devise, taux);
+  if (!versUsd) return []; // 1.0 : aucune ligne sur une dépense convertie à un cours inventé
   const be = m.d.be || {}, plafondDa = phase === 'VALIDE' ? +be.par_livree : +be.par_confirmee;
   const lot = m.lot || {}, rushes = String(m.d.rushes || '');
   const out = [];
@@ -638,7 +649,7 @@ export function lignesBibliotheque(m, x, r, taux, jour, phase, date) {
     const k = +((/\bV(\d{2})\b/.exec(nomSet) || [])[1] || 0);
     const v = k ? (m.d.videosTest || [])[k - 1] : null;
     const fiche = ficheVideo({ rapport: (v && v.rapport) || {}, modele: lot.nom || m.code, mannequin: path.basename(rushes) || '', couleur: (lot.couleurs || [])[0] || '', video_id: (m.d.metaVideos || [])[k - 1]?.video_id || '', ad_id: a.id, adset: k ? `V${String(k).padStart(2, '0')}` : '' });
-    out.push(ligneResultat(fiche, { date, phase, jours: jour, depense_usd: versUsd(a.depense), leads: a.commandes_tassyir || 0, confirmees: a.confirmees_tassyir || 0, livrees: a.livrees_tassyir || 0, plafond_usd: plafondDa > 0 ? plafondDa / t : null }));
+    out.push(ligneResultat(fiche, { date, phase, jours: jour, depense_usd: versUsd(a.depense), leads: a.commandes_tassyir || 0, confirmees: a.confirmees_tassyir || 0, livrees: a.livrees_tassyir || 0, plafond_usd: plafondDa > 0 && t ? plafondDa / t : null }));
   }
   return out;
 }
@@ -2695,6 +2706,16 @@ Rends {productId, actif (relu), variantesVisibles (nombre relu), urlProduit "htt
       const r = await outil(m, 'break-even', '3-TESTING/manita-testing.py', args, { dureeMaxMs: 120000 });
       const be = jsonOutil(r, 'break_even');
       if (!be) throw definitive('l\'outil du testing ne rend pas le break even : ' + extrait(r.sortie));
+      // « الطالب 1.0 » (fix 7) : LE SOMMET ET LE PIRE CAS sortent de la BOUSSOLE 29.18 (boussala_testweek), pas de l'outil Python.
+      // L'outil garde les sorties de secours (prix minimum, livraison minimum) ; la décision et les trois plafonds sont ceux du moteur.
+      const taux = +R().taux || 0;
+      let bo;
+      try { bo = limitesProduit({ nom: m.code, prix: rep.detail, gros: rep.gros, emballage: c.emballage, livraison: (+c.livraison || 0) + (+c.fraisCod || 0), retour: c.retour, confirmation: dcl.confirmation, livraisonPct: dcl.livraison, taux }); }
+      catch (e) { throw definitive(`la boussole ne calcule pas le sommet : ${e.message}`); }
+      if (bo.ok) Object.assign(be, { par_commande: bo.parCommandeDa, par_confirmee: bo.parConfirmeeDa, par_livree: bo.parLivreeDa, pire_par_confirmee: bo.pireParConfirmeeDa, passe: bo.passe });
+      else Object.assign(be, { passe: false });
+      be.boussole = { source: bo.source, limites: bo.limites };
+      histoire(m, `porte : la boussole (${bo.source}) — ${bo.ok ? `${bo.parConfirmeeDa} DA par confirmée (pire cas ${bo.pireParConfirmeeDa}), ${bo.parCommandeDa} DA par commande, arrêt à ${bo.arretUsd} $` : 'aucune limite : le produit ne se calcule pas'}`);
       m.d.be = be;
       await outilCarnet(m, 'carnet-fiche', ['--fiche', '--produit', m.code, '--prix', rep.detail, '--gros', rep.gros, '--emballage', c.emballage, '--livraison-a-ta-charge', (+c.livraison || 0) + (+c.fraisCod || 0), '--retour', c.retour, '--conf-declaree', (+dcl.confirmation / 100).toFixed(2), '--liv-declaree', (+dcl.livraison / 100).toFixed(2)]);
       if (be.passe) { await envoyer(m, M.porteOk(be, +R().taux || 0)); return undefined; }
@@ -2713,12 +2734,12 @@ Rends {productId, actif (relu), variantesVisibles (nombre relu), urlProduit "htt
       // LES CRÉAS DU CLIENT (08/10/2026) : de un à quatre, sa réponse au robot (une fois par lien), sinon le réglage (défaut quatre)
       const k = creasDe(m.demande.reponses.creas, R().creasParModele);
       const saines = m.d.creas.length, voulu = Math.min(k, saines);
-      // l'outil convertit un plafond en DZD au cours fixe de 255 : sous ce cours, choisir au taux du client lui ferait refuser le budget
+      // 1.0 : le plafond en dinars se convertit au taux du CLIENT (l'outil fait pareil) — avant : max(taux, 255)
       // 0.4.2 : la STRUCTURE du fichier (budget du client, vidéos, lead max de la porte) — ABO, CBO, ou moins de vidéos
       const leadMaxUsd = +(m.d.be && m.d.be.par_commande) > 0 ? (+m.d.be.par_commande) / taux : 0;
-      const choix = structureDuTest(voulu, plafondDa / Math.max(taux, 255), leadMaxUsd, k);
+      const choix = structureDuTest(voulu, plafondDa / taux, leadMaxUsd, k);
       // le client l'apprend en clair (dinars ET dollars) ; l'échec qui suit porte les boutons « عاود » / « حبس »
-      if (!choix.n) await envoyer(m, M.budgetCourt(parts, plafondDa, Math.max(taux, 255)));
+      if (!choix.n) await envoyer(m, M.budgetCourt(parts, plafondDa, taux));
       if (!choix.n) throw definitive(parts > 1 ? `le budget du jour (${plafondJour} DA) partagé entre ${parts} modèles laisse ${plafondDa} DA par modèle : pas assez pour une vidéo à ${PLANCHER_CBO_USD} $ (rien n'est créé)` : `le budget maximum (${plafondDa} DA) ne paie même pas une vidéo à ${PLANCHER_CBO_USD} $`);
       if (parts > 1) histoire(m, `budget : ${plafondJour} DA par jour partagés entre ${parts} modèles → ${plafondDa} DA pour celui-ci`);
       // moins que le choix : on part avec ce qu'il y a, et le client le sait — UNE fois, même si l'étape est rejouée
