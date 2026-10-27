@@ -329,7 +329,9 @@ def vers_dinars(devise):
 
 
 def taux_devise(devise):
-    """Combien d'unites de `devise` pour un dollar (la regle est en dollars)."""
+    """Combien d'unites de `devise` pour un dollar (la regle est en dollars). Un compte en dollars : 1, sans taux."""
+    if (devise or "USD").upper() == "USD":
+        return 1.0
     return vers_dinars("USD") / vers_dinars(devise)
 
 

@@ -7201,7 +7201,7 @@ await etape('[relecture] SERVEUR META LOCAL — l\'heure de début ne se pose JA
     return 'start_time / campaign_start_time à la création → refus, aucune écriture · sans heure → créé en pause';
   } finally { c.fermer(); }
 });
-await etape('[relecture] OUTILS — (1) le COACH lit sur la MÊME base que l\'agent Testing (« السلعة ») : jour 3, 26 confirmées, 0 livrée, 20 colis en route, 30 000 DA (avant : DISJONCTEUR chez le coach, RENTABLE chez le testing) ; à ce stade, sans --base-test la ligne de commande REFUSE ; (2) le plafond en DINARS se convertit au taux du client quand il est plus cher que 255 (3 900 DA à 290 = 13,45 $ : deux vidéos à 7 $ REFUSÉES ; avant : 15,29 $, acceptées) ; (3) l\'écran du budget dit DA ET USD ; (4) le carnet compte à 255 (avant 260) ; (5) le mot COD espacé (« C O D ») attrapé par le scaling et le coach ; (6) captures.py sans --couleurs = « auto » (le nombre dit, sinon l\'outil compte)', async () => {
+await etape('[relecture] OUTILS — (1) le COACH lit sur la MÊME base que l\'agent Testing (« السلعة ») : jour 3, 26 confirmées, 0 livrée, 20 colis en route, 30 000 DA (avant : DISJONCTEUR chez le coach, RENTABLE chez le testing) ; à ce stade, sans --base-test la ligne de commande REFUSE ; (2) le plafond en DINARS se convertit au taux du client quand il est plus cher que 255 (3 900 DA à 290 = 13,45 $ : deux vidéos à 7 $ REFUSÉES ; avant : 15,29 $, acceptées) ; (3) l\'écran du budget dit DA ET USD ; (4) le carnet sans taux par défaut (1.0 ; avant 260, puis 255) ; (5) le mot COD espacé (« C O D ») attrapé par le scaling et le coach ; (6) captures.py sans --couleurs = « auto » (le nombre dit, sinon l\'outil compte)', async () => {
   const py = travauxM.trouverPython(''), atelier = path.resolve(RACINE, '..', 'outils');
   const T = travauxM.creerTravaux({ python: () => py, env: () => travauxM.envOutil({}) });
   const code = `import importlib.util, json, sys, inspect, re
@@ -7234,7 +7234,8 @@ print('MANITA_JSON ' + json.dumps({'quoi': 'relecture-outils', **r}))`;
   if (j.coach !== j.testing || /DISJONCTEUR|PERTE|ERREUR/.test(j.coach)) f.push(`coach ${j.coach} / testing ${j.testing}`);
   if (j.plafond !== 13.45 || j.budget2 !== 'refuse') f.push(`plafond ${j.plafond} $, deux vidéos ${j.budget2}`);
   if (!j.vue_da) f.push('écran du budget sans DA');
-  if (j.carnet !== 255) f.push('carnet à ' + j.carnet);
+  // 1.0 (fix 7) : le carnet n'a PLUS de taux par défaut (avant 260, puis 255) : le taux du client, ou les dinars seuls
+  if (j.carnet !== null) f.push('carnet à ' + j.carnet + ' (1.0 : aucun taux par défaut)');
   if (!j.cod.every(Boolean)) f.push('COD espacé : ' + JSON.stringify(j.cod));
   if (j.captures !== 'auto') f.push('captures.py --couleurs par défaut : ' + j.captures);
   // la ligne de commande du coach, au stade du livre, sans --base-test : refus (code 2)
@@ -7243,7 +7244,7 @@ print('MANITA_JSON ' + json.dumps({'quoi': 'relecture-outils', **r}))`;
   const cli2 = await T.lancer({ nom: 'coach-lecture-2', script: path.join(atelier, '5-COACH-ERP', 'manita-coach.py'), args: ['--lecture', '--jour', '3', '--depense', '30000', '--devise-depenses', 'DZD', '--devise', 'DZD', '--commandes', '30', '--confirmees', '26', '--livrees', '0', '--expediees', '20', '--en-route', '20', '--retours', '0', '--declare-livraison', '0.7', '--be-commande', '1500', '--be-confirmee', '2500', '--be-livree', '3900', '--mode', 'site', '--base-test', 'stock'], dureeMaxMs: 60000 });
   if (cli2.code !== 0 || /وقف\. هاذي خسارة كبيرة/.test(cli2.sortie)) f.push('coach --base-test stock : code ' + cli2.code + ' ' + String(cli2.sortie).slice(-200));
   if (f.length) throw new Error(f.join(' | '));
-  return `coach ${j.coach} = testing ${j.testing} (20 colis en route) · sans --base-test : refus · 3 900 DA à 290 → ${j.plafond} $, deux vidéos refusées · budget en DA · carnet ${j.carnet} · « C O D » attrapé · captures --couleurs ${j.captures}`;
+  return `coach ${j.coach} = testing ${j.testing} (20 colis en route) · sans --base-test : refus · 3 900 DA à 290 → ${j.plafond} $, deux vidéos refusées · budget en DA · carnet sans taux par défaut · « C O D » attrapé · captures --couleurs ${j.captures}`;
 });
 await etape('[relecture] TEXTES ET DOCS — le message à coller nomme les DEUX lignes du jeton Meta NON_VERIFIABLE sans jeton et la case Telegram exacte (jamais « توكن ميتا ») ; le badge de « التحضير » ne compte pas ces deux lignes sans jeton ; aucun rôle affiché ne dit « brouillon » ni un plafond pour la page publiée ; « زوج » (jamais « جوج ») ; les skills disent la porte du lot (manager), la description seule (page), la question « السلعة » (testing), la loi par id (scaling), un seul lien (manager du bureau) ; la fin de --produit ne dit plus d\'attendre un oui', () => {
   const lire = f => fs.readFileSync(path.resolve(RACINE, '..', f), 'utf8');
