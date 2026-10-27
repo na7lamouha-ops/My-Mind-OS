@@ -1,0 +1,1016 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>الأجونات واحد بواحد</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Mise en page : un storyboard vertical en RTL, chaque étape est une « station » dessinée, reliée par un fil rouge comme le liseré de l'ensemble. */
+:root{
+  --bg:#f3f4f6; --panel:#ffffff; --ink:#1b2230; --mute:#5d6676; --line:#d5d9e1;
+  --thread:#d6264a; --thread-soft:#fbe4e9; --skin:#e9c9ad; --cloth:#20242c; --good:#1f7a4d; --good-soft:#e2f2ea;
+  --f-display:"Reem Kufi","Noto Kufi Arabic",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans Arabic","Segoe UI",Tahoma,system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#12151b; --panel:#1b2029; --ink:#e8ebf1; --mute:#9aa3b2; --line:#2f3643;
+  --thread:#ff5a78; --thread-soft:#3a1d25; --skin:#c9a487; --cloth:#3a414f; --good:#5fd39a; --good-soft:#163428; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12151b; --panel:#1b2029; --ink:#e8ebf1; --mute:#9aa3b2; --line:#2f3643;
+  --thread:#ff5a78; --thread-soft:#3a1d25; --skin:#c9a487; --cloth:#3a414f; --good:#5fd39a; --good-soft:#163428; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.75}
+.wrap{max-width:980px;margin:0 auto;padding-block:28px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:28px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.35}
+h1{font-size:clamp(1.8rem,5vw,2.6rem)}
+h2{font-size:clamp(1.3rem,3.4vw,1.7rem)}
+h3{font-size:1.1rem}
+p{margin:0}
+.lat{font-family:var(--f-mono);direction:ltr;unicode-bidi:isolate;font-size:.92em}
+.mute{color:var(--mute)}
+/* dessins */
+.ink{fill:var(--ink)} .cloth{fill:var(--cloth)} .skin{fill:var(--skin)} .thread{fill:var(--thread)} .paper{fill:var(--panel)}
+.stroke{fill:none;stroke:var(--ink);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.st-thread{fill:none;stroke:var(--thread);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.st-mute{fill:none;stroke:var(--line);stroke-width:2;stroke-linecap:round}
+.good{fill:var(--good)}
+/* héro */
+.hero{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px}
+.hero .txt{display:flex;flex-direction:column;gap:10px;min-width:0}
+.eyebrow{font-size:.82rem;letter-spacing:.04em;color:var(--thread);font-weight:600}
+.hero figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:4px}.hero svg{width:150px;height:auto}.hero figcaption{font-size:.85rem;color:var(--mute);text-align:center}
+@media (max-width:560px){.hero{grid-template-columns:1fr}.hero svg{width:120px;justify-self:center}}
+/* stations */
+.station{display:flex;flex-direction:column;gap:14px}
+.station-h{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.step{font-family:var(--f-display);color:var(--panel);background:var(--thread);border-radius:999px;padding:2px 12px;font-size:.9rem}
+.q-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.q{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.q svg{width:84px;height:84px;align-self:center}
+.q .kw{font-family:var(--f-mono);color:var(--thread);font-size:.9rem;direction:ltr;text-align:right}
+.q .ask{font-family:var(--f-display);font-size:1.15rem}
+.where{align-self:flex-start;font-size:.8rem;border-radius:999px;padding:1px 10px;border:1px solid var(--line);color:var(--mute)}
+.where.vid{border-color:var(--ink);color:var(--ink)}
+.where.txt{border-color:var(--thread);color:var(--thread)}
+.note{background:var(--thread-soft);border-radius:12px;padding:12px 14px}
+.ev{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:12px}
+.ev-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.ev-col{display:flex;flex-direction:column;gap:10px;min-width:0}
+.ev-h{font-family:var(--f-display);font-size:1.1rem;color:var(--thread)}
+.ev-sub{font-size:.85rem;margin-top:-8px}
+.ev-i{display:flex;gap:10px;align-items:center;border-top:1px solid var(--line);padding-top:10px}
+.ev-i svg{width:44px;height:44px;flex:none}
+.ev-i p{color:var(--mute);font-size:.92rem}
+.ev-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.ev-top .kw{font-family:var(--f-mono);color:var(--thread);font-size:.9rem;direction:ltr;unicode-bidi:isolate}
+.ev-grid{counter-reset:col}
+.ev-h{display:flex;align-items:center;gap:8px}
+.ev-h::before{counter-increment:col;content:counter(col);font-family:var(--f-mono);font-size:.78rem;min-width:22px;height:22px;border-radius:999px;border:1.5px solid var(--thread);color:var(--thread);display:inline-flex;align-items:center;justify-content:center;flex:none}
+.ev-col.not{background:var(--bg);border:1px dashed var(--line);border-radius:12px;padding:10px}
+.ev-col.not .ev-h{color:var(--mute)}
+.ev-col.yes{background:var(--good-soft);border:1px solid var(--good);border-radius:12px;padding:10px}
+.ev-col.yes .ev-h{color:var(--good)}
+.ev-col.yes .ev-h::before{border-color:var(--good);color:var(--good)}
+.ev-i .lat{color:var(--thread)}
+.tips{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:4px 16px;counter-reset:tip}
+.tips .ev-i b::before{counter-increment:tip;content:counter(tip);font-family:var(--f-mono);font-size:.75rem;min-width:20px;height:20px;border-radius:999px;background:var(--ink);color:var(--panel);display:inline-flex;align-items:center;justify-content:center;margin-inline-end:6px;vertical-align:2px}
+.num{font-family:var(--f-mono);font-weight:500;font-size:1.05rem;background:var(--ink);color:var(--panel);border-radius:999px;min-width:34px;height:34px;padding:0 6px;display:inline-flex;align-items:center;justify-content:center;align-self:center;direction:ltr;flex:none}
+.n{font-family:var(--f-mono);font-weight:500;font-size:.85rem;border:1.5px solid var(--ink);color:var(--ink);border-radius:999px;padding:0 9px;line-height:1.7;direction:ltr;unicode-bidi:isolate;display:inline-block;flex:none;background:var(--panel);vertical-align:2px}
+.road{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px}
+.road b{font-family:var(--f-display);font-weight:500;margin-inline-end:4px}
+.road a{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:2px 12px 2px 4px}
+.road a span{font-family:var(--f-mono);font-size:.8rem;background:var(--ink);color:var(--panel);border-radius:999px;min-width:22px;height:22px;padding:0 4px;display:inline-flex;align-items:center;justify-content:center}
+.road a:focus-visible{outline:3px solid var(--thread);outline-offset:2px}
+.road i{color:var(--mute);font-style:normal}
+.tbl-wrap{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:12px}
+.tbl{width:100%;min-width:560px;border-collapse:collapse;font-size:.9rem;line-height:1.5}
+.tbl caption{caption-side:top;text-align:left;padding:10px 12px 4px;font-weight:600}
+.tbl th,.tbl td{border-top:1px solid var(--line);padding:7px 12px;text-align:left;vertical-align:top}
+.tbl thead th{color:var(--mute);font-weight:500}
+.tbl td.win{color:var(--good);font-weight:600}
+.tbl td.lose{color:var(--thread)}
+.small{font-size:.85rem}
+.jar .ok{fill:var(--good-soft);stroke:none}
+.jar .ko{fill:var(--thread-soft);stroke:none}
+.jar .goal{fill:none;stroke:var(--thread);stroke-width:1.6;stroke-dasharray:6 5}
+.diagram .badge{fill:var(--ink)}
+.diagram .badge-t{fill:var(--panel);font-family:var(--f-mono);font-size:13px}
+.diagram .pill{fill:var(--thread-soft);stroke:var(--thread);stroke-width:1.4}
+.diagram .good-t{fill:var(--good);font-weight:600;font-size:15px}
+.diagram .cap{font-size:13px;fill:var(--ink);font-weight:600}
+.diagram .arrow{fill:none;stroke:var(--ink);stroke-width:2;marker-end:url(#fl)}
+.souk{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.souk-c{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.souk-fig{display:flex;justify-content:space-around;align-items:flex-end}
+.souk-fig figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:2px}
+.souk-fig svg{width:64px;height:64px}
+.souk-fig figcaption{font-size:.8rem;color:var(--mute)}
+.bub{border-radius:14px;padding:6px 12px;font-size:.95rem}
+.bub.q{background:var(--bg);border:1px solid var(--line);border-start-start-radius:4px}
+.bub.a{background:var(--thread-soft);border:1px solid var(--thread);border-start-end-radius:4px}
+.tag{align-self:flex-start;font-size:.85rem;font-weight:600;color:var(--panel);background:var(--thread);border-radius:999px;padding:1px 12px}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;counter-reset:st}
+.steps li{display:flex;gap:10px;align-items:flex-start}
+.steps li::before{counter-increment:st;content:counter(st);font-family:var(--f-mono);font-size:.8rem;min-width:24px;height:24px;border-radius:999px;background:var(--thread);color:var(--panel);display:inline-flex;align-items:center;justify-content:center;flex:none;margin-top:3px}
+.steps li.pre::before{content:"0";background:var(--mute)}
+.steps li.pre{counter-increment:none}
+.legend{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:2px;font-size:.92rem}
+.legend li{border-top:1px solid var(--line);padding-top:4px}
+.q .n{align-self:flex-start}
+.ok-t{color:var(--good)}
+.ko-t{color:var(--thread)}
+.tbl-wrap{direction:ltr}
+.test .diagram svg{min-width:400px}
+.rq{background:var(--panel);border:1px solid var(--line);border-inline-start:5px solid var(--ink);border-radius:12px;padding:10px 14px;display:flex;flex-direction:column;gap:6px}
+.rq-h{font-family:var(--f-display);font-size:1rem;color:var(--thread)}
+.rq ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:5px}
+.rq li{font-weight:600;line-height:1.6}
+.kwrow{display:flex;flex-wrap:wrap;gap:6px}
+.kwrow span{border:1px solid var(--line);border-radius:999px;padding:2px 12px;font-size:.92rem;background:var(--bg)}
+.kwrow b{color:var(--thread);margin-inline-end:6px;font-weight:600}
+.mods{font-size:.9rem}
+.mod{font-family:var(--f-mono);font-size:.8rem;direction:ltr;unicode-bidi:isolate;border:1px dashed var(--mute);color:var(--mute);border-radius:6px;padding:0 6px;white-space:nowrap}
+.station-h .mod{margin-inline-start:auto}
+h1 .lat,h2 .lat{font-family:var(--f-body);font-weight:700;font-size:1em}
+.edge{stroke:var(--bg);stroke-width:1.4;stroke-linejoin:round}
+.road{flex-direction:column;align-items:stretch;gap:10px}
+.road-h{margin:0;font-size:.95rem;color:var(--ink)}
+.road-r{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding-top:8px;border-top:1px dashed var(--line)}
+.road-r .mod{margin:0}
+.avcard{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px}
+.avcard figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:4px}
+.avcard svg{width:110px;height:auto}
+.avcard figcaption{font-size:.85rem;color:var(--mute)}
+.avcard dl{margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px 16px;min-width:0}
+.avcard dl div{border-top:1px solid var(--line);padding-top:6px}
+.avcard dt{font-size:.8rem;color:var(--thread);font-weight:600}
+.avcard dd{margin:0}
+@media (max-width:560px){.avcard{grid-template-columns:1fr}}
+.kit{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.kit-c{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.kit-h{font-size:.82rem;color:var(--thread);font-weight:600;margin:0}
+.thumb{font-family:var(--f-display);font-size:1.6rem;line-height:1.3;background:var(--ink);color:var(--panel);border-radius:10px;padding:14px;text-align:center;margin:0}
+.tbl.script{min-width:0}
+.tbl.script td,.tbl.script th{text-align:right;vertical-align:top}
+.tbl.script caption{text-align:right}
+.tbl.script .t{font-family:var(--f-mono);white-space:nowrap;direction:ltr;text-align:center}
+.prompt .copy{align-self:flex-start}
+.tbl-wrap.rtl{direction:rtl}
+.box-h{font-size:.8rem;font-weight:600;color:var(--thread);margin:0}
+.pro{background:var(--panel);border:1.5px solid var(--ink);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:12px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);border-radius:999px;padding:2px 12px;font-size:.92rem;background:var(--bg)}
+.chip b{color:var(--thread);font-weight:600}
+.chip b{margin-left:6px}
+.minirow{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:center;gap:8px 4px;counter-reset:nd;padding-top:4px}
+.nd{margin:0;display:flex;flex-direction:column;align-items:center;gap:4px;width:124px;text-align:center;position:relative}
+.nd::before{counter-increment:nd;content:counter(nd);position:absolute;top:-2px;inset-inline-start:22px;font-family:var(--f-mono);font-size:.72rem;min-width:20px;height:20px;border-radius:999px;background:var(--ink);color:var(--panel);display:inline-flex;align-items:center;justify-content:center}
+.nd svg{width:68px;height:68px;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:8px}
+.nd b{font-size:.95rem;display:block;line-height:1.4}
+.nd span{font-size:.8rem;color:var(--mute);display:block;line-height:1.45}
+.ar{font-size:1.5rem;line-height:1;color:var(--thread);margin-top:24px;flex:none}
+.calc{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.calc-t,.story-t{font-family:var(--f-display);font-size:1.15rem;line-height:1.5}
+.calc>table{width:100%;max-width:640px;border-collapse:collapse}
+.calc>table th{font-weight:500;text-align:right;padding:7px 0 7px 12px;border-top:1px solid var(--line);vertical-align:top}
+.calc>table td.v{font-family:var(--f-mono);font-size:.92rem;direction:ltr;text-align:left;padding:7px 0;border-top:1px solid var(--line);vertical-align:top;white-space:nowrap}
+.calc tr.sub th,.calc tr.sub td{font-weight:600}
+.calc tr.tot th,.calc tr.tot td{font-weight:700;color:var(--good);border-top:2px solid var(--ink)}
+.calc tr.cap th,.calc tr.cap td{color:var(--thread);font-weight:600}
+.hyp{font-size:.8rem;color:var(--mute);text-align:left;line-height:1.55}
+.calc .tbl{min-width:640px}
+.calc .tbl sup{font-size:.7em}
+.story{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:620px){.duo{grid-template-columns:1fr}}
+.side{border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.side.ko{background:var(--bg);border:1px dashed var(--mute)}
+.side.ok{background:var(--good-soft);border:1px solid var(--good)}
+.side-h{display:flex;align-items:center;gap:8px;font-family:var(--f-display);font-size:1.05rem}
+.side-h svg{width:46px;height:46px;flex:none}
+.res{font-weight:600;border-top:1px solid var(--line);padding-top:6px}
+.side.ko .res{color:var(--thread)}
+.side.ok .res{color:var(--good)}
+.jomla{background:var(--ink);color:var(--panel);border-radius:12px;padding:10px 14px;font-family:var(--f-display);font-size:1.1rem;line-height:1.6}
+.jomla b{color:var(--panel);opacity:.75;font-family:var(--f-body);font-size:.85rem;margin-inline-end:6px}
+.laws{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.law{background:var(--thread-soft);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;border-inline-start:5px solid var(--thread);min-width:0}
+.law-n{font-family:var(--f-display);font-size:1.2rem;line-height:1.45}
+.law-s{font-size:.95rem;border-top:1px solid var(--line);padding-top:6px}
+.law-s b{color:var(--thread)}
+.ex{display:flex;gap:10px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+.ex svg{width:40px;height:40px;flex:none}
+.ex b{color:var(--thread)}
+.rec{border:1px dashed var(--mute);border-radius:12px;padding:10px 14px;display:flex;flex-direction:column;gap:3px;font-size:.92rem;color:var(--mute)}
+.rec b{color:var(--ink);font-weight:600}
+.rec .cut{color:var(--ink)}
+.close{font-family:var(--f-display);font-size:clamp(1.2rem,3vw,1.5rem);text-align:center;padding:14px;border-block:2px solid var(--thread)}
+.wrap a{color:var(--thread)}
+.road a{color:var(--ink)}
+.hero .steps{font-size:.98rem}
+@media (max-width:420px){.nd{width:104px}.ar{font-size:1.2rem}}
+.calc .tbl td:not(:last-child),.calc .tbl th{white-space:nowrap}
+@media (max-width:560px){.minirow{display:grid;grid-template-columns:1fr 1fr;justify-items:center;gap:12px 8px}.minirow .ar{display:none}.nd{width:100%}.calc>table td.v{font-size:.82rem}}
+.hooks{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hooks .box-h{grid-column:1/-1}
+@media (max-width:620px){.hooks{grid-template-columns:1fr}}
+.hk{background:var(--panel);border:1.5px solid var(--thread);border-radius:12px;padding:10px 14px;font-weight:600;display:flex;gap:10px;align-items:flex-start}
+.hk-l{flex:none;min-width:26px;height:26px;border-radius:999px;background:var(--thread);color:var(--panel);display:inline-flex;align-items:center;justify-content:center;font-size:.85rem;margin-top:2px}
+.who{font-size:.95rem;color:var(--mute)}
+.who b{color:var(--ink)}
+.scr{background:var(--panel);border:1.5px dashed var(--ink);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.scr ol{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px;counter-reset:sc}
+.scr li{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline;border-top:1px solid var(--line);padding-top:8px}
+.scr li::before{counter-increment:sc;content:counter(sc);font-family:var(--f-mono);font-size:.75rem;min-width:22px;height:22px;border-radius:999px;background:var(--ink);color:var(--panel);display:inline-flex;align-items:center;justify-content:center;flex:none}
+.tool{font-family:var(--f-mono);font-size:.8rem;direction:ltr;unicode-bidi:isolate;border:1px solid var(--line);border-radius:6px;padding:0 6px;color:var(--thread);background:var(--bg);white-space:nowrap}
+.scr li>span:last-child{flex:1 1 220px;min-width:0}
+.task{background:var(--good-soft);border:1px solid var(--good);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:4px}
+.task .box-h{color:var(--good)}
+.before{background:var(--thread-soft);border-radius:12px;padding:12px 14px}
+.before ul{margin:4px 0 0;padding-inline-start:20px}
+.fclose{border-top:2px solid var(--ink);padding-top:10px;font-weight:600}
+.cmp th:first-child,.cmp tbody th{color:var(--thread);font-weight:600;white-space:nowrap}
+.cmp td{min-width:140px}
+.tbl caption{font-size:.85rem}
+.tbl.code{min-width:0}.tbl.code th{white-space:nowrap;width:1%}
+.say{display:none}
+.pro.js .say{display:flex;flex-direction:column;gap:8px;background:var(--bg);border:2px solid var(--thread);border-radius:14px;padding:12px 14px}
+.say-top{display:flex;align-items:center;gap:8px}
+.say-k{background:var(--thread);color:var(--panel);border-radius:999px;padding:0 12px;font-size:.85rem;font-weight:600}
+.say-who{font-family:var(--f-display);font-size:1.05rem}
+.say-t{font-size:1.12rem;line-height:1.85;font-weight:500;min-height:3.6em}
+.say-nav{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.say-nav button{align-self:auto}
+.say-n{font-family:var(--f-mono);font-size:.85rem;color:var(--mute);direction:ltr;unicode-bidi:isolate}
+.say-all summary{cursor:pointer;color:var(--thread);font-weight:600;font-size:.92rem}
+.say-list{margin:8px 0 0;padding-inline-start:20px;display:flex;flex-direction:column;gap:8px}
+.pro[data-say] .nd{cursor:pointer;border-radius:14px}
+.pro[data-say] .nd:focus-visible{outline:3px solid var(--thread);outline-offset:2px}
+.nd.on svg{border:2px solid var(--thread);box-shadow:0 0 0 5px var(--thread-soft)}
+.nd.on b{color:var(--thread)}
+.calc>table td.v small{display:block;font-family:var(--f-body);font-size:.8rem;font-weight:500;color:var(--mute);direction:rtl;text-align:left;white-space:normal;line-height:1.5}
+.calc>table th .op{display:block;margin-top:3px;font-family:var(--f-mono);font-size:.8rem;font-weight:500;color:var(--mute);direction:ltr;unicode-bidi:isolate;text-align:right}
+.calc tr.grp th{padding:16px 0 6px;font-family:var(--f-display);font-size:1rem;font-weight:600;color:var(--thread);border-top:2px solid var(--line)}
+/* schéma meta */
+.diagram{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px;overflow-x:auto}
+.diagram svg{display:block;min-width:620px;width:100%;height:auto}
+.diagram text{font-family:var(--f-body);fill:var(--ink)}
+.diagram .small{font-size:13px;fill:var(--mute)}
+.diagram .lab{font-size:15px;font-weight:600}
+.diagram .lab-t{font-size:14px;fill:var(--thread);font-weight:600}
+.box{fill:var(--panel);stroke:var(--ink);stroke-width:1.6}
+.box-t{fill:var(--thread-soft);stroke:var(--thread);stroke-width:1.6}
+.box-g{fill:var(--good-soft);stroke:var(--good);stroke-width:1.6}
+/* deux tests */
+.tests{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:720px){.tests{grid-template-columns:1fr}}
+.test{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.test .diagram{border:0;padding:0}
+.test .diagram svg{min-width:300px}
+.rule{font-weight:600}
+.judge{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:560px){.judge{grid-template-columns:1fr}}
+.j{border-radius:14px;padding:14px;border:1px solid var(--line);background:var(--panel);display:flex;gap:12px;align-items:flex-start}
+.j svg{width:56px;height:56px;flex:none}
+.j.ok{border-color:var(--good);background:var(--good-soft)}
+.prompt{background:var(--panel);border:1px dashed var(--ink);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.prompt pre{white-space:pre-wrap;margin:0;font-family:var(--f-body);background:var(--bg);border-radius:10px;padding:12px;line-height:1.8}
+button{font:inherit;border:1px solid var(--ink);background:var(--ink);color:var(--panel);border-radius:999px;padding:4px 16px;cursor:pointer;align-self:flex-start}
+button:focus-visible{outline:3px solid var(--thread);outline-offset:2px}
+footer{font-size:.85rem;color:var(--mute)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- femme voilée, ensemble noir à liseré rouge -->
+    <symbol id="femme" viewBox="0 0 120 200">
+      <path class="cloth edge" d="M34 76 L22 82 L13 126 L28 129 L35 98 Z"/>
+      <path class="cloth edge" d="M86 76 L98 82 L107 126 L92 129 L85 98 Z"/>
+      <path class="st-thread" d="M13 125 L28 128 M107 125 L92 128"/>
+      <circle class="skin" cx="20" cy="134" r="5.5"/><circle class="skin" cx="100" cy="134" r="5.5"/>
+      <path class="cloth edge" d="M32 131 L59 131 L57 186 L29 186 Z"/>
+      <path class="cloth edge" d="M61 131 L88 131 L91 186 L63 186 Z"/>
+      <path class="cloth edge" d="M34 74 L86 74 L92 133 L28 133 Z"/>
+      <path class="st-thread" d="M57 86 L53 133 M63 86 L67 133 M29 132 H91"/>
+      <path class="cloth edge" d="M60 8 C40 8 31 24 31 41 C31 55 35 64 30 78 C42 92 78 92 90 78 C85 64 89 55 89 41 C89 24 80 8 60 8 Z"/>
+      <ellipse class="skin" cx="60" cy="42" rx="14" ry="17"/>
+      <circle class="ink" cx="54.5" cy="40" r="1.9"/><circle class="ink" cx="65.5" cy="40" r="1.9"/>
+      <path class="stroke" d="M54 49 Q60 54 66 49" style="stroke-width:1.8"/>
+      <path class="paper" d="M27 186 H58 V194 H24 C24 190 25 187 27 186 Z"/><path class="stroke" d="M27 186 H58 V194 H24 C24 190 25 187 27 186 Z" style="stroke-width:1.6"/>
+      <path class="paper" d="M62 186 H93 C95 187 96 190 96 194 H62 Z"/><path class="stroke" d="M62 186 H93 C95 187 96 190 96 194 H62 Z" style="stroke-width:1.6"/>
+      <path class="st-thread" d="M30 191 H40 M80 191 H90" style="stroke-width:1.8"/>
+      <rect class="paper" x="98" y="138" width="17" height="20" rx="3"/><rect class="stroke" x="98" y="138" width="17" height="20" rx="3" style="stroke-width:1.6"/>
+      <path class="stroke" d="M101 138 C101 131 112 131 112 138" style="stroke-width:1.6"/>
+    </symbol>
+    <symbol id="fac" viewBox="0 0 80 80">
+      <path class="stroke" d="M8 30 L40 12 L72 30 Z"/>
+      <path class="stroke" d="M14 34 V62 M28 34 V62 M40 34 V62 M52 34 V62 M66 34 V62 M8 66 H72"/>
+      <path class="st-thread" d="M36 24 H44"/>
+    </symbol>
+    <symbol id="bureau" viewBox="0 0 80 80">
+      <path class="stroke" d="M22 22 H58 V46 H22 Z"/>
+      <path class="stroke" d="M14 52 H66 M40 46 V52 M10 64 H70"/>
+      <path class="st-thread" d="M28 30 H46 M28 37 H40"/>
+    </symbol>
+    <symbol id="cafe" viewBox="0 0 80 80">
+      <path class="stroke" d="M18 32 H54 V48 C54 58 46 64 36 64 C26 64 18 58 18 48 Z"/>
+      <path class="stroke" d="M54 38 C64 38 64 52 54 52 M12 70 H62"/>
+      <path class="st-thread" d="M28 14 C24 20 32 22 28 28 M40 14 C36 20 44 22 40 28"/>
+    </symbol>
+    <symbol id="calendrier" viewBox="0 0 80 80">
+      <rect class="stroke" x="14" y="18" width="52" height="48" rx="6"/>
+      <path class="stroke" d="M14 32 H66 M28 12 V24 M52 12 V24"/>
+      <rect class="thread" x="44" y="42" width="12" height="12" rx="2"/>
+    </symbol>
+    <symbol id="style" viewBox="0 0 80 80">
+      <path class="thread" d="M40 4 C31 4 26 11 26 20 C26 29 29 36 31 40 L49 40 C51 36 54 29 54 20 C54 11 49 4 40 4 Z"/>
+      <ellipse class="skin" cx="40" cy="19" rx="7" ry="8"/>
+      <path class="stroke" d="M6 68 L7 56 H17 C19 61 25 63 33 63 C37 63 39 65 39 68 Z"/>
+      <rect class="stroke" x="5" y="68" width="35" height="5" rx="2.5" style="stroke-width:1.8"/>
+      <path class="st-thread" d="M12 59 L15 62 M17 59 L20 62" style="stroke-width:1.8"/>
+      <path class="stroke" d="M48 52 H72 L70 76 H50 Z"/>
+      <path class="stroke" d="M55 52 C55 44 65 44 65 52"/>
+      <path class="st-thread" d="M50 62 H70"/>
+    </symbol>
+    <symbol id="bulle" viewBox="0 0 80 80">
+      <path class="st-thread" d="M10 16 H70 V52 H38 L24 66 V52 H10 Z"/>
+      <path class="st-thread" d="M20 28 H60 M20 40 H48"/>
+    </symbol>
+    <symbol id="cible" viewBox="0 0 80 80">
+      <circle class="stroke" cx="40" cy="40" r="28"/><circle class="stroke" cx="40" cy="40" r="16"/>
+      <circle class="thread" cx="40" cy="40" r="6"/>
+    </symbol>
+    <symbol id="bague" viewBox="0 0 80 80">
+      <circle class="stroke" cx="40" cy="50" r="20"/>
+      <path class="thread" d="M40 10 L50 22 L40 30 L30 22 Z"/>
+    </symbol>
+    <symbol id="main" viewBox="0 0 80 80">
+      <path class="stroke" d="M28 70 V38 C28 34 34 34 34 38 V20 C34 16 40 16 40 20 V34 V16 C40 12 46 12 46 16 V34 V20 C46 16 52 16 52 20 V40 C52 34 58 34 58 40 V50 C58 62 50 70 40 70 Z"/>
+      <circle class="thread" cx="43" cy="50" r="5"/><circle class="thread" cx="37" cy="27" r="2"/><circle class="thread" cx="49" cy="27" r="2"/>
+    </symbol>
+    <symbol id="croissant" viewBox="0 0 80 80">
+      <path class="cloth" d="M48 12 C30 14 18 28 18 44 C18 60 32 72 48 70 C36 64 30 54 30 42 C30 30 37 18 48 12 Z"/>
+      <path class="thread" d="M58 26 L60 32 L66 32 L61 36 L63 42 L58 38 L53 42 L55 36 L50 32 L56 32 Z"/>
+    </symbol>
+    <symbol id="toque" viewBox="0 0 80 80">
+      <path class="cloth" d="M8 32 L40 18 L72 32 L40 46 Z"/>
+      <path class="cloth" d="M22 40 V54 C30 62 50 62 58 54 V40 L40 48 Z"/>
+      <path class="st-thread" d="M66 34 V54"/><circle class="thread" cx="66" cy="57" r="3"/>
+    </symbol>
+    <symbol id="soleil" viewBox="0 0 80 80">
+      <circle class="thread" cx="40" cy="40" r="13"/>
+      <path class="st-thread" d="M40 10 V18 M40 62 V70 M10 40 H18 M62 40 H70 M19 19 L25 25 M55 55 L61 61 M61 19 L55 25 M25 55 L19 61"/>
+    </symbol>
+    <symbol id="flocon" viewBox="0 0 80 80">
+      <path class="stroke" d="M40 10 V70 M14 25 L66 55 M66 25 L14 55 M33 14 L40 21 L47 14 M33 66 L40 59 L47 66"/>
+    </symbol>
+    <symbol id="p-etud" viewBox="0 0 80 80">
+      <path class="cloth" d="M40 8 C31 8 27 15 27 23 C27 31 30 36 33 39 L47 39 C50 36 53 31 53 23 C53 15 49 8 40 8 Z"/><ellipse class="skin" cx="40" cy="23" rx="7" ry="8"/><path class="cloth" d="M31 38 L49 38 L55 72 L25 72 Z"/><path class="st-thread" d="M40 40 L36 58 M40 40 L44 58"/><path class="stroke" d="M47 40 L59 51"/><rect class="paper" x="54" y="50" width="16" height="16" rx="3"/><rect class="stroke" x="54" y="50" width="16" height="16" rx="3"/>
+    </symbol>
+    <symbol id="p-arousa" viewBox="0 0 80 80">
+      <path class="cloth" d="M40 8 C31 8 27 15 27 23 C27 31 30 36 33 39 L47 39 C50 36 53 31 53 23 C53 15 49 8 40 8 Z"/><ellipse class="skin" cx="40" cy="23" rx="7" ry="8"/><path class="cloth" d="M31 38 L49 38 L55 72 L25 72 Z"/><path class="st-thread" d="M40 40 L36 58 M40 40 L44 58"/><path class="st-thread" d="M31 11 L34 3 L40 8 L46 3 L49 11"/><circle class="thread" cx="40" cy="4" r="2"/>
+    </symbol>
+    <symbol id="p-mama" viewBox="0 0 80 80">
+      <g transform="translate(-10 0)"><path class="cloth" d="M40 8 C31 8 27 15 27 23 C27 31 30 36 33 39 L47 39 C50 36 53 31 53 23 C53 15 49 8 40 8 Z"/><ellipse class="skin" cx="40" cy="23" rx="7" ry="8"/><path class="cloth" d="M30 38 L50 38 L58 72 L22 72 Z"/></g><path class="stroke" d="M54 56 H68 V62 C68 67 65 70 61 70 C57 70 54 67 54 62 Z M68 58 C74 58 74 64 68 64 M54 58 L49 53"/><path class="st-thread" d="M58 51 H64"/>
+    </symbol>
+    <symbol id="p-enceinte" viewBox="0 0 80 80">
+      <path class="cloth" d="M40 8 C31 8 27 15 27 23 C27 31 30 36 33 39 L47 39 C50 36 53 31 53 23 C53 15 49 8 40 8 Z"/><ellipse class="skin" cx="40" cy="23" rx="7" ry="8"/><path class="cloth" d="M31 38 L47 38 C59 46 61 58 52 64 L55 72 L25 72 Z"/><path class="st-thread" d="M48 43 C57 49 57 58 51 62"/>
+    </symbol>
+    <symbol id="p-enfant" viewBox="0 0 80 80">
+      <g transform="translate(-10 0)"><path class="cloth" d="M40 8 C31 8 27 15 27 23 C27 31 30 36 33 39 L47 39 C50 36 53 31 53 23 C53 15 49 8 40 8 Z"/><ellipse class="skin" cx="40" cy="23" rx="7" ry="8"/><path class="cloth" d="M31 38 L49 38 L55 72 L25 72 Z"/><path class="st-thread" d="M40 40 L36 58 M40 40 L44 58"/></g><path class="ink" d="M56 46 C56 38 68 38 68 46 C66 42 58 42 56 46 Z"/><circle class="skin" cx="62" cy="47" r="6"/><path class="cloth" d="M57 54 H67 L70 72 H54 Z"/><path class="st-thread" d="M44 56 L57 58"/>
+    </symbol>
+    <symbol id="p-bureau" viewBox="0 0 80 80">
+      <g transform="translate(-8 0)"><path class="cloth" d="M40 8 C31 8 27 15 27 23 C27 31 30 36 33 39 L47 39 C50 36 53 31 53 23 C53 15 49 8 40 8 Z"/><ellipse class="skin" cx="40" cy="23" rx="7" ry="8"/><path class="cloth" d="M31 38 L49 38 L55 72 L25 72 Z"/><path class="st-thread" d="M40 40 L36 58 M40 40 L44 58"/><rect class="thread" x="42" y="44" width="5" height="7" rx="1"/></g><rect class="paper" x="52" y="52" width="20" height="15" rx="2"/><rect class="stroke" x="52" y="52" width="20" height="15" rx="2"/><path class="stroke" d="M58 52 V48 H66 V52"/><path class="st-thread" d="M52 58 H72"/>
+    </symbol>
+    <symbol id="p-prof" viewBox="0 0 80 80">
+      <g transform="translate(12 0)"><path class="cloth" d="M40 8 C31 8 27 15 27 23 C27 31 30 36 33 39 L47 39 C50 36 53 31 53 23 C53 15 49 8 40 8 Z"/><ellipse class="skin" cx="40" cy="23" rx="7" ry="8"/><path class="cloth" d="M31 38 L49 38 L55 72 L25 72 Z"/><path class="st-thread" d="M40 40 L36 58 M40 40 L44 58"/></g><rect class="paper" x="4" y="12" width="28" height="22" rx="2"/><rect class="stroke" x="4" y="12" width="28" height="22" rx="2"/><path class="st-thread" d="M9 19 H26 M9 26 H20"/><path class="stroke" d="M45 48 L30 37"/>
+    </symbol>
+    <symbol id="vendeur" viewBox="0 0 80 80">
+      <path class="stroke" d="M22 74 V50 C22 40 58 40 58 50 V74"/><path class="st-thread" d="M32 44 V74 M48 44 V74"/><circle class="skin" cx="40" cy="24" r="11"/><path class="ink" d="M28 21 C28 9 52 9 52 21 Z"/><path class="ink" d="M26 20 H58 V23 H26 Z"/><path class="ink" d="M34 29 C37 31 43 31 46 29 C43 32 37 32 34 29 Z"/><circle class="ink" cx="36" cy="24" r="1.4"/><circle class="ink" cx="44" cy="24" r="1.4"/>
+    </symbol>
+    <symbol id="jebba" viewBox="0 0 80 80">
+      <path class="cloth" d="M32 10 H48 L54 18 L68 30 L62 38 L54 32 L58 72 H22 L26 32 L18 38 L12 30 L26 18 Z"/><path class="st-thread" d="M40 12 V36 M35 16 H45 M25 67 H55"/>
+    </symbol>
+    <symbol id="tradi" viewBox="0 0 80 80">
+      <circle class="stroke" cx="40" cy="40" r="30"/><circle class="thread" cx="40" cy="40" r="6"/><path class="stroke" d="M40 33 C33 22 47 22 40 33 M40 47 C33 58 47 58 40 47 M33 40 C22 33 22 47 33 40 M47 40 C58 33 58 47 47 40"/><path class="st-thread" d="M22 22 L28 28 M58 22 L52 28 M22 58 L28 52 M58 58 L52 52"/>
+    </symbol>
+    <symbol id="sahra" viewBox="0 0 80 80">
+      <path class="cloth" d="M33 10 H47 L45 30 C55 44 61 58 66 72 H14 C19 58 25 44 35 30 Z"/><path class="st-thread" d="M35 30 H45"/><path class="thread" d="M62 10 L64 16 L70 18 L64 20 L62 26 L60 20 L54 18 L60 16 Z"/>
+    </symbol>
+    <symbol id="khimar" viewBox="0 0 80 80">
+      <path class="thread" d="M40 8 C26 8 18 20 18 34 C18 50 24 62 28 72 L52 72 C56 62 62 50 62 34 C62 20 54 8 40 8 Z"/><ellipse class="skin" cx="40" cy="32" rx="10" ry="12"/><circle class="ink" cx="36" cy="31" r="1.4"/><circle class="ink" cx="44" cy="31" r="1.4"/>
+    </symbol>
+    <symbol id="basket" viewBox="0 0 80 80">
+      <path class="stroke" d="M12 58 L14 38 H30 C34 46 44 49 58 49 C66 49 70 53 70 58 Z"/><rect class="stroke" x="10" y="58" width="62" height="7" rx="3"/><path class="st-thread" d="M22 42 L27 47 M29 42 L34 47"/>
+    </symbol>
+    <symbol id="sac" viewBox="0 0 80 80">
+      <path class="stroke" d="M18 30 H62 L58 70 H22 Z"/><path class="stroke" d="M30 30 C30 14 50 14 50 30"/><path class="st-thread" d="M21 44 H59"/>
+    </symbol>
+    <symbol id="ballerine" viewBox="0 0 80 80">
+      <path class="stroke" d="M10 58 C8 50 14 44 22 45 C30 46 36 44 42 41 C54 43 64 46 69 51 C73 55 71 60 66 60 H14 C12 60 11 59 10 58 Z"/><path class="st-thread" d="M36 44 C40 40 46 40 48 44 C46 48 40 48 36 44 Z"/>
+    </symbol>
+    <symbol id="talon" viewBox="0 0 80 80">
+      <path class="stroke" d="M16 34 C14 42 22 52 34 58 L66 60 C72 60 72 54 66 51 C56 47 48 46 42 42 L24 32 C20 30 17 31 16 34 Z"/><path class="stroke" d="M19 42 L21 70 H26"/><path class="st-thread" d="M30 37 L38 45"/>
+    </symbol>
+    <symbol id="bijou" viewBox="0 0 80 80">
+      <path class="stroke" d="M16 14 C16 44 64 44 64 14"/><circle class="thread" cx="23" cy="30" r="2.5"/><circle class="thread" cx="57" cy="30" r="2.5"/><circle class="thread" cx="31" cy="37" r="2.5"/><circle class="thread" cx="49" cy="37" r="2.5"/><path class="thread" d="M40 40 L47 51 L40 63 L33 51 Z"/>
+    </symbol>
+    <symbol id="coussin" viewBox="0 0 80 80">
+      <path class="stroke" d="M14 30 C14 22 22 20 40 20 C58 20 66 22 66 30 V50 C66 58 58 60 40 60 C22 60 14 58 14 50 Z"/><path class="st-thread" d="M26 40 H54"/><path class="stroke" d="M14 30 L8 26 M66 30 L72 26 M14 50 L8 54 M66 50 L72 54"/>
+    </symbol>
+    <symbol id="pansement" viewBox="0 0 80 80">
+      <g transform="rotate(-35 40 40)"><rect class="stroke" x="8" y="29" width="64" height="22" rx="11"/><rect class="thread" x="31" y="31" width="18" height="18" rx="3"/></g>
+    </symbol>
+    <symbol id="thermo" viewBox="0 0 80 80">
+      <path class="stroke" d="M34 14 C34 9 46 9 46 14 V47 C53 51 53 66 40 66 C27 66 27 51 34 47 Z"/><circle class="thread" cx="40" cy="57" r="6"/><path class="st-thread" d="M40 52 V24"/>
+    </symbol>
+    <symbol id="etoile" viewBox="0 0 80 80">
+      <path class="stroke" d="M40 10 L48 30 L70 31 L53 45 L59 66 L40 54 L21 66 L27 45 L10 31 L32 30 Z"/><path class="thread" d="M66 8 L67 12 L71 13 L67 14 L66 18 L65 14 L61 13 L65 12 Z"/>
+    </symbol>
+    <symbol id="cintre" viewBox="0 0 80 80">
+      <path class="stroke" d="M40 30 C40 25 46 24 46 18 C46 13 42 10 38 10 C34 10 32 13 32 16 M40 30 L10 54 H70 Z"/><path class="st-thread" d="M22 54 V66 M40 54 V70 M58 54 V66"/>
+    </symbol>
+    <symbol id="diamant" viewBox="0 0 80 80">
+      <path class="stroke" d="M14 30 L26 16 H54 L66 30 L40 66 Z M14 30 H66 M26 16 L34 30 L40 66 M54 16 L46 30 L40 66"/><path class="st-thread" d="M34 30 L40 16 L46 30"/>
+    </symbol>
+    <symbol id="valise" viewBox="0 0 80 80">
+      <rect class="stroke" x="12" y="26" width="56" height="40" rx="5"/><path class="stroke" d="M32 26 V18 H48 V26"/><path class="st-thread" d="M12 42 H68"/><circle class="thread" cx="40" cy="42" r="4"/>
+    </symbol>
+    <symbol id="cadeau" viewBox="0 0 80 80">
+      <rect class="stroke" x="14" y="34" width="52" height="32" rx="3"/><rect class="stroke" x="10" y="25" width="60" height="10" rx="2"/><path class="st-thread" d="M40 25 V66 M40 25 C30 12 21 21 32 25 M40 25 C50 12 59 21 48 25"/>
+    </symbol>
+    <symbol id="swap" viewBox="0 0 80 80">
+      <path class="stroke" d="M14 28 H62 M52 18 L62 28 L52 38"/><path class="st-thread" d="M66 52 H18 M28 42 L18 52 L28 62"/>
+    </symbol>
+    <symbol id="studio" viewBox="0 0 80 80">
+      <path class="stroke" d="M10 14 L32 20 V40 L10 46 Z"/><path class="stroke" d="M32 30 H38 M21 46 L14 72 M21 46 L28 72 M21 46 V72"/><path class="stroke" d="M54 72 H70 L68 58 H56 Z"/><path class="st-thread" d="M62 58 V34 M62 56 C62 46 54 42 50 38 M62 50 C62 42 70 40 74 36"/>
+    </symbol>
+    <symbol id="micro" viewBox="0 0 80 80">
+      <rect class="stroke" x="32" y="8" width="16" height="32" rx="8"/><path class="stroke" d="M24 32 C24 48 56 48 56 32 M40 48 V62 M30 62 H50"/><path class="st-thread" d="M14 20 C9 28 9 38 14 46 M66 20 C71 28 71 38 66 46"/>
+    </symbol>
+    <symbol id="oeil" viewBox="0 0 80 80">
+      <path class="stroke" d="M8 40 C20 22 60 22 72 40 C60 58 20 58 8 40 Z"/><circle class="thread" cx="40" cy="40" r="9"/><circle class="ink" cx="40" cy="40" r="3"/>
+    </symbol>
+    <symbol id="page" viewBox="0 0 80 80">
+      <rect class="paper" x="14" y="6" width="52" height="68" rx="5"/><rect class="stroke" x="14" y="6" width="52" height="68" rx="5"/><path class="st-mute" d="M14 18 H66"/><path class="stroke" d="M22 58 H58 M22 66 H46"/>
+    </symbol>
+    <symbol id="cadenas" viewBox="0 0 80 80">
+      <rect class="stroke" x="18" y="36" width="44" height="34" rx="5"/><path class="stroke" d="M28 36 V26 C28 12 52 12 52 26 V36"/><circle class="thread" cx="40" cy="52" r="5"/><path class="st-thread" d="M40 56 V62"/>
+    </symbol>
+    <symbol id="sablier" viewBox="0 0 80 80">
+      <path class="stroke" d="M20 10 H60 M20 70 H60 M24 10 C24 30 56 30 56 10 M24 70 C24 50 56 50 56 70 M24 10 C24 26 38 34 38 40 C38 46 24 54 24 70 M56 10 C56 26 42 34 42 40 C42 46 56 54 56 70"/><path class="thread" d="M30 66 C34 58 46 58 50 66 Z"/>
+    </symbol>
+    <symbol id="cash" viewBox="0 0 80 80">
+      <rect class="stroke" x="8" y="22" width="64" height="36" rx="4"/><circle class="thread" cx="40" cy="40" r="8"/><path class="st-thread" d="M17 31 V49 M63 31 V49"/>
+    </symbol>
+    <symbol id="camion" viewBox="0 0 80 80">
+      <rect class="stroke" x="6" y="22" width="40" height="32" rx="3"/><path class="stroke" d="M46 32 H60 L71 44 V54 H46 Z"/><circle class="paper" cx="20" cy="58" r="7"/><circle class="stroke" cx="20" cy="58" r="7"/><circle class="paper" cx="58" cy="58" r="7"/><circle class="stroke" cx="58" cy="58" r="7"/><path class="st-thread" d="M14 34 H36 M14 42 H30"/>
+    </symbol>
+    <symbol id="machine" viewBox="0 0 80 80">
+      <path class="stroke" d="M8 68 H72 M14 68 V60 H66 V68"/><path class="stroke" d="M20 60 V24 C20 18 24 15 30 15 H60 C64 15 66 18 66 22 V36 H56 V28 H32 V60"/><path class="stroke" d="M61 36 V46"/><path class="st-thread" d="M61 46 V56 M36 46 C42 40 48 50 54 44"/><circle class="thread" cx="44" cy="21" r="3"/>
+    </symbol>
+    <symbol id="agent" viewBox="0 0 80 80">
+      <rect class="stroke" x="18" y="24" width="44" height="36" rx="8"/><path class="stroke" d="M40 24 V15 M18 38 H12 V48 H18 M62 38 H68 V48 H62"/><circle class="thread" cx="40" cy="12" r="4"/><circle class="thread" cx="31" cy="40" r="4"/><circle class="thread" cx="49" cy="40" r="4"/><path class="st-thread" d="M32 51 H48"/>
+    </symbol>
+    <symbol id="loupe" viewBox="0 0 80 80">
+      <circle class="stroke" cx="34" cy="34" r="20"/><path class="stroke" style="stroke-width:5" d="M49 49 L68 68"/><path class="st-thread" d="M23 31 C25 25 30 22 35 22"/>
+    </symbol>
+    <symbol id="cahier" viewBox="0 0 80 80">
+      <rect class="stroke" x="20" y="10" width="46" height="60" rx="4"/><path class="st-thread" d="M28 10 V70"/><path class="stroke" d="M36 26 H58 M36 36 H58 M36 46 H52 M14 20 H24 M14 32 H24 M14 44 H24 M14 56 H24"/>
+    </symbol>
+    <symbol id="boussole" viewBox="0 0 80 80">
+      <circle class="stroke" cx="40" cy="40" r="28"/><path class="thread" d="M40 17 L46 40 L34 40 Z"/><path class="stroke" d="M34 40 L40 63 L46 40"/><circle class="ink" cx="40" cy="40" r="3"/>
+    </symbol>
+    <symbol id="escalier" viewBox="0 0 80 80">
+      <path class="stroke" d="M8 68 H24 V54 H40 V40 H56 V26 H72"/><path class="st-thread" d="M14 46 L32 28 M24 28 H32 V36"/>
+    </symbol>
+    <symbol id="abo" viewBox="0 0 60 60">
+      <rect class="stroke" x="18" y="4" width="24" height="12" rx="3"/><path class="st-mute" d="M30 16 V23 M14 23 H46 M14 23 V29 M46 23 V29"/><rect class="stroke" x="2" y="29" width="24" height="12" rx="3"/><rect class="stroke" x="34" y="29" width="24" height="12" rx="3"/><path class="st-thread" d="M14 41 V46 M46 41 V46"/><circle class="thread" cx="14" cy="52" r="5"/><circle class="thread" cx="46" cy="52" r="5"/>
+    </symbol>
+    <symbol id="cbo" viewBox="0 0 60 60">
+      <circle class="thread" cx="30" cy="7" r="5"/><path class="st-thread" d="M30 12 V15"/><rect class="stroke" x="18" y="15" width="24" height="12" rx="3"/><path class="st-thread" d="M30 27 V33 M14 33 H46 M14 33 V40 M46 33 V40"/><rect class="stroke" x="2" y="40" width="24" height="12" rx="3"/><rect class="stroke" x="34" y="40" width="24" height="12" rx="3"/>
+    </symbol>
+    <symbol id="tel" viewBox="0 0 60 100">
+      <rect class="paper" x="3" y="3" width="54" height="94" rx="9"/>
+      <rect class="stroke" x="3" y="3" width="54" height="94" rx="9"/>
+      <path class="stroke" d="M24 10 H36"/>
+    </symbol>
+    <symbol id="coupe" viewBox="0 0 60 60">
+      <path class="good" d="M16 8 H44 V20 C44 30 37 36 30 36 C23 36 16 30 16 20 Z"/>
+      <path class="good" d="M26 36 H34 V44 H40 V50 H20 V44 H26 Z"/>
+      <path style="fill:none;stroke:var(--good);stroke-width:3" d="M16 12 H8 C8 22 12 26 18 26 M44 12 H52 C52 22 48 26 42 26"/>
+    </symbol>
+    <symbol id="colis" viewBox="0 0 60 60">
+      <path class="stroke" d="M8 20 L30 10 L52 20 V44 L30 54 L8 44 Z M8 20 L30 30 L52 20 M30 30 V54"/>
+      <path class="st-thread" d="M19 15 L41 25"/>
+    </symbol>
+    <symbol id="clic" viewBox="0 0 60 60">
+      <path class="stroke" d="M22 12 V36 L16 30 C13 27 9 31 12 34 L24 48 H42 C46 48 48 44 48 40 V28 C48 24 42 24 42 28 V26 C42 22 36 22 36 26 V24 C36 20 30 20 30 24 V12 C30 8 22 8 22 12 Z"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="wrap" dir="rtl" lang="ar">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="pc" viewBox="0 0 80 80"><rect class="stroke" x="14" y="14" width="52" height="38" rx="4"/><path class="stroke" d="M6 64 H74 L67 56 H13 Z"/><path class="st-thread" d="M25 27 L33 33 L25 39 M37 41 H49"/></symbol>
+  <symbol id="term" viewBox="0 0 80 80"><rect class="stroke" x="8" y="14" width="64" height="52" rx="5"/><path class="st-mute" d="M8 25 H72"/><path class="st-thread" d="M18 37 L27 43 L18 49 M31 53 H45"/></symbol>
+  <symbol id="drive" viewBox="0 0 80 80"><path class="stroke" d="M29 12 H51 L73 51 L62 69 H18 L7 51 Z"/><path class="st-thread" d="M29 12 L51 51 H73 M7 51 L19 30"/></symbol>
+</defs></svg>
+<style>
+.axmap{list-style:none;margin:16px 0 0;padding:16px;display:grid;grid-template-columns:repeat(5,1fr);gap:18px 10px;border:1.5px solid var(--line);border-radius:16px;background:var(--panel)}
+.axmap li{position:relative;min-width:0}
+.axmap li:not(:last-child):not(:nth-child(5))::after{content:"←";position:absolute;left:-10px;top:28px;font-weight:700;color:var(--ink)}
+.axmap a{display:flex;flex-direction:column;align-items:center;gap:6px;text-decoration:none;color:var(--ink);text-align:center}
+.axmap .ax-c{width:70px;height:70px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;position:relative}
+.axmap .ax-k{position:absolute;top:-6px;right:-6px;font-family:var(--f-mono);font-weight:500;font-size:.8rem;background:var(--ink);color:var(--panel);border-radius:999px;min-width:24px;height:24px;display:grid;place-items:center;direction:ltr}
+.axmap .ax-c svg{width:44px;height:44px}
+.axmap .ax-t{font-family:var(--f-display);font-weight:600;font-size:.95rem}
+@media (max-width:640px){.axmap{grid-template-columns:repeat(3,1fr)}.axmap li::after{display:none}}
+.launch{margin:14px 0 0;border:1.5px solid var(--line);border-radius:14px;background:var(--panel);padding:12px 14px}
+.launch p{margin:4px 0}
+.launch .lh{font-family:var(--f-display);font-weight:600;color:var(--thread)}
+.rq .lat,.nd .lat,.launch .lat{white-space:nowrap}
+.station .tbl-wrap{margin-top:14px}
+.nope{margin:14px 0 0;padding:10px 14px;border:1.5px dashed var(--line);border-radius:14px;color:var(--mute)}
+.nope b{color:var(--ink)}
+@media (max-width:640px){.station .tbl{min-width:0;font-size:.82rem}.station .tbl th,.station .tbl td{padding:6px 8px}.station .tbl td{overflow-wrap:anywhere}}
+</style>
+
+<header class="hero">
+  <div class="txt">
+    <span class="eyebrow">التكوين · الجزء الثاني</span>
+    <h1>الأجونات، واحد بواحد</h1>
+    <p>كل أجون : واش يدير، حكاية صغيرة، شحال يدّيلك وقت باليد وشحال تربح بيه، وكيفاش تزيدلو حاجة ولا تبدّلو.</p>
+  </div>
+  <figure><svg viewBox="0 0 80 80" role="img" aria-label="أجون"><use href="#agent"/></svg><figcaption>ثمن أجونات، وكلمتك فوقهم</figcaption></figure>
+</header>
+
+<section class="station" aria-labelledby="map">
+  <div class="station-h"><span class="step">الخريطة</span><h2 id="map">بالترتيب تاع الطريق</h2></div>
+  <ol class="axmap ax10" aria-label="الأجونات بالترتيب">
+    <li><a href="#a0"><span class="ax-c"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#agent"/></svg><b class="ax-k">0</b></span><span class="ax-t">الطريقتين</span></a></li>
+    <li><a href="#a1"><span class="ax-c"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#loupe"/></svg><b class="ax-k">1</b></span><span class="ax-t">السباي</span></a></li>
+    <li><a href="#a2"><span class="ax-c"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#oeil"/></svg><b class="ax-k">2</b></span><span class="ax-t">الإنغاجمان</span></a></li>
+    <li><a href="#a3"><span class="ax-c"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#studio"/></svg><b class="ax-k">3</b></span><span class="ax-t">المونتاج</span></a></li>
+    <li><a href="#a4"><span class="ax-c"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#page"/></svg><b class="ax-k">4</b></span><span class="ax-t">الصفحة</span></a></li>
+    <li><a href="#a5"><span class="ax-c"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#clic"/></svg><b class="ax-k">5</b></span><span class="ax-t">التيست</span></a></li>
+    <li><a href="#a6"><span class="ax-c"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#vendeur"/></svg><b class="ax-k">6</b></span><span class="ax-t">الكوتش</span></a></li>
+    <li><a href="#a7"><span class="ax-c"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#escalier"/></svg><b class="ax-k">7</b></span><span class="ax-t">السكالينغ</span></a></li>
+    <li><a href="#a8"><span class="ax-c"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#cahier"/></svg><b class="ax-k">8</b></span><span class="ax-t">المانجر</span></a></li>
+    <li><a href="#a9"><span class="ax-c"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#swap"/></svg><b class="ax-k">9</b></span><span class="ax-t">تزيد وتبدّل</span></a></li>
+  </ol>
+</section>
+
+<section class="station" aria-labelledby="a0">
+  <div class="station-h"><span class="num">0</span><span class="step">الطريقتين</span><h2 id="a0">زوج طرق، بنفس الأجونات</h2><span class="lat">Auto · Manuel</span><span class="mod" title="الموديل في البلان">M14 · M17</span></div>
+  <aside class="rq" aria-label="رؤوس أقلام">
+    <p class="rq-h">رؤوس أقلام</p>
+    <ul>
+      <li><span class="n">0.1</span> الأوتوماتيك : تبعث لينك الدرايف للروبو، والمكتب يمشّي الأجونات واحد ورا لاخر.</li>
+      <li><span class="n">0.2</span> اليدوي : ديسكيسيون جديدة في «&nbsp;<span class="lat">Code</span>&nbsp;»، تكتب / وتختار الأجون.</li>
+      <li><span class="n">0.3</span> الدراهم يحسبهم الكود، ماشي <span class="lat">Claude</span>. والقرار ديما بكلمتك.</li>
+    </ul>
+  </aside>
+  <div class="pro" role="group" aria-label="الطريقتين">
+    <p class="box-h">الشيما</p>
+    <div class="chips"><span class="chip"><b class="lat">Auto</b>المكتب وتيليغرام</span><span class="chip"><b class="lat">Manuel</b>أجون في كل ديسكيسيون</span></div>
+    <div class="minirow"><figure class="nd" data-i="1"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#drive"/></svg><figcaption><b>الدرايف</b><span>لينك واحد</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="2"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#studio"/></svg><figcaption><b>المونتاج</b><span>عشرة فيديوات</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="3"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#page"/></svg><figcaption><b>الصفحة</b><span>في Tassyir</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="4"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#clic"/></svg><figcaption><b>التيست</b><span>محبوس</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="5"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#vendeur"/></svg><figcaption><b>الكوتش</b><span>الصوت الوحيد</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="6"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#escalier"/></svg><figcaption><b>السكالينغ</b><span>بكلمتك</span></figcaption></figure></div>
+  </div>
+  <div class="tbl-wrap"><table class="tbl" lang="fr" dir="ltr">
+    <caption>Les huit agents</caption>
+    <thead><tr><th>Agent</th><th>Commande (mode manuel)</th><th>Dans le bureau automatique</th></tr></thead>
+    <tbody>
+<tr><th>Spy</th><td>/ecom-manita:spy</td><td>non : manuel (Telegram en option)</td></tr>
+<tr><th>Engagement</th><td>/ecom-manita:engagement</td><td>non : manuel</td></tr>
+<tr><th>Éditeur</th><td>/ecom-manita:editeur</td><td>oui : dès le lien Drive</td></tr>
+<tr><th>Page</th><td>/ecom-manita:page</td><td>oui : après le montage</td></tr>
+<tr><th>Testing</th><td>/ecom-manita:testing</td><td>oui : après la page, campagne en pause</td></tr>
+<tr><th>Coach</th><td>/ecom-manita:coach</td><td>oui : rapport du soir à partir du 3e jour</td></tr>
+<tr><th>Scaling</th><td>/ecom-manita:scaling</td><td>oui : après le coach</td></tr>
+<tr><th>Manager</th><td>/ecom-manita:manager</td><td>oui : il enchaîne les autres ; le coach parle au client</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="station" aria-labelledby="a1">
+  <div class="station-h"><span class="num">1</span><span class="step">السباي</span><h2 id="a1">السباي : شكون يبيع بالصح في بلاد</h2><span class="lat">Ad Library</span><span class="mod" title="الموديل في البلان">M4</span></div>
+  <aside class="rq" aria-label="رؤوس أقلام">
+    <p class="rq-h">رؤوس أقلام</p>
+    <ul>
+      <li><span class="n">1.1</span> يقرا البوب تاع اللبسة في المكتبة تاع ميتا، على الشهر لي فات.</li>
+      <li><span class="n">1.2</span> يقرا التواريخ : شكون يتيستي، شكون يسكالي بالسلعة، وشكون خيّط من بعد التيست.</li>
+      <li><span class="n">1.3</span> يقرا برك : ما يحمّلش الفيديوات وما يخمّنش السومة.</li>
+    </ul>
+  </aside>
+  <div class="pro" role="group" aria-label="السباي">
+    <p class="box-h">الشيما</p>
+    <div class="chips"><span class="chip"><b class="lat">Ad Library</b>المكتبة</span><span class="chip"><b class="lat">Verdict</b>الحكم</span></div>
+    <div class="minirow"><figure class="nd" data-i="1"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#bulle"/></svg><figcaption><b>spy dz</b><span>كلمة وحدة</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="2"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#loupe"/></svg><figcaption><b>المكتبة</b><span>البوب تاع البلاد</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="3"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#calendrier"/></svg><figcaption><b>التواريخ</b><span>الموجات والفراغات</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="4"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#coupe"/></svg><figcaption><b>الحكم</b><span>تيست، ستوك، إنتاج</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="5"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#cahier"/></svg><figcaption><b>الرابور</b><span>تصاور الموديلات</span></figcaption></figure></div>
+  </div>
+  <div class="launch"><p class="box-h">كيفاش يتلانسا</p><p><span class="lh">الأوتوماتيك :</span> ما كانش، يخدم في اليدوي برك.</p><p><span class="lh">اليدوي :</span> ديسكيسيون جديدة في «&nbsp;<span class="lat">Code</span>&nbsp;»، وتكتب <span class="lat">/ecom-manita:spy</span></p></div>
+  <div class="story">
+    <p class="box-h">نشرحها بحكاية</p>
+    <p class="story-t">لي حسب الإعلانات</p>
+    <p>زوج تجار، يقلّبو على موديل يخيّطوه.</p>
+    <div class="duo">
+      <div class="side ko"><p class="side-h"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#vendeur"/></svg>الأول : تاجر</p>
+        <p>شاف بوتيك عندها بزاف تاع البوب على عباية، وقال : هاذي رابحة.</p>
+        <p>خيّط نفس العباية بلا ما يشوف التواريخ.</p>
+        <p class="res">بعد شهر : البوب تاع البوتيك حبسو. كان غير تيست، والسلعة بقات عندو.</p></div>
+      <div class="side ok"><p class="side-h"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#vendeur"/></svg>الثاني : تاجر</p>
+        <p>لانسا السباي، وقرا التواريخ.</p>
+        <p>لقى بوتيك حبست شوية، ورجعت بأكثر بوب على نفس الموديل.</p>
+        <p class="res">بعد شهر : عرف بلي هاذيك البوتيك خيّطت من بعد التيست، وتيستا نفس النوع قبل ما يخيّط.</p></div>
+    </div>
+    <p>نفس السوق، نفس الشهر. الفرق بلي واحد حسب الإعلانات، والآخر قرا التواريخ.</p>
+    <p class="jomla"><b>الجملة :</b> التواريخ تقولك شكون يبيع، ماشي عدد الإعلانات.</p>
+  </div>
+  <p class="nope"><b>واش ما يديرش :</b> ما يمسّ حتى كونت، ما يحسبش المارج، وما يقولكش شحال باعو : يقرا التواريخ برك.</p>
+  <div class="tbl-wrap"><table class="tbl" lang="fr" dir="ltr">
+    <caption>Le temps : à la main contre avec l’agent (estimation, à corriger avec ton chrono)</caption>
+    <thead><tr><th>Travail</th><th>À la main</th><th>Avec l’agent : ton temps</th></tr></thead>
+    <tbody>
+<tr><th>Lire un pays sur 30 jours</th><td>page par page, date par date : plusieurs jours</td><td>un mot ; le PC lit de 15 à 40 min</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="station" aria-labelledby="a2">
+  <div class="station-h"><span class="num">2</span><span class="step">الإنغاجمان</span><h2 id="a2">الإنغاجمان : واش يجبد الناس في إنستغرام</h2><span class="lat">Engagement</span><span class="mod" title="الموديل في البلان">M5</span></div>
+  <aside class="rq" aria-label="رؤوس أقلام">
+    <p class="rq-h">رؤوس أقلام</p>
+    <ul>
+      <li><span class="n">2.1</span> يقرا ليستة بروفايلات إنستغرام، بالباب الرسمي تاع ميتا.</li>
+      <li><span class="n">2.2</span> يخلّي غير الفيديوات لي فاتو الحد تاع المشاهدات في الشهر، ويرتّب البروفايلات.</li>
+      <li><span class="n">2.3</span> المشاهدات ماشي مبيعات : يقولك واش يجبد، ماشي واش يبيع.</li>
+    </ul>
+  </aside>
+  <div class="pro" role="group" aria-label="الإنغاجمان">
+    <p class="box-h">الشيما</p>
+    <div class="chips"><span class="chip"><b class="lat">Instagram</b></span><span class="chip"><b class="lat">Reels</b>الفيديوات</span><span class="chip"><b class="lat">Business Discovery</b>الباب الرسمي</span></div>
+    <div class="minirow"><figure class="nd" data-i="1"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#oeil"/></svg><figcaption><b>البروفايلات</b><span>الليستة</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="2"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#cadenas"/></svg><figcaption><b>المفتاح</b><span>في الفيشي</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="3"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#sablier"/></svg><figcaption><b>القراية</b><span>بالشوية</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="4"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#etoile"/></svg><figcaption><b>لي فاتو الحد</b><span>يتخلّاو</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="5"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#cahier"/></svg><figcaption><b>الجدول</b><span>وصفحة بكليك</span></figcaption></figure></div>
+  </div>
+  <div class="launch"><p class="box-h">كيفاش يتلانسا</p><p><span class="lh">الأوتوماتيك :</span> ما كانش، يخدم في اليدوي برك.</p><p><span class="lh">اليدوي :</span> ديسكيسيون جديدة في «&nbsp;<span class="lat">Code</span>&nbsp;»، وتكتب <span class="lat">/ecom-manita:engagement</span></p></div>
+  <div class="story">
+    <p class="box-h">نشرحها بحكاية</p>
+    <p class="story-t">لي حسب المشاهدات بيعة</p>
+    <p>زوج تجار، شافو نفس الريل فيه بزاف تاع المشاهدات.</p>
+    <div class="duo">
+      <div class="side ko"><p class="side-h"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#vendeur"/></svg>الأول : تاجر</p>
+        <p>قال : الموديل هذا يبيع.</p>
+        <p>خيّط بزاف قطع مرة وحدة.</p>
+        <p class="res">بعد شهر : الناس تفرّجو في الفيديو، بصح قلال لي شراو. السلعة بقات.</p></div>
+      <div class="side ok"><p class="side-h"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#vendeur"/></svg>الثاني : تاجر</p>
+        <p>حط البروفايل في الليستة تاع الإنغاجمان مع لخرين.</p>
+        <p>خيّط قطعة للتصوير، ودار تيست قبل الستوك.</p>
+        <p class="res">بعد شهر : التيست قالو شحال تأكّد، وخيّط على قد المأكّدات.</p></div>
+    </div>
+    <p>نفس الريل، نفس المشاهدات. الفرق بلي واحد حسبها بيعة، والآخر حسبها فكرة يجرّبها.</p>
+    <p class="jomla"><b>الجملة :</b> المشاهدات تقولك واش يجبد، والتيست يقولك واش يبيع.</p>
+  </div>
+  <p class="nope"><b>واش ما يديرش :</b> ما يدخلش بكلمة سر، ما يحمّلش فيديوات الناس، وما يمسّ حتى كونت.</p>
+  <div class="tbl-wrap"><table class="tbl" lang="fr" dir="ltr">
+    <caption>Le temps : à la main contre avec l’agent (estimation, à corriger avec ton chrono)</caption>
+    <thead><tr><th>Travail</th><th>À la main</th><th>Avec l’agent : ton temps</th></tr></thead>
+    <tbody>
+<tr><th>Lire 100 profils</th><td>ouvrir chaque profil et chaque reel : ≈ 5 à 8 h</td><td>coller la liste une fois ; la lecture tourne seule, plus lente quand Meta compte</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="station" aria-labelledby="a3">
+  <div class="station-h"><span class="num">3</span><span class="step">المونتاج</span><h2 id="a3">المونتاج : بزاف فيديوات من لينك واحد</h2><span class="lat">Éditeur</span><span class="mod" title="الموديل في البلان">M7</span></div>
+  <aside class="rq" aria-label="رؤوس أقلام">
+    <p class="rq-h">رؤوس أقلام</p>
+    <ul>
+      <li><span class="n">3.1</span> ياخذ الشوتينغ من الدرايف، ويفرز الموديلات واللونات.</li>
+      <li><span class="n">3.2</span> يمونطي عشرة فيديوات لكل موديل : موسيقى مختلفة وكتابة مختلفة في كل وحدة.</li>
+      <li><span class="n">3.3</span> يشوف كل فيديو قبل ما يعطيهولك، وانت تأكّد اللونات.</li>
+    </ul>
+  </aside>
+  <div class="pro" role="group" aria-label="المونتاج">
+    <p class="box-h">الشيما</p>
+    <div class="chips"><span class="chip"><b class="lat">Drive</b></span><span class="chip"><b class="lat">Hook</b>الثانية الأولى</span><span class="chip"><b class="lat">POV</b>الكتابة</span></div>
+    <div class="minirow"><figure class="nd" data-i="1"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#drive"/></svg><figcaption><b>الدرايف</b><span>لينك عام</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="2"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#cintre"/></svg><figcaption><b>الموديلات</b><span>تأكّد على تصويرة</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="3"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#style"/></svg><figcaption><b>اللونات</b><span>انت تسمّيهم</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="4"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#studio"/></svg><figcaption><b>المونتاج</b><span>موسيقى وكتابة</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="5"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#tel"/></svg><figcaption><b>الألبوم</b><span>في تيليغرام</span></figcaption></figure></div>
+  </div>
+  <div class="launch"><p class="box-h">كيفاش يتلانسا</p><p><span class="lh">الأوتوماتيك :</span> تبعث لينك الدرايف للروبو، والمكتب يبدا بيه.</p><p><span class="lh">اليدوي :</span> ديسكيسيون جديدة في «&nbsp;<span class="lat">Code</span>&nbsp;»، وتكتب <span class="lat">/ecom-manita:editeur</span></p></div>
+  <div class="story">
+    <p class="box-h">نشرحها بحكاية</p>
+    <p class="story-t">لي مونطى فيديو واحد</p>
+    <p>زوج تجار، نفس الشوتينغ، نفس البودجي.</p>
+    <div class="duo">
+      <div class="side ko"><p class="side-h"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#vendeur"/></svg>الأول : تاجر</p>
+        <p>مونطى فيديو واحد بيدو في ليلة كاملة.</p>
+        <p>طلّقو، وما جابش.</p>
+        <p class="res">بعد سمانة : قال الموديل ما يبيعش، وحبسو.</p></div>
+      <div class="side ok"><p class="side-h"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#vendeur"/></svg>الثاني : تاجر</p>
+        <p>بعث اللينك، وجاوه بزاف فيديوات بموسيقى وكتابة مختلفين.</p>
+        <p>تيستا بزاف منهم.</p>
+        <p class="res">بعد سمانة : لقى الفيديو لي يجيب، والموديل كمّل.</p></div>
+    </div>
+    <p>نفس الموديل، نفس الدراهم. الفرق بلي واحد حكم على الموديل بفيديو واحد.</p>
+    <p class="jomla"><b>الجملة :</b> الموديل ما يتحكمش عليه بفيديو واحد.</p>
+  </div>
+  <p class="nope"><b>واش ما يديرش :</b> ما ينشر والو، ما يخلق حتى بوب، وما يمسح حتى فيشي : الزايد يتحط على جنب.</p>
+  <div class="tbl-wrap"><table class="tbl" lang="fr" dir="ltr">
+    <caption>Le temps : à la main contre avec l’agent (estimation, à corriger avec ton chrono)</caption>
+    <thead><tr><th>Travail</th><th>À la main</th><th>Avec l’agent : ton temps</th></tr></thead>
+    <tbody>
+<tr><th>10 vidéos par mannequin</th><td>à la main : ≈ 30 min à 1 h par vidéo, donc 5 à 10 h</td><td>envoyer le lien, confirmer les couleurs : quelques minutes</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="station" aria-labelledby="a4">
+  <div class="station-h"><span class="num">4</span><span class="step">الصفحة</span><h2 id="a4">الصفحة في <span class="lat">Tassyir</span> : التصاور، النصوص، و SKU</h2><span class="lat">Page</span><span class="mod" title="الموديل في البلان">M10</span></div>
+  <aside class="rq" aria-label="رؤوس أقلام">
+    <p class="rq-h">رؤوس أقلام</p>
+    <ul>
+      <li><span class="n">4.1</span> يبني الصفحة : التصاور بالدور، النصوص بالدارجة، و <span class="lat">SKU</span> لكل لون وكل مقاس.</li>
+      <li><span class="n">4.2</span> يأكّد معاك الاسم، السومة، واللونات، ويفحص بلي الموديل ما كانش من قبل.</li>
+      <li><span class="n">4.3</span> الصفحة تتخلق مخبّية، تتقرا، ومن بعد تتنشر ويعطيك اللينك.</li>
+    </ul>
+  </aside>
+  <div class="pro" role="group" aria-label="الصفحة">
+    <p class="box-h">الشيما</p>
+    <div class="chips"><span class="chip"><b class="lat">SKU</b>لون ومقاس</span><span class="chip"><b class="lat">Landing page</b>صفحة الموديل</span></div>
+    <div class="minirow"><figure class="nd" data-i="1"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#cintre"/></svg><figcaption><b>الاسم والسومة</b><span>انت تأكّد</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="2"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#style"/></svg><figcaption><b>التصاور</b><span>لون ورا لون</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="3"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#bulle"/></svg><figcaption><b>النصوص</b><span>بالدارجة</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="4"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#page"/></svg><figcaption><b>SKU</b><span>لون بلون، مقاس بمقاس</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="5"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#cadenas"/></svg><figcaption><b>مخبّية</b><span>تتقرا قبل ما تتنشر</span></figcaption></figure></div>
+  </div>
+  <div class="launch"><p class="box-h">كيفاش يتلانسا</p><p><span class="lh">الأوتوماتيك :</span> المكتب يديرها من بعد المونتاج.</p><p><span class="lh">اليدوي :</span> ديسكيسيون جديدة في «&nbsp;<span class="lat">Code</span>&nbsp;»، وتكتب <span class="lat">/ecom-manita:page</span></p></div>
+  <div class="story">
+    <p class="box-h">نشرحها بحكاية</p>
+    <p class="story-t">لي نسا مقاس</p>
+    <p>زوج تجار، نفس العباية بثلاث لونات وأربع مقاسات.</p>
+    <div class="duo">
+      <div class="side ko"><p class="side-h"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#vendeur"/></svg>الأول : تاجر</p>
+        <p>دار الصفحة بيدو في الليل، ونسا مقاس في لون.</p>
+        <p>زبونة كوموندات مقاس ما كانش في الستوك.</p>
+        <p class="res">بعد سمانة : الكوموند تلغات، والزبونة ما رجعتش.</p></div>
+      <div class="side ok"><p class="side-h"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#vendeur"/></svg>الثاني : تاجر</p>
+        <p>الأجون دار كل لون وكل مقاس وحدو، بالستوك تاعو.</p>
+        <p>قرا الصفحة قبل ما ينشرها.</p>
+        <p class="res">بعد سمانة : كل كوموند جات على حاجة كاينة.</p></div>
+    </div>
+    <p>نفس الموديل، نفس الصفحة. الفرق بلي واحد خلّى الستوك يتحسب وحدو.</p>
+    <p class="jomla"><b>الجملة :</b> الصفحة الصحيحة تمنع الكوموند الغالطة قبل ما تصرا.</p>
+  </div>
+  <p class="nope"><b>واش ما يديرش :</b> ما يأكّدش ولا يبعث كوموند، ما يمسح والو، وما يمسّ ميتا.</p>
+  <div class="tbl-wrap"><table class="tbl" lang="fr" dir="ltr">
+    <caption>Le temps : à la main contre avec l’agent (estimation, à corriger avec ton chrono)</caption>
+    <thead><tr><th>Travail</th><th>À la main</th><th>Avec l’agent : ton temps</th></tr></thead>
+    <tbody>
+<tr><th>Une page, 3 couleurs × 4 tailles (12 SKU)</th><td>photos, textes, SKU un par un : ≈ 1 à 2 h</td><td>confirmer nom, prix, couleurs : ≈ 5 min</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="station" aria-labelledby="a5">
+  <div class="station-h"><span class="num">5</span><span class="step">التيست</span><h2 id="a5">التيست : يحسب، يحضّر محبوس، ويستنى كلمتك</h2><span class="lat">Testing</span><span class="mod" title="الموديل في البلان">M11 · M12</span></div>
+  <aside class="rq" aria-label="رؤوس أقلام">
+    <p class="rq-h">رؤوس أقلام</p>
+    <ul>
+      <li><span class="n">5.1</span> يحسب البريك إيفن قبل ما يتصرف حتى دينار.</li>
+      <li><span class="n">5.2</span> يخلق الكومبانيا في ميتا محبوسة : فيديو في كل أدسات، والبودجي تحت السقف تاعك.</li>
+      <li><span class="n">5.3</span> ما يشعل والو بلا «&nbsp;لانسي&nbsp;». ومن بعد كل عشية رابور، وفي النهار الثالث الحكم.</li>
+    </ul>
+  </aside>
+  <div class="pro" role="group" aria-label="التيست">
+    <p class="box-h">الشيما</p>
+    <div class="chips"><span class="chip"><b class="lat">Break-even</b>لا ربح لا خسارة</span><span class="chip"><b class="lat">PAUSED</b>محبوس</span><span class="chip"><b class="lat">ABO</b>للتيست</span></div>
+    <div class="minirow"><figure class="nd" data-i="1"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#cash"/></svg><figcaption><b>البريك إيفن</b><span>قبل أول دينار</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="2"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#studio"/></svg><figcaption><b>الفيديوات</b><span>تروح لميتا</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="3"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#cadenas"/></svg><figcaption><b>الكومبانيا</b><span>محبوسة</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="4"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#clic"/></svg><figcaption><b>«&nbsp;لانسي&nbsp;»</b><span>كلمتك</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="5"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#cahier"/></svg><figcaption><b>كل عشية</b><span>الرابور</span></figcaption></figure></div>
+  </div>
+  <div class="launch"><p class="box-h">كيفاش يتلانسا</p><p><span class="lh">الأوتوماتيك :</span> من بعد الصفحة، سؤال «&nbsp;لانسي&nbsp;» واحد في تيليغرام للوط كامل.</p><p><span class="lh">اليدوي :</span> ديسكيسيون جديدة في «&nbsp;<span class="lat">Code</span>&nbsp;»، وتكتب <span class="lat">/ecom-manita:testing</span></p></div>
+  <div class="story">
+    <p class="box-h">نشرحها بحكاية</p>
+    <p class="story-t">لي شعّل قبل ما يحسب</p>
+    <p>زوج تجار، نفس العباية، نفس البودجي.</p>
+    <div class="duo">
+      <div class="side ko"><p class="side-h"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#vendeur"/></svg>الأول : تاجر</p>
+        <p>شعّل البوب نهار جات الفيديوات.</p>
+        <p>من بعد حسب، ولقى بلي بهاذ السومة كل كولي يخسّرو.</p>
+        <p class="res">بعد سمانة : الدراهم راحو، والحساب جا متأخر.</p></div>
+      <div class="side ok"><p class="side-h"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#vendeur"/></svg>الثاني : تاجر</p>
+        <p>الأجون حسب قبل، وقالو أقل سومة تخلّيه يربح.</p>
+        <p>بدّل السومة، والكومبانيا بقات محبوسة حتى قال «&nbsp;لانسي&nbsp;».</p>
+        <p class="res">بعد سمانة : عرف من النهار الأول شحال يقدر يصرف على كل مأكّدة.</p></div>
+    </div>
+    <p>نفس الموديل، نفس الدراهم. الفرق بلي واحد حسب قبل الدينار الأول.</p>
+    <p class="jomla"><b>الجملة :</b> احسب قبل ما تصرف، وخلّي الكومبانيا محبوسة حتى تقول كلمتك.</p>
+  </div>
+  <p class="nope"><b>واش ما يديرش :</b> ما يشعل بلا «&nbsp;لانسي&nbsp;» («&nbsp;واه&nbsp;» ما تحسبش)، ما يمسح والو في ميتا، وفي <span class="lat">Tassyir</span> يقرا برك.</p>
+  <div class="tbl-wrap"><table class="tbl" lang="fr" dir="ltr">
+    <caption>Le temps : à la main contre avec l’agent (estimation, à corriger avec ton chrono)</caption>
+    <thead><tr><th>Travail</th><th>À la main</th><th>Avec l’agent : ton temps</th></tr></thead>
+    <tbody>
+<tr><th>Préparer un test</th><td>calcul Excel, envoi des vidéos, textes, campagne et liens : ≈ 1 à 2 h</td><td>répondre aux questions, puis <bdi dir="rtl" lang="ar">«&nbsp;لانسي&nbsp;»</bdi></td></tr>
+<tr><th>Lire chaque soir</th><td>≈ 20 à 30 min par soir</td><td>le rapport arrive tout seul</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="station" aria-labelledby="a6">
+  <div class="station-h"><span class="num">6</span><span class="step">الكوتش</span><h2 id="a6">الكوتش : الصوت لي يقولك الصح بالأرقام</h2><span class="lat">Coach</span><span class="mod" title="الموديل في البلان">M16</span></div>
+  <aside class="rq" aria-label="رؤوس أقلام">
+    <p class="rq-h">رؤوس أقلام</p>
+    <ul>
+      <li><span class="n">6.1</span> يعاود يحسب بالأرقام لي صراو بالصح : التأكيد، التوصيل، والسومة على الكولي الواصل.</li>
+      <li><span class="n">6.2</span> يقولك واش تخيّط، وشحال من قطعة لكل لون : باب الإنتاج.</li>
+      <li><span class="n">6.3</span> يحل ولا يسكّر باب السكالينغ، ويقول «&nbsp;رأيي&nbsp;». القرار تاعك.</li>
+    </ul>
+  </aside>
+  <div class="pro" role="group" aria-label="الكوتش">
+    <p class="box-h">الشيما</p>
+    <div class="chips"><span class="chip"><b class="lat">Coach</b>الكوتش</span><span class="chip"><b class="lat">ROAS</b>على الكاش لي رجع</span></div>
+    <div class="minirow"><figure class="nd" data-i="1"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#loupe"/></svg><figcaption><b>الأرقام الحقيقية</b><span>التأكيد والتوصيل</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="2"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#machine"/></svg><figcaption><b>باب الإنتاج</b><span>المأكّدات الكافية</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="3"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#escalier"/></svg><figcaption><b>باب السكالينغ</b><span>يتحل ولا يتسكّر</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="4"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#bulle"/></svg><figcaption><b>«&nbsp;رأيي&nbsp;»</b><span>وانت تقرر</span></figcaption></figure></div>
+  </div>
+  <div class="launch"><p class="box-h">كيفاش يتلانسا</p><p><span class="lh">الأوتوماتيك :</span> من النهار الثالث، في الرابور تاع العشية.</p><p><span class="lh">اليدوي :</span> ديسكيسيون جديدة في «&nbsp;<span class="lat">Code</span>&nbsp;»، وتكتب <span class="lat">/ecom-manita:coach</span></p></div>
+  <div class="story">
+    <p class="box-h">نشرحها بحكاية</p>
+    <p class="story-t">لي حكم بالإحساس</p>
+    <p>زوج تجار، نفس الموديل، نفس النتائج في ميتا.</p>
+    <div class="duo">
+      <div class="side ko"><p class="side-h"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#vendeur"/></svg>الأول : تاجر</p>
+        <p>حس بلي الموديل ما يبيعش، وحبس البوب.</p>
+        <p>ما شافش الأرقام تاع التأكيد.</p>
+        <p class="res">بعد سمانة : عرف بلي الكوموندات كانو مليحين، والمشكل كان في التيليفون.</p></div>
+      <div class="side ok"><p class="side-h"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#vendeur"/></svg>الثاني : تاجر</p>
+        <p>سقسى الكوتش.</p>
+        <p>الكوتش قرا الأرقام : البوب مليحة، والتأكيد ضعيف.</p>
+        <p class="res">بعد سمانة : صلّح التأكيد، وخلّى الموديل يكمّل.</p></div>
+    </div>
+    <p>نفس الموديل، نفس النتائج. الفرق بلي واحد قرا الأرقام قبل ما يحبس.</p>
+    <p class="jomla"><b>الجملة :</b> الكوتش يوريك وين المشكل، والقرار يبقى تاعك.</p>
+  </div>
+  <p class="nope"><b>واش ما يديرش :</b> ما يحبس والو وحدو، ما يكتب في <span class="lat">Tassyir</span> بلا «&nbsp;واه&nbsp;»، وما يوعدش بالبيع.</p>
+  <div class="tbl-wrap"><table class="tbl" lang="fr" dir="ltr">
+    <caption>Le temps : à la main contre avec l’agent (estimation, à corriger avec ton chrono)</caption>
+    <thead><tr><th>Travail</th><th>À la main</th><th>Avec l’agent : ton temps</th></tr></thead>
+    <tbody>
+<tr><th>Calculer les vrais taux et les portes</th><td>Excel chaque soir : ≈ 30 min</td><td>le rapport du soir les donne</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="station" aria-labelledby="a7">
+  <div class="station-h"><span class="num">7</span><span class="step">السكالينغ</span><h2 id="a7">السكالينغ : يكبّر غير الرابح، على قد السلعة</h2><span class="lat">Scaling</span><span class="mod" title="الموديل في البلان">M13</span></div>
+  <aside class="rq" aria-label="رؤوس أقلام">
+    <p class="rq-h">رؤوس أقلام</p>
+    <ul>
+      <li><span class="n">7.1</span> يحسب شحال تقدر تصرف في النهار على حساب السلعة لي عندك.</li>
+      <li><span class="n">7.2</span> يختار الإعلان الرابح، ويحضّر كومبانيا <span class="lat">CBO</span> جديدة بنفس البوست، محبوسة.</li>
+      <li><span class="n">7.3</span> يطلّع البودجي بالدرجات، غير بكلمة «&nbsp;طلّع&nbsp;».</li>
+    </ul>
+  </aside>
+  <div class="pro" role="group" aria-label="السكالينغ">
+    <p class="box-h">الشيما</p>
+    <div class="chips"><span class="chip"><b class="lat">CBO</b>ميتا تقسم</span><span class="chip"><b class="lat">Post ID</b>نفس البوست</span></div>
+    <div class="minirow"><figure class="nd" data-i="1"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#colis"/></svg><figcaption><b>السلعة</b><span>السقف في النهار</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="2"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#coupe"/></svg><figcaption><b>الرابح</b><span>الأرخص</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="3"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#cbo"/></svg><figcaption><b>CBO</b><span>نفس البوست</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="4"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#escalier"/></svg><figcaption><b>«&nbsp;طلّع&nbsp;»</b><span>بالدرجات</span></figcaption></figure></div>
+  </div>
+  <div class="launch"><p class="box-h">كيفاش يتلانسا</p><p><span class="lh">الأوتوماتيك :</span> من بعد الكوتش، كي يتحل باب السكالينغ.</p><p><span class="lh">اليدوي :</span> ديسكيسيون جديدة في «&nbsp;<span class="lat">Code</span>&nbsp;»، وتكتب <span class="lat">/ecom-manita:scaling</span></p></div>
+  <div class="story">
+    <p class="box-h">نشرحها بحكاية</p>
+    <p class="story-t">لي ضاعف في ليلة</p>
+    <p>زوج تجار، نفس الفيديو الرابح.</p>
+    <div class="duo">
+      <div class="side ko"><p class="side-h"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#vendeur"/></svg>الأول : تاجر</p>
+        <p>نهار رابح، ضاعف البودجي في الليل.</p>
+        <p>الكوست طلع، والسلعة خلصت قبل ما تخيّط الورشة.</p>
+        <p class="res">بعد سمانة : الربح تاع النهار الرابح راح.</p></div>
+      <div class="side ok"><p class="side-h"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#vendeur"/></svg>الثاني : تاجر</p>
+        <p>خلّى السكالينغ يحسب السقف على السلعة.</p>
+        <p>طلّع بالدرجات، غير بعد أيام رابحين.</p>
+        <p class="res">بعد سمانة : الورشة لحقت، والسلعة ما خلصتش.</p></div>
+    </div>
+    <p>نفس الفيديو، نفس السلعة. الفرق بلي واحد طلّع بالدرجات وعلى قد السلعة.</p>
+    <p class="jomla"><b>الجملة :</b> كبّر بالدرجات، وعلى قد السلعة لي عندك.</p>
+  </div>
+  <p class="nope"><b>واش ما يديرش :</b> ما يطلّع بلا «&nbsp;طلّع&nbsp;»، ما يشعل بلا «&nbsp;لانسي&nbsp;»، وما يعاود يخلق نفس الكومبانيا.</p>
+  <div class="tbl-wrap"><table class="tbl" lang="fr" dir="ltr">
+    <caption>Le temps : à la main contre avec l’agent (estimation, à corriger avec ton chrono)</caption>
+    <thead><tr><th>Travail</th><th>À la main</th><th>Avec l’agent : ton temps</th></tr></thead>
+    <tbody>
+<tr><th>Préparer le scaling</th><td>trouver le post, construire la CBO, calculer le plafond : ≈ 30 min à 1 h</td><td>un mot</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="station" aria-labelledby="a8">
+  <div class="station-h"><span class="num">8</span><span class="step">المانجر</span><h2 id="a8">المانجر : يقولك وين وصل كل موديل</h2><span class="lat">Manager</span><span class="mod" title="الموديل في البلان">M14</span></div>
+  <aside class="rq" aria-label="رؤوس أقلام">
+    <p class="rq-h">رؤوس أقلام</p>
+    <ul>
+      <li><span class="n">8.1</span> يقولك وين راهو كل موديل، وشكون يخدم عليه.</li>
+      <li><span class="n">8.2</span> يمشّي الأجونات بالترتيب : المونتاج، الصفحة، التيست، الكوتش، والسكالينغ.</li>
+      <li><span class="n">8.3</span> يكتب في الكارني غير واش تقاس، وما يحسبش الدراهم وحدو.</li>
+    </ul>
+  </aside>
+  <div class="pro" role="group" aria-label="المانجر">
+    <p class="box-h">الشيما</p>
+    <div class="chips"><span class="chip"><b class="lat">Manager</b>يمشّي الأجونات</span><span class="chip"><b class="lat">Carnet</b>الكارني</span></div>
+    <div class="minirow"><figure class="nd" data-i="1"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#agent"/></svg><figcaption><b>المانجر</b><span>«&nbsp;واش نديرو اليوم ؟&nbsp;»</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="2"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#studio"/></svg><figcaption><b>المونتاج</b><span></span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="3"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#page"/></svg><figcaption><b>الصفحة</b><span></span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="4"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#clic"/></svg><figcaption><b>التيست</b><span></span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="5"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#escalier"/></svg><figcaption><b>السكالينغ</b><span></span></figcaption></figure></div>
+  </div>
+  <div class="launch"><p class="box-h">كيفاش يتلانسا</p><p><span class="lh">الأوتوماتيك :</span> يخدم من ورا، والكوتش هو لي يهدر معاك.</p><p><span class="lh">اليدوي :</span> ديسكيسيون جديدة في «&nbsp;<span class="lat">Code</span>&nbsp;»، وتكتب <span class="lat">/ecom-manita:manager</span></p></div>
+  <div class="story">
+    <p class="box-h">نشرحها بحكاية</p>
+    <p class="story-t">لي نسا موديل</p>
+    <p>زوج تجار، كل واحد عندو أربع موديلات في نفس الوقت.</p>
+    <div class="duo">
+      <div class="side ko"><p class="side-h"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#vendeur"/></svg>الأول : تاجر</p>
+        <p>يتبع كلش في كراس.</p>
+        <p>موديل بقى في المونتاج سمانة وهو ما دراش.</p>
+        <p class="res">بعد شهر : خرّج زوج موديلات برك.</p></div>
+      <div class="side ok"><p class="side-h"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#vendeur"/></svg>الثاني : تاجر</p>
+        <p>كل صباح يسقسي المانجر : «&nbsp;واش نديرو اليوم ؟&nbsp;».</p>
+        <p>المانجر يقولو وين وصل كل واحد، وواش ناقص.</p>
+        <p class="res">بعد شهر : الأربعة وصلو للتيست.</p></div>
+    </div>
+    <p>نفس الخدمة، نفس الوقت. الفرق بلي واحد خلّى المانجر يتفكر بلاصتو.</p>
+    <p class="jomla"><b>الجملة :</b> المانجر يتفكر وين وصل كل موديل، باش انت تقرر.</p>
+  </div>
+  <p class="nope"><b>واش ما يديرش :</b> ما يمسّ موديل راهو عند المكتب، وكل كلمة تحل حاجة وحدة : «&nbsp;لانسي&nbsp;» للتيست، «&nbsp;طلّع&nbsp;» للبودجي.</p>
+  <div class="tbl-wrap"><table class="tbl" lang="fr" dir="ltr">
+    <caption>Le temps : à la main contre avec l’agent (estimation, à corriger avec ton chrono)</caption>
+    <thead><tr><th>Travail</th><th>À la main</th><th>Avec l’agent : ton temps</th></tr></thead>
+    <tbody>
+<tr><th>Suivre 4 modèles</th><td>cahier ou Excel : ≈ 15 à 30 min par jour</td><td>une question : <bdi dir="rtl" lang="ar">«&nbsp;واش نديرو اليوم ؟&nbsp;»</bdi></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="station" aria-labelledby="a9">
+  <div class="station-h"><span class="num">9</span><span class="step">تزيد وتبدّل</span><h2 id="a9">كيفاش تزيد حاجة لأجون، ولا تبدّلو</h2><span class="lat">SKILL.md</span><span class="mod" title="الموديل في البلان">M2</span></div>
+  <aside class="rq" aria-label="رؤوس أقلام">
+    <p class="rq-h">رؤوس أقلام</p>
+    <ul>
+      <li><span class="n">9.1</span> كل أجون هو ورقة تعليمات : <span class="lat">SKILL.md</span>. تبدّلها بجملة تقولها لـ <span class="lat">Claude</span>.</li>
+      <li><span class="n">9.2</span> قبل كل تبدال، النسخة القديمة تتحفظ بالتاريخ. حاجة وحدة في المرة.</li>
+      <li><span class="n">9.3</span> من بعد التبدال : الفحص، وديسكيسيون جديدة باش تخدم بالنسخة الجديدة.</li>
+    </ul>
+  </aside>
+  <div class="pro" role="group" aria-label="تزيد وتبدّل">
+    <p class="box-h">الشيما</p>
+    <div class="chips"><span class="chip"><b class="lat">SKILL.md</b>ورقة الأجون</span><span class="chip"><b class="lat">Local</b>في الجهاز</span><span class="chip"><b class="lat">PASSE</b>الفحص نجح</span></div>
+    <div class="minirow"><figure class="nd" data-i="1"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#bulle"/></svg><figcaption><b>الطلب</b><span>«&nbsp;زيد للأجون…&nbsp;»</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="2"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#cahier"/></svg><figcaption><b>النسخة القديمة</b><span>محفوظة بالتاريخ</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="3"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#page"/></svg><figcaption><b>الورقة</b><span>تتبدّل</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="4"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#loupe"/></svg><figcaption><b>الفحص</b><span>كامل PASSE</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="5"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#agent"/></svg><figcaption><b>ديسكيسيون جديدة</b><span>بالنسخة الجديدة</span></figcaption></figure></div>
+  </div>
+  <div class="tbl-wrap"><table class="tbl" lang="fr" dir="ltr">
+    <caption>Où vit chaque agent (dossier ecom-manita)</caption>
+    <thead><tr><th>Agent</th><th>Mode manuel</th><th>Bureau automatique</th></tr></thead>
+    <tbody>
+<tr><th>manager, editeur, page, testing, scaling, coach</th><td>plugin/ecom-manita/skills/&lt;agent&gt;/SKILL.md</td><td>bureau/skills/&lt;agent&gt;/SKILL.md : les deux se changent ensemble</td></tr>
+<tr><th>spy, engagement</th><td>plugin/ecom-manita/skills/&lt;agent&gt;/SKILL.md et ses outils .py</td><td>—</td></tr>
+<tr><th>Les calculs d’argent</th><td>dans les outils (outils/, bureau/boussole), jamais dans la feuille</td><td>une formule se change dans le code, avec un essai</td></tr>
+    </tbody>
+  </table></div>
+  <div class="tbl-wrap"><table class="tbl" lang="fr" dir="ltr">
+    <caption>Les gestes (Claude › Code › Local, sur le dossier ecom-manita)</caption>
+    <thead><tr><th>Tu veux</th><th>Tu écris à Claude</th><th>Ce qu’il fait</th></tr></thead>
+    <tbody>
+<tr><th>Ajouter une chose à un agent</th><td><bdi dir="rtl" lang="ar">«&nbsp;في الأجون تاع السباي، زيد هاذ الكلمات لبلاد المغرب : …&nbsp;»</bdi></td><td>copie datée, puis il change la feuille (les deux copies si l’agent est aussi dans le bureau)</td></tr>
+<tr><th>Changer une règle</th><td><bdi dir="rtl" lang="ar">«&nbsp;في التيست، بدّل …&nbsp;»</bdi></td><td>il montre l’ancienne phrase et la nouvelle avant d’écrire</td></tr>
+<tr><th>Créer un nouvel agent</th><td><bdi dir="rtl" lang="ar">«&nbsp;دير أجون جديد سميتو … يدير …&nbsp;»</bdi></td><td>un dossier neuf skills/&lt;nom&gt;/SKILL.md (nom + description) ; il apparaît en /ecom-manita:&lt;nom&gt;</td></tr>
+<tr><th>Revenir en arrière</th><td><bdi dir="rtl" lang="ar">«&nbsp;رجّع النسخة القديمة تاع …&nbsp;»</bdi></td><td>il remet la copie datée</td></tr>
+<tr><th>Vérifier</th><td><bdi dir="rtl" lang="ar">«&nbsp;افحص كلش&nbsp;»</bdi></td><td>http://localhost:4620 › <bdi dir="rtl" lang="ar">«&nbsp;التحضير&nbsp;»</bdi> : chaque ligne PASSE</td></tr>
+<tr><th>Utiliser la nouvelle version</th><td>une NOUVELLE discussion, puis /ecom-manita:&lt;agent&gt;</td><td>—</td></tr>
+    </tbody>
+  </table></div>
+  <p class="hyp" lang="fr" dir="ltr">Mesuré le 27 oct sur une copie du plugin installée dans un dossier d’essai : Claude Code lit le plugin directement dans le dossier («&nbsp;Read from: …/plugin/ecom-manita&nbsp;») ; un dossier d’agent ajouté fait passer la liste de 8 à 9 agents sans réinstaller.</p>
+</section>
+
+<footer>
+  <p>الجزء الثاني تاع التصوير. الأوقات «&nbsp;باليد&nbsp;» تقدير : بدّلهم بالوقت لي تقيسو انت. الحكايات مخترعة باش تفهم، ماشي تجار حقيقيين.</p>
+</footer>
+
+</div>
+
+<script>
+(function(){
+  document.querySelectorAll('button.copy').forEach(function(b){
+    var t=document.getElementById(b.getAttribute('data-copy')), lab=b.textContent;
+    b.addEventListener('click',function(){
+      function sel(){var r=document.createRange();r.selectNodeContents(t);var s=window.getSelection();s.removeAllRanges();s.addRange(r);b.textContent='تحدّد، انسخو';}
+      try{navigator.clipboard.writeText(t.textContent).then(function(){b.textContent='تنسخ';setTimeout(function(){b.textContent=lab;},1600);},sel);}catch(e){sel();}
+    });
+  });
+  document.querySelectorAll('.pro[data-say]').forEach(function(p){
+    var lines=[].slice.call(p.querySelectorAll('.say-list li')), nds=[].slice.call(p.querySelectorAll('.nd')),
+        t=p.querySelector('.say-t'), w=p.querySelector('.say-who'), n=p.querySelector('.say-n'), i=0;
+    function show(k){
+      i=Math.max(0,Math.min(lines.length-1,k)); var li=lines[i], key=li.getAttribute('data-i');
+      t.innerHTML=li.querySelector('.s').innerHTML; w.textContent=li.getAttribute('data-l');
+      n.textContent=(i+1)+' / '+lines.length;
+      nds.forEach(function(d){d.classList.toggle('on', d.getAttribute('data-i')===key);});
+    }
+    p.querySelector('.say-next').addEventListener('click',function(){show(i+1);});
+    p.querySelector('.say-prev').addEventListener('click',function(){show(i-1);});
+    nds.forEach(function(d){
+      d.setAttribute('tabindex','0'); d.setAttribute('role','button');
+      function go(){for(var k=0;k<lines.length;k++){if(lines[k].getAttribute('data-i')===d.getAttribute('data-i')){show(k);return;}}}
+      d.addEventListener('click',go);
+      d.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();go();}});
+    });
+    p.classList.add('js'); show(0);
+  });
+})();
+</script>
+
+</body></html>
