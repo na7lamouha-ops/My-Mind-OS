@@ -64,7 +64,7 @@
       "nom": "PAGE PRODUIT + SKU",
       "nomAr": "الصفحة",
       "couleur": "#3d405b",
-      "role": "La page Tassyir, publiée dès qu'elle est prête et relue : un SKU par couleur et par taille, description photo / texte alternée.",
+      "role": "La page Tassyir, créée masquée et publiée après le « نشرها » du client, relue : un SKU par couleur et par taille, description photo / texte alternée.",
       "skill": "skills/page/SKILL.md",
       "outilPython": "2-PAGE-PRODUIT-SKU/manita-produit.py",
       "connecteurs": [
@@ -88,7 +88,7 @@
           "id": "brouillon",
           "nom": "BROUILLON TASSYIR",
           "nomAr": "البروويون",
-          "role": "Crée la page sur Tassyir et la publie dès qu'elle est prête et relue (la description envoyée seule, relue avant)."
+          "role": "Crée la page sur Tassyir MASQUÉE et la publie après le « نشرها » du client, relue (la description envoyée seule, relue avant)."
         }
       ],
       "ecriture": [

@@ -4025,7 +4025,7 @@ Ne touche à rien d'autre : ni les ad sets (en CBO, ils n'ont pas de budget), ni
     // bouton (page déjà publiée, autre étape) ne fait rien.
     if (cle === 'page') {
       const st = m.etapes['page-ok'];
-      if (m.attente !== 'page-ok' || !st || st.reponse === 'oui') return { connu: true, texte: 'هاذ السؤال فات' };
+      if (m.etat !== 'encours' || m.attente !== 'page-ok' || !st || st.reponse === 'oui') return { connu: true, texte: 'هاذ السؤال فات' };
       if (val === 'oui') {
         st.reponse = 'oui'; st.repondu = maintenant(); st.etat = 'encours'; m.attente = null;
         noterDecision(m, 'publier la page', 'le client a appuyé « نشرها » sur sa page masquée');

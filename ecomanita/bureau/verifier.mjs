@@ -3032,10 +3032,10 @@ await etape('INSTALLATEUR WINDOWS (lu, 23/10/2026) : l\'épreuve verifier.mjs vo
   for (const [nom, b] of [['sans Path ffmpeg', sansPath], ['appel sans $ffmpeg', sansArg], ['sans BOM', sansBom]]) if (!fautesPs1(b).length) throw new Error(`contrôle négatif « ${nom} » accepté`);
   return 'ffmpeg devant le Path avant l\'épreuve (comme Mac) · BOM UTF-8 · .bat CRLF · 3 négatifs refusés';
 });
-await etape('page publiée directement, aperçu « démo » jamais montré, vieux boutons de la page sans effet, un produit « du même nom » qui n\'est pas celui de la chaîne ni repris ni publié ; campagne de test SANS plafond (les VRAIS noms des champs Meta : campaign_spend_cap, campaign_daily_budget…, même dans un JSON en texte) qui reprend, RELIT et complète la campagne de la clé (jamais de copie, ni ailleurs, ni d\'id inventé ; un plafond d\'une ancienne version arrête) ; structure ABO (une vidéo par ad set, budget de l\'outil sur l\'ad set, aucun budget de campagne) ; verdict au 3e jour dans les deux modes, le même que manita-testing.py (contrôles négatifs)', async () => {
+await etape('page MASQUÉE jusqu\'au « نشرها » du client (1.0, fix 8 ; avant : publiée directement), aperçu « démo » jamais montré, vieux boutons de la page sans effet, un produit « du même nom » qui n\'est pas celui de la chaîne ni repris ni publié ; campagne de test SANS plafond (les VRAIS noms des champs Meta : campaign_spend_cap, campaign_daily_budget…, même dans un JSON en texte) qui reprend, RELIT et complète la campagne de la clé (jamais de copie, ni ailleurs, ni d\'id inventé ; un plafond d\'une ancienne version arrête) ; structure ABO (une vidéo par ad set, budget de l\'outil sur l\'ad set, aucun budget de campagne) ; verdict au 3e jour dans les deux modes, le même que manita-testing.py (contrôles négatifs)', async () => {
   const maisonP = fs.mkdtempSync(path.join(os.tmpdir(), 'manita-phase2-'));
-  let rendre = null; const vus = [], albums = [];
-  const tg = { envoyer: async () => ({ envoye: true }), envoyerAlbum: async (f, l) => { albums.push({ f, l }); return { envoye: true }; }, envoyerPhoto: async () => ({ envoye: true }), envoyerVideo: async () => ({ envoye: true }) };
+  let rendre = null; const vus = [], albums = [], textes = [];
+  const tg = { envoyer: async (t, o = {}) => { textes.push({ t, b: o.boutons || null }); return { envoye: true }; }, envoyerAlbum: async (f, l) => { albums.push({ f, l }); return { envoye: true }; }, envoyerPhoto: async () => ({ envoye: true }), envoyerVideo: async () => ({ envoye: true }) };
   const Ms = missionsM.ouvrirMissions({ maison: maisonP, atelier: path.join(maisonP, 'pas-d-atelier'), travaux: { lancer: async () => ({ code: 1, sortie: '', json: [] }) }, telegram: () => tg, depot: {}, reglages: () => ({ ciblage: CIBLAGE_OK }), claude: async a => { vus.push(a); return rendre(a); } });
   const photo = path.join(maisonP, 'p1.jpg'); fs.writeFileSync(photo, 'x');
   const m = { id: 'ccc001', code: 'LINA', etat: 'encours', d: { photosPage: [{ couleur: 'Noir', fichier: photo, cdn: 'https://cdn.tassyir.io/images/a/public' }] }, demande: { reponses: { mode: 'site', compte: { id: 'act_111' }, page: { id: '222', nom: 'P' } } }, etapes: { 'page-ok': {} }, historique: [] };
@@ -3046,16 +3046,20 @@ await etape('page publiée directement, aperçu « démo » jamais montré, vieu
     appels: [appel('create_product', {}, { id: 'P1' }), appel('update_product', { productId: 'P1', isActive: false, isVisible: false }, { ok: true }), { nom: 'mcp__claude_ai_X__render_preview', entree: {}, sortie: '{}', images: [{ media_type: 'image/png', data: png }] }] });
   rendre = page(false); await Ms._etapes.page(m);
   if (!/apercuFidele/.test(JSON.stringify(vus[0].schema)) || !/Ce n'est PAS une erreur/.test(vus[0].message) || m.d.produit.apercus.length || m.d.produit.apercuFidele || fs.existsSync(path.join(maisonP, 'missions', m.id, 'page', 'apercu-1.png'))) throw new Error('un aperçu « démo » a été gardé : ' + JSON.stringify(m.d.produit));
+  // 1.0 (fix 8) : les VRAIES photos, puis « نشرها ؟ » (boutons نشرها / خليها مخبية), et l'étape ATTEND le client — rien n'est publié seul
   const r1 = await Ms._etapes['page-ok'](m);
-  if (r1 === missionsM.ATTENTE || m.etapes['page-ok'].reponse !== 'oui' || albums.length !== 1 || albums[0].f[0] !== photo) throw new Error('page-ok attend encore, ou n\'envoie pas les VRAIES photos : ' + JSON.stringify({ r1: String(r1), albums }));
-  await Ms._etapes['page-ok'](m); if (albums.length !== 1) throw new Error('les photos sont reparties une 2e fois');
+  const q = textes.find(x => /نشرها للزبونات/.test(x.t));
+  if (r1 !== missionsM.ATTENTE || m.etapes['page-ok'].reponse === 'oui' || albums.length !== 1 || albums[0].f[0] !== photo || !q || !JSON.stringify(q.b).includes(`mis:${m.id}:page:oui`)) throw new Error('page-ok publie sans le client, ou n\'envoie pas les VRAIES photos et la question : ' + JSON.stringify({ r1: String(r1), albums, q: !!q }));
+  await Ms._etapes['page-ok'](m); if (albums.length !== 1 || textes.filter(x => /نشرها للزبونات/.test(x.t)).length !== 1) throw new Error('les photos ou la question sont reparties une 2e fois');
+  m.etapes['page-ok'].reponse = 'oui'; if (await Ms._etapes['page-ok'](m) === missionsM.ATTENTE) throw new Error('« نشرها » répondu : l\'étape doit passer');
   rendre = page(true); await Ms._etapes.page(m);
   if (m.d.produit.apercus.length !== 1 || !fs.existsSync(m.d.produit.apercus[0])) throw new Error('un aperçu fidèle n\'est pas gardé');
   m.etapes['page-ok'] = {}; await Ms._etapes['page-ok'](m); if (albums[1].f[0] !== m.d.produit.apercus[0]) throw new Error('l\'aperçu fidèle n\'est pas montré');
-  // une mission de v0.3.7 qui attendait « نشرها » (son aperçu et le lien déjà partis) : elle passe, sans renvoyer l'album
-  m.etapes['page-ok'] = { etat: 'attente', essais: 0, demande: '2026-10-05T10:00:00.000Z' };
-  if (await Ms._etapes['page-ok'](m) === missionsM.ATTENTE || albums.length !== 2) throw new Error('une mission d\'avant qui attendait « نشرها » : ' + JSON.stringify({ albums: albums.length, st: m.etapes['page-ok'] }));
-  // les VIEUX boutons (un message d'avant la mise à jour) : « خليها مخبية » ne promet plus une page cachée, « نشرها » ne fait rien
+  // une mission de v0.3.7 qui attendait « نشرها » (son aperçu et le lien déjà partis) : 1.0 → elle ATTEND toujours la décision du
+  // client (sa question est encore ouverte), sans renvoyer l'album ni la question
+  m.etapes['page-ok'] = { etat: 'attente', essais: 0, demande: '2026-10-05T10:00:00.000Z' }; const nq = textes.length;
+  if (await Ms._etapes['page-ok'](m) !== missionsM.ATTENTE || albums.length !== 2 || textes.length !== nq) throw new Error('une mission d\'avant qui attendait « نشرها » : ' + JSON.stringify({ albums: albums.length, st: m.etapes['page-ok'] }));
+  // les VIEUX boutons d'une mission DÉJÀ passée (en suivi) : « خليها مخبية » ne promet plus une page cachée, « نشرها » ne fait rien
   const idV = 'ccc009'; fs.mkdirSync(path.join(maisonP, 'missions', idV), { recursive: true });
   fs.writeFileSync(path.join(maisonP, 'missions', idV, 'mission.json'), JSON.stringify({ id: idV, code: 'V', creeLe: new Date().toISOString(), etat: 'suivi', etape: 'activation', attente: 'page-ok', historique: [], demande: { reponses: {} }, etapes: { 'page-ok': { etat: 'attente', demande: '2026-10-05T10:00:00.000Z' } }, d: {} }));
   const envoyes = [], tgV = { ...tg, envoyer: async t => { envoyes.push(t); return { envoye: true }; } };
@@ -3568,14 +3572,14 @@ await etape('montage en style NATIF : une mission seule → MONTER-10 --rushes -
   if (mc.d.creas.length !== 2 || !mc.d.creasRefusees.some(x => x.fichier === 'variante_02.mp4' && /deux modèles/.test(x.pourquoi))) throw new Error('contrôle : ' + JSON.stringify({ bonnes: mc.d.creas.map(b => path.basename(b.fichier)), refus: mc.d.creasRefusees }));
   return 'seule : --rushes --style natif · une couleur : --couleurs 1 natif (repli manita.py écrit, trois rushes → MONTER-10 puis manita.py en repli) · moins de quatre rushes → MONTER-10 en premier · familles nommées → --familles (couleur retirée marquée), mission ancienne → --couleurs N · deux couleurs, rien sorti → repli écrit · lot : --plan du lot --modele « Robe droite » --style natif (sans musique : pas de --musiques) · mission d\'avant : modèle de son rang · maison déplacée : plan d\'ici · plan absent ✗ · modèle hors plan ✗ · variante à deux modèles refusée au contrôle';
 });
-await etape('skills du bureau (phase 2) : page (publication directe, script d\'angles en darija), testing (aucun plafond, verdict au 3e jour, clé reprise et complétée, script d\'angles), coach et manager (3 jours, page publiée, pas de plafond, natif, lot, stratégie) ; aucune n\'est coupée par la chaîne (60 000 caractères) ; plus aucun montage « bande » (contrôles négatifs)', () => {
+await etape('skills du bureau (phase 2) : page (1.0 : masquée jusqu\'au « نشرها » du client, script d\'angles en darija), testing (aucun plafond, verdict au 3e jour, clé reprise et complétée, script d\'angles), coach et manager (3 jours, page publiée, pas de plafond, natif, lot, stratégie) ; aucune n\'est coupée par la chaîne (60 000 caractères) ; plus aucun montage « bande » (contrôles négatifs)', () => {
   const lire = d => fs.readFileSync(path.join(RACINE, 'skills', d, 'SKILL.md'), 'utf8');
   const doit = (d, t, oui, non) => { for (const x of oui) if (!(x instanceof RegExp ? x.test(t) : t.includes(x))) throw new Error(`${d} : il manque ${x}`); for (const x of non) if (x instanceof RegExp ? x.test(t) : t.includes(x)) throw new Error(`${d} : il reste ${x}`); };
   const page = lire('page'), testing = lire('testing'), coach = lire('coach'), manager = lire('manager');
-  doit('page', page, ['SCRIPT-ANGLES-MARKETING.json', 'DARIJA ALGERIENNE', 'PUBLIER tout de suite', 'banque de', 'strategie.json', 'page de DEMONSTRATION', 'aucune ligne vide ni « --- » DEDANS', 'jamais « cod », meme colle dans un mot'], [/jamais sans un OUI ecrit/, /CACHE tant qu'il n'a pas dit oui/, /tu ne publies qu'apres son OUI/]);
+  doit('page', page, ['SCRIPT-ANGLES-MARKETING.json', 'DARIJA ALGERIENNE', 'PUBLIER APRÈS « نشرها »', 'banque de', 'strategie.json', 'page de DEMONSTRATION', 'aucune ligne vide ni « --- » DEDANS', 'jamais « cod », meme colle dans un mot'], [/PUBLIER tout de suite/, /PUBLIÉE DIRECTEMENT/] /* 1.0 (fix 8) : la publication directe du 06/10 est remplacée par le « نشرها » du client */);
   doit('testing', testing, ['AUCUN plafond', 'COMPLETES', 'au **troisieme** jour aussi', 'SCRIPT-ANGLES-MARKETING.json', 'DARIJA ALGERIENNE', 'faux avis', 'PAS de campaign_spend_cap', 'publiees ET en brouillon', 'Une campagne REPRISE d\'une ancienne version'], [/Pose-les/, /tu poses daily_spend_cap/, /la douleur evitee/, /\| plus tot \| plus tard \|/]);
   doit('coach', coach, ['au **troisieme** jour aussi', 'strategie.txt', 'AUCUN plafond', 'PUBLIEE', 'TON verdict sur le LIVRE (`manita-coach.py --lecture`) | au dixieme jour | au douzieme jour'], [/\| plus tot \| plus tard \|/, /\| Le verdict se prend \| au \*\*troisieme\*\* jour/]);
-  doit('manager', manager, ['شحال من موديل', '--style natif', 'une seule couleur : `--couleurs 1`', '--plan <lot>/plan.json', "DES QU'ELLE EST PRETE", 'AUCUN plafond', 'TROISIEME jour', 'strategie.json'], [/APRES le bouton « نشرها »/]);
+  doit('manager', manager, ['شحال من موديل', '--style natif', 'une seule couleur : `--couleurs 1`', '--plan <lot>/plan.json', 'APRES le bouton « نشرها » du client', 'AUCUN plafond', 'TROISIEME jour', 'strategie.json'], [/DES QU'ELLE EST PRETE/, /sans bouton « نشرها »/] /* 1.0 (fix 8) */);
   for (const [d, t] of Object.entries({ page, testing, coach, manager })) if (t.length > 60000) throw new Error(`${d} : ${t.length} caractères, la chaîne en coupe la fin (60 000)`);
   const src = fs.readFileSync(path.join(RACINE, 'missions.mjs'), 'utf8');
   if (/'--style', 'bande'/.test(src) || (src.match(/'--style', 'natif'/g) || []).length !== 2) throw new Error('le bureau monte encore en style bande');
@@ -8459,7 +8463,7 @@ try {
       return `textes (script + darija, schéma, 0 outil) → paquet réel « ${paquet.name} » → stratégie + note du coach · bloquée à « page » : ${String(mi.etapes.page?.erreur || '').slice(0, 60)}`;
     } finally { s2.kill('SIGTERM'); await dormir(300); }
   });
-  await etape('reprise (mise à jour, coupure du PC) : une mission de v0.3.7 qui ATTENDAIT « نشرها » → au démarrage elle passe à la publication sans renvoyer ses photos ; le vieux bouton « خليها مخبية » de son message répond « هاذ السؤال فات » et n\'envoie RIEN (surtout pas « الصفحة باقية مخبية ») (contrôles négatifs)', async () => {
+  await etape('reprise (mise à jour, coupure du PC) : une mission de v0.3.7 qui ATTENDAIT « نشرها » → 1.0 (fix 8) : au démarrage elle ATTEND toujours la décision du client (aucune photo renvoyée, aucune publication) ; son bouton « خليها مخبية » marche (« الصفحة باقية مخبية », la question revient) ; « نشرها » lance la publication (contrôles négatifs)', async () => {
     const maisonR = fs.mkdtempSync(path.join(os.tmpdir(), 'manita-pageok-srv-')), id = 'fab002', D = path.join(maisonR, 'missions', id);
     fs.mkdirSync(D, { recursive: true });
     const photos = [0, 1].map(i => { const f = path.join(D, `p${i}.jpg`); fs.writeFileSync(f, Buffer.from('ffd8ffe0ffd9', 'hex')); return { couleur: 'Noir', fichier: f, cdn: `https://cdn.tassyir.io/images/v${i}/public` }; });
@@ -8471,14 +8475,23 @@ try {
     const envoisAvant = recu.envois.length, fichiersAvant = recu.fichiers.length, photosAvant = recu.photos.length;
     const s3 = await demarrer(maisonR, port + 4);
     try {
-      const mi = await attendreQue(async () => { const x = JSON.parse(fs.readFileSync(path.join(D, 'mission.json'), 'utf8')); return x.etat === 'bloquee' ? x : null; }, 60000, 300);
-      if (mi.etapes['page-ok']?.etat !== 'fini' || mi.etapes['page-ok'].reponse !== 'oui' || mi.etape !== 'publication' || !mi.etapes.publication?.erreur) throw new Error('étapes : ' + JSON.stringify({ etape: mi.etape, pageOk: mi.etapes['page-ok'], publication: mi.etapes.publication }));
+      // au démarrage : la mission reste à « page-ok », en attente — rien n'est publié sans le client, aucune photo ne repart
+      await dormir(4000);
+      const m0 = JSON.parse(fs.readFileSync(path.join(D, 'mission.json'), 'utf8'));
+      if (m0.attente !== 'page-ok' || m0.etapes['page-ok'].reponse === 'oui' || m0.etapes.publication?.etat === 'encours' || m0.etapes.publication?.erreur) throw new Error('publiée sans le client : ' + JSON.stringify({ attente: m0.attente, pageOk: m0.etapes['page-ok'], publication: m0.etapes.publication }));
       if (recu.fichiers.length !== fichiersAvant || recu.photos.length !== photosAvant) throw new Error('les photos d\'une mission d\'avant sont reparties');
+      // « خليها مخبية » : la page reste masquée, le client le lit, et la question revient (avec ses boutons)
       pousser({ callback_query: { id: 'cbVieux', data: `mis:${id}:page:non`, from: { id: 1 }, message: { message_id: 7001, chat: { id: '4242' } } } });
       const rb = await attendreQue(async () => recu.reponses.find(x => x.callback_query_id === 'cbVieux') || null, 15000);
+      await attendreQue(async () => recu.envois.slice(envoisAvant).some(e => /نشرها للزبونات/.test(e.text || '')) || null, 15000);
       const apres = recu.envois.slice(envoisAvant).map(e => e.text || '').join(' | ');
-      if (rb.text !== 'هاذ السؤال فات' || /مخبية|نشرها للزبونات/.test(apres)) throw new Error(`vieux bouton : « ${rb.text} » · envoyé : ${apres.slice(0, 160)}`);
-      return `page-ok passée au démarrage (aucun album renvoyé) → publication tentée (${String(mi.etapes.publication.erreur).slice(0, 50)}…) · vieux « خليها مخبية » → « ${rb.text} », rien d'envoyé`;
+      if (rb.text !== 'وصلني' || !/الصفحة باقية مخبية/.test(apres)) throw new Error(`« خليها مخبية » : « ${rb.text} » · envoyé : ${apres.slice(0, 200)}`);
+      if (JSON.parse(fs.readFileSync(path.join(D, 'mission.json'), 'utf8')).etapes['page-ok'].reponse === 'oui') throw new Error('« خليها مخبية » a publié');
+      // « نشرها » : la publication part (le faux Claude ne la fait pas : elle s'arrête proprement, bloquée, l'erreur dite)
+      pousser({ callback_query: { id: 'cbPub', data: `mis:${id}:page:oui`, from: { id: 1 }, message: { message_id: 7002, chat: { id: '4242' } } } });
+      const mi = await attendreQue(async () => { const x = JSON.parse(fs.readFileSync(path.join(D, 'mission.json'), 'utf8')); return x.etat === 'bloquee' ? x : null; }, 60000, 300);
+      if (mi.etapes['page-ok']?.etat !== 'fini' || mi.etapes['page-ok'].reponse !== 'oui' || mi.etape !== 'publication' || !mi.etapes.publication?.erreur) throw new Error('après « نشرها » : ' + JSON.stringify({ etape: mi.etape, pageOk: mi.etapes['page-ok'], publication: mi.etapes.publication }));
+      return `au démarrage : attend le client (aucune photo, rien publié) · « خليها مخبية » → « ${rb.text} », masquée, la question revient · « نشرها » → publication tentée (${String(mi.etapes.publication.erreur).slice(0, 40)}…)`;
     } finally { s3.kill('SIGTERM'); await dormir(300); }
   });
   // ---- relu DE BOUT EN BOUT (07/10/2026) : les défauts qui passent par le serveur (les boutons effacés, le double « ابدا » N = 1)

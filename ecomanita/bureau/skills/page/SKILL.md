@@ -355,7 +355,7 @@ Tu prends `paquet-create_product.json` et tu fais, dans cet ordre exact :
        encore ratee → tu t'arretes, la page reste cachee, tu le dis
 4. render_preview storeId + productId
 5. relire la page (les controles de la fin de ce fichier)
-6. PUBLIER tout de suite : update_product isActive:true isVisible:true (JAMAIS la description dans cet envoi)
+6. PUBLIER APRÈS « نشرها » (1.0 : la page attend masquée la décision du client) : update_product isActive:true isVisible:true (JAMAIS la description dans cet envoi)
    + repasser chaque variante isHidden:false, puis get_product pour relire
    + CHAQUE variante envoyee porte son id, son price et ses selectedOptions TELS QUE get_product les rend (l'id seul : Tassyir refuse, erreur -32602 ; jamais un prix change)
    + MODE CHAINE (10/10/2026) : la liste complete des variantes est CONSTRUITE PAR LE BUREAU (lue chez Tassyir, recoupee avec le paquet) et donnee prete dans la consigne : tu l'envoies TELLE QUELLE, tu ne recalcules rien

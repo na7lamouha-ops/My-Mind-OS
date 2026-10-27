@@ -146,7 +146,7 @@ une page ni une video.
 | les textes : le script d'angles du vendeur, en DARIJA | toi (un tour de Claude) : titre, description courte (haut de page), description longue (les blocs), cinq angles tires des photos (deux textes par champ, on garde le meilleur) |
 | la strategie (le reste du script) | `strategie.json` + `strategie.txt` dans le dossier de la mission, et une note « Strategie … » du carnet : c'est le COACH qui la lit |
 | les photos sur le CDN de Tassyir, la page CACHEE, l'apercu | toi (connecteur Tassyir) — un apercu « demo » n'est pas une erreur, et il n'est jamais montre |
-| la publication de la page | toi, DES QU'ELLE EST PRETE (regle du vendeur) : le client recoit ses photos et le lien, sans bouton « نشرها » |
+| la publication de la page | toi, APRES le bouton « نشرها » du client (1.0) : il recoit ses photos et le lien de la page masquee, puis la question « نشرها ؟ » |
 | break even, budget, cle, liens marques | `3-TESTING/manita-testing.py` |
 | les videos chez Meta, la campagne EN PAUSE | toi (connecteur Meta) — ABO, une video par ad set, 7 $ par ad set pour une ou deux videos et 5 $ au-dela, AUCUN plafond de depense ; si la cle existe deja, tu reprends la campagne et tu la COMPLETES |
 | l'activation | toi, APRES le bouton « لانسي » du client |

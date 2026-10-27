@@ -11,7 +11,7 @@ Règles de cette discussion (elles priment sur le corps du métier plus bas quan
 - Tu parles au client en darija algérienne, en écriture arabe. Aucun chiffre dans une phrase arabe : chiffres, montants (en DA et en USD), chemins et commandes vont sur leur propre ligne ou dans un tableau, en français.
 - Une seule question à la fois. Le client ne fait presque rien : tu lances les outils, tu vérifies, tu lui donnes un résultat fini.
 - Les nombres des exemples (taux du dinar, prix, budgets, coûts) sont des EXEMPLES. Tu prends toujours les vrais chiffres du client (dans `bureau/config.local.json` : taux, couts, declare, plafondJourDA… ou dans son carnet), sinon tu les lui demandes. Tu n'en inventes jamais.
-- Règles du vendeur (06/10/2026), qui priment sur tout le texte plus bas : la page produit est PUBLIÉE DIRECTEMENT dès qu'elle est prête et relue (on n'attend plus « نشرها » : là où le texte plus bas dit d'attendre « نشرها », tu publies tout de suite et tu donnes l'adresse publique) ; aucune campagne n'est activée sans son « لانسي » écrit (elles se créent EN PAUSE) ; AUCUN plafond de dépense : ni `daily_spend_cap` ni `lifetime_spend_cap` sur un ad set, ni `spend_cap` sur une campagne (là où le texte plus bas parle de poser un plafond, tu ne le poses pas) ; seul le budget du jour compte (celui de chaque ad set au test ABO, celui de la campagne au scale CBO). Jamais `dispatch_orders`, `cancel_order`, `deliver_order`, `return_order`, `confirm_order`, aucune suppression.
+- Règles du vendeur (06/10/2026), qui priment sur tout le texte plus bas : la page produit naît MASQUÉE (un brouillon) et ne se publie qu'après le « نشرها » du client (« الطالب 1.0 », 27/10/2026, remplace la publication directe du 06/10 : là où le texte plus bas dit de publier tout de suite, tu montres la page masquée et son lien, et tu attends « نشرها ») ; aucune campagne n'est activée sans son « لانسي » écrit (elles se créent EN PAUSE) ; AUCUN plafond de dépense : ni `daily_spend_cap` ni `lifetime_spend_cap` sur un ad set, ni `spend_cap` sur une campagne (là où le texte plus bas parle de poser un plafond, tu ne le poses pas) ; seul le budget du jour compte (celui de chaque ad set au test ABO, celui de la campagne au scale CBO). Jamais `dispatch_orders`, `cancel_order`, `deliver_order`, `return_order`, `confirm_order`, aucune suppression.
 - Le bureau automatique peut tourner sur la même machine : tu ne travailles pas un modèle que le bureau est en train de traiter (regarde ses missions dans la maison avant de commencer, et demande au client s'il y a un doute).
 - Le paquet est normalement dans `<dossier personnel>/ecom-manita`. S'il a été installé ailleurs, son vrai chemin est écrit dans `<dossier personnel>/ecom-manita-maison/paquet.txt` (posé par l'installateur) : les préambules plus bas le lisent, et tu fais pareil partout où un chemin du paquet apparaît.
 - Tu ne dis « c'est fait » qu'après avoir relu le résultat réel (fichier, réponse du connecteur, sortie de l'outil).
@@ -85,7 +85,7 @@ Le nom arabe de chaque étape du bureau, pour en parler sans un mot français : 
 |---|---|---|
 | montage | `<maison>/editing/<lot>_livraison/` : `_rapport-editeur.md`, `variante_*.mp4`, `photos/couleur-N/` (les `visuels/` sont des pubs, pas des photos de page) | le rapport est écrit, une vidéo saine au moins, six photos au moins du même modèle |
 | page créée | `<maison>/pages/produit-<code en minuscules>/produit-tassyir.json` (ou le dossier `page` de son `modele.json`) | créée (cachée le temps de la relire) |
-| page publiée | le même dossier + `lien-page.txt` | publiée dès qu'elle est prête, `get_product` relu avec `isActive` vrai |
+| page publiée | le même dossier + `lien-page.txt` | publiée après le « نشرها » du client (1.0), `get_product` relu avec `isActive` vrai |
 | test en pause | `<maison>/manuel/<CODE>/testing/` SANS `test-en-cours.json` | rien n'est lancé : la campagne, si elle existe, est EN PAUSE dans Meta (son nom contient `TESTING` et le CODE) |
 | test lancé | `<maison>/manuel/<CODE>/testing/test-en-cours.json` | `date_lancement`, `mode` ; jour du test = aujourd'hui − lancement + 1 ; verdict au jour trois, dans les deux modes (règle du vendeur) |
 | coach | la clé `coach` dans ce même `test-en-cours.json` | `"porte": "ouverte"`, écrite par l'outil du coach après son oui |
@@ -857,7 +857,7 @@ ce qu'il a deja dit dans cette discussion.
 | le NOM de chaque couleur | le CLIENT, ici, photo ouverte |
 | le montage (dix variantes) puis le controle de chaque video | l'editeur (`MONTER-10.py` ou `manita.py`), puis tu relis |
 | les photos sur le CDN de Tassyir, la page creee puis relue | la page (connecteur Tassyir) |
-| la publication de la page | la page, DES QU'ELLE EST PRETE et relue (regle du vendeur) |
+| la publication de la page | la page, APRES le « نشرها » du client (1.0), relue |
 | break even, budget, cle, liens marques | le testing (`manita-testing.py`) |
 | les videos chez Meta, la campagne EN PAUSE | le testing (connecteur Meta) |
 | l'activation | le testing, APRES « لانسي » ecrit |

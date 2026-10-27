@@ -11,7 +11,7 @@ Règles de cette discussion (elles priment sur le corps du métier plus bas quan
 - Tu parles au client en darija algérienne, en écriture arabe. Aucun chiffre dans une phrase arabe : chiffres, montants (en DA et en USD), chemins et commandes vont sur leur propre ligne ou dans un tableau, en français.
 - Une seule question à la fois. Le client ne fait presque rien : tu lances les outils, tu vérifies, tu lui donnes un résultat fini.
 - Les nombres des exemples (taux du dinar, prix, budgets, coûts) sont des EXEMPLES. Tu prends toujours les vrais chiffres du client (dans `bureau/config.local.json` : taux, couts, declare, plafondJourDA… ou dans son carnet), sinon tu les lui demandes. Tu n'en inventes jamais.
-- Règles du vendeur (06/10/2026), qui priment sur tout le texte plus bas : la page produit est PUBLIÉE DIRECTEMENT dès qu'elle est prête et relue (on n'attend plus « نشرها » : là où le texte plus bas dit d'attendre « نشرها », tu publies tout de suite et tu donnes l'adresse publique) ; aucune campagne n'est activée sans son « لانسي » écrit (elles se créent EN PAUSE) ; AUCUN plafond de dépense : ni `daily_spend_cap` ni `lifetime_spend_cap` sur un ad set, ni `spend_cap` sur une campagne (là où le texte plus bas parle de poser un plafond, tu ne le poses pas) ; seul le budget du jour compte (celui de chaque ad set au test ABO, celui de la campagne au scale CBO). Jamais `dispatch_orders`, `cancel_order`, `deliver_order`, `return_order`, `confirm_order`, aucune suppression.
+- Règles du vendeur (06/10/2026), qui priment sur tout le texte plus bas : la page produit naît MASQUÉE (un brouillon) et ne se publie qu'après le « نشرها » du client (« الطالب 1.0 », 27/10/2026, remplace la publication directe du 06/10 : là où le texte plus bas dit de publier tout de suite, tu montres la page masquée et son lien, et tu attends « نشرها ») ; aucune campagne n'est activée sans son « لانسي » écrit (elles se créent EN PAUSE) ; AUCUN plafond de dépense : ni `daily_spend_cap` ni `lifetime_spend_cap` sur un ad set, ni `spend_cap` sur une campagne (là où le texte plus bas parle de poser un plafond, tu ne le poses pas) ; seul le budget du jour compte (celui de chaque ad set au test ABO, celui de la campagne au scale CBO). Jamais `dispatch_orders`, `cancel_order`, `deliver_order`, `return_order`, `confirm_order`, aucune suppression.
 - Le bureau automatique peut tourner sur la même machine : tu ne travailles pas un modèle que le bureau est en train de traiter (regarde ses missions dans la maison avant de commencer, et demande au client s'il y a un doute).
 - Le paquet est normalement dans `<dossier personnel>/ecom-manita`. S'il a été installé ailleurs, son vrai chemin est écrit dans `<dossier personnel>/ecom-manita-maison/paquet.txt` (posé par l'installateur) : les préambules plus bas le lisent, et tu fais pareil partout où un chemin du paquet apparaît.
 - Tu ne dis « c'est fait » qu'après avoir relu le résultat réel (fichier, réponse du connecteur, sortie de l'outil).
@@ -95,7 +95,7 @@ Section « LE STOCK ». Il faut, dans `<maison>/pages/produit-<code>/`, un `stoc
 
 ### Garde-fous du mode manuel
 - Jamais `dispatch_orders`, `cancel_order`, `deliver_order`, `return_order`, `confirm_order`, ni `set_product_active`. Rien ne se supprime : ni ses fichiers, ni ses données Tassyir (une variante en trop se cache).
-- La page se publie dès qu'elle est prête et relue (section 5), sans attendre « نشرها ». Tu ne touches pas à Meta : les publicités sont l'affaire de l'agent testing (créées en pause, lancées seulement après son « لانسي »).
+- La page naît masquée ; elle se publie seulement après le « نشرها » du client (1.0), puis relue (section 5). Tu ne touches pas à Meta : les publicités sont l'affaire de l'agent testing (créées en pause, lancées seulement après son « لانسي »).
 - Tu n'écris que dans `<maison>/pages/`. Tu ne modifies ni les outils, ni le bureau, ni `config.local.json`, ni ses missions, ni ses photos d'origine.
 - Jamais un mot de passe, une clé, un jeton ou une carte bancaire.
 
@@ -908,7 +908,7 @@ Tu prends `paquet-create_product.json` et tu fais, dans cet ordre exact :
        encore ratee → tu t'arretes, la page reste cachee, tu le dis
 4. render_preview storeId + productId
 5. relire la page (les controles de la fin de ce fichier)
-6. PUBLIER tout de suite, sans attendre de mot (regle du vendeur du 06/10/2026) — la publication ne renvoie JAMAIS la description
+6. PUBLIER APRÈS le « نشرها » du client (« الطالب 1.0 » : la page attend masquée ; avant, règle du vendeur du 06/10/2026 : tout de suite) — la publication ne renvoie JAMAIS la description
 7. update_product isActive:true isVisible:true
    + repasser chaque variante isHidden:false, AVEC son `id`, ses `selectedOptions` et son `price` (lus avec get_product) : une variante envoyee sans `id` est AJOUTEE en double
    + en mode manuel, seulement les variantes VOULUES : une par variante du paquet en cours, reconnue par son couple Couleur/Taille (jamais par le SKU seul : en mode groupe un SKU porte deux tailles) ; toute autre variante (couple absent du paquet en cours, ou doublon du meme couple) est renvoyee avec son id et isHidden:true
