@@ -129,12 +129,9 @@
   },
   "inspecteur": {
     "_role": "le contrôle médical avant tout test (0.4.0) : lecture seule, une tâche à la fois, la porte « جاهز للتاست »",
-    "poids": {
-      "stop": 15,
-      "warn": 5,
-      "info": 1
-    },
-    "porte": "aucun point rouge"
+"note": "1.0 : la méthode de l'académie — vert 1, orange 0,5, rouge 0, sur les fiches LUES (regles-masar.noteInspecteur) ; les anciens poids (15 / 5 / 1) ne servent plus",
+    "nonCommence": "zéro produit dans le magasin = « ما بداش », sans note",
+    "porte": "aucun point rouge ET aucun inconnu (une question pas répondue, une fiche rouge pas lue)"
   },
   "test": {
     "_role": "0.4.2 : le média buyer — la structure SORT DU FICHIER qu'il reçoit, le lien caché, le jugement",

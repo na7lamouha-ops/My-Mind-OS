@@ -28,15 +28,15 @@ const controles = await import('./controles.mjs');
 const telegram = await import('./telegram.mjs');
 const routines = await import('./routines.mjs');
 
-/* ---------- 0.5.0 : les agents en boucle (boucle.mjs, agents/<id>), la boussole dans le bureau, les petites règles ---------- */
-{ const A = await import('./verifier-agents.mjs'); await A.epreuveAgents({ etape }); await A.epreuveServeurAgents({ etape }); }
+/* ---------- « الطالب 1.0 » : les dix fixes (verifier-1.0.mjs) ---------- */
+{ const A = await import('./verifier-1.0.mjs'); await A.epreuve10({ etape }); await A.epreuveInspecteur10({ etape }); await A.epreuveServeur10({ etape }); }
 
 /* ---------- 0.4.0 : l'inspecteur (المفتّش) et le fichier de règles unique ---------- */
 const inspecteurM = await import('./inspecteur.mjs');
 await etape('0.4.0 : regles.json se lit, il porte les six étapes, la commande de test CONFIRMÉE (aucun statut d\'attente), les règles de PAGE et les poids de l\'inspecteur', () => {
   const R = JSON.parse(fs.readFileSync(path.join(RACINE, 'regles.json'), 'utf8'));
   const e = R.etapes && R.etapes.ordre; if (JSON.stringify(e) !== JSON.stringify(['CANDIDAT', 'TEST', 'FIX', 'VALIDE', 'DESTOCK', 'STOP'])) throw new Error('étapes : ' + JSON.stringify(e));
-  if (R.tassyir.statutAttente !== undefined || !/confirmée/.test(R.tassyir.commandeTest) || !R.page || !R.page.tailles || !R.page.avis || R.inspecteur.poids.stop !== 15) throw new Error('commande de test, PAGE ou poids');
+  if (R.tassyir.statutAttente !== undefined || !/confirmée/.test(R.tassyir.commandeTest) || !R.page || !R.page.tailles || !R.page.avis || !/académie/.test(R.inspecteur.note || '') /* 1.0 (fix 3) : la note de l'académie remplace les poids 15/5/1 */) throw new Error('commande de test, PAGE ou poids');
   if (!R.interdits.urgence.includes('قبل نفاد الكمية')) throw new Error('urgence');
   return `${e.length} étapes · ${R.interdits.urgence.length} formules d'urgence interdites`;
 });
@@ -93,7 +93,9 @@ await etape('0.4.0 inspecteur : un compte sale → rouges, note basse, porte fer
   const a = inspecteurM.inspecter(sale, { magasinId: '1', aujourdhui: '2026-10-24', regles: R });
   const ids = a.constats.map(c => c.id);
   for (const k of ['pixel_invalide', 'prix_achat', 'sku', 'stock_non_suivi', 'tarifs', 'retour_prix', 'depenses', 'charge', 'attente_vieille', 'premiere_couleur', 'tag_test']) if (!ids.includes(k)) throw new Error('manque ' + k);
-  if (a.pret || a.note > 30) throw new Error('porte ou note : ' + a.note);
+  // 1.0 (fix 3) : la note de l'académie (vert 1, orange 0,5 sur les fiches lues), et non plus la déduction par poids (≤ 30) : ici 4 verts,
+  // 8 oranges, 4 rouges = (4 + 4) / 16 = 50, compté à la main ; la porte reste fermée (4 rouges, 4 inconnus)
+  if (a.pret || a.note !== 50 || a.rouges.length !== 4) throw new Error('porte ou note : ' + a.note + ' ' + JSON.stringify(a.checks));
   const m = inspecteurM.messageInspecteur(a), md = inspecteurM.rapportInspecteur(a);
   if ((m + md).includes('quelquun@exemple.dz')) throw new Error('valeur du pixel recopiée');
   const f = telegram.fautesDeForme(m); if (f.length) throw new Error('loi de forme : ' + f.join(' ; '));
@@ -101,18 +103,29 @@ await etape('0.4.0 inspecteur : un compte sale → rouges, note basse, porte fer
   const propre = { get_store: { id: '1', name: 'B', facebookPixelId: '1234567890123', metaCapiTokenSet: true, deliveryAgentId: 'a', deliveryFeeGroupId: 'g1', description: 'x', language: 'ar' },
     list_products: { data: [{ id: 'p', name: 'جبة', storeId: '1' }] }, produits: [{ id: 'p', name: 'جبة', storeId: '1', sku: 'B-J-V-M', isInventoryTracked: true, gallery: ['u'], tags: [], options: [{ name: 'اللون', values: ['أخضر'] }], variants: [{ sku: 'B-J-V-M', selectedOptions: [{ name: 'اللون', value: 'أخضر' }] }] }],
     get_variant_analytics: { data: [{ product: { name: 'جبة' }, buyPrice: 2900 }] }, list_delivery_agents: [{ status: 'active' }], list_delivery_fees: [{ groupId: 'g1', name: 'Navex', storeId: '1', deliveryAgentId: 'a' }],
-    list_custom_statuses: [], list_expenses: [{ amount: 1 }], list_employees: [] };
+    list_custom_statuses: [], list_expenses: [{ amount: 1 }],
+    // 1.0 (fix 3, inspecteur 1.2) : un confirmateur au moins (fiche 14, rouge), et les lectures des fiches 17, 20, 22 et 23 — une fiche
+    // rouge qui ne se lit pas est « inconnue » et garde la porte fermée. Le compte propre les a donc toutes, vides.
+    list_employees: [{ name: 'X', openOrders: 0 }], commandes: { pending: { data: [] } }, list_returns: [], list_order_tracking: [], list_finance_transactions: [],
+    get_marketing_analytics: { totals: { ads: { spend: 0 }, counts: { orders: 0 } }, tree: [] }, get_finance_summary: { adsSpend: { value: 0 } } };
+  // 1.0 (fix 3) : le dollar et les quatre wallets sont des QUESTIONS — répondus pour le compte propre
+  const repondu = { reponses: { portefeuilles: true }, taux: 250 };
   const conflit = inspecteurM.inspecter(sale, { magasinId: '1', aujourdhui: '2026-10-24', regles: R, couts: { retour: 50 } });
   if (!conflit.constats.some(c => c.id === 'retour_conflit' && c.niveau === 'stop') || conflit.constats.some(c => c.id === 'retour_prix')) throw new Error('retour déclaré 50, Tassyir 200 : ' + conflit.constats.map(c => c.id).join(','));
   const sansRetour = inspecteurM.inspecter(propre, { magasinId: '1', regles: R });
   if (sansRetour.pret || !sansRetour.constats.some(c => c.id === 'retour_prix' && c.niveau === 'stop')) throw new Error('0.4.2 : le prix du retour est obligatoire, même boutique neuve');
-  const gratuit = inspecteurM.inspecter(propre, { magasinId: '1', regles: R, couts: { retour: 0 } });
+  const gratuit = inspecteurM.inspecter(propre, { magasinId: '1', regles: R, couts: { retour: 0 }, ...repondu });
   if (!gratuit.pret) throw new Error('retour gratuit (0) refusé : ' + gratuit.constats.map(c => c.id).join(','));
-  const b = inspecteurM.inspecter(propre, { magasinId: '1', regles: R, couts: { retour: 50 } });
+  const b = inspecteurM.inspecter(propre, { magasinId: '1', regles: R, couts: { retour: 50 }, ...repondu });
+  // 1.0 (fix 3) : sans les réponses, la porte reste fermée sur deux « inconnus » (le dollar, les wallets) — la note ne bouge pas
+  const sansReponses = inspecteurM.inspecter(propre, { magasinId: '1', regles: R, couts: { retour: 50 } });
+  if (sansReponses.pret || sansReponses.inconnus.join() !== 'portefeuilles,taux' || sansReponses.note !== 100) throw new Error('sans réponses : ' + JSON.stringify({ pret: sansReponses.pret, inconnus: sansReponses.inconnus, note: sansReponses.note }));
   if (!b.pret || b.note !== 100) throw new Error('compte propre : ' + b.note + ' ' + b.constats.map(c => c.id).join(','));
-  const vide = inspecteurM.inspecter({ ...propre, list_products: { data: [] }, produits: [], get_variant_analytics: { data: [] } }, { magasinId: '1', regles: R, couts: { retour: 50 } });
-  if (!vide.pret || !vide.constats.some(c => c.id === 'aucun_produit' && c.niveau === 'info')) throw new Error('boutique vide (0.4.1 : normal avant SPY) : ' + vide.constats.map(c => c.id + ':' + c.niveau).join(','));
-  return `sale : ${a.note}/100, ${a.constats.length} constats, porte fermée · propre : ${b.note}/100, porte ouverte · vide : porte ouverte (PAGE après SPY) · retour obligatoire (vide = rouge, 0 = OK, 50 ≠ 200 = rouge) · ${m.split('\n').length} lignes, loi de forme OK`;
+  const vide = inspecteurM.inspecter({ ...propre, list_products: { data: [] }, produits: [], get_variant_analytics: { data: [] } }, { magasinId: '1', regles: R, couts: { retour: 50 }, ...repondu });
+  // 1.0 (fix 2) : zéro produit = « ما بداش », SANS note (avant : une note sur les réglages partagés du business) ; la porte se lit
+  // toujours sur la préparation du compte (aucun rouge, aucun inconnu), comme en 0.4.1 (PAGE prépare les produits après SPY)
+  if (!vide.pret || vide.etat !== 'pas_commence' || vide.note !== null) throw new Error('boutique vide : ' + JSON.stringify({ pret: vide.pret, etat: vide.etat, note: vide.note }));
+  return `sale : ${a.note}/100, ${a.constats.length} constats, porte fermée · propre : ${b.note}/100, porte ouverte (sans réponses : fermée, 2 inconnus) · vide : « ما بداش », sans note, porte ouverte · retour obligatoire (vide = rouge, 0 = OK, 50 ≠ 200 = rouge) · ${m.split('\n').length} lignes, loi de forme OK`;
 });
 await etape('modules : les six premiers se chargent', () => `${[moteur, carnet, routeur, controles, telegram, routines].map(m => Object.keys(m).length).join('/')} exports`);
 await etape('moteur : la ligne de commande — prompt en FICHIER, message par l\'entrée standard, aucun outil intégré, liste blanche, jamais dispatch (Windows : < 32 767 caractères)', () => {

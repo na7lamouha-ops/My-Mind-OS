@@ -21,10 +21,7 @@ import { creerTelegram } from './telegram.mjs';
 import { creerSpy, lireDemandeSpy } from './spy.mjs'; // 23/10/2026 : « spy dz » écrit au robot du bureau
 import { creerInspecteur, lireDemandeInspecteur } from './inspecteur.mjs'; // 0.4.0 : « افحص حسابي » écrit au robot du bureau
 import { ouvrirRoutines } from './routines.mjs';
-import { creerBoucle } from './boucle.mjs'; // 0.5.0 : chaque étape = un agent qui tourne en boucle (agents/<id>)
-import { chargerAgents } from './agents/index.mjs';
-import { routerTexte } from './agents/qaid/agent.mjs';
-import { etatCerveau, TEXTE_SANS_CERVEAU } from './boussala/pont.mjs';
+import { etatCerveau, TEXTE_SANS_CERVEAU } from './boussala/pont.mjs'; // 1.0 : la boussole 29.18, l'unique calculateur
 import { ouvrirAccueil, TEXTES as TEXTES_ACCUEIL, creasValide, creasDe } from './accueil.mjs';
 import { pixelsDuBrut } from './missions.mjs'; // [v19-trois] les pixels de chaque compte, relus dans le brut
 import { ouvrirMissions, WILAYAS_NORD, recouperRegions, ciblageDuClient, ciblageLu, ciblageDuPaquet, compterMusiques as compterMusiquesDe, detailMusiques, MUSIQUES_MIN, ecartMetaDe, choixLectureSeule } from './missions.mjs';
@@ -292,44 +289,16 @@ const spy = creerSpy({ telegram: () => telegram, claude: claudeChaine, prefixes:
  *  par inspecteur.mjs sur les réponses BRUTES, puis la note et UN devoir sur Telegram. Le fichier de règles unique : regles.json. */
 const lireRegles = () => { try { return JSON.parse(fs.readFileSync(path.join(RACINE, 'regles.json'), 'utf8')); } catch { return {}; } };
 const inspecteur = creerInspecteur({ telegram: () => telegram, claude: claudeChaine, prefixes: () => prefixes(), magasin: () => cfg().magasin || null,
-  regles: lireRegles, couts: () => cfg().couts || {}, dossier: path.join(DATA, 'inspecteur'), journal });
-/** 0.5.0 — LES AGENTS : chargés depuis agents/<id>, une seule boucle (boucle.mjs), le القائد route Telegram. La boussole 29.18
- *  (boussala/) est l'unique cerveau des chiffres : golden 6/6 au démarrage, sinon « العقل ما راهوش » et les agents qui calculent
- *  bloquent. Les tours de Claude passent par la MÊME file (claudeChaine) : un tour à la fois. */
-const { agents: AGENTS, refuses: AGENTS_REFUSES } = await chargerAgents();
-for (const r of AGENTS_REFUSES) journal(`agent ${r.id} refusé : ${r.fautes.join(', ')}`);
+  regles: lireRegles, couts: () => cfg().couts || {}, dossier: path.join(DATA, 'inspecteur'), journal,
+  // 1.0 : le dollar et le retour répondus sur Telegram vont dans les réglages du client (comme tapés dans الإعدادات)
+  taux: () => +cfg().taux || null,
+  ecrireReglage: (cle, v) => ecrireConfig(c => { if (cle === 'taux') c.taux = v; if (cle === 'retour') c.couts = { ...(c.couts || {}), retour: v }; }),
+  // les modèles jugés par la boussole (fix 9) : un tag TEST sans verdict est orange (fix 4)
+  verdicts: () => missions.lister().map(x => missions.lire(x.id)).filter(m => m && m.d && m.d.verdictBoussole).flatMap(m => [m.d.produit && m.d.produit.id, m.d.produit && m.d.produit.nom]).filter(Boolean) });
+/** 1.0 — LE CERVEAU : la boussole 29.18 (boussala/) est l'unique calculateur des chiffres. Golden 6/6 au démarrage, sinon
+ *  « العقل ما راهوش » dans التحضير et sur Telegram, et ce qui calcule refuse (boussala/pont.mjs). */
 const CERVEAU = etatCerveau();
 journal(CERVEAU.ok ? `cerveau : boussole ${CERVEAU.version}, golden ${CERVEAU.pass}/${CERVEAU.total}` : `cerveau ABSENT : golden ${CERVEAU.pass}/${CERVEAU.total} — ${CERVEAU.echecs.join(' ; ')}`);
-const boucle = creerBoucle({ maison: MAISON, agents: AGENTS, telegram: () => telegram, claude: claudeChaine, reglages: reglagesChaine, journal,
-  prerequisCommuns: {
-    connecteur_tassyir: () => ({ ok: !!prefixes().tassyir, ar: 'الكونيكتور تاع تسيير ماشي مربوط' }),
-    connecteur_meta: () => ({ ok: !!prefixes().meta, ar: 'الكونيكتور تاع ميتا ماشي مربوط' }),
-    cerveau: () => ({ ok: etatCerveau().ok, ar: 'العقل ما راهوش : البوصلة' }),
-  } });
-// une porte franchie : le القائد refait « واش ندير اليوم » (les agents suivants viennent de s'ouvrir)
-boucle.surPorte = async () => { await boucle.cycle('qaid', { declencheur: 'porte', texte: 'jour' }); };
-/** Un texte du client pour les agents : une phrase connue → l'agent ; sinon la réponse à la question ouverte. Rend true si pris.
- *  Le travail ne bloque JAMAIS l'écoute (le cycle part en arrière-plan). */
-async function agentsSurTexte(t, { reponseLibre = false } = {}) {
-  const ids = boucle.agents().map(c => c.id), noms = Object.fromEntries(boucle.agents().map(c => [c.id, c.nom_ar]));
-  const enFond = p => { p.catch(e => journal('agents : ' + e.message)); return true; };
-  if (!reponseLibre) {
-    const r = routerTexte(t, ids, noms);
-    if (!r) return false;
-    if (r.agent === '*arreter_tout' || (r.agent === '*arreter' && !r.cible)) { const x = await boucle.arreter(r.agent === '*arreter' ? (boucle.etats().filter(s => !s.arrete && s.etat !== 'repos' && s.etat !== 'fini').map(s => s.id)[0] || null) : null); await boucle.dire('qaid', ['حبست :', ...x.map(i => `- ${noms[i] || i}`), 'باش نعاودو : شعّل الكل']); return true; }
-    if (r.agent === '*arreter') { await boucle.arreter(r.cible); await boucle.dire('qaid', [`حبست ${noms[r.cible]}`, 'باش يعاود يخدم : شعّل']); return true; }
-    if (r.agent === '*rallumer_tout' || r.agent === '*rallumer') { const x = await boucle.rallumer(r.cible || null); await boucle.dire('qaid', ['شعّلت :', ...x.map(i => `- ${noms[i] || i}`), 'كل وكيل يقولك واش راه يدير']); return true; }
-    if (r.agent === '*kammelt') {
-      const cible = boucle.etats().filter(s => s.memo && s.memo.devoir && !s.arrete).sort((a, b) => (b.memo.devoir.quand || 0) - (a.memo.devoir.quand || 0))[0];
-      if (!cible) return false;
-      return enFond(boucle.cycle(cible.id, { declencheur: 'kammelt', humain: true, point: cible.memo.devoir.id }));
-    }
-    return enFond(boucle.cycle(r.agent, { declencheur: 'texte', humain: true, texte: r.agent === 'qaid' ? r.intention : r.texte }));
-  }
-  const att = boucle.enAttenteDeReponse();
-  if (!att) return false;
-  return enFond(boucle.repondre(att.id, att.question.id, t));
-}
 if (!CERVEAU.ok && telegram.etat().configure) telegram.envoyer(TEXTE_SANS_CERVEAU).catch(() => {});
 
 /** Les messages de l'accueil : un texte (avec boutons), ou une PHOTO avec sa légende et ses boutons (un modèle à confirmer).
@@ -428,8 +397,8 @@ function brancherTelegram() {
         return;
       }
       if (data.startsWith('mis:')) { boutonMission({ data, id, messageId }); return; } // jamais attendu par l'écoute
-      // 0.5.0 : les boutons des agents (« b:<agent>:<action>… ») — la réponse tout de suite, le travail en arrière-plan
-      if (data.startsWith('b:')) { await telegram.repondreBouton(id, 'وصلني'); await telegram.retirerBoutons(messageId); boucle.surBouton(data).catch(e => journal('agents : ' + e.message)); return; }
+      // 1.0 : les boutons de l'inspecteur (le chemin, les questions à boutons) — la réponse tout de suite, le travail ensuite
+      if (data.startsWith('insp:')) { await telegram.repondreBouton(id, 'وصلني'); await telegram.retirerBoutons(messageId); inspecteur.surBouton(data).catch(e => journal('inspecteur : ' + e.message)); return; }
       if (/^spy:[A-Z]{2}$/.test(data)) { await telegram.repondreBouton(id, 'وصلني'); await telegram.retirerBoutons(messageId); await spy.demander({ pays: data.slice(4) }); return; } // le pays choisi après « spy » seul
       const m = /^(ok|non):(.+)$/.exec(data);
       if (m && telegram.questionOuverte(m[2])) {
@@ -440,8 +409,8 @@ function brancherTelegram() {
     surTexte: async ({ texte }) => {
       const t = String(texte || '').trim();
       // « spy dz » passe AVANT l'accueil (jamais pris pour un nom de modèle) ; le travail ne bloque pas l'écoute
-      if (await agentsSurTexte(t)) return; // 0.5.0 : une phrase d'un agent construit (sinon le chemin de 0.4.x ci-dessous)
       if (lireDemandeInspecteur(t)) { await inspecteur.demander(); return; }
+      if (inspecteur.attendNombre() && await inspecteur.surTexte(t)) return; // 1.0 : le dollar ou le retour demandé par l'inspecteur
       const demandeSpy = lireDemandeSpy(t);
       if (demandeSpy) { await spy.demander(demandeSpy); return; }
       if (accueil.enCours()) return suiteAccueil(accueil.surTexte(t));
@@ -450,7 +419,6 @@ function brancherTelegram() {
       if (/^\/start/.test(t)) return envoyerLot([{ texte: ACCUEIL_DEBUT }]);
       // [v19-trois] « الغي » SANS fiche ouverte : toutes les questions « لانسي » ouvertes se ferment (sans dialogue, rien activé, rien
       // supprimé chez Meta), et c'est dit ; « سقسيني » rouvre chacune plus tard
-      if (!accueil.enCours() && await agentsSurTexte(t, { reponseLibre: true })) return; // la réponse à la question ouverte d'un agent
       if (MOTS_ANNULE_PORTES.includes(t.replace(/[\u064B-\u0652\u0640]/g, '').replace(/[أإآ]/g, 'ا').toLowerCase())) { const r = missions.annulerPortes(); journal(`« الغي » sans fiche : ${r.fermees} question(s) « لانسي » fermée(s)`); return envoyerLot([r.message]); }
       return envoyerLot([{ texte: ['وصلني الميساج تاعك', 'باش نبداو موديل جديد،', 'ابعث لينك الدرايف برك', 'والأسئلة كاينين في المكتب'].join('\n') }]);
     }
@@ -782,9 +750,8 @@ function etatInstallation({ complet = false } = {}) {
   const manquent = [['emballage', cts.emballage], ['livraison', cts.livraison], ['retour', cts.retour], ['confirmation', dcl.confirmation], ['livraison %', dcl.livraison], ['taux du dollar', c.taux], ['budget max/jour', c.plafondJourDA], ['code boutique', c.codeBoutique]].filter(([, v]) => v === null || v === undefined || v === '').map(([k]) => k);
   ajoute('reglages', 'الإعدادات تاع البيزنس', !manquent.length, manquent.length ? 'manque : ' + manquent.join(', ') : 'complets');
   ajoute('atelier', 'الأدوات تاع Python', !!(ATELIER && fs.existsSync(ATELIER)), ATELIER || 'introuvable');
-  // 0.5.0 : le cerveau (la boussole 29.18 dans bureau/boussala) — pas 6/6 = « العقل ما راهوش », les agents qui calculent bloquent
+  // 1.0 : le cerveau (la boussole 29.18 dans bureau/boussala) — pas 6/6 = « العقل ما راهوش », les agents qui calculent bloquent
   const cv = etatCerveau(); ajoute('cerveau', 'العقل : البوصلة', cv.ok, cv.ok ? `boussole ${cv.version} · golden ${cv.pass}/${cv.total}` : `العقل ما راهوش : golden ${cv.pass}/${cv.total}${cv.echecs.length ? ' — ' + cv.echecs.join(' ; ').slice(0, 160) : ''}`);
-  ajoute('agents', 'الوكلاء', AGENTS_REFUSES.length ? false : AGENTS.length > 0, `${AGENTS.map(a => a.contrat.nom_ar).join(' · ')}${AGENTS_REFUSES.length ? ' · refusés : ' + AGENTS_REFUSES.map(a => a.id).join(', ') : ''}`);
   return l;
 }
 async function verifierTout() {
@@ -817,7 +784,6 @@ setInterval(() => {
     enfiler(() => executer(t));
   }
 }, 30000).unref();
-setInterval(() => { boucle.tick().catch(e => journal('horloge des agents : ' + e.message)); }, 60000).unref(); // 0.5.0
 setInterval(() => { try { const n = missions.tick(); if (n) journal(`suivi du soir : ${n} mission(s)`); } catch (e) { journal('horloge des missions : ' + e.message); } }, 60000).unref();
 
 /* ---------- chat : seul le coach a une voix ---------- */
@@ -901,9 +867,8 @@ const serveur = http.createServer(async (req, res) => {
   try {
     if (p.startsWith('/api/')) { const refus = requeteAutorisee(req); if (refus) return json(res, 403, { erreur: refus }); }
     if (p === '/api/sante' && m === 'GET') return json(res, 200, sante());
-    // 0.5.0 : l'état des agents (la page ne pilote rien : la manette, c'est Telegram)
-    if (p === '/api/agents' && m === 'GET') return json(res, 200, { cerveau: etatCerveau(), refuses: AGENTS_REFUSES, portes: boucle.portes(), produits: boucle.produits.lister(),
-      agents: boucle.etats().map(s => ({ id: s.id, nom: (boucle.agent(s.id) || {}).contrat?.nom_ar, etat: s.etat, arrete: s.arrete, pas: s.pas, iteration: s.iteration, prochaine: s.prochaine, question: s.question ? s.question.ar : null, bloqueRaison: s.bloqueRaison, dernierRapport: s.dernierRapport })), boite: boucle.boite(30) });
+    // 1.0 : l'état du cerveau (la boussole dans le bureau)
+    if (p === '/api/cerveau' && m === 'GET') return json(res, 200, etatCerveau());
     if (p === '/api/bureau' && m === 'GET') return json(res, 200, { ...BUREAU, maison: MAISON });
     if (p === '/api/taches' && m === 'GET') return json(res, 200, taches.slice(0, 200));
     if (p === '/api/taches' && m === 'POST') {
