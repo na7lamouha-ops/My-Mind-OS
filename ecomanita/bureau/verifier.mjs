@@ -3843,8 +3843,8 @@ await etape('lot avec le VRAI separer.py : un shooting fabriqué (deux modèles 
   const haute = path.join(maisonS, 'haute.jpg'), normale = path.join(maisonS, 'normale.jpg');
   spawnSync(path.join(ffDossier, 'ffmpeg' + exe), ['-y', '-v', 'error', '-f', 'lavfi', '-i', 'color=c=white:s=300x9000', '-frames:v', '1', haute], { windowsHide: true });
   spawnSync(path.join(ffDossier, 'ffmpeg' + exe), ['-y', '-v', 'error', '-f', 'lavfi', '-i', 'color=c=white:s=1200x900', '-frames:v', '1', normale], { windowsHide: true });
-  const rh = Ms._imagePourClaude(haute, path.join(maisonS, 'pour-claude', 'h.jpg')), sh = missionsM.sonder(path.join(ffDossier, 'ffprobe' + exe), rh);
-  if (rh === haute || !(sh.hauteur <= 2000) || Ms._imagePourClaude(normale, path.join(maisonS, 'pour-claude', 'n.jpg')) !== normale) throw new Error(`planches pour Claude : ${rh} ${sh.largeur}x${sh.hauteur}`);
+  const rh = await Ms._imagePourClaude(haute, path.join(maisonS, 'pour-claude', 'h.jpg')), sh = missionsM.sonder(path.join(ffDossier, 'ffprobe' + exe), rh);
+  if (rh === haute || !(sh.hauteur <= 2000) || (await Ms._imagePourClaude(normale, path.join(maisonS, 'pour-claude', 'n.jpg'))) !== normale) throw new Error(`planches pour Claude : ${rh} ${sh.largeur}x${sh.hauteur}`);
   return `${l.d.groupes.length} groupe(s) candidats, ${vus[0].length} planche(s) lue(s) (l'aperçu en premier) · T# / R# et nom sans accents traduits · plan aux noms du disque (NFD gardé) · ${x.nom} : ${fichiersDe(x).join(', ')} · ${y.nom} : ${fichiersDe(y).join(", ")} · planche de 9 000 px réduite à ${sh.largeur}x${sh.hauteur}`;
 });
 await etape('boussole : les chiffres du guide (281 · 169 · 68 · 310 417 · 357 250), les trois corrections, un produit perdant, et la MÊME formule que les quatre outils Python (deuxième méthode)', async () => {
