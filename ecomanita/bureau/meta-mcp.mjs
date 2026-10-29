@@ -85,7 +85,7 @@ export function classeErreur(e) {
 /** LE CHEMIN d'un appel (10/10/2026, « casse ») : un nœud (me, act_<id>, <id>) et au plus UNE arête connue, rien d'autre.
  *  Un id collé tel quel (« C1/copies », « C1?status=ACTIVE », « 111/campaigns?method=post&… ») ouvrait une duplication,
  *  une activation sans porte ou un plafond passé dans l'adresse. */
-export const ARETES = ['adaccounts', 'promote_pages', 'campaigns', 'adsets', 'ads', 'advideos', 'adimages', 'instagram_accounts', 'adspixels', 'adcreatives', 'owned_pixels'];
+export const ARETES = ['adaccounts', 'accounts', 'promote_pages', 'campaigns', 'adsets', 'ads', 'advideos', 'adimages', 'instagram_accounts', 'adspixels', 'adcreatives', 'owned_pixels'];
 export const ID_SUR = /^[A-Za-z0-9_-]{1,64}$/;
 export function cheminSur(chemin) {
   const c = String(chemin ?? '');
@@ -343,6 +343,11 @@ export const CHAMPS_CREA = ['id', 'name', 'status', 'account_id', 'object_type',
 // description, display_link, child_attachments ne sont pas des champs Graph de la créa : lus dans object_story_spec
 const CREA_DERIVES = ['description', 'display_link', 'child_attachments'];
 const CREA_DEFAUT_LISTE = ['id', 'name', 'account_id', 'status', 'body', 'title', 'call_to_action_type'];
+/** 28/10/2026 (rapport d'installation 0.4.2, n° 18) : les sous-codes de Meta que le bureau reconnaît, et ce qu'il faut dire au client.
+ *  1885183 : la publication de la créa est créée par une app en mode Développement — Meta la refuse (« Invalid parameter »). */
+export const EXPLICATIONS = {
+  '1885183': "app Meta en mode Développement : Meta refuse une créa publiée par une app qui n'est pas en mode Live. Passer l'app en mode Live (Meta for Developers → l'app → Paramètres de base : URL de politique de confidentialité, icône, catégorie ; puis le bouton « Live »), ou faire la mission par le connecteur Meta Ads de claude.ai. Rien n'a été créé ni dépensé par cet appel."
+};
 /** LES OUTILS QUI ÉCRIVENT : tout le reste ne fait que des GET. */
 export const ECRITURES = new Set(['ads_creative_upload_media', 'ads_create_campaign', 'ads_create_ad_set', 'ads_create_creative', 'ads_create_ad', 'ads_activate_entity', 'ads_update_entity']);
 
@@ -361,7 +366,7 @@ export const OUTILS = [
   { name: 'ads_get_creatives', description: 'Les créas du compte (lecture) ; creative_ids pour des créas précises. fields parmi ' + CHAMPS_CREA.join(', ') + '.', inputSchema: schema({ ad_account_id: TXT, creative_ids: LISTE, fields: LISTE, limit: INT, cursor: TXT }, ['ad_account_id']) },
   { name: 'ads_create_campaign', description: 'Crée UNE campagne EN PAUSE. ABO : aucun budget de campagne. CBO : campaign_daily_budget (plus petite unité de la devise) et campaign_bid_strategy. REFUSÉS : campaign_spend_cap, campaign_lifetime_budget, budget_schedule_specs (aucun plafond, aucun budget de vie).', inputSchema: schema({ ad_account_id: TXT, campaign_name: TXT, objective: TXT, buying_type: TXT, campaign_daily_budget: INT, campaign_bid_strategy: TXT, special_ad_categories: TXT, promoted_object: TXT, campaign_start_time: TXT, adlabels: TXT }, ['ad_account_id', 'campaign_name', 'objective', 'buying_type']) },
   { name: 'ads_create_ad_set', description: 'Crée UN ad set EN PAUSE sous une campagne. daily_budget en ABO seulement ; en CBO, daily_min_spend_target (le plancher de l\'ad set, pas un plafond). REFUSÉS : daily_spend_cap, lifetime_spend_cap, lifetime_budget (aucun plafond, aucun budget de vie). targeting en texte JSON.', inputSchema: schema({ ad_account_id: TXT, campaign_id: TXT, ad_set_name: TXT, billing_event: TXT, optimization_goal: TXT, targeting: TXT, daily_budget: INT, daily_min_spend_target: INT, bid_strategy: TXT, bid_amount: INT, promoted_object: TXT, destination_type: TXT, start_time: TXT, attribution_spec: TXT, pacing_type: TXT, is_dynamic_creative: BOOL }, ['ad_account_id', 'campaign_id', 'ad_set_name', 'billing_event', 'optimization_goal', 'targeting']) },
-  { name: 'ads_create_creative', description: 'Crée une créa : vidéo (page_id, video_id, image_url ou image_hash pour la vignette, message, headline, description, link_url, call_to_action_type), image (page_id, link_url, image_hash ou image_url…), ou un POST existant (page_id, object_story_id « <page>_<post> », instagram_user_id facultatif).', inputSchema: schema({ ad_account_id: TXT, page_id: TXT, name: TXT, video_id: TXT, image_hash: TXT, image_url: TXT, link_url: TXT, message: TXT, headline: TXT, description: TXT, call_to_action_type: TXT, instagram_user_id: TXT, object_story_id: TXT }, ['ad_account_id', 'page_id']) },
+  { name: 'ads_create_creative', description: 'Crée une créa : vidéo (page_id, video_id, image_url ou image_hash pour la vignette, message, headline, description, link_url, call_to_action_type), image (page_id, link_url, image_hash ou image_url…), ou un POST existant (page_id, object_story_id « <page>_<post> », instagram_user_id facultatif). Vidéo avec PLUSIEURS textes (1 à 5 de chaque) : primary_texts, headlines, descriptions — Meta choisit à la diffusion ; message, headline et description sont alors ignorés.', inputSchema: schema({ ad_account_id: TXT, page_id: TXT, name: TXT, video_id: TXT, image_hash: TXT, image_url: TXT, link_url: TXT, message: TXT, headline: TXT, description: TXT, call_to_action_type: TXT, instagram_user_id: TXT, object_story_id: TXT, primary_texts: LISTE, headlines: LISTE, descriptions: LISTE }, ['ad_account_id', 'page_id']) },
   { name: 'ads_create_ad', description: 'Crée UNE annonce EN PAUSE dans un ad set. creative en texte JSON avec exactement une source : creative_id, object_story_id ou object_story_spec. source_ad_id REFUSÉ (aucune duplication).', inputSchema: schema({ ad_account_id: TXT, ad_set_id: TXT, ad_name: TXT, creative: TXT, tracking_specs: TXT, conversion_domain: TXT }, ['ad_account_id', 'ad_set_id', 'ad_name']) },
   { name: 'ads_activate_entity', description: 'Active (PAUSED → ACTIVE) une campagne, un ad set ou une annonce. REFUSÉ sans « porte » : la porte à usage unique que l\'étape d\'activation du bureau donne après « لانسي ». object_ids : d\'autres objets de la même porte à activer dans le même appel.', inputSchema: schema({ ad_account_id: TXT, entity_id: TXT, entity_type: TXT, object_ids: LISTE, publish_as_active: BOOL, porte: TXT }, ['ad_account_id', 'entity_id', 'entity_type']) },
   { name: 'ads_update_entity', description: 'Met à jour une campagne, un ad set ou une annonce. fields (objet JSON) ne peut porter QUE {"status":"PAUSED"} et/ou {"daily_budget": <entier, plus petite unité>} — OU, seul et sur un AD SET seulement, {"start_time":"<date ISO avec fuseau, future, au plus 7 jours>"} avec la « porte » de l\'activation (l\'heure est relue et rendue). Tout autre champ (ACTIVE, plafonds, ciblage, nom…) est refusé.', inputSchema: schema({ ad_account_id: TXT, entity_id: TXT, entity_type: TXT, fields: TXT, porte: TXT }, ['ad_account_id', 'entity_id', 'entity_type', 'fields']) }
@@ -397,7 +402,13 @@ export function creerServeur({ fichierConfig = path.join(ICI, 'config.local.json
   /** Un id qui entre dans un CHEMIN Graph : des lettres, chiffres, « _ » et « - », rien d'autre (jamais « / », « ? », « & »). */
   const idSur = (v, quoi) => { const s = String(v ?? '').trim(); if (!ID_SUR.test(s)) throw refuser(`${quoi} illisible : ${s.slice(0, 40) || '(vide)'} (un id Meta, rien d'autre)`); return s; };
   const jsonArg = (v, quoi) => { if (v === undefined || v === null || v === '') return undefined; if (typeof v === 'object') return v; try { return JSON.parse(v); } catch { throw refuser(`${quoi} : JSON illisible`); } };
-  const parIds = async (ids, fields) => { ids = (Array.isArray(ids) ? ids : []).map(x => idSur(x, 'id')); if (!ids.length) throw refuser('aucun id à lire'); const j = await G('GET', '', { ids: ids.join(','), fields }); return ids.map(id => j[id]).filter(Boolean); };
+  // 27/10/2026 : une app créée après v26.0 est servie en v26 même épinglée v25.0, et v26 refuse « ids » (#100) : alors un GET par id
+  const parIds = async (ids, fields) => {
+    ids = (Array.isArray(ids) ? ids : []).map(x => idSur(x, 'id')); if (!ids.length) throw refuser('aucun id à lire');
+    try { const j = await G('GET', '', { ids: ids.join(','), fields }); return ids.map(id => j[id]).filter(Boolean); }
+    catch (e) { if (!(+e.code === 100 && /ids query parameter is deprecated/i.test(e.message))) throw e; }
+    return (await Promise.all(ids.map(id => G('GET', id, { fields })))).filter(Boolean);
+  };
   /** Une liste d'arguments (liste, ou texte JSON d'une liste) ; chaque élément une chaîne. */
   const listeArg = (v, quoi) => { if (v === undefined || v === null || v === '') return []; let l = v; if (typeof l === 'string') { try { l = JSON.parse(l); } catch { l = l.split(/[\s,]+/).filter(Boolean); } } if (!Array.isArray(l)) throw refuser(`${quoi} : une liste`); return l.map(x => String(x ?? '').trim()).filter(Boolean); };
   /** Les champs demandés, dans la liste du connecteur ; un autre nom est refusé (rien ne part chez Meta). */
@@ -580,6 +591,20 @@ export function creerServeur({ fichierConfig = path.join(ICI, 'config.local.json
       } else {
         const cta = a.call_to_action_type ? { type: a.call_to_action_type, ...(a.link_url ? { value: { link: a.link_url } } : a.call_to_action_type === 'MESSAGE_PAGE' ? { value: { app_destination: 'MESSENGER' } } : {}) } : (a.link_url ? { type: 'LEARN_MORE', value: { link: a.link_url } } : undefined);
         const spec = { page_id: a.page_id, ...(a.instagram_user_id ? { instagram_user_id: a.instagram_user_id } : {}) };
+        // 28/10/2026 (décision du vendeur : le TEST porte les cinq textes, un par angle) : une vidéo et 1 à 5 textes de chaque
+        // → asset_feed_spec (Meta choisit à la diffusion) ; sans ces listes, la créa d'avant, inchangée
+        const variantes = { bodies: listeArg(a.primary_texts, 'primary_texts'), titles: listeArg(a.headlines, 'headlines'), descriptions: listeArg(a.descriptions, 'descriptions') };
+        if (Object.values(variantes).some(l => l.length)) {
+          if (!a.video_id) throw refuser('primary_texts, headlines, descriptions : seulement avec une vidéo (video_id)');
+          for (const [k, l] of Object.entries(variantes)) if (l.length > 5) throw refuser(`${k} : cinq textes au plus (${l.length})`);
+          p.object_story_spec = spec;
+          p.asset_feed_spec = { videos: [{ video_id: a.video_id, ...(a.image_hash ? { thumbnail_hash: a.image_hash } : a.image_url ? { thumbnail_url: a.image_url } : {}) }],
+            ...Object.fromEntries(Object.entries(variantes).filter(([, l]) => l.length).map(([k, l]) => [k, l.map(text => ({ text }))])),
+            ...(a.link_url ? { link_urls: [{ website_url: a.link_url }] } : {}), ...(cta ? { call_to_action_types: [cta.type] } : {}),
+            ad_formats: ['SINGLE_VIDEO'], optimization_type: 'DEGREES_OF_FREEDOM' };
+          const j = await G('POST', `${compte}/adcreatives`, p);
+          return { creative_id: String(j.id || ''), id: String(j.id || '') };
+        }
         if (a.video_id) spec.video_data = { video_id: a.video_id, ...(a.image_hash ? { image_hash: a.image_hash } : a.image_url ? { image_url: a.image_url } : {}), message: a.message, title: a.headline, ...(a.description && a.link_url ? { link_description: a.description } : {}), ...(cta ? { call_to_action: cta } : {}) };
         else { if (!a.link_url) throw refuser('une créa image demande link_url'); spec.link_data = { link: a.link_url, message: a.message, name: a.headline, description: a.description, ...(a.image_hash ? { image_hash: a.image_hash } : a.image_url ? { picture: a.image_url } : {}), ...(cta ? { call_to_action: cta } : {}) }; }
         p.object_story_spec = spec;
@@ -662,7 +687,7 @@ export function creerServeur({ fichierConfig = path.join(ICI, 'config.local.json
     } catch (e) {
       const classe = e.refus ? 'refus' : e.classe || 'meta';
       noter(nom, e.refus ? 'REFUS' : 'ERREUR', `${e.code !== undefined ? '(#' + e.code + ') ' : ''}${e.message}`);
-      return sortir({ error: { code: e.code ?? null, error_subcode: e.sous_code ?? null, type: e.type || (e.refus ? 'manita' : 'meta'), manita: classe, message: masquer(e.message, jeton) } }, true);
+      return sortir({ error: { code: e.code ?? null, error_subcode: e.sous_code ?? null, type: e.type || (e.refus ? 'manita' : 'meta'), manita: classe, message: masquer(e.message, jeton), ...(EXPLICATIONS[String(e.sous_code)] ? { explication: EXPLICATIONS[String(e.sous_code)] } : {}) } }, true);
     }
   }
 
@@ -732,6 +757,19 @@ export function cheminJeton({ fichierConfig, base = GRAPH_META, journal = '' }) 
       const a = await lire('ads_get_ad_accounts', { limit: 100 });
       const comptes = (a.ad_accounts || []).filter(x => x.ad_account_id).map(x => ({ id: act(x.ad_account_id), nom: x.ad_account_name || '', devise: x.currency || '', statut: String(x.account_status ?? ''), mcp_ok: true }));
       const pages = new Map();
+      // 28/10/2026 (rapport d'installation 0.4.2, n° 2) : d'abord les pages ATTRIBUÉES à l'utilisateur (système) du jeton, par
+      //   me/accounts (promote_pages est vide pour un compte qui n'a jamais promu de page). Lu ICI, en direct, seulement pour
+      //   l'installation : aucun outil de plus pour Claude. Champs id,name seulement (jamais le jeton d'une page). Un refus de
+      //   DROITS (pages_show_list absent) n'arrête rien : il reste dans « appels », les pages promues suivent.
+      { let apres, n = 0; do {
+          const entree = { fields: 'id,name', limit: 100, ...(apres ? { after: apres } : {}) }; let j;
+          try { j = await graph({ jeton: lireJeton(fichierConfig), base, methode: 'GET', chemin: 'me/accounts', params: entree }); }
+          catch (e) { appels.push({ nom: PREFIXE + 'me/accounts', entree, sortie: JSON.stringify({ error: { code: e.code ?? null, manita: e.classe || 'meta', message: masquer(e.message, lireJeton(fichierConfig)) } }), erreur: true, obj: null }); if (e.classe !== 'droits') throw Object.assign(new Error(`${REFUS_SONDE[e.classe] || 'refus'} — me/accounts (#${e.code ?? '?'}) ${String(e.message || '').slice(0, 200)}`), { classe: e.classe || 'meta', appels }); break; }
+          const obj = { pages: (j.data || []).map(p => ({ page_id: p.id, page_name: p.name || '' })) };
+          appels.push({ nom: PREFIXE + 'me/accounts', entree, sortie: masquer(JSON.stringify(obj), lireJeton(fichierConfig)), erreur: false, obj });
+          for (const x of obj.pages) if (x.page_id && !pages.has(String(x.page_id))) pages.set(String(x.page_id), { id: String(x.page_id), nom: x.page_name });
+          apres = j.paging?.next ? j.paging?.cursors?.after || null : null; n++;
+        } while (apres && n < 10); }
       for (const c of comptes) { const p = await lire('ads_get_ad_account_pages', { ad_account_id: sansAct(c.id), limit: 100 }); for (const x of p.pages || []) if (x.page_id && !pages.has(String(x.page_id))) pages.set(String(x.page_id), { id: String(x.page_id), nom: x.page_name || '' }); }
       return { comptes, pages: [...pages.values()], appels };
     },

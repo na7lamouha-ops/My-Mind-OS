@@ -95,6 +95,19 @@ export function creasValide(v) {
 export const creasDe = (reponse, reglage) => creasValide(reponse) ?? creasValide(reglage) ?? CREAS_DEFAUT;
 /** La ligne latine du résumé (« 1 crea », « 3 creas »). */
 export const creasLatin = k => (k === 1 ? '1 crea' : `${k} creas`);
+/** 29/10/2026 (règle du vendeur) — LA VOIE DU LIEN, une fois par lien, juste avant les créas : « شوتينغ جديد » = la chaîne
+ *  d'avant, TELLE QUELLE (montage, créas au choix) ; « تيست » = les vidéos DÉJÀ faites du dossier, QUATRE créas par modèle
+ *  (QUATRE-CREAS.py : quatre vidéos ou plus → les quatre premières telles quelles ; moins → chaque originale + des copies où
+ *  SEULE la musique change), puis la STRUCTURE au choix du client : ABO comme avant (un ad set par vidéo, la règle 7 / 5 $)
+ *  ou CBO (une campagne, UN ad set, les quatre annonces dedans, CBO_TESTER_USD par modèle sur la campagne). Les textes des
+ *  annonces ne changent pas. Le bouton « تيست » dit que les vidéos sont au client ou qu'il a l'accord de leur propriétaire.
+ *  Une conversation d'avant sans voie : la chaîne d'avant. */
+export const VOIES = [{ v: 'shooting', t: '📸 شوتينغ جديد' }, { v: 'tester', t: '🧪 تيست بالفيديوهات' }];
+export const CBO_TESTER_USD = 20;
+export const CREAS_TESTER = 4;
+export const STRUCTURES_TESTER = [{ v: 'ABO', t: 'ABO' }, { v: 'CBO', t: 'CBO' }];
+/** La voie « tester » (le reste, absent compris, est la chaîne d'avant). */
+export const estTester = r => !!r && r.voie === 'tester';
 
 export const TAILLES = [
   { v: 'lettres-courte', t: 'S → XL' }, { v: 'lettres-complete', t: 'S → 3XL' },
@@ -198,9 +211,19 @@ export const QUESTIONS = [
     texteVide: ['سؤال : البيكسل', 'الكونت لي ختارت ما فيه حتى بيكسل', 'بدّل للميساج ولا اكتب : الغي'] },
   { cle: 'placements', type: 'choix', texte: ['سؤال : وين تبان البوب', 'ستوري و ريلز برك،', 'ولا برود في كل بلاصة ؟'],
     choix: [{ v: 'story_reels', t: 'ستوري و ريلز' }, { v: 'broad', t: 'برود' }] },
+  // 29/10/2026 : LA VOIE (une fois par lien) ; une conversation d'avant déjà passée plus loin (créas, nom, type ou niche répondus)
+  // ne la reçoit jamais : elle continue sur la chaîne d'avant, telle quelle
+  { cle: 'voie', type: 'choix', colonnes: 1, si: r => [r.creas, r.choixnom, r.type, r.nom, r.niche].every(x => x === undefined),
+    texte: ['سؤال : واش من طريقة ؟', 'شوتينغ جديد : المونتاج كيما العادة', 'تيست : الفيديوهات لي في الدوسي', 'أربعة كريات لكل موديل', 'فيديو وحدة : نزيدو ثلاثة', 'نفس التصويرة، الموسيقى برك تتبدّل', 'غير الفيديوهات تاعك', 'ولا لي مولاها عطاك الإذن'],
+    choix: VOIES },
+  // 29/10/2026 : LA STRUCTURE du test, seulement sur la voie « tester » (la ligne du budget en dollars ET en dinars est ajoutée à l'envoi)
+  { cle: 'structure', type: 'choix', colonnes: 2, si: r => estTester(r),
+    texte: ['سؤال : الكامباني تاع التيست', 'ABO : كل فيديو في أد ست وحدو', 'كيما العادة، والو ما يتبدّل', 'CBO : أد ست واحد فيه الكريات', 'البودجي على الكامباني لكل موديل :'],
+    fin: ['اختار واحد'], choix: STRUCTURES_TESTER },
   // UNE fois par lien (08/10/2026) ; les libellés sont refaits à chaque envoi (le réglage marqué « (العادة) »). Une conversation
   // N = 1 d'avant déjà au résumé (la niche, dernière question, est répondue) ne la reçoit pas : le réglage, figé au résumé.
-  { cle: 'creas', type: 'choix', colonnes: 2, si: r => !(r.niche !== undefined && r.creas === undefined),
+  // 29/10/2026 : jamais sur la voie « tester » (quatre créas, la règle du vendeur)
+  { cle: 'creas', type: 'choix', colonnes: 2, si: r => !estTester(r) && !(r.niche !== undefined && r.creas === undefined),
     texte: ['سؤال : الكريات تاع التيست', 'شحال من كريا للتيست ؟', 'من واحد حتى أربعة لكل موديل', 'نفس العدد لكل الموديلات'],
     choix: CREAS_CHOIX.map(k => ({ v: String(k), t: CREAS_LETTRES[k] })) },
   // LE CHOIX (10/10/2026) : « نكتبو أنا » (texte libre) ou « اقترحلي أسماء » (le type puis les noms) ; seulement tant que ni le
@@ -225,7 +248,7 @@ export const QUESTIONS = [
 /** Le 3e bouton de la photo à confirmer : le modèle est juste, ses couleurs non (darija, ≤ 36 caractères, aucun chiffre). */
 export const BOUTON_COULEURS_FAUSSES = 'صحيح، بصح اللونات غالطين';
 /** Un lot : ce qui est posé UNE fois pour tous les modèles, puis ce qui est posé pour CHAQUE modèle. */
-export const COMMUNES = ['stock', 'compte', 'page', 'mode', 'pixel', 'placements', 'creas', 'niche'];
+export const COMMUNES = ['stock', 'compte', 'page', 'mode', 'pixel', 'placements', 'voie', 'structure', 'creas', 'niche'];
 /** [v19-trois] Les boutons du pixel : huit au plus (la borne du robot du vendeur) ; le bouton du compte sans pixel. */
 export const PIXELS_MAXI_BOUTONS = 8;
 export const BOUTON_PIXEL_MESSAGE = 'بدّل للميساج';
@@ -360,6 +383,7 @@ export const TEXTES = {
   lotEchec: raison => ['صرا مشكل في فرز الموديلات', 'السبب :', ...coupeLatin(raison), 'ابعث نفس اللينك من جديد'],
   lotPerdu: ['ما قدرتش نبدا الموديلات', 'الفرز تاعهم ضاع من الدوسي', 'ابعث اللينك من جديد'],
   lotLance: n => ['تمام، الخدمة بدات', 'عدد الموديلات :', `${n} modeles`, 'كل موديل عندو الخدمة تاعو', 'وكل ميساج فيه اسم الموديل', 'نعلمك في كل مرحلة'],
+  budgetCourtTester: (n, minDa) => ['البودجي تاع النهار ما يكفيش', 'التيست بأربعة كريات يحتاج', 'عشرين دولار لكل موديل', 'الأقل لكل الموديلات :', `${nombre(minDa)} DA = ${CBO_TESTER_USD * n} $`, 'طلّع البودجي في الإعدادات', 'ومن بعد اضغط : ابدا'],
   budgetCourt: (n, minDa) => ['البودجي تاع النهار ما يكفيش', 'لازم ثلاثة دولار لكل موديل', 'الأقل لكل الموديلات :', `${nombre(minDa)} DA = ${3 * n} $`, 'طلّع البودجي في الإعدادات', 'ومن بعد اضغط : ابدا'],
   confirmation: (k, n, couleurs) => ['هاذا واحد من الموديلات لي فرزت', 'الرقم تاعو و اللونات :', `Modele ${k} / ${n}`, ...lignesNoms(couleurs), 'كل التصاور فيها نفس الموديل ؟', 'إذا صحيح اضغط : صحيح', 'وإذا اللونات غالطين، تسمّيهم انت'],
   /** Dans le résumé du lot, sous un modèle dont le client a dit « اللونات غالطين » (rien sous les autres : comme avant). */
@@ -417,8 +441,13 @@ export function ouvrirAccueil({ dossier, listes = () => ({ comptes: [], pages: [
   /** [v19-trois] Les pixels LUS du compte choisi (du dernier tir au plus ancien), ou null quand ils n'ont jamais été lus. */
   const pixelsDe = r => { const c = choisiParId(listes().comptes, r || {}, 'compte'); return c && Array.isArray(c.pixels) ? c.pixels.filter(x => x && x.id !== undefined && x.id !== null && String(x.nom || '').trim()).slice().sort((a, b) => String(b.dernierTir || '').localeCompare(String(a.dernierTir || ''))) : null; };
   const pixelActif = r => !!r && r.mode === 'site' && pixelsDe(r) !== null;
-  const questionsActives = r => QUESTIONS.filter(q => (!q.si || q.si(r)) && (q.cle !== 'pixel' || pixelActif(r)));
-  const communes = () => COMMUNES.map(c => (c === 'niche' ? { ...parCle(c), texte: NICHE_LOT } : parCle(c))).filter(q => q.cle !== 'pixel' || pixelActif(conv.reponses));
+  // 29/10/2026 : la voie n'existe que pour une conversation NÉE avec elle (conv.avecVoie, posé au lien) — une conversation d'avant
+  // relue du disque continue sur la chaîne d'avant, telle quelle
+  const voieDue = () => !!(conv && conv.avecVoie);
+  const questionsActives = r => QUESTIONS.filter(q => (!q.si || q.si(r)) && (q.cle !== 'pixel' || pixelActif(r)) && (q.cle !== 'voie' || voieDue()));
+  const communes = () => COMMUNES.map(c => (c === 'niche' ? { ...parCle(c), texte: NICHE_LOT } : parCle(c))).filter(q => q.cle !== 'pixel' || pixelActif(conv.reponses))
+    .filter(q => (q.cle !== 'structure' || estTester(conv.reponses)) && (q.cle !== 'creas' || !estTester(conv.reponses)) // 29/10/2026
+      && (q.cle !== 'voie' || (voieDue() && (conv.reponses.voie !== undefined || q.si(conv.reponses))))); // un lot d'avant : pas de voie
   const modele = () => (conv.modeles || [])[conv.rang - 1] || null;
   /** Les réponses que la question en cours remplit : celles du modèle en cours dans un lot, sinon celles de la conversation. */
   const reponses = () => (conv.phase === 'modeles' ? modele().reponses : conv.reponses);
@@ -458,6 +487,7 @@ export function ouvrirAccueil({ dossier, listes = () => ({ comptes: [], pages: [
     let choix = choixDe(q);
     let texte = q.texte;
     if (q.cle === 'creas') { const reg = listes().creasParModele; choix = choixCreas(reg); texte = [...q.texte, ligneHabitude(reg)]; }
+    if (q.cle === 'structure') texte = [...q.texte, ligneCboTester(), ...q.fin]; // 29/10/2026 : le budget CBO en dollars ET en dinars
     // « نكتبو أنا » pressé : la question du nom en texte libre, avec le seul « سمّيه انت » (les règles d'avant)
     if (q.cle === 'nom' && porteur().nomLibre) { choix = q.choix; texte = q.texteLibre; }
     if (q.cle === 'pixel' && !(pixelsDe(reponses()) || []).length) texte = q.texteVide;
@@ -496,7 +526,10 @@ export function ouvrirAccueil({ dossier, listes = () => ({ comptes: [], pages: [
   const nomChoisi = (src, r, cle) => { const x = choisiParId(listes()[src], r, cle); return ligneSure(x ? String(x.nom || x.id) : '?'); };
   // la loi des dinars : chaque montant en DA porte aussi les dollars (le taux du client, dans ses réglages)
   const prix = (etiquette, v) => { const taux = +(listes().taux || 0); return `${etiquette} ${nombre(v)} DA = ${taux > 0 ? nombre(Math.round(v / taux)) : '?'} $`; };
-  const lignesCommunes = r => ['السلعة : ' + (r.stock === 'stock' ? 'عندك' : 'تيست برك'), 'الكوموند : ' + (r.mode === 'site' ? 'من الموقع' : 'بالميساج'), ...(r.mode === 'site' && r.pixelId ? ['البيكسل :', ligneSure(String(r.pixel || '?'))] : []), 'البوب : ' + (r.placements === 'broad' ? 'برود' : 'ستوري و ريلز')];
+  /** 29/10/2026 : le budget CBO du test, en dollars ET en dinars au taux du client (une ligne latine). */
+  const ligneCboTester = () => { const taux = +(listes().taux || 0); return `${CBO_TESTER_USD} $${taux > 0 ? ` = ${nombre(CBO_TESTER_USD * taux)} DA` : ''} / modele`; };
+  const lignesVoie = r => (!estTester(r) ? [] : ['الطريقة : تيست بالفيديوهات', ...(r.structure === 'CBO' ? ['الكامباني : أد ست واحد', 'CBO · 1 adset · 4 ads', ligneCboTester()] : ['الكامباني : كل فيديو وحدو', 'ABO · 4 adsets'])]);
+  const lignesCommunes = r => ['السلعة : ' + (r.stock === 'stock' ? 'عندك' : 'تيست برك'), 'الكوموند : ' + (r.mode === 'site' ? 'من الموقع' : 'بالميساج'), ...(r.mode === 'site' && r.pixelId ? ['البيكسل :', ligneSure(String(r.pixel || '?'))] : []), 'البوب : ' + (r.placements === 'broad' ? 'برود' : 'ستوري و ريلز'), ...lignesVoie(r)];
   /** [v19-trois] Le pixel qui PART avec la demande : celui du compte choisi, retrouvé par son id dans la liste du moment ; disparu
    *  de la liste → l'id et le nom choisis partent quand même (la campagne le relit chez Meta et refuse s'il n'y est plus) ; jamais
    *  un autre pixel. Mode message ou pixels jamais lus : rien (l'ancienne loi). */
@@ -508,6 +541,8 @@ export function ouvrirAccueil({ dossier, listes = () => ({ comptes: [], pages: [
   /** Le nombre de créas montré au résumé est CELUI qui part : sans réponse valable (conversation d'avant, valeur abîmée),
    *  le réglage est figé ici, au moment où le résumé est envoyé — un réglage changé avant « ابدا » ne change rien. */
   function figerCreas() {
+    // 29/10/2026 : la voie « tester » = quatre créas, toujours (la règle du vendeur)
+    if (estTester(conv.reponses)) { if (conv.reponses.creas !== String(CREAS_TESTER)) { conv.reponses.creas = String(CREAS_TESTER); sauver(); } return CREAS_TESTER; }
     if (creasValide(conv.reponses.creas) !== null) return creasValide(conv.reponses.creas);
     const k = creasDe(undefined, listes().creasParModele);
     conv.reponses.creas = String(k); sauver(); journal(`accueil ${conv.id} : créas figées au résumé sur le réglage (${k})`);
@@ -612,7 +647,7 @@ export function ouvrirAccueil({ dossier, listes = () => ({ comptes: [], pages: [
       const lienPropre = String(lien || '').trim();
       if (!LIEN_DRIVE.test(lienPropre)) return [msg(TEXTES.pasDrive)];
       if (conv && !conv.termine) return lienPendantFiche(lienPropre);
-      conv = { id: crypto.randomBytes(3).toString('hex'), debut: new Date().toISOString(), lien: lienPropre, phase: 'nombre', n: null, reponses: {}, termine: false };
+      conv = { id: crypto.randomBytes(3).toString('hex'), debut: new Date().toISOString(), lien: lienPropre, phase: 'nombre', n: null, reponses: {}, termine: false, avecVoie: true };
       sauver(); journal(`accueil ${conv.id} : lien reçu`);
       return [message(courante())];
     },
@@ -870,6 +905,8 @@ export function ouvrirAccueil({ dossier, listes = () => ({ comptes: [], pages: [
       // le serveur retire les boutons du résumé pressé : le résumé repart AVEC « ابدا », que le message dit de presser une fois
       // le budget monté (07/10/2026 : le client n'avait plus aucun « ابدا » et devait tout recommencer)
       if (plafond > 0 && cours > 0 && Math.floor(plafond / conv.n) / cours < 3) return [msg(TEXTES.budgetCourt(conv.n, conv.n * Math.ceil(3 * cours))), messageResumeLot()];
+      // 29/10/2026 : la voie « tester » demande CBO_TESTER_USD par modèle (ABO : 4 × 5 $, CBO : sur la campagne)
+      if (estTester(conv.reponses) && plafond > 0 && cours > 0 && Math.floor(plafond / conv.n) / cours < CBO_TESTER_USD) return [msg(TEXTES.budgetCourtTester(conv.n, conv.n * Math.ceil(CBO_TESTER_USD * cours))), messageResumeLot()];
       // « finie » n'est PAS écrite sur le disque : une coupure avant l'effacement laisse le résumé, que le client peut
       // represser (une conversation « finie » restée sur le disque gardait le lot « prêt » pour rien, sans rien dire)
       conv.termine = true; conv.fin = new Date().toISOString();
@@ -921,7 +958,7 @@ export function fautesDesQuestions() {
   for (const q of PAR_MODELE.map(c => QUESTIONS.find(x => x.cle === c))) voir(`${q.cle} (modèle d'un lot)`, [...TEXTES.entete(2, 3), ...q.texte]);
   for (const [k, t] of Object.entries(TEXTES)) {
     if (k === 'entete' || k === 'couleursClient') continue;
-    const lignes = typeof t === 'function' ? ({ lotParti: () => t(3), trouve: () => t(3, 2, 1), estimation: () => t(3), lotEchec: () => t('separer.py --candidats a echoue : code 3 (plantage voulu)'), lotLance: () => t(3), budgetCourt: () => t(3, 5355), confirmation: () => t(2, 3, ['Noir', 'Beige', 'Bordeaux', 'Marine', 'Camel']) }[k] || (() => t()))() : t;
+    const lignes = typeof t === 'function' ? ({ lotParti: () => t(3), trouve: () => t(3, 2, 1), estimation: () => t(3), lotEchec: () => t('separer.py --candidats a echoue : code 3 (plantage voulu)'), lotLance: () => t(3), budgetCourt: () => t(3, 5355), budgetCourtTester: () => t(3, 15300), confirmation: () => t(2, 3, ['Noir', 'Beige', 'Bordeaux', 'Marine', 'Camel']) }[k] || (() => t()))() : t;
     voir(k, lignes);
   }
   // les formes rares : plusieurs modèles retirés, une estimation au-delà de vingt (toujours « تقريبا », jamais un chiffre arabe)

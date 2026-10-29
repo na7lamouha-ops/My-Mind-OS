@@ -566,7 +566,10 @@ def budget(videos, devise, plafond_usd=0.0, un_seul_ad_set=False,
         structure = str(structure).upper()
         if structure not in ("ABO", "CBO"):
             raise ValueError("structure inconnue : %s (ABO ou CBO)" % structure)
-        if un_seul_ad_set:
+        # 29/10/2026 (regle du vendeur, mode « tester ») : CBO + --un-seul-ad-set =
+        # UNE campagne, UN ad set, toutes les annonces dedans, le budget du jour
+        # sur la CAMPAGNE. ABO + --un-seul-ad-set reste refuse (comme avant).
+        if un_seul_ad_set and structure != "CBO":
             raise ValueError("--un-seul-ad-set et --structure ne vont pas ensemble")
         total_usd = float(budget_jour_usd or 0)
         if total_usd <= 0:
@@ -574,9 +577,9 @@ def budget(videos, devise, plafond_usd=0.0, un_seul_ad_set=False,
         if plafond_usd and total_usd > plafond_usd + 0.005:
             raise ValueError("PLAFOND DEPASSE : %.2f USD par jour demandes, le client "
                              "a declare %.2f USD." % (total_usd, plafond_usd))
-        if structure == "CBO" and videos < 2:
+        if structure == "CBO" and videos < 2 and not un_seul_ad_set:
             raise ValueError("CBO demande au moins deux videos (une seule : ABO)")
-        if total_usd < PLANCHER_CBO_USD * (videos if structure == "CBO" else 1) - 1e-9:
+        if total_usd < PLANCHER_CBO_USD * (videos if structure == "CBO" and not un_seul_ad_set else 1) - 1e-9:
             raise ValueError("BUDGET TROP COURT : %.2f USD pour %d video(s), il faut au "
                              "moins %.2f USD par video." % (total_usd, videos, PLANCHER_CBO_USD))
         plancher = PLANCHER_META.get(devise, 100)
@@ -590,6 +593,14 @@ def budget(videos, devise, plafond_usd=0.0, un_seul_ad_set=False,
                     "centimes_min_par_ad_set": None,
                     "total_devise": centimes * videos / 100.0}
         centimes_campagne = int(round(total_usd * taux_devise(devise) * 100))
+        if un_seul_ad_set:
+            # un seul ad set : aucun plancher par ad set (il n'y a rien a partager)
+            return {"videos": videos, "ad_sets": 1, "un_seul_ad_set": True,
+                    "annonces": videos, "structure": "CBO",
+                    "par_ad_set_usd": total_usd, "total_usd": total_usd, "devise": devise,
+                    "centimes_par_ad_set": None, "centimes_campagne": centimes_campagne,
+                    "centimes_min_par_ad_set": None,
+                    "total_devise": centimes_campagne / 100.0}
         centimes_min = max(plancher, int(round(PLANCHER_CBO_USD * taux_devise(devise) * 100)))
         return {"videos": videos, "ad_sets": videos, "un_seul_ad_set": False,
                 "annonces": videos, "structure": "CBO",
@@ -1011,6 +1022,17 @@ def vue_sortie(prix_mini, liv_mini, taux=None):
 
 
 def vue_budget(b):
+    if b.get("structure") == "CBO" and b.get("un_seul_ad_set"):
+        L = [BARRE, "  البودجي تاع التست", BARRE, "",
+             "  الهيكل", "      1C | CBO | 1 ADSET | %d AD" % b["annonces"], "",
+             "  أد ست واحد، وفيه كامل الإعلانات.",
+             "  ميتا تقسّم البودجي بين الإعلانات كيما تحب هي.", "",
+             "  المجموع في النهار، على الحملة", "      %d DA   =   %.2f USD" % (round(b["total_usd"] * vers_dinars("USD")), b["total_usd"]), "",
+             "  الحساب تاعك بالعملة", "      %s" % b["devise"], "",
+             "  الرقم لي تبعث لميتا على الحملة",
+             "      %d" % b["centimes_campagne"], "",
+             "  ميتا تحسب بالسنتيم، ماشي بالوحدة.", BARRE]
+        return "\n".join(L)
     if b.get("structure") == "CBO":
         L = [BARRE, "  البودجي تاع التست", BARRE, "",
              "  الهيكل", "      1C | CBO | %d ADSET | %d AD" % (b["ad_sets"], b["annonces"]), "",
@@ -1665,6 +1687,22 @@ def verifier():
     ok &= _essai("CBO : 1500 centimes sur la campagne, 300 au moins par ad set, aucun budget d'ad set",
                  bc["centimes_campagne"] == 1500 and bc["centimes_min_par_ad_set"] == 300
                  and bc["centimes_par_ad_set"] is None and bc["structure"] == "CBO", str(bc))
+    # 29/10/2026 (mode tester) : CBO en UN SEUL ad set, 20 USD sur la campagne
+    b1 = budget(4, "USD", 20.0, True, "CBO", 20.0)
+    ok &= _essai("CBO un seul ad set : 2000 centimes sur la campagne, 1 ad set, 4 annonces, aucun plancher",
+                 b1["centimes_campagne"] == 2000 and b1["ad_sets"] == 1 and b1["annonces"] == 4
+                 and b1["un_seul_ad_set"] is True and b1["centimes_min_par_ad_set"] is None
+                 and b1["centimes_par_ad_set"] is None, str(b1))
+    try:
+        budget(4, "USD", 0, True, "ABO", 20.0); abo_un = False
+    except ValueError:
+        abo_un = True
+    ok &= _essai("ABO + un seul ad set avec --structure : toujours refuse", abo_un)
+    try:
+        budget(4, "USD", 15.0, True, "CBO", 20.0); cbo_dep = False
+    except ValueError:
+        cbo_dep = True
+    ok &= _essai("CBO un seul ad set : 20 USD sur un plafond de 15 USD = refus", cbo_dep)
     ba = budget(3, "USD", 0, False, "ABO", 60.0)
     ok &= _essai("ABO du fichier : 2000 centimes par ad set",
                  ba["centimes_par_ad_set"] == 2000 and ba["total_usd"] == 60.0, str(ba))

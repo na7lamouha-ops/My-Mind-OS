@@ -620,7 +620,9 @@ def preparer(travail):
         dire(f"déjà là, pas touché : {cle}")
     profils = travail / "profils.txt"
     if not profils.exists():
-        profils.write_text(MODELE_PROFILS, encoding="utf-8")
+        # 28/10/2026 : la liste de départ livrée avec l'agent (profils-depart.txt, à côté de ce script) est ajoutée sous le modèle
+        depart = Path(__file__).resolve().parent / "profils-depart.txt"
+        profils.write_text(MODELE_PROFILS + (depart.read_text(encoding="utf-8-sig") if depart.exists() else ""), encoding="utf-8")
         dire(f"créé : {profils}")
     else:
         dire(f"déjà là, pas touché : {profils}")

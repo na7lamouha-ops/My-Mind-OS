@@ -1,6 +1,6 @@
 {
   "name": "ecom-manita-bureau",
-  "version": "0.4.2",
+  "version": "0.4.4",
   "description": "ecom manita — le bureau : des agents e-commerce COD qui travaillent sur l'abonnement Claude du client, avec trois contrôles par livrable et Telegram pour l'accord.",
   "type": "module",
   "private": true,

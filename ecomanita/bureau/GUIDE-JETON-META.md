@@ -9,6 +9,7 @@ Le jeton ne s'écrit **jamais dans le chat**. Le client le colle lui-même dans 
 2. Cas d'usage : « Autre » ; type : « Entreprise » (Business) ; un nom (ex. `ecom-manita-<boutique>`) ; le portefeuille business du client.
 3. Dans l'app : ajouter le produit « API Marketing » (Marketing API).
 4. L'app reste en mode **Développement** : aucune revue d'app n'est nécessaire pour agir sur les comptes du client lui-même. Le niveau d'accès de l'API Marketing « Limited » (le niveau de départ) suffit pour une mission normale : il limite seulement le nombre d'appels par heure.
+5. **Correction du 28/10/2026** : le mode Développement suffit pour LIRE et pour envoyer les vidéos, mais **pas pour créer une créa** : Meta la refuse (code 100, sous-code 1885183, « Invalid parameter »), rien n'est créé ni dépensé. Avant la première campagne par le jeton, passer l'app en mode **Live** : Paramètres → Paramètres de base → URL de politique de confidentialité, icône de l'app, catégorie ; puis le bouton « Live » en haut de la page. Sinon, faire la mission par le connecteur Meta Ads de claude.ai. Le bureau reconnaît ce sous-code et le dit en clair.
 
 ## 2. L'utilisateur système
 1. https://business.facebook.com/settings → Utilisateurs → **Utilisateurs système** → Ajouter.

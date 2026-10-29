@@ -227,6 +227,9 @@ export const M = {
   creasPlafond: (choisi, n) => ({ texte: ['البودجي تاع النهار ما يكفيش', 'للكريات لي اخترت :', creasLatin(choisi), 'البودجي يكفي غير لـ :', creasLatin(n), 'تقدر تطلّعو في الإعدادات'].join('\n') }),
   testRefait: k => ({ texte: ['التيست لي تحضّر من قبل', 'فيه فيديوات كثر من أربعة', 'نحضّرو تيست جديد محبوس', 'عدد الكريات دروك :', creasLatin(k), 'الكامباني القديمة :', 'تبقى محبوسة، ما مسحنا والو', 'كي يكون واجد نسقسيك : لانسي'].join('\n') }),
   adSetsEnTrop: n => ({ texte: ['الكامباني فيها آدسات زايدين', 'عدد الآدسات الزايدين :', `${n} ad sets`, 'خليناهم محبوسين، ما مسحنا والو', 'نشعلو غير تاع التيست'].join('\n') }),
+  /** 29/10/2026 : la voie « تيست » demande plus que le budget du jour (par modèle) : rien n'est créé, le client le lit. */
+  budgetTester: (parts, plafondDa, taux, besoinUsd) => ({ texte: ['البودجي تاع النهار ما يكفيش', ...(parts > 1 ? ['مقسوم على الموديلات :', `${parts} modeles`, 'لكل موديل :'] : ['البودجي تاع النهار :']), da(plafondDa, taux),
+    'التيست تاع الكريات يحتاج :', da(Math.ceil(besoinUsd * taux), taux), 'ما درنا والو في ميتا', 'طلّع البودجي في الإعدادات', 'ومن بعد اضغط : عاود'].join('\n') }),
   budgetCourt: (parts, plafondDa, taux) => ({ texte: ['البودجي تاع النهار ما يكفيش', ...(parts > 1 ? ['مقسوم على الموديلات :', `${parts} modeles`, 'لكل موديل :'] : ['البودجي تاع النهار :']), da(plafondDa, taux),
     'لازم ثلاثة دولار على الأقل', 'ما درنا والو في ميتا', 'طلّع البودجي في الإعدادات', 'ومن بعد اضغط : عاود'].join('\n') }),
   /** La lecture du soir n'a pas pu se faire (Meta, Tassyir, Claude), même après les essais du soir : UN message, la pub ne

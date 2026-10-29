@@ -398,13 +398,13 @@ await etape('accueil : la PREMIÈRE question est « شحال من موديل ؟ 
   r = b('n', '1');
   if (r[0].texte !== accueil.QUESTIONS[0].texte.join('\n')) throw new Error('N = 1 : la question des prix a changé : ' + r[0].texte);
   t('2300'); t('6900');
-  for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels'], ['creas', '4']]) b(k, v);
+  for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels'], ['voie', 'shooting'], ['creas', '4']]) b(k, v);
   t('Robe'); t('Robe Essai'); b('tailles', 'chiffres-46'); b('sku', 'par-taille'); r = b('niche', 'hijab');
   if (!/إذا صحيح اضغط : ابدا/.test(r[0].texte) || !JSON.stringify(r[0].boutons).includes(':refaire:1')) throw new Error('résumé N = 1 : ' + r[0].texte);
   // « ابدا » N = 1 (08/10/2026) : la demande complète part avec un lot d'UN modèle (separer.py compte d'abord) ; la conversation attend
   r = b('go', '1');
   const cles = Object.keys(r.lot?.demande?.reponses || {}).sort().join(',');
-  if (!r.lot || r.lot.n !== 1 || cles !== 'compte,creas,detail,gros,mode,niche,nom,page,placements,sku,stock,tailles,type' || r.lot.demande.reponses.compte.id !== 'act_111' || r.lot.demande.lot || A.conversation()?.phase !== 'analyse' || r.envoyer[0].texte !== accueil.TEXTES.analyseUn.join('\n')) throw new Error('demande N = 1 : ' + JSON.stringify(r));
+  if (!r.lot || r.lot.n !== 1 || cles !== 'compte,creas,detail,gros,mode,niche,nom,page,placements,sku,stock,tailles,type,voie' || r.lot.demande.reponses.compte.id !== 'act_111' || r.lot.demande.lot || A.conversation()?.phase !== 'analyse' || r.envoyer[0].texte !== accueil.TEXTES.analyseUn.join('\n')) throw new Error('demande N = 1 : ' + JSON.stringify(r));
   // un seul groupe pur (« seul » : le bureau a déjà fait naître la mission) → « تمام، الخدمة بدات », la conversation se ferme
   r = garde(A.lotPret({ id: r.lot.id, etat: 'seul', d: {} }));
   if (!Array.isArray(r) || r[0].texte !== accueil.TEXTES.demandeOk.join('\n') || A.conversation()) throw new Error('N = 1 seul : ' + JSON.stringify(r));
@@ -480,7 +480,7 @@ await etape('accueil (lot) : N = 2 → communes → analyse → photo de chaque 
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'manita-acclot-'));
   const A = accueil.ouvrirAccueil({ dossier: dir, listes: () => listesEssai(plafond)() });
   const { garde, b, t } = pilote(A, tous);
-  const jusquAuLot = n => { garde(A.commencer(lienEssai)); b('n', String(n)); for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels'], ['creas', '4']]) b(k, v); return b('niche', 'hijab'); };
+  const jusquAuLot = n => { garde(A.commencer(lienEssai)); b('n', String(n)); for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels'], ['voie', 'shooting'], ['creas', '4']]) b(k, v); return b('niche', 'hijab'); };
   let r = jusquAuLot(2); const id = A.conversation().id;
   if (!r.lot || r.lot.id !== id || r.lot.n !== 2 || r.lot.lien !== lienEssai || !/2 modeles/.test(r.envoyer[0].texte)) throw new Error('lancement du lot : ' + JSON.stringify(r));
   if (!/راني نفرز/.test(t('2300')[0].texte)) throw new Error('un texte pendant l\'analyse n\'attend pas');
@@ -543,12 +543,12 @@ await etape('accueil : les cas de la vraie vie — chiffres tapés au clavier ar
   garde(A.commencer(lienEssai)); let r = t('١'); if (A.conversation().phase !== 'questions') throw new Error('« ١ » tapé : ' + JSON.stringify(r));
   // un autre lien collé à la question du prix : « un modèle est en cours », pas « je n'ai pas compris le prix »
   r = t('https://drive.google.com/drive/folders/1ZzZzZzZzZzZzZzZ'); if (!/راك في وسط موديل آخر/.test(r[0].texte) || A.conversation().reponses.gros !== undefined) throw new Error('lien collé pendant les questions : ' + r[0].texte);
-  t('٢٣٠٠'); t('6900'); for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'broad'], ['creas', '4']]) b(k, v);
+  t('٢٣٠٠'); t('6900'); for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'broad'], ['voie', 'shooting'], ['creas', '4']]) b(k, v);
   t('Robe'); t('Robe DA'); b('tailles', 'sans'); r = b('niche', 'hijab');
   if (!/Gros 2 300 DA = 9 \$/.test(r[0].texte) || telegram.fautesDeForme(r[0].texte).length) throw new Error('résumé avec des noms « DA » : ' + telegram.fautesDeForme(r[0].texte) + ' ' + r[0].texte);
   A.annuler();
   // un lot : la photo du modèle 1 n'est jamais arrivée → un texte tapé la RENVOIE (photo + boutons) ; pareil pour le résumé
-  garde(A.commencer(lienEssai)); t('٢'); for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'broad'], ['creas', '4']]) b(k, v); b('niche', 'hijab');
+  garde(A.commencer(lienEssai)); t('٢'); for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'broad'], ['voie', 'shooting'], ['creas', '4']]) b(k, v); b('niche', 'hijab');
   const id = A.conversation().id, photo = path.join(dir, 'm1.jpg'); fs.writeFileSync(photo, 'x');
   A.lotPret({ id, etat: 'pret', d: { modeles: [{ nom: 'Abaya', couleurs: ['Noir'], photo }, { nom: 'Robe', couleurs: ['Beige'], photo: null }] } });
   r = t('واش ؟'); if (r.length !== 2 || r[1].photo !== photo || !JSON.stringify(r[1].boutons).includes(`acc:${id}:ok1:oui`)) throw new Error('photo renvoyée : ' + JSON.stringify(r));
@@ -573,7 +573,7 @@ await etape('accueil (lot) : « صحيح، بصح اللونات غالطين »
   let A = ouvrir();
   const pil = () => pilote(A, tous); // A change à chaque « coupure » : le pilote suit
   const b = (k, v) => pil().b(k, v), t = x => pil().t(x), garde = r => pil().garde(r);
-  const jusquAuLot = n => { garde(A.commencer(lienEssai)); b('n', String(n)); for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels'], ['creas', '4']]) b(k, v); return b('niche', 'hijab'); };
+  const jusquAuLot = n => { garde(A.commencer(lienEssai)); b('n', String(n)); for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels'], ['voie', 'shooting'], ['creas', '4']]) b(k, v); return b('niche', 'hijab'); };
   const bt = accueil.BOUTON_COULEURS_FAUSSES;
   if (bt !== 'صحيح، بصح اللونات غالطين' || bt.length > 36 || /\d/.test(bt) || !/[؀-ۿ]/.test(bt)) throw new Error('le 3e bouton : ' + bt);
   jusquAuLot(3); const id = A.conversation().id;
@@ -627,7 +627,7 @@ await etape('accueil (lot), CASSÉ à la relecture du 3e bouton : un lot de 2 o�
   const ouvrir = () => accueil.ouvrirAccueil({ dossier: dir, listes: listesEssai(30000) });
   let A = ouvrir();
   const b = (k, v) => pilote(A, tous).b(k, v), t = x => pilote(A, tous).t(x), garde = r => pilote(A, tous).garde(r);
-  const jusquAuLot = n => { garde(A.commencer(lienEssai)); b('n', String(n)); for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels'], ['creas', '4']]) b(k, v); return b('niche', 'hijab'); };
+  const jusquAuLot = n => { garde(A.commencer(lienEssai)); b('n', String(n)); for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels'], ['voie', 'shooting'], ['creas', '4']]) b(k, v); return b('niche', 'hijab'); };
   const L = accueil.TEXTES.couleursClient;
   // ---- un lot de 2 : le modèle 1 sur « صحيح », le DERNIER sur « اللونات غالطين » (le passage aux questions par modèle)
   jusquAuLot(2); const id = A.conversation().id;
@@ -692,7 +692,7 @@ await etape('accueil (lot) : « السعر و التايات كيف كيف في 
   let A = ouvrir();
   const b = (k, v) => pilote(A, tous).b(k, v), t = x => pilote(A, tous).t(x), garde = r => pilote(A, tous).garde(r);
   const KIF = /كيف كيف في كل الموديلات/;
-  const jusquAuLot = n => { garde(A.commencer(lienEssai)); b('n', String(n)); for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels'], ['creas', '4']]) b(k, v); return b('niche', 'hijab'); };
+  const jusquAuLot = n => { garde(A.commencer(lienEssai)); b('n', String(n)); for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels'], ['voie', 'shooting'], ['creas', '4']]) b(k, v); return b('niche', 'hijab'); };
   const lotDe = (noms) => { const id = A.conversation().id; return pret(garde(A.lotPret({ id, etat: 'pret', d: { modeles: noms.map(x => ({ nom: x, couleurs: ['Noir'], photo: null })) } }))); };
   // ---- « واه، كيف كيف » sur un lot de TROIS ----
   jusquAuLot(3); const id = A.conversation().id; lotDe(['Alpha', 'Beta', 'Gamma']);
@@ -739,7 +739,7 @@ await etape('accueil (lot) : « السعر و التايات كيف كيف في 
   if (!/سعر الجملة/.test(r[0].texte) || A.conversation().modeles[1].reponses.gros !== undefined) throw new Error('prix tapé : le modèle 2 a reçu des prix copiés : ' + JSON.stringify(A.conversation().modeles[1]));
   A.annuler();
   // ---- N = 1 : jamais posée ; un lot réduit à UN modèle (« ماشي صحيح ») : jamais posée ----
-  const avantUn = tous.length; garde(A.commencer(lienEssai)); b('n', '1'); t('2300'); t('6900'); for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels'], ['creas', '4']]) b(k, v);
+  const avantUn = tous.length; garde(A.commencer(lienEssai)); b('n', '1'); t('2300'); t('6900'); for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels'], ['voie', 'shooting'], ['creas', '4']]) b(k, v);
   t('Robe'); t('Robe Cinq'); b('tailles', 'sans'); r = b('niche', 'hijab');
   if (!/إذا صحيح اضغط : ابدا/.test(r[0].texte) || tous.slice(avantUn).some(m => KIF.test(m.texte || ''))) throw new Error('N = 1 : ' + JSON.stringify(r));
   A.annuler();
@@ -989,7 +989,7 @@ await etape('accueil N = 1, relu de bout en bout : un texte tapé après le rés
   const A = accueil.ouvrirAccueil({ dossier: fs.mkdtempSync(path.join(os.tmpdir(), 'manita-acc-bout-')), listes: listesEssai() });
   const { garde, b, t } = pilote(A, tous);
   garde(A.commencer(lienEssai)); b('n', '1'); t('2300'); t('6900');
-  for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels'], ['creas', '4']]) b(k, v);
+  for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels'], ['voie', 'shooting'], ['creas', '4']]) b(k, v);
   t('Robe'); t('Robe Essai'); b('tailles', 'sans'); let r = b('niche', 'hijab');
   const id = A.conversation().id, resume = r[0].texte;
   for (const x of ['ok', 'ابدا', 'واش ؟']) {
@@ -1014,7 +1014,7 @@ await etape('accueil (lot), relu de bout en bout : un budget du jour trop court 
   const A = accueil.ouvrirAccueil({ dossier: fs.mkdtempSync(path.join(os.tmpdir(), 'manita-acc-budget-')), listes: () => listesEssai(plafond)() });
   const { garde, b, t } = pilote(A, tous);
   let r;
-  garde(A.commencer(lienEssai)); b('n', '2'); for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels'], ['creas', '4']]) b(k, v); b('niche', 'hijab');
+  garde(A.commencer(lienEssai)); b('n', '2'); for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels'], ['voie', 'shooting'], ['creas', '4']]) b(k, v); b('niche', 'hijab');
   const idL = A.conversation().id;
   garde(A.lotPret({ id: idL, etat: 'pret', d: { modeles: [{ nom: 'A', couleurs: ['Noir'] }, { nom: 'B', couleurs: ['Beige'] }] } }));
   b('ok1', 'oui'); b('ok2', 'oui'); t('Robe'); t('Robe Une'); t('2300'); t('6900'); b('tailles1', 'sans'); t('Robe'); t('Robe Deux'); t('1800'); t('4900'); r = b('tailles2', 'sans');
@@ -1144,7 +1144,7 @@ await etape('TYPE + QUATRE NOMS (accueil, recette du vendeur du 09/10/2026, remi
   const tous = [];
   const A = accueil.ouvrirAccueil({ dossier: fs.mkdtempSync(path.join(os.tmpdir(), 'manita-noms-')), listes: listesEssai(30000) });
   const { garde, b, t } = pilote(A, tous);
-  garde(A.commencer(lienEssai)); b('n', '2'); for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels'], ['creas', '4']]) b(k, v); b('niche', 'hijab');
+  garde(A.commencer(lienEssai)); b('n', '2'); for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels'], ['voie', 'shooting'], ['creas', '4']]) b(k, v); b('niche', 'hijab');
   const id = A.conversation().id, photo = path.join(os.tmpdir(), `noms-${id}.jpg`); fs.writeFileSync(photo, 'x');
   pret(garde(A.lotPret({ id, etat: 'pret', d: { modeles: [{ nom: 'Abaya plissee', couleurs: ['Noir'], photo }, { nom: 'Robe droite', couleurs: ['Noir'], photo }] } })));
   b('ok1', 'oui'); let r = b('ok2', 'oui');
@@ -1177,13 +1177,13 @@ await etape('TYPE + QUATRE NOMS (accueil, recette du vendeur du 09/10/2026, remi
   const mf = r.lotFinal?.modeles || [];
   if (JSON.stringify(mf.map(m => [m.reponses.type, m.reponses.nom])) !== JSON.stringify([['Abaya', noms1[2]], ['Abaya', 'Abaya Perle']])) throw new Error('lot final : ' + JSON.stringify(mf.map(m => m.reponses)));
   // un texte tapé À LA PLACE d'un bouton est le nom ; « سمّيه انت » reste (Claude titre depuis les photos : nom « auto »)
-  garde(A.commencer(lienEssai)); b('n', '1'); t('2300'); t('6900'); for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels']]) b(k, v);
+  garde(A.commencer(lienEssai)); b('n', '1'); t('2300'); t('6900'); for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels'], ['voie', 'shooting']]) b(k, v);
   r = b('creas', '4'); if (!/تكتب الاسم أنت ولا نقترحولك/.test(r[0].texte)) throw new Error('N = 1 : le choix juste après les créas : ' + r[0].texte);
   r = b('choixnom', 'proposer'); if (!/نوع الموديل/.test(r[0].texte)) throw new Error('N = 1 : le type juste avant le nom : ' + r[0].texte);
   r = b('type', 'Hijab'); if (!/اسم الموديل/.test(r[0].texte) || !/:nom:Hijab /.test(JSON.stringify(r[0].boutons))) throw new Error('N = 1 : quatre noms Hijab : ' + JSON.stringify(r[0]));
   r = b('nom', 'auto'); if (A.conversation().reponses.nom !== 'auto' || !/التايات/.test(r[0].texte)) throw new Error('« سمّيه انت » : ' + JSON.stringify(A.conversation().reponses));
   A.annuler();
-  garde(A.commencer(lienEssai)); b('n', '1'); t('2300'); t('6900'); for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels'], ['creas', '4']]) b(k, v);
+  garde(A.commencer(lienEssai)); b('n', '1'); t('2300'); t('6900'); for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels'], ['voie', 'shooting'], ['creas', '4']]) b(k, v);
   t('روبة'); r = t('Robe Tapee'); if (A.conversation().reponses.type !== 'Robe' || A.conversation().reponses.nom !== 'Robe Tapee' || !/التايات/.test(r[0].texte)) throw new Error('texte tapé à la place des boutons : ' + JSON.stringify(A.conversation().reponses));
   A.annuler();
   // une conversation d'AVANT arrêtée APRÈS son nom (nom donné, aucun type) : le type n'est jamais demandé
@@ -1331,7 +1331,7 @@ await etape('CASSE NOMS (accueil, 10/10/2026) : le libellé d\'un bouton TAPÉ �
   for (let rang = 1; rang <= 10; rang++) for (const ty of ['Hijab', 'Abcdefghijkl', 'Combinaison']) { const s = accueil.nomsProposes({ graine: 'ab12cd', rang, type: ty }); if (JSON.stringify(s) !== JSON.stringify(accueil.nomsProposes({ graine: 'ab12cd', rang, type: ty })) || new Set(s.map(x => x.toUpperCase())).size !== 4 || s.some(x => x.length > 30 || /[^A-Za-z ]/.test(x))) throw new Error('tirage : ' + JSON.stringify(s)); }
   const tous = [], d = fs.mkdtempSync(path.join(os.tmpdir(), 'manita-casse-noms-'));
   let A = accueil.ouvrirAccueil({ dossier: d, listes: listesEssai(30000) }); let P = pilote(A, tous);
-  P.garde(A.commencer(lienEssai)); P.b('n', '3'); for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels'], ['creas', '4']]) P.b(k, v); P.b('niche', 'hijab');
+  P.garde(A.commencer(lienEssai)); P.b('n', '3'); for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels'], ['voie', 'shooting'], ['creas', '4']]) P.b(k, v); P.b('niche', 'hijab');
   const id = A.conversation().id, photo = path.join(d, 'p.jpg'); fs.writeFileSync(photo, 'x');
   pret(P.garde(A.lotPret({ id, etat: 'pret', d: { modeles: [1, 2, 3].map(k => ({ nom: 'Dossier ' + k, couleurs: ['Noir'], photo })) } })));
   P.b('ok1', 'oui'); P.b('ok2', 'oui'); P.b('ok3', 'oui');
@@ -1374,7 +1374,7 @@ await etape('NOMS AU CHOIX (demande du vendeur du 10/10/2026, recette prouvée s
   // le parcours d'un lot de TROIS : plan « Abaya plissée » (valable), « Modele 2 » (chiffre : jamais proposé), « Robe Lila »
   const tous = [], d = fs.mkdtempSync(path.join(os.tmpdir(), 'manita-noms-choix-'));
   let A = accueil.ouvrirAccueil({ dossier: d, listes: listesEssai(30000) }); let P = pilote(A, tous);
-  P.garde(A.commencer(lienEssai)); P.b('n', '3'); for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels'], ['creas', '4']]) P.b(k, v); P.b('niche', 'hijab');
+  P.garde(A.commencer(lienEssai)); P.b('n', '3'); for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels'], ['voie', 'shooting'], ['creas', '4']]) P.b(k, v); P.b('niche', 'hijab');
   const id = A.conversation().id, photo = path.join(d, 'p.jpg'); fs.writeFileSync(photo, 'x');
   pret(P.garde(A.lotPret({ id, etat: 'pret', d: { modeles: [{ nom: 'Abaya plissée', couleurs: ['Noir'], photo }, { nom: 'Modele 2', couleurs: ['Noir'], photo }, { nom: 'Robe Lila', couleurs: ['Noir'], photo }] } })));
   P.b('ok1', 'oui'); P.b('ok2', 'oui'); let r = P.b('ok3', 'oui');
@@ -1414,14 +1414,14 @@ await etape('NOMS AU CHOIX (demande du vendeur du 10/10/2026, recette prouvée s
   P.t('2300'); P.t('6900'); P.b('tailles3', 'sans'); r = P.b('go', '1');
   const mf = (r.lotFinal?.modeles || []).map(m => m.reponses.nom); if (JSON.stringify(mf) !== JSON.stringify(['Abaya plissee', 'Robe Maya', 'auto'])) throw new Error('lot final : ' + JSON.stringify(mf));
   // N = 1 : le choix après les créas ; un texte tapé sur le choix est le nom ; « سمّيه انت » tapé sur le choix → auto
-  P.garde(A.commencer(lienEssai)); P.b('n', '1'); P.t('2300'); P.t('6900'); for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels']]) P.b(k, v);
+  P.garde(A.commencer(lienEssai)); P.b('n', '1'); P.t('2300'); P.t('6900'); for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels'], ['voie', 'shooting']]) P.b(k, v);
   r = P.b('creas', '4'); if (!/تكتب الاسم أنت ولا نقترحولك/.test(r[0].texte) || !/:choixnom:proposer/.test(JSON.stringify(r[0].boutons))) throw new Error('N = 1 : le choix après les créas : ' + JSON.stringify(r[0]));
   r = P.t('Robe Tapee'); if (A.conversation().reponses.nom !== 'Robe Tapee' || !/التايات/.test(r[0].texte)) throw new Error('N = 1 : texte tapé sur le choix = le nom : ' + JSON.stringify(A.conversation().reponses));
   A.annuler();
-  P.garde(A.commencer(lienEssai)); P.b('n', '1'); P.t('2300'); P.t('6900'); for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels'], ['creas', '4']]) P.b(k, v);
+  P.garde(A.commencer(lienEssai)); P.b('n', '1'); P.t('2300'); P.t('6900'); for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels'], ['voie', 'shooting'], ['creas', '4']]) P.b(k, v);
   r = P.t('سمّيه انت'); if (A.conversation().reponses.nom !== 'auto') throw new Error('N = 1 : « سمّيه انت » tapé sur le choix : ' + JSON.stringify(A.conversation().reponses));
   A.annuler();
-  P.garde(A.commencer(lienEssai)); P.b('n', '1'); P.t('2300'); P.t('6900'); for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels'], ['creas', '4']]) P.b(k, v);
+  P.garde(A.commencer(lienEssai)); P.b('n', '1'); P.t('2300'); P.t('6900'); for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels'], ['voie', 'shooting'], ['creas', '4']]) P.b(k, v);
   P.b('choixnom', 'proposer'); r = P.b('type', 'Hijab'); const n1 = r[0].boutons.slice(0, 2).flat().map(x => x.texte);
   if (n1.length !== 4 || !n1.every(n => n.startsWith('Hijab ') && latin(n)) || r[0].boutons[2]?.[0]?.texte !== ECRIRE) throw new Error('N = 1 : quatre noms Hijab + « نكتبو أنا » : ' + JSON.stringify(r[0]));
   A.annuler();
@@ -1968,7 +1968,7 @@ await etape('PLAN CROISÉ, la lecture entière (09/10/2026) : 2 vus pour 3 annon
   // le client : « لقيت موديل واحد » puis la ligne du retiré (en lettres), la photo du modèle gardé
   const A = accueil.ouvrirAccueil({ dossier: fs.mkdtempSync(path.join(os.tmpdir(), 'manita-croise-acc-')), listes: () => listesEssai(20000)() });
   const tous = []; const { garde, b } = pilote(A, tous);
-  garde(A.commencer(lienEssai)); b('n', '3'); for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels'], ['creas', '4']]) b(k, v); b('niche', 'hijab');
+  garde(A.commencer(lienEssai)); b('n', '3'); for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels'], ['voie', 'shooting'], ['creas', '4']]) b(k, v); b('niche', 'hijab');
   const r = garde(A.lotPret({ id: A.conversation().id, etat: 'pret', d: { trouves: l.d.trouves, misDeCote: l.d.misDeCote, retires: l.d.retires, modeles: [{ rang: 1, nom: 'Robe', couleurs: ['Noir'] }] } }));
   if (!Array.isArray(r) || !/^لقيت موديل واحد/.test(r[0].texte) || !/\nوحيّدت موديل واحد\nما بقا فيه حتى فيديو صالحة\n/.test(r[0].texte) || !/Modele 1 \/ 1/.test(r[1].texte)) throw new Error('au client : ' + JSON.stringify(r));
   formeL(r[0].texte); formeL(accueil.TEXTES.trouve(3, 1, 2).join('\n'));
@@ -2018,7 +2018,7 @@ await etape('VIDÉO QUI ALTERNE DEUX VÊTEMENTS (09/10/2026, une vidéo réelle 
   // 6. l'accueil : « لقيت … » la nomme (ligne latine, loi de forme), puis TOUT DE SUITE la photo du 1er modèle (aucune question)
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'manita-alterne-acc-')), Ac = accueil.ouvrirAccueil({ dossier: dir, listes: listesEssai() });
   Ac.commencer(lienEssai); const id = Ac.conversation().id; Ac.surBouton(`acc:${id}:n:2`);
-  for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels'], ['creas', '4'], ['niche', 'hijab']]) Ac.surBouton(`acc:${id}:${k}:${v}`);
+  for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels'], ['voie', 'shooting'], ['creas', '4'], ['niche', 'hijab']]) Ac.surBouton(`acc:${id}:${k}:${v}`);
   const r = Ac.lotPret({ id, etat: 'pret', d: { alternees: ['Videos/' + V, 'فيديو ٧.mp4'], retires: 1, modeles: [{ nom: 'Abaya', couleurs: ['Noir'] }, { nom: 'Robe', couleurs: ['Beige'] }] } });
   if (!Array.isArray(r) || r.length !== 2 || r[0].texte !== accueil.TEXTES.trouve(2, 0, 1, ['Videos/' + V, 'فيديو ٧.mp4']).join('\n') || !r[0].texte.split('\n').includes(V) || !r[0].texte.split('\n').includes('video') || !/زوج لبسات/.test(r[0].texte) || !JSON.stringify(r[1].boutons).includes(`acc:${id}:ok1:oui`)) throw new Error('« لقيت … » : ' + JSON.stringify(r));
   const f = telegram.fautesDeForme(r[0].texte); if (f.length) throw new Error('hors loi de forme : ' + f.join(' ; '));
@@ -4078,7 +4078,7 @@ await etape('accueil : un VIEUX bouton d\'une conversation d\'avant pendant qu\'
   // un lot : photo à confirmer, résumé ; pendant la séparation : on attend
   const d2 = fs.mkdtempSync(path.join(os.tmpdir(), 'manita-vieux-lot-')), B = accueil.ouvrirAccueil({ dossier: d2, listes: listesEssai() });
   B.commencer(lienEssai); const idL = B.conversation().id; B.surBouton(`acc:${idL}:n:2`);
-  for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels'], ['creas', '4'], ['niche', 'hijab']]) B.surBouton(`acc:${idL}:${k}:${v}`);
+  for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels'], ['voie', 'shooting'], ['creas', '4'], ['niche', 'hijab']]) B.surBouton(`acc:${idL}:${k}:${v}`);
   const ra = garde(B.surBouton('acc:aaaaaa:stock:test'));
   if (ra.length !== 1 || ra[0].texte !== accueil.TEXTES.analyse.join('\n')) throw new Error('vieux bouton pendant la séparation : ' + JSON.stringify(ra));
   B.lotPret({ id: idL, etat: 'pret', d: { modeles: [{ nom: 'A', couleurs: ['Noir'] }, { nom: 'B', couleurs: ['Rose'] }] } });
@@ -4125,7 +4125,7 @@ await etape('LIEN NEUF PENDANT UNE FICHE OUVERTE (09/10/2026) : « راك في �
   A.annuler();
   // 6. un LOT en pleine séparation : le lien neuf → « راني نفرز اللينك لي فات » + bouton ; « الغي » annule le lot PUIS le lien commence
   garde(A.commencer(lienEssai)); const id4 = A.conversation().id; garde(A.surBouton(`acc:${id4}:n:2`));
-  for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels'], ['creas', '4']]) garde(A.surBouton(`acc:${id4}:${k}:${v}`));
+  for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels'], ['voie', 'shooting'], ['creas', '4']]) garde(A.surBouton(`acc:${id4}:${k}:${v}`));
   const lot = garde(A.surBouton(`acc:${id4}:niche:hijab`)); if (!lot.lot || A.conversation().phase !== 'analyse') throw new Error('lot non lancé');
   // [relecture] 10/10/2026 (décision 21:20) : le lien neuf envoyé pendant la séparation est GARDÉ et c'est DIT ; son bouton
   // « الغي اللينك » n'annule QUE lui (la séparation continue) ; « الغي » TAPÉ garde son sens (le lot annulé, puis le lien)
@@ -4161,7 +4161,7 @@ await etape('CASSE-2 « الغي » ET LE LIEN EN ATTENTE (10/10/2026) : (1) le 
   // un lot en séparation qui reçoit un lien neuf
   const lotAvecLien = () => {
     garde(A.commencer(lienEssai)); const id = A.conversation().id; garde(A.surBouton(`acc:${id}:n:2`));
-    for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels'], ['creas', '4'], ['niche', 'hijab']]) garde(A.surBouton(`acc:${id}:${k}:${v}`));
+    for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels'], ['voie', 'shooting'], ['creas', '4'], ['niche', 'hijab']]) garde(A.surBouton(`acc:${id}:${k}:${v}`));
     garde(A.surTexte(neuf)); return id;
   };
   const commence = (r, quoi) => { const l = Array.isArray(r) ? r : (r && r.envoyer) || []; if (!l.some(m => m.texte === SUIV) || !l.some(m => Q0.test(m.texte)) || A.conversation()?.lien !== neuf || A.conversation()?.phase !== 'nombre') fautes.push(`${quoi} : le lien qui attendait est perdu — ` + JSON.stringify(l.map(m => m.texte.split('\n')[0]))); };
@@ -4258,8 +4258,8 @@ await etape('CRÉAS (accueil) : UNE question par lien juste après les placement
   const boutonsDe = m => (m.boutons || []).flat().filter(x => !/:annule:/.test(x.data));
   const estQuestionCreas = (m, marque) => { const bs = boutonsDe(m); return /شحال من كريا للتيست/.test(m.texte) && !/Modele \d/.test(m.texte) && bs.map(x => x.data.split(':').slice(2).join(':')).join(',') === 'creas:1,creas:2,creas:3,creas:4' && bs.map(x => x.texte).join('|') === ['واحد', 'زوج', 'ثلاثة', 'أربعة'].map(w => w === marque ? w + ' (العادة)' : w).join('|'); };
   P.garde(A.commencer(lienEssai)); P.b('n', '1'); P.t('2300'); P.t('6900');
-  for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site']]) P.b(k, v);
-  let r = P.b('placements', 'story_reels');
+  for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels']]) P.b(k, v);
+  let r = P.b('voie', 'shooting'); // 29/10/2026 : la voie entre les placements et les créas
   if (!estQuestionCreas(r[0], 'ثلاثة') || !/العادة تاعك : ثلاثة/.test(r[0].texte)) throw new Error('question des créas (N = 1, réglage 3) après les placements : ' + JSON.stringify(r));
   for (const v of ['0', '5', '9']) if (P.b('creas', v) !== null) throw new Error(`créas « ${v} » accepté`);
   r = P.t('3'); if (!Array.isArray(r) || r.length !== 2 || !/جاوب بالأزرار/.test(r[0].texte) || !estQuestionCreas(r[1], 'ثلاثة') || A.conversation().reponses.creas !== undefined) throw new Error('« 3 » tapé sur la question des créas : ' + JSON.stringify(r));
@@ -4279,8 +4279,8 @@ await etape('CRÉAS (accueil) : UNE question par lien juste après les placement
   // un LOT de deux : la question une seule fois dans les communes, puis le même nombre pour les deux modèles
   reglage = 4; const avantLot = tous.length;
   P.garde(A.commencer(lienEssai)); P.b('n', '2');
-  for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site']]) P.b(k, v);
-  r = P.b('placements', 'story_reels'); if (!estQuestionCreas(r[0], 'أربعة')) throw new Error('question des créas (lot) : ' + JSON.stringify(r));
+  for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels']]) P.b(k, v);
+  r = P.b('voie', 'shooting'); if (!estQuestionCreas(r[0], 'أربعة')) throw new Error('question des créas (lot) : ' + JSON.stringify(r));
   r = P.b('creas', '3'); if (!/النيش، لكل الموديلات/.test(r[0].texte)) throw new Error('après les créas du lot, la niche : ' + JSON.stringify(r));
   r = P.b('niche', 'hijab'); const id = A.conversation().id;
   if (!r.lot) throw new Error('lot non lancé : ' + JSON.stringify(r));
@@ -6212,7 +6212,7 @@ await etape('PIXELS PAR COMPTE [v19-trois] (fonction de la chaîne du vendeur : 
     r = P.b('pixel', '9101'); if (r !== null || A.conversation().reponses.pixel !== undefined) throw new Error('bouton d\'un pixel d\'un autre compte accepté : ' + JSON.stringify(r));
     r = P.t('atelier  SECOURS');
     if (A.conversation().reponses.pixelId !== '9002' || !/وين تبان/.test(r[0]?.texte || '')) throw new Error('nom tapé exact (casse, espaces) : ' + JSON.stringify([A.conversation().reponses, r]).slice(0, 300));
-    P.b('placements', 'story_reels'); P.b('creas', '4'); P.t('Robe'); P.t('Robe Essai'); P.b('tailles', 'chiffres-46'); P.b('sku', 'par-taille'); r = P.b('niche', 'hijab');
+    P.b('placements', 'story_reels'); P.b('voie', 'shooting'); P.b('creas', '4'); P.t('Robe'); P.t('Robe Essai'); P.b('tailles', 'chiffres-46'); P.b('sku', 'par-taille'); r = P.b('niche', 'hijab');
     if (!/\nالبيكسل :\nAtelier Secours\n/.test(r[0]?.texte || '')) throw new Error('le résumé ne dit pas le pixel : ' + (r[0]?.texte || ''));
     formeOk(r[0].texte);
     const go = P.b('go', '1'), d = go && go.lot && go.lot.demande;
@@ -7013,7 +7013,7 @@ await etape('[casse-6] CASSE UNE SEULE LECTURE / GUIDE — (1) réglage écrit �
   { const f = telegram.fautesDeForme(tS, { minArabe: 3 }); if (f.length) fautes.push('hors loi de forme : ' + f.join(' ; ')); }
   // (4) le client REFUSE une photo d'un lot à une seule lecture (l'autre continue), puis toutes (rien ne démarre, le lot est annulé)
   { const tous = [], dir = fs.mkdtempSync(path.join(os.tmpdir(), 'manita-c6acc-')), A = accueil.ouvrirAccueil({ dossier: dir, listes: () => listesEssai(20000)() }), { garde, b, t } = pilote(A, tous);
-    const jusquAuLot = () => { garde(A.commencer(lienEssai)); b('n', '2'); for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels'], ['creas', '4']]) b(k, v); return b('niche', 'hijab'); };
+    const jusquAuLot = () => { garde(A.commencer(lienEssai)); b('n', '2'); for (const [k, v] of [['stock', 'test'], ['compte', '0'], ['page', '0'], ['mode', 'site'], ['placements', 'story_reels'], ['voie', 'shooting'], ['creas', '4']]) b(k, v); return b('niche', 'hijab'); };
     const ph = [1, 2].map(k => { const f = path.join(dir, `m${k}.jpg`); fs.writeFileSync(f, 'x'); return f; });
     const lotSeul = id => ({ id, etat: 'pret', d: { trouves: 3, lectureSeule: true, sansPhoto: ['C'], modeles: [{ rang: 1, nom: 'A', couleurs: ['Noir'], photo: ph[0] }, { rang: 3, nom: 'B', couleurs: ['Rose'], photo: ph[1] }] } });
     jusquAuLot(); let id = A.conversation().id; let r = garde(A.lotPret(lotSeul(id)));
@@ -7188,7 +7188,7 @@ await etape('[relecture] ACCUEIL — « /start » tapé à la question du nom n\
   const A = accueil.ouvrirAccueil({ dossier: fs.mkdtempSync(path.join(os.tmpdir(), 'manita-acc-relect-')), listes: () => L });
   const { garde, b, t } = pilote(A, tous);
   garde(A.commencer(lienEssai)); b('n', '1'); t('2300'); t('6900');
-  for (const [k, v] of [['stock', 'test'], ['compte', '1'], ['page', '1'], ['mode', 'site'], ['placements', 'story_reels'], ['creas', '4']]) b(k, v);
+  for (const [k, v] of [['stock', 'test'], ['compte', '1'], ['page', '1'], ['mode', 'site'], ['placements', 'story_reels'], ['voie', 'shooting'], ['creas', '4']]) b(k, v);
   t('Robe');
   const r1 = t('/start');
   if (A.conversation().reponses.nom === '/start' || !/اسم الموديل/.test(JSON.stringify(r1))) throw new Error('« /start » pris comme nom : ' + JSON.stringify({ nom: A.conversation().reponses.nom, r1 }));
@@ -7994,7 +7994,7 @@ try {
     const q0 = await attendreQue(async () => recu.envois.slice(avant).find(e => /شحال من موديل ؟/.test(e.text)) || null, 10000);
     if (recu.envois.slice(avant).some(e => /سعر الجملة/.test(e.text))) throw new Error('le prix est demandé avant le nombre de modèles');
     const conv = /acc:([0-9a-f]{6}):/.exec(JSON.stringify(q0.reply_markup))[1];
-    const etapes = [['b', 'n:1'], ['t', '2300'], ['t', '6900'], ['b', 'stock:test'], ['b', 'compte:0'], ['b', 'page:0'], ['b', 'mode:site'], ['b', 'placements:story_reels'], ['b', 'creas:4'], ['t', 'Robe'], ['t', 'Robe Essai'], ['b', 'tailles:chiffres-46'], ['b', 'sku:par-taille'], ['b', 'niche:hijab'], ['b', 'go:1']];
+    const etapes = [['b', 'n:1'], ['t', '2300'], ['t', '6900'], ['b', 'stock:test'], ['b', 'compte:0'], ['b', 'page:0'], ['b', 'mode:site'], ['b', 'placements:story_reels'], ['b', 'voie:shooting'], ['b', 'creas:4'], ['t', 'Robe'], ['t', 'Robe Essai'], ['b', 'tailles:chiffres-46'], ['b', 'sku:par-taille'], ['b', 'niche:hijab'], ['b', 'go:1']];
     let n = 1000;
     for (const [type, v] of etapes) {
       const deja = recu.envois.length;
@@ -8027,7 +8027,7 @@ try {
     const q0 = await attendreQue(async () => recu.envois.slice(deja).find(e => /شحال من موديل ؟/.test(e.text)) || null, 10000);
     const conv = /acc:([0-9a-f]{6}):/.exec(JSON.stringify(q0.reply_markup))[1];
     await presser(conv, `n:${n}`);
-    for (const v of ['stock:test', 'compte:0', 'page:0', 'mode:site', 'placements:story_reels', 'creas:4']) await presser(conv, v);
+    for (const v of ['stock:test', 'compte:0', 'page:0', 'mode:site', 'placements:story_reels', 'voie:shooting', 'creas:4']) await presser(conv, v);
     const parti = await presser(conv, 'niche:hijab');
     if (!parti.some(e => /ونفرزو الموديلات وحدنا/.test(e.text))) throw new Error('le lot n\'est pas annoncé : ' + JSON.stringify(parti.map(e => e.text)));
     return conv;
@@ -8273,7 +8273,7 @@ try {
       const q0 = await attendreQue(async () => recu.envois.slice(deja).find(e => /شحال من موديل ؟/.test(e.text)) || null, 10000);
       const conv = /acc:([0-9a-f]{6}):/.exec(JSON.stringify(q0.reply_markup))[1];
       await presser(conv, 'n:1'); await ecrire('2300'); await ecrire('6900');
-      for (const v of ['stock:test', 'compte:0', 'page:0', 'mode:site', 'placements:story_reels', 'creas:4']) await presser(conv, v);
+      for (const v of ['stock:test', 'compte:0', 'page:0', 'mode:site', 'placements:story_reels', 'voie:shooting', 'creas:4']) await presser(conv, v);
       await ecrire('Robe'); await ecrire('Robe Depart'); await presser(conv, 'tailles:sans');
       const r = await presser(conv, 'niche:hijab'); if (!/إذا صحيح اضغط : ابدا/.test(r[0].text)) throw new Error('résumé N = 1 : ' + r[0].text);
       const g = await presser(conv, 'go:1'); if (g[0].text !== accueil.TEXTES.analyseUn.join('\n')) throw new Error('« ابدا » N = 1 : ' + g[0].text);
@@ -8744,6 +8744,9 @@ try {
   fauxGraphe.close();
   fs.rmSync(COPIE, { recursive: true, force: true });
 }
+
+/* ---------- 29/10/2026 : la voie « تيست » (quatre créas, ABO / CBO), verifier-tester.mjs ---------- */
+{ const Tst = await import('./verifier-tester.mjs'); await Tst.epreuveTester({ etape }); await Tst.epreuveCatalogue({ etape }); } // 29/10/2026 : + le kit catalogue
 
 /* ---------- 3. une vraie tâche avec le vrai Claude Code (sur demande) ---------- */
 if (process.env.MANITA_REEL === '1') {

@@ -1,0 +1,133 @@
+/* ecom manita — thème « manette » (29/10/2026) : noir profond, néon cyan à gauche, néon orange à droite, comme l'affiche.
+   Surcouche chargée APRÈS style.css : elle ne remplace que les variables et quelques touches de lumière. */
+
+:root {
+  color-scheme: dark;
+  --fond: #050608;
+  --fond-2: #0d1117;
+  --fond-3: #141a22;
+  --encre: #eef3f7;
+  --encre-2: #a6b3c0;
+  --encre-3: #6f7c8a;
+  --trait: #1c2530;
+  --trait-fort: #2b3846;
+  --accent: #ff9a3c;          /* l'orange du néon droit */
+  --accent-encre: #140c04;
+  --vert: #4fe0a0;
+  --vert-fond: #0d2a20;
+  --orange: #ffb043;
+  --orange-fond: #3a2410;
+  --rouge: #ff6161;
+  --rouge-fond: #3a1518;
+  --gris: #6b7683;
+  --gris-fond: #171d25;
+  --bleu: #5fe3ff;            /* le cyan du néon gauche */
+  --ombre: 0 1px 2px rgba(0, 0, 0, .5), 0 8px 24px rgba(0, 0, 0, .45);
+  --sol: #0b0e12;
+  --sol-trait: #1a222c;
+  --neon-cyan: #5fe3ff;
+  --neon-cyan-rgb: 95, 227, 255;
+  --neon-orange: #ff9a3c;
+  --neon-orange-rgb: 255, 154, 60;
+}
+
+/* le même noir quel que soit le réglage du Mac */
+@media (prefers-color-scheme: light) {
+  :root { --fond: #050608; --fond-2: #0d1117; --fond-3: #141a22; --encre: #eef3f7; --encre-2: #a6b3c0; --encre-3: #6f7c8a; --trait: #1c2530; --trait-fort: #2b3846; --sol: #0b0e12; --sol-trait: #1a222c; }
+}
+
+html { background: var(--fond); }
+body {
+  background:
+    radial-gradient(720px 520px at 0% 40%, rgba(var(--neon-cyan-rgb), .13), transparent 62%),
+    radial-gradient(720px 520px at 100% 40%, rgba(var(--neon-orange-rgb), .14), transparent 62%),
+    var(--fond);
+  background-attachment: fixed;
+  scrollbar-color: var(--trait-fort) var(--fond);
+}
+
+/* bandeau du haut : noir, trait de lumière cyan → orange */
+.haut {
+  background: rgba(7, 9, 13, .86);
+  border-bottom: 1px solid transparent;
+  border-image: linear-gradient(90deg, var(--neon-cyan), rgba(var(--neon-cyan-rgb), .15) 35%, rgba(var(--neon-orange-rgb), .15) 65%, var(--neon-orange)) 1;
+}
+.titre .latin {
+  background: linear-gradient(90deg, var(--neon-orange), #ffd08a 45%, var(--neon-cyan));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 0 8px rgba(var(--neon-orange-rgb), .35));
+}
+.pastille-connecteur.ok { background: rgba(79, 224, 160, .12); color: var(--vert); box-shadow: inset 0 0 0 1px rgba(79, 224, 160, .25); }
+.telegram-etat { background: var(--fond-2); border-color: var(--trait-fort); }
+
+/* le panneau et ses onglets : cyan quand c'est l'onglet ouvert */
+.panneau { background: linear-gradient(180deg, #0d1117, #080b0f); border-inline-start: 1px solid var(--trait); }
+.onglets { border-bottom-color: var(--trait); }
+.onglet.actif { color: var(--neon-cyan); border-bottom-color: var(--neon-cyan); text-shadow: 0 0 10px rgba(var(--neon-cyan-rgb), .55); }
+.onglet:not(.actif):hover { color: var(--encre); }   /* l'onglet ouvert garde son cyan même sous la souris */
+.onglet .compte { background: var(--neon-orange); color: var(--accent-encre); box-shadow: 0 0 8px rgba(var(--neon-orange-rgb), .5); }
+
+/* boutons : l'orange de la manette pour l'action principale, un liseré cyan au survol */
+.bouton { background: #10151c; border-color: var(--trait-fort); }
+.bouton:hover { border-color: var(--neon-cyan); box-shadow: 0 0 12px rgba(var(--neon-cyan-rgb), .22); }
+.bouton.principal {
+  background: linear-gradient(180deg, #ffad57, #ff7f1f);
+  color: var(--accent-encre); border-color: transparent;
+  box-shadow: 0 0 18px rgba(var(--neon-orange-rgb), .38), inset 0 1px 0 rgba(255, 255, 255, .28);
+}
+.bouton.principal:hover { filter: brightness(1.08); box-shadow: 0 0 24px rgba(var(--neon-orange-rgb), .55), inset 0 1px 0 rgba(255, 255, 255, .28); }
+.bouton.vert { background: linear-gradient(180deg, #5ff0b0, #35c98a); color: #04170e; }
+.bouton-mini { background: #10151c; border-color: var(--trait); }
+.bouton-mini:hover { border-color: var(--neon-cyan); color: var(--neon-cyan); }
+
+/* champs */
+select, input[type="time"], input[type="text"], input[type="number"], input[type="password"], textarea {
+  background: #0a0e13; border-color: #263140; color: var(--encre);
+}
+textarea:focus, select:focus, input:focus { outline: 2px solid rgba(var(--neon-cyan-rgb), .45); border-color: var(--neon-cyan); }
+.case input { accent-color: var(--neon-orange); }
+::placeholder { color: var(--encre-3); }
+
+/* cartes, badges, bulles, fiches */
+.tache { background: var(--fond-2); border-color: var(--trait); }
+.tache-tete:hover { background: rgba(var(--neon-cyan-rgb), .05); }
+.bulle.coach { background: var(--fond-3); }
+.bulle.client { background: linear-gradient(180deg, #ffad57, #ff7f1f); color: var(--accent-encre); }
+.fiche { background: var(--fond-2); border-color: var(--trait-fort); }
+.fiche::backdrop { background: rgba(2, 3, 5, .7); }
+
+/* la scène du bureau : sol noir, étiquettes sombres */
+.sol { fill: var(--sol); }
+.sol-grille { stroke: var(--sol-trait); }
+.etiquette-fond { fill: #0d1117; stroke: #2b3846; }
+.legende .lg-encours { box-shadow: 0 0 0 3px var(--vert-fond), 0 0 8px var(--vert); }
+
+/* les îlots des départements : charbon noir avec un liseré néon — cyan pour la colonne de gauche (test, scale, voix, télégram),
+   orange pour la colonne de droite (page, montage, inspecteur) et pour le القائد au centre, comme la manette de l'affiche */
+.ilot > polygon:nth-of-type(1) { fill: #10161d; }
+.ilot > polygon:nth-of-type(2) { fill: #0a0e13; }
+.ilot > polygon.ilot-dessus { fill: #161c25; stroke: rgba(var(--neon-cyan-rgb), .8); stroke-width: 1.3; }
+.ilot[data-dept="page"] > polygon.ilot-dessus, .ilot[data-dept="editeur"] > polygon.ilot-dessus,
+.ilot[data-dept="inspecteur"] > polygon.ilot-dessus, .ilot[data-dept="manager"] > polygon.ilot-dessus { stroke: rgba(var(--neon-orange-rgb), .85); }
+.ilot[data-dept="manager"] > polygon.ilot-dessus { fill: #1a1a1f; }
+.ilot:hover .ilot-dessus, .ilot:focus-visible .ilot-dessus { filter: brightness(1.25); }
+.fil { stroke: rgba(var(--neon-cyan-rgb), .35); }
+
+/* le stade en fond de tout l'écran (flou sur tous les onglets, net sur الستاد) ; le bandeau et le panneau = vitres sombres par-dessus */
+body.fond-stade { background: transparent; --sol: rgba(8, 10, 14, .55); --sol-trait: rgba(var(--neon-cyan-rgb), .14); }
+body.fond-stade .app { position: relative; z-index: 1; }
+body.fond-stade .haut { background: rgba(7, 9, 13, .66); }
+body.fond-stade .panneau { background: rgba(9, 12, 17, .76); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-inline-start-color: rgba(var(--neon-cyan-rgb), .25); }
+body.fond-stade .bureau-bas .legende, body.fond-stade .bouton-vie { background: rgba(9, 12, 17, .6); border-radius: 999px; padding: 2px 10px; }
+
+/* onglet الستاد : le générique du match dans le panneau, sous le bouton — les lignes montent lentement, comme la fin d'un film */
+#generique-bureau { position: relative; overflow: hidden; margin-top: 14px; font-family: var(--police); font-size: 15px; line-height: 1.55; direction: rtl; text-align: right;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 16%, #000 90%, transparent 100%); mask-image: linear-gradient(180deg, transparent 0, #000 16%, #000 90%, transparent 100%); }
+#generique-bureau .gen-liste { position: absolute; left: 0; right: 0; top: 100%; will-change: transform; }
+#generique-bureau .gen-ligne { margin: 0 0 14px; }
+#generique-bureau .gen-ligne.astuce { color: var(--encre-2); }
+#generique-bureau .gen-ligne.but { color: #ffd08a; }
+#generique-bureau .gen-ligne.contre { color: #ff9c96; }
+#generique-bureau .gen-ligne.process { color: #a6f0ff; }
+#generique-bureau .gen-ligne b { color: var(--neon-cyan); }
+body.stade-actif #vue-stade { display: flex; flex-direction: column; }

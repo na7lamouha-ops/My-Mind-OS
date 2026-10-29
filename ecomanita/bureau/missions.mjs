@@ -155,7 +155,7 @@ import crypto from 'node:crypto';
 import { spawn, spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { M, PALETTE, da, usd, enteteModele, couleurProche, nomLatin, urlLisible, nommerSansFusion, hexCouleur } from './messages.mjs';
-import { creasDe, CREAS_MAXI, TEXTES as TEXTES_ACCUEIL } from './accueil.mjs';
+import { creasDe, CREAS_MAXI, TEXTES as TEXTES_ACCUEIL, estTester, CBO_TESTER_USD, CREAS_TESTER } from './accueil.mjs';
 import { REGLES_MAISON } from './routeur.mjs';
 import { ouvrirCarnet, ecrireNote, listerNotes, refusDeContenu } from './carnet.mjs';
 import { ecrirePorte, effacerPorte, ecrireTicketPause, effacerTicketPause, ouvrirTourPorte, fermerTourPorte } from './meta-mcp.mjs';
@@ -646,7 +646,8 @@ export function lignesBibliotheque(m, x, r, taux, jour, phase, date) {
   const out = [];
   for (const a of su.annonces) {
     if (!(+a.depense > 0) || !(brutM.includes(String(a.depense)) || brutM.includes((+a.depense).toFixed(2)) || brutM.includes(String(Math.round(+a.depense * 100))))) continue;
-    const nomSet = sets.get(adSetDe.get(String(a.id)) || '') || String(a.nom || '');
+    // 29/10/2026 : un seul ad set (la CBO de la voie « tester ») : le V0k est dans le nom de l'ANNONCE, pas de l'ad set
+    const nomSet = (m.d && m.d.budget && m.d.budget.un_seul_ad_set && /\bV\d{2}\b/.test(String(a.nom || ''))) ? String(a.nom) : (sets.get(adSetDe.get(String(a.id)) || '') || String(a.nom || ''));
     const k = +((/\bV(\d{2})\b/.exec(nomSet) || [])[1] || 0);
     const v = k ? (m.d.videosTest || [])[k - 1] : null;
     const fiche = ficheVideo({ rapport: (v && v.rapport) || {}, modele: lot.nom || m.code, mannequin: path.basename(rushes) || '', couleur: (lot.couleurs || [])[0] || '', video_id: (m.d.metaVideos || [])[k - 1]?.video_id || '', ad_id: a.id, adset: k ? `V${String(k).padStart(2, '0')}` : '' });
@@ -1146,6 +1147,13 @@ export const ETAPES_SANS_SKILL = new Set(['photos', 'publication', 'videos', 'ac
 export const MODELE_LEGER = { photos: 'haiku', publication: 'haiku', 'activation-relire': 'haiku', 'relire-scale': 'haiku' };
 
 /* ---------------------------------- les TEXTES : le script d'angles du vendeur ---------------------------------- */
+/** 28/10/2026 : les CINQ textes du test (un par angle, ceux que l'étape textes a gardés), ou null s'il n'y a pas cinq angles complets. */
+export function cinqTextes(m) {
+  const a = (m && m.d && m.d.textes && Array.isArray(m.d.textes.angles)) ? m.d.textes.angles : [];
+  const t = k => a.map(x => String((x && x[k]) || '').trim());
+  const r = { primary_texts: t('primary'), headlines: t('titre'), descriptions: t('description') };
+  return a.length === 5 && Object.values(r).every(l => l.every(Boolean)) ? r : null;
+}
 /** Le script du vendeur, copié tel quel à côté de la skill de la page (il ne porte aucun nom). */
 export const FICHIER_SCRIPT_ANGLES = path.join(path.dirname(fileURLToPath(import.meta.url)), 'skills', 'page', 'SCRIPT-ANGLES-MARKETING.json');
 export function lireScriptAngles(fichier = FICHIER_SCRIPT_ANGLES) {
@@ -1762,6 +1770,10 @@ export function ouvrirMissions(deps) {
       histoire(m, `${etape} : porte d'activation posée pour ${porte.length} objet(s) de cette mission (usage unique)`);
       message += `\nPORTE (serveur Meta local) : ajoute l'argument porte "${laPorte}" à CHAQUE appel ads_activate_entity${adSetsPorte.length ? ' et à chaque ads_update_entity qui pose start_time' : ''}. Sans elle le serveur refuse ; elle ne vaut que pour les objets ci-dessus, une fois chacun.`;
     }
+    // 28/10/2026 (décision du vendeur, carte « Jeton : 5 textes par pub ») : sur le chemin du JETON, chaque créa du TEST porte les
+    // CINQ textes (le primary, le headline et la description gardés de chaque angle) ; par le connecteur, rien ne change
+    const cinq = etape === 'campagne' && cheminMeta === 'local' ? cinqTextes(m) : null;
+    if (cinq) message += `\nCINQ TEXTES (serveur Meta local, décision du vendeur) : dans CHAQUE ads_create_creative de ce test, mets primary_texts = ${JSON.stringify(cinq.primary_texts)}, headlines = ${JSON.stringify(cinq.headlines)}, descriptions = ${JSON.stringify(cinq.descriptions)} — EXACTEMENT ces listes, dans cet ordre, les mêmes pour toutes les annonces ; garde aussi message, headline et description de l'angle de la vidéo (le serveur les ignore quand les listes sont là).`;
     // LE TICKET DE PAUSE (10/10/2026) : un tour de pause sur le chemin local ne peut QUE mettre en pause les objets de la mission
     let ticket = null;
     const objetsMission = () => { const c = m.d.campagne || {}, sc = m.d.suivi?.scale?.campagne || null; return [c, ...(sc ? [sc] : [])].flatMap(k => [k.id, ...(k.adSets || []).map(a => a.id), ...(k.ads || []).map(a => a.id)]).filter(x => x !== undefined && x !== null).map(String); };
@@ -2185,6 +2197,30 @@ Rends {productId, actif (relu), variantesVisibles (nombre relu), urlProduit "htt
     return { plan, modele: md.nom };
   }
 
+  /** 29/10/2026 (règle du vendeur) — LE BUDGET DE LA VOIE « تيست » : quatre créas par modèle (moins s'il n'y a pas quatre vidéos
+   *  saines : dit une fois). ABO (le choix « comme avant ») : un ad set par vidéo, la règle de l'outil (7 $ par ad set pour une ou
+   *  deux vidéos, 5 $ au-delà). CBO : une campagne, UN ad set, toutes les annonces dedans, CBO_TESTER_USD sur la campagne. Le
+   *  plafond du jour du client (÷ les modèles du lot) passe AVANT : trop court → rien n'est créé, le client le lit. */
+  async function budgetTester(m, { taux, parts, plafondDa, devise }) {
+    const cbo = m.demande.reponses.structure === 'CBO';
+    const saines = m.d.creas.length, n = Math.min(CREAS_TESTER, saines);
+    const besoinUsd = cbo ? CBO_TESTER_USD : (n <= 2 ? 7 : 5) * n;
+    if (plafondDa / taux + 1e-9 < besoinUsd) {
+      await envoyer(m, M.budgetTester(parts, plafondDa, taux, besoinUsd));
+      throw definitive(`voie tester : ${besoinUsd} $ par jour demandés (${cbo ? 'CBO' : 'ABO'}), le budget du jour laisse ${plafondDa} DA${parts > 1 ? ` par modèle (÷ ${parts})` : ''} : rien n'est créé`);
+    }
+    if (saines < CREAS_TESTER && !m.d.creasMoinsDit) { await envoyer(m, M.creasMoins(CREAS_TESTER, saines)); m.d.creasMoinsDit = maintenant(); }
+    const args = ['--budget', '--videos', n, '--devise', devise, '--plafond', plafondDa, '--plafond-devise', 'DZD', '--taux-dinar', taux,
+      ...(cbo ? ['--structure', 'CBO', '--un-seul-ad-set', '--budget-jour-usd', CBO_TESTER_USD.toFixed(2)] : [])];
+    histoire(m, `budget (voie tester) : ${saines} vidéo(s) saine(s), ${n} au test · ${cbo ? `CBO, un seul ad set, ${CBO_TESTER_USD} $ par jour sur la campagne` : `ABO, un ad set par vidéo (${besoinUsd} $ par jour)`}`);
+    const r = await outil(m, 'budget', '3-TESTING/manita-testing.py', args, { dureeMaxMs: 120000 });
+    const b = jsonOutil(r, 'budget');
+    if (!b) throw definitive('l\'outil refuse le budget : ' + extrait(r.sortie));
+    if (cbo && !(b.structure === 'CBO' && b.un_seul_ad_set === true && b.ad_sets === 1)) throw definitive(`l'outil rend ${b.structure} à ${b.ad_sets} ad set(s) au lieu de CBO à un seul ad set`);
+    if (!cbo && !(b.structure === 'ABO' && !b.un_seul_ad_set && b.ad_sets === n)) throw definitive(`l'outil rend ${b.structure} à ${b.ad_sets} ad set(s) au lieu de ABO à ${n}`);
+    m.d.budget = b; m.d.creasChoix = CREAS_TESTER; m.d.videosTest = choisirVideosTest(m.d.creas, n);
+  }
+
   const ETAPE = {
     async descente(m) {
       // une mission née d'un lot ne télécharge JAMAIS : son dossier vient de la séparation (sinon tout le Drive, tous les modèles mélangés)
@@ -2304,7 +2340,14 @@ Rends {productId, actif (relu), variantesVisibles (nombre relu), urlProduit "htt
       // STYLE NATIF partout (règle du vendeur, 06/10/2026) : la plaque POV seule, aucun fond flouté, aucune barre ; des
       // rushes de tailles différentes sont ramenés à la taille majoritaire en REMPLISSANT (MONTER-10)
       let r, moteur, raison;
-      if (m.lot) {
+      if (estTester(m.demande.reponses)) {
+        // 29/10/2026 (règle du vendeur) — LA VOIE « تيست » : aucun montage. Les vidéos DÉJÀ faites du dossier du modèle, QUATRE
+        // créas : quatre vidéos ou plus → les quatre premières telles quelles ; moins → chaque originale + des copies où SEULE la
+        // musique change (QUATRE-CREAS.py). Le contrôle qui suit relit chaque vidéo comme après un montage.
+        moteur = 'tester'; raison = `quatre créas depuis ${m.d.rushes}`;
+        histoire(m, `montage : moteur ${moteur} (${raison})`);
+        r = await outil(m, 'montage', '1-EDITEUR/QUATRE-CREAS.py', ['--rushes', m.d.rushes, '--sortie', creas, '--combien', String(CREAS_TESTER), ...(nbMus ? ['--musiques', musiques] : [])], duree);
+      } else if (m.lot) {
         // un modèle de lot : monté depuis le PLAN du lot (ses segments, et rien que les siens), avec le contrôle
         // anti-mélange et le rythme 1,6 / 3 s de MONTER-10. Le mode --rushes exige quatre rushes : un modèle fait
         // d'une ou deux longues prises y serait refusé.
@@ -2742,6 +2785,7 @@ Rends {productId, actif (relu), variantesVisibles (nombre relu), urlProduit "htt
       const compte = m.demande.reponses.compte || {};
       const devise = String(compte.devise || 'USD').toUpperCase();
       // LES CRÉAS DU CLIENT (08/10/2026) : de un à quatre, sa réponse au robot (une fois par lien), sinon le réglage (défaut quatre)
+      if (estTester(m.demande.reponses)) return budgetTester(m, { taux, parts, plafondDa, devise });
       const k = creasDe(m.demande.reponses.creas, R().creasParModele);
       const saines = m.d.creas.length, voulu = Math.min(k, saines);
       // 1.0 : le plafond en dinars se convertit au taux du CLIENT (l'outil fait pareil) — avant : max(taux, 255)
@@ -2810,7 +2854,9 @@ Rends {videos:[{index, video_id, statut, duree}], vignettes:[{index, image_hash,
       const args = ['--noms', '--mode', rep.mode, '--boutique', codeBoutique(), '--modele', m.code, '--prix', rep.detail, '--date', (m.d.dateTest || maintenant().slice(0, 10)),
         '--videos-ids', m.d.metaVideos.map(v => v.video_id).join(','), '--devise', m.d.budget.devise, ...(rep.mode === 'site' ? ['--lien', urlPourMeta(m.d.produit.urlProduit)] : []),
         // 0.4.2 : la structure du budget voyage avec les noms (le nom de la campagne annonce le vrai total du jour)
-        ...(m.d.budget.structure && m.d.budget.total_usd ? ['--structure', m.d.budget.structure, '--budget-jour-usd', (+m.d.budget.total_usd).toFixed(2)] : [])];
+        ...(m.d.budget.structure && m.d.budget.total_usd ? ['--structure', m.d.budget.structure, '--budget-jour-usd', (+m.d.budget.total_usd).toFixed(2)] : []),
+        // 29/10/2026 : la CBO de la voie « tester » (un seul ad set) voyage avec les noms
+        ...(m.d.budget.structure === 'CBO' && m.d.budget.un_seul_ad_set ? ['--un-seul-ad-set'] : [])];
       // [pack-23oct] LE NOM DU MODÈLE LISIBLE DANS LE TRACKING : utm_campaign = <nom>-<CLÉ> (la vue UTM de Tassyir n'a pas de
       // niveau medium). Le nom donné par le client d'abord, puis celui du lot, puis celui des textes — le premier qui a une
       // lettre latine ; aucun → l'outil prend le code du modèle. La clé reste la clé (campagne Meta, anti-doublon).
@@ -2834,7 +2880,8 @@ Rends {videos:[{index, video_id, statut, duree}], vignettes:[{index, image_hash,
       const cib = ciblageWilayas(R().ciblage);
       if (cib.faute) throw Object.assign(definitive(`ciblage : ${cib.faute} — rien n'est créé chez Meta`), { client: M.wilayasManquent(m.id) });
       const angles = m.d.textes.angles;
-      const annonces = m.d.metaVideos.map((v, i) => ({ adSet: b.un_seul_ad_set ? n.ad_sets[0] : n.ad_sets[i], video_id: v.video_id, vignette: m.d.metaVignettes[i]?.image_hash || m.d.metaVignettes[i]?.url || null, angle: angles[i % 5], lien: rep.mode === 'site' ? (n.liens || [])[i % 5] : null }));
+      const cboUn = b.structure === 'CBO' && b.un_seul_ad_set; // 29/10/2026 : la CBO de la voie « tester » (un ad set, les annonces dedans)
+      const annonces = m.d.metaVideos.map((v, i) => ({ adSet: b.un_seul_ad_set ? n.ad_sets[0] : n.ad_sets[i], ...(cboUn ? { nomAnnonce: n.ad_sets[i] } : {}), video_id: v.video_id, vignette: m.d.metaVignettes[i]?.image_hash || m.d.metaVignettes[i]?.url || null, angle: angles[i % 5], lien: rep.mode === 'site' ? (n.liens || [])[i % 5] : null }));
       const ciblage = cib.targeting;
       const placements = rep.placements === 'broad' ? 'automatiques (Advantage+ placements)' : 'publisher_platforms ["facebook","instagram"], instagram_positions ["story","reels"], facebook_positions ["story","facebook_reels"]';
       // PAR ID, JAMAIS PAR NOM (09/10/2026) : l'id de la campagne déjà dans la mission (une campagne repassée par cette étape,
@@ -2851,8 +2898,8 @@ Compte : ${String(rep.compte?.id || '').replace(/^act_/, '')} (devise ${b.devise
 1. ads_get_ad_entities : cherche la clé « ${n.cle} » dans les campagnes du compte, publiées ET en brouillon (object_state « live » puis « draft » : un compte en mode brouillon garde là ce qu'un essai coupé a créé). Si une campagne la porte, ne crée PAS de deuxième campagne : reprends-la (existaitDeja = true) et LIS-la dans Meta : la campagne (id, name, spend_cap), ses ad sets (id, name, daily_budget, daily_spend_cap, lifetime_spend_cap, targeting) et ses annonces (id, adset_id). Si elle est complète (tous les ad sets et toutes les annonces), rends ses id. Si elle est incomplète (un essai précédent s'est arrêté en route), COMPLÈTE-la : crée seulement ce qui manque, dans cette campagne (campaign_id = son id). Ne touche pas aux autres campagnes qui portent la clé : dis-le dans « note ». PAR ID, JAMAIS PAR NOM : si PLUSIEURS campagnes portent la clé « ${n.cle} » ou le nom « ${n.campagne} », ${idConnu ? `reprends SEULEMENT celle dont l'id est ${idConnu} (l'id de cette mission)` : `n'en choisis AUCUNE (ni la plus récente, ni par le nom), ne crée rien et mets leurs id dans « erreur »`}. Si la campagne ou un de ses ad sets porte un plafond de dépense (posé par une ancienne version), ou un ad set un autre ciblage que les wilayas ci-dessous, ne le change pas : dis-le dans « note ».
 2. ${rep.mode === 'site' && m.d.pixel && m.d.pixel.id ? `LE PIXEL est CHOISI par le client et RELU par le bureau dans Meta : pixel_id ${m.d.pixel.id} (« ${String(m.d.pixel.nom || '').replace(/[«»"]/g, '')} »). Mets EXACTEMENT celui-là dans promoted_object de chaque ad set ; aucun autre pixel, ne choisis rien à sa place.` : rep.mode === 'site' ? 'ads_get_datasets : le pixel du compte (dédoublonne ; un pixel qui n\'a jamais tiré, dis-le dans « erreur »).' :'Mode message : pas de pixel ; objectif messages, destination Messenger + Instagram Direct (vérifie les noms exacts avec ads_get_field_context si Meta refuse).'}
 3. ads_create_campaign : campaign_name « ${n.campagne} », ${rep.mode === 'site' ? 'objective OUTCOME_SALES' : 'objectif de messages'}, buying_type AUCTION, statut PAUSED. ${b.structure === 'CBO' ? `CBO (la structure du fichier) : campaign_daily_budget ${b.centimes_campagne} (plus petite unité de la devise ${b.devise}), campaign_bid_strategy LOWEST_COST_WITHOUT_CAP. AUCUN campaign_lifetime_budget, AUCUN budget_schedule_specs, AUCUN campaign_spend_cap (règle du vendeur : pas de plafond ; le budget du jour de la campagne est la seule limite).` : 'ABO : AUCUN campaign_daily_budget, campaign_lifetime_budget ni campaign_bid_strategy. AUCUN campaign_spend_cap (règle du vendeur : pas de plafond ; le budget du jour de chaque ad set est la seule limite).'}
-4. ${b.un_seul_ad_set ? 'UN SEUL ad set' : `${n.ad_sets.length} ad sets (un par vidéo, une seule vidéo par ad set)`} : campaign_id = la campagne de l'étape 1 ou 3, ${b.structure === 'CBO' ? `AUCUN daily_budget (CBO : le budget est sur la campagne), daily_min_spend_target ${b.centimes_min_par_ad_set} (le plancher de chaque vidéo, centimes, devise ${b.devise}), aucune bid_strategy sur l'ad set` : `daily_budget ${b.centimes_par_ad_set} (centimes, devise ${b.devise})`}, AUCUN daily_spend_cap ni lifetime_spend_cap (pas de plafond), billing_event IMPRESSIONS, ${rep.mode === 'site' ? 'optimization_goal OFFSITE_CONVERSIONS, destination_type WEBSITE, promoted_object {pixel_id, custom_event_type PURCHASE}' : 'optimization_goal CONVERSATIONS, destination Messenger + Instagram Direct'}, targeting.geo_locations = EXACTEMENT ${JSON.stringify(ciblage.geo_locations)} (les ${cib.cles.length} wilayas confirmées par le client, règle du vendeur : JAMAIS countries ["DZ"] ni tout le pays, aucune ville, aucune audience enregistrée ; les placements vont dans ce même targeting), statut PAUSED. Noms : ${JSON.stringify(n.ad_sets)}.
-5. Une créa + une annonce par vidéo (PAUSED), l'annonce dans SON ad set (ad_set_id) : page_id, instagram_user_id (ads_get_ig_accounts), video_id, la vignette, call_to_action ${rep.mode === 'site' ? 'SHOP_NOW avec link_url = le lien caché, EXACTEMENT tel quel (le même pour toutes les annonces : les accolades {{campaign.id}} et {{ad.id}} restent ÉCRITES ainsi, Meta les remplace par les numéros ; ne les remplace pas toi-même, n\'y mets aucun nom)' : 'MESSAGE_PAGE (Messenger)'}, message = primary, headline = titre, description. Le nom de chaque annonce (ad_name) = le nom de SON ad set (il porte V01, V02… : Tassyir l'affiche à côté des commandes).
+4. ${b.un_seul_ad_set ? 'UN SEUL ad set' : `${n.ad_sets.length} ad sets (un par vidéo, une seule vidéo par ad set)`} : campaign_id = la campagne de l'étape 1 ou 3, ${b.structure === 'CBO' ? (b.centimes_min_par_ad_set === null || b.centimes_min_par_ad_set === undefined ? `AUCUN daily_budget (CBO : le budget est sur la campagne), AUCUN daily_min_spend_target (un seul ad set), aucune bid_strategy sur l'ad set` : `AUCUN daily_budget (CBO : le budget est sur la campagne), daily_min_spend_target ${b.centimes_min_par_ad_set} (le plancher de chaque vidéo, centimes, devise ${b.devise}), aucune bid_strategy sur l'ad set`) : `daily_budget ${b.centimes_par_ad_set} (centimes, devise ${b.devise})`}, AUCUN daily_spend_cap ni lifetime_spend_cap (pas de plafond), billing_event IMPRESSIONS, ${rep.mode === 'site' ? 'optimization_goal OFFSITE_CONVERSIONS, destination_type WEBSITE, promoted_object {pixel_id, custom_event_type PURCHASE}' : 'optimization_goal CONVERSATIONS, destination Messenger + Instagram Direct'}, targeting.geo_locations = EXACTEMENT ${JSON.stringify(ciblage.geo_locations)} (les ${cib.cles.length} wilayas confirmées par le client, règle du vendeur : JAMAIS countries ["DZ"] ni tout le pays, aucune ville, aucune audience enregistrée ; les placements vont dans ce même targeting), statut PAUSED. Noms : ${JSON.stringify(n.ad_sets)}.
+5. Une créa + une annonce par vidéo (PAUSED), l'annonce dans SON ad set (ad_set_id) : page_id, instagram_user_id (ads_get_ig_accounts), video_id, la vignette, call_to_action ${rep.mode === 'site' ? 'SHOP_NOW avec link_url = le lien caché, EXACTEMENT tel quel (le même pour toutes les annonces : les accolades {{campaign.id}} et {{ad.id}} restent ÉCRITES ainsi, Meta les remplace par les numéros ; ne les remplace pas toi-même, n\'y mets aucun nom)' : 'MESSAGE_PAGE (Messenger)'}, message = primary, headline = titre, description. Le nom de chaque annonce (ad_name) = ${cboUn ? `son « nomAnnonce » (il porte V01, V02… : Tassyir l'affiche à côté des commandes) ; l'ad set unique porte le nom « ${n.ad_sets[0]} »` : 'le nom de SON ad set (il porte V01, V02… : Tassyir l\'affiche à côté des commandes)'}.
 6. TOUT NAÎT EN PAUSE, même dans un compte en mode brouillon : campagne, ad sets et annonces PAUSED. Puis RELIS (ads_get_ad_entities, object_ids = la campagne, ses ad sets et ses annonces, object_state « live » puis « draft », fields id, name, status, configured_status, effective_status). Un objet relu ACTIVE (ou autre que PAUSED) : ne l'active pas, ne publie rien, dis-le dans « note » — le bureau refuse et le dit au client.
 Chaque objet est créé À PART : jamais de campaign_spec, d'adset_spec ni de copie (source_campaign_id, source_adset_id, source_ad_id) — une copie garderait les réglages (et le plafond) d'un autre. Les annonces :
 ${JSON.stringify(annonces, null, 1)}
@@ -2913,7 +2960,10 @@ Rends {campaign_id, ad_sets:[{id, nom}], ads:[{id, ad_set_id, angle}], existaitD
       for (const a of appelsDe(r, 'ads_create_ad_set')) {
         if (cbo) {
           const x = /"(daily_budget|lifetime_budget|bid_strategy)"\s*:/.exec(JSON.stringify(a.entree || {})); if (x) throw new Error(`ad set créé avec ${x[1]} sous une campagne CBO (le budget est sur la campagne)`);
-          const mn = /"daily_min_spend_target"\s*:\s*"?(\d+)/.exec(JSON.stringify(a.entree || {})); if (!mn || +mn[1] !== +b.centimes_min_par_ad_set) throw new Error(`ad set CBO créé avec daily_min_spend_target ${mn ? mn[1] : 'absent'} au lieu de ${b.centimes_min_par_ad_set} centimes (le plancher de chaque vidéo)`);
+          const mn = /"daily_min_spend_target"\s*:\s*"?(\d+)/.exec(JSON.stringify(a.entree || {}));
+          // 29/10/2026 : la CBO à un seul ad set n'a AUCUN plancher (rien à partager)
+          if (b.centimes_min_par_ad_set === null || b.centimes_min_par_ad_set === undefined) { if (mn) throw new Error(`ad set CBO unique créé avec daily_min_spend_target ${mn[1]} (un seul ad set : aucun plancher)`); }
+          else if (!mn || +mn[1] !== +b.centimes_min_par_ad_set) throw new Error(`ad set CBO créé avec daily_min_spend_target ${mn ? mn[1] : 'absent'} au lieu de ${b.centimes_min_par_ad_set} centimes (le plancher de chaque vidéo)`);
         } else {
           const v = /"daily_budget"\s*:\s*"?(\d+)/.exec(JSON.stringify(a.entree || {})); if (!v || +v[1] !== +b.centimes_par_ad_set) throw new Error(`ad set créé avec daily_budget ${v ? v[1] : 'absent'} au lieu de ${b.centimes_par_ad_set} centimes`);
         }
@@ -2929,6 +2979,12 @@ Rends {campaign_id, ad_sets:[{id, nom}], ads:[{id, ad_set_id, angle}], existaitD
       if (rep.mode === 'site') for (const a of appelsDe(r, 'ads_create_creative')) {
         const l = String(a.entree?.link_url || '');
         if (!l.includes('utm_campaign={{campaign.id}}') || !l.includes('utm_content={{ad.id}}')) throw new Error(`créa créée sans le lien caché (numéros de Meta) : ${l.slice(0, 90) || 'link_url absent'}`);
+      }
+      // 28/10/2026 : sur le chemin du JETON, chaque créa vidéo du test porte EXACTEMENT les cinq textes (relus dans l'ENTRÉE brute)
+      const cinq = m.d.cheminMeta && m.d.cheminMeta.chemin === 'local' ? cinqTextes(m) : null;
+      if (cinq) for (const a of appelsDe(r, 'ads_create_creative')) {
+        if (!a.entree || !a.entree.video_id) continue;
+        for (const k of ['primary_texts', 'headlines', 'descriptions']) if (JSON.stringify(a.entree[k] || []) !== JSON.stringify(cinq[k])) throw new Error(`créa créée sans les cinq ${k} des angles (décision du vendeur) : ${JSON.stringify(a.entree[k] || []).slice(0, 90)}`);
       }
       // [v19-trois] le pixel CHOISI et relu : chaque ad set créé le porte, et le pixel rendu est le même (sinon refus, rien n'est activé)
       if (rep.mode === 'site' && m.d.pixel && m.d.pixel.id) {

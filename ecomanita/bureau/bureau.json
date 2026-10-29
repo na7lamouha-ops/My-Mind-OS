@@ -1,6 +1,6 @@
 {
   "nom": "ecom manita",
-  "version": "0.4.2",
+  "version": "0.4.4",
   "port": 4620,
   "modele": "sonnet",
   "dureeMaxSecondes": 300,

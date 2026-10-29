@@ -559,6 +559,14 @@ async function sonderJetonMeta({ compte = null, page = null } = {}) {
  *  l'installation (comptes et pages, clés des wilayas) et l'essai vidéo passent par le serveur local, EN DIRECT (aucun tour
  *  de Claude) ; un refus du jeton est dit tel quel (jamais de repli silencieux sur le connecteur). Tassyir reste un connecteur. */
 const parJeton = () => cheminJeton({ fichierConfig: FICHIER_LOCAL, base: GRAPH_LOCAL, journal: JOURNAL_META });
+/** 28/10/2026 (rapport d'installation 0.4.2, n° 2) : une relecture qui rend une liste VIDE ne remplace jamais une liste qui ne
+ *  l'est pas (un jeton qui ne voit pas les pages effaçait celles du connecteur) ; une liste non vide remplace comme avant. */
+function garderSiVide(c, lus) {
+  for (const [k, l] of Object.entries(lus)) {
+    if (!l.length && Array.isArray(c[k]) && c[k].length) { journal(`${k} : relecture VIDE, les ${c[k].length} d'avant gardé(e)s`); continue; }
+    c[k] = l;
+  }
+}
 function lireComptes() {
   return new Promise((ok, ko) => enfiler(async () => {
     try {
@@ -577,9 +585,9 @@ function lireComptes() {
         // [v19-trois] LES PIXELS PAR COMPTE, lus EN VRAI par le jeton (ads_get_datasets), relus dans le brut ; un compte refusé : non lus
         try { const px = await parJeton().pixelsDesComptes(comptes); for (const c of comptes) { const l = pixelsDuBrut(px.appels, c.id); if (l) c.pixels = l; } if (px.refus.length) journal(`pixels non lus (refus) : ${px.refus.map(x => x.compte).join(', ')}`); }
         catch (e) { journal('pixels : lecture impossible — ' + e.message); }
-        ecrireConfig(c => { c.comptes = comptes; c.pages = pages; c.boutiques = boutiques; if (!c.magasin && boutiques.filter(b => b.actif !== false).length === 1) c.magasin = boutiques.find(b => b.actif !== false); });
+        const k = ecrireConfig(c => { garderSiVide(c, { comptes, pages, boutiques }); if (!c.magasin && boutiques.filter(b => b.actif !== false).length === 1) c.magasin = boutiques.find(b => b.actif !== false); });
         journal(`comptes lus par le JETON (serveur local, ${j.appels.length} lecture(s) Graph) : ${comptes.length} compte(s) pub, ${pages.length} page(s) · ${boutiques.length} boutique(s) par le connecteur Tassyir`);
-        return ok({ comptes, pages, boutiques, chemin: 'jeton', ecartes: ((r.structure || {}).boutiques || []).length - boutiques.length });
+        return ok({ comptes: k.comptes, pages: k.pages, boutiques: k.boutiques, chemin: 'jeton', ecartes: ((r.structure || {}).boutiques || []).length - boutiques.length });
       }
       const schema = { type: 'object', properties: {
         comptes: { type: 'array', items: { type: 'object', properties: { id: { type: 'string' }, nom: { type: 'string' }, devise: { type: 'string' }, statut: { type: 'string' }, mcp_ok: { type: 'boolean' }, pixels: { type: 'array', items: { type: 'object', properties: { id: { type: 'string' }, nom: { type: 'string' } } } } }, required: ['id', 'nom', 'devise'] } },
@@ -599,9 +607,9 @@ function lireComptes() {
       // [v19-trois] LES PIXELS PAR COMPTE : seulement ceux de la réponse BRUTE d'ads_get_datasets pour CE compte (jamais ce que le tour
       // dit) ; un compte jamais lu garde ses pixels « non lus » (pas de question du pixel pour lui)
       for (const c of comptes) { delete c.pixels; const l = pixelsDuBrut(r.appels, c.id); if (l) c.pixels = l; }
-      ecrireConfig(c => { c.comptes = comptes; c.pages = pages; c.boutiques = boutiques; if (!c.magasin && boutiques.filter(b => b.actif !== false).length === 1) c.magasin = boutiques.find(b => b.actif !== false); });
+      const k = ecrireConfig(c => { garderSiVide(c, { comptes, pages, boutiques }); if (!c.magasin && boutiques.filter(b => b.actif !== false).length === 1) c.magasin = boutiques.find(b => b.actif !== false); });
       journal(`comptes lus : ${comptes.length} compte(s) pub, ${pages.length} page(s), ${boutiques.length} boutique(s)`);
-      ok({ comptes, pages, boutiques, ecartes: (s.comptes || []).length + (s.pages || []).length + (s.boutiques || []).length - comptes.length - pages.length - boutiques.length });
+      ok({ comptes: k.comptes, pages: k.pages, boutiques: k.boutiques, ecartes: (s.comptes || []).length + (s.pages || []).length + (s.boutiques || []).length - comptes.length - pages.length - boutiques.length });
     } catch (e) { ko(e); }
   }));
 }
