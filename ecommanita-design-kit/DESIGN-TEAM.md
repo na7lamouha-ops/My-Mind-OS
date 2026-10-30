@@ -71,6 +71,8 @@
 - `scripts/master_slide.py`: يعاود يبني القالب.
 - `scripts/match_slide.py`: سلايدات الماتش من ملف JSON.
 - `scripts/course_cover.py`: غلاف الدورة مع الكود.
+- `scripts/review_gate.py`: بوابة المراجع الأوتوماتيكية (`review_gate.py CONTENT.json OUT_PREFIX`).
+- اللاعبين (الوكلاء) في `.claude/agents/`، والأمر «درس XX» في `.claude/skills/design-lesson/`.
 - `content/s01-mindset.json`: مثال كامل.
 - `reference/`: صور مرجعية مصادق عليها.
 
