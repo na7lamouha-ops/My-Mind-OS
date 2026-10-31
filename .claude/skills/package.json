@@ -1,0 +1,9 @@
+{
+  "name": "my-mind-os-video-skills",
+  "private": true,
+  "type": "module",
+  "description": "Node deps for the vendored video-editing skills (zaddy99999/video-editing-skills needs sharp).",
+  "dependencies": {
+    "sharp": "^0.35.5"
+  }
+}
