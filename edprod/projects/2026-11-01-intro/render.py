@@ -71,6 +71,14 @@ cols = np.nonzero(lm.any(0))[0]
 SPATH = np.array([L2V(x, np.nonzero(lm[:, x])[0].min()) for x in cols[::3]])
 
 
+def add_rgb(f, rgb, x, y):
+    """additive paste with clipping (layers can be wider than the frame)."""
+    h, w = rgb.shape[:2]
+    x0, y0, x1, y1 = max(0, x), max(0, y), min(W, x + w), min(H, y + h)
+    if x1 > x0 and y1 > y0:
+        f[y0:y1, x0:x1] += rgb[y0 - y:y1 - y, x0 - x:x1 - x]
+
+
 def bars(f, t, side, t_on, k_all=1.0):
     """three tall neon bars switching on one by one with a flicker."""
     xs = [930, 985, 1040] if side == "R" else [150, 95, 40]
@@ -130,8 +138,7 @@ def intro_scene(t):
         body[..., :3] *= 0.10 + 0.25 * ease_io((t - 3.0) / 1.0) + 0.65 * all_lit
         over(layer, body, OX, OY, reveal)
         rim = RIM * (0.9 * reveal) * (1 - 0.6 * all_lit)
-        h, w = rim.shape
-        layer[OY:OY + h, OX:OX + w] += rim[..., None] * np.array([0.65, 0.85, 1.0], np.float32)
+        add_rgb(layer, rim[..., None] * np.array([0.65, 0.85, 1.0], np.float32), OX, OY)
         # strands + spark (3.5 - 5.0)
         sv = clamp01((t - 3.5) / 1.3)
         if sv > 0:
@@ -224,7 +231,7 @@ POFF = (H - PH) // 2
 STAD = np.zeros((H, W, 3), np.float32)
 STAD[POFF:POFF + PH] = np.asarray(Image.fromarray((np.clip(P, 0, 1) * 255).astype(np.uint8)).resize((W, PH), Image.LANCZOS)).astype(np.float32) / 255
 # bottom: fade the poster's CTA and visa line (we put the match title there)
-cover = np.clip((YY[:, :1] - 1450) / 45, 0, 1) * np.clip(np.minimum(XX[:1] - 100, 980 - XX[:1]) / 60, 0, 1) * 0.94
+cover = np.clip((YY[:, :1] - 1440) / 22, 0, 1) * np.clip(np.minimum(XX[:1] - 90, 990 - XX[:1]) / 50, 0, 1) * 0.985
 STAD *= (1 - cover)[..., None]
 
 
