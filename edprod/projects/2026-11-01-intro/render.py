@@ -22,6 +22,7 @@ from edprod_kit import (ASSETS, BLUE, FPS, GREEN, H, ORANGE, RED, SR, W, WHITE, 
                         sfx_whistle, text_glow, text_rgba, widen)
 
 TITLE = sys.argv[1] if len(sys.argv) > 1 else "المباراة 01 · الطلبات المزيّفة"
+MODE = os.environ.get("MODE", "full")   # full | clean (no scorebug/title) | overlay (scorebug only, RGBA) | audio (stems only)
 OUT = os.path.join(HERE, "out")
 os.makedirs(OUT, exist_ok=True)
 DUR = 16.0
@@ -311,6 +312,8 @@ TITLE_T = text_rgba(TITLE, font("ExtraBold", 56), (255, 255, 255))
 
 
 def scorebug(f, t):
+    if MODE == "clean":
+        return
     if t < 12.0:
         return
     d = t - 12.0
@@ -370,17 +373,58 @@ def frame(n):
     return f
 
 
-enc = Encoder(os.path.join(OUT, "intro_video.mp4"))
-for n in range(TOTAL):
-    f = frame(n)
-    if n % 15 == 0:
-        Image.fromarray((np.clip(f, 0, 1) * 255).astype(np.uint8)).save(os.path.join(OUT, f"p_{n:04d}.png"))
-    enc.write(f)
-enc.close()
+if MODE in ("full", "clean"):
+    enc = Encoder(os.path.join(OUT, "intro_video.mp4" if MODE == "full" else "intro_clean.mp4"))
+    for n in range(TOTAL):
+        f = frame(n)
+        if MODE == "full" and n % 15 == 0:
+            Image.fromarray((np.clip(f, 0, 1) * 255).astype(np.uint8)).save(os.path.join(OUT, f"p_{n:04d}.png"))
+        enc.write(f)
+    enc.close()
+elif MODE == "overlay":
+    # scorebug + title alone, from 12.0 s: rendered on black and on white -> exact alpha
+    import subprocess
+    t0 = 12.0
+    n_ov = int((DUR - t0) * FPS)
+    pro = subprocess.Popen(["ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgba", "-s", f"{W}x{H}", "-r", str(FPS),
+                            "-i", "-", "-c:v", "prores_ks", "-profile:v", "4444", "-pix_fmt", "yuva444p10le",
+                            os.path.join(OUT, "scorebug_alpha.mov")], stdin=subprocess.PIPE)
+    grn = Encoder(os.path.join(OUT, "scorebug_greenscreen.mp4"), crf=14)
+    for k in range(n_ov):
+        t = t0 + k / FPS
+        b = np.zeros((H, W, 3), np.float32)
+        w = np.ones((H, W, 3), np.float32)
+        scorebug(b, t)
+        scorebug(w, t)
+        a = np.clip(1 - (w - b).mean(-1, keepdims=True), 0, 1)
+        rgb = np.where(a > 1e-3, np.clip(b / np.maximum(a, 1e-3), 0, 1), 0)
+        pro.stdin.write((np.dstack([rgb, a]) * 255 + 0.5).astype(np.uint8).tobytes())
+        g = rgb * a + np.array([0.0, 1.0, 0.0], np.float32) * (1 - a)
+        grn.write(g)
+        if k == n_ov - 1:
+            Image.fromarray((np.dstack([rgb, a]) * 255 + 0.5).astype(np.uint8), "RGBA").save(os.path.join(OUT, "scorebug_final.png"))
+    pro.stdin.close()
+    pro.wait()
+    grn.close()
 print("video done")
+if MODE in ("clean", "overlay"):
+    sys.exit(0)
 
 # ============================================================ sound =============
-mix = Mix(DUR)
+full = Mix(DUR)
+stem_atmos, stem_sfx = Mix(DUR), Mix(DUR)
+
+
+class _Dual:
+    def __init__(self, m):
+        self.m = m
+
+    def place(self, *a, **k):
+        self.m.place(*a, **k)
+        full.place(*a, **k)
+
+
+atmos, mix = _Dual(stem_atmos), _Dual(stem_sfx)
 
 
 def ex(n, tau): return np.exp(-np.arange(n) / SR / tau)
@@ -464,7 +508,7 @@ n = int(8.5 * SR)
 wind = flt(nz(n), "band", [200, 900], 2) * (0.5 + 0.5 * np.sin(2 * np.pi * 0.2 * np.arange(n) / SR))
 hum = np.sin(2 * np.pi * 50 * np.arange(n) / SR) * 0.5 + np.sin(2 * np.pi * 100 * np.arange(n) / SR) * 0.25
 env = np.clip((np.arange(n) / SR - 0) / 1.2, 0, 1) * np.clip((8.5 - np.arange(n) / SR) / 1.0, 0, 1)
-mix.place(1.5, wind * env * 0.04 + hum * env * 0.02)
+atmos.place(1.5, wind * env * 0.04 + hum * env * 0.02)
 mix.place(3.0, thunder(), 0.5)
 mix.place(3.5, electric(1.4), 0.12)
 mix.place(4.4, whoosh(1.0), 0.25)
@@ -479,13 +523,13 @@ bed = widen(amb_lo[int(4 * SR):int(4 * SR) + nb] / rms(amb_lo), 0.7)
 tb = np.arange(nb) / SR + 7.5
 bed *= np.interp(tb, [7.5, 9.0, 10.0, 11.0, 16.5], [0.0, 0.025, 0.04, 0.05, 0.05])[:, None]
 bed[:, :] = flt(bed, "low", 1200) * (tb < 10)[:, None] + bed * (tb >= 10)[:, None]   # distant (muffled) until the stadium appears
-mix.place(7.5, bed)
+atmos.place(7.5, bed)
 hi = widen(amb_hi[int(3 * SR):int(3 * SR) + int(5 * SR)] / rms(amb_hi), 0.7)
-mix.place(11.0, hi * np.linspace(0.0, 0.035, len(hi))[:, None] ** 0.5)
+atmos.place(11.0, hi * np.linspace(0.0, 0.035, len(hi))[:, None] ** 0.5)
 mix.place(10.0, static(1.05), 0.10)
 mix.place(11.55, sfx_whistle(0.55), 0.16)
 hr = crowd("cheer-hr-3")
-mix.place(13.6, widen(hr[:int(2.4 * SR)] / rms(hr), 0.7) * np.linspace(0.02, 0.03, int(2.4 * SR))[:, None])   # chants
+atmos.place(13.6, widen(hr[:int(2.4 * SR)] / rms(hr), 0.7) * np.linspace(0.02, 0.03, int(2.4 * SR))[:, None])   # chants
 mix.place(12.0, tick(), 0.25)
 mix.place(12.75, bass_pulse(), 0.35)
 mix.place(12.85, beep(), 0.07)
@@ -493,5 +537,7 @@ n2 = int(0.4 * SR)
 mix.place(13.2, flt(nz(n2), "band", [800, 6000]) * np.sin(np.pi * np.arange(n2) / n2) ** 2, 0.07)
 for s in range(int(15.5), 16):
     mix.place(s + 0.5, tick(), 0.12)
-gr = mix.save(os.path.join(OUT, "intro.wav"))
+gr = full.save(os.path.join(OUT, "intro.wav"))
+stem_atmos.save(os.path.join(OUT, "stem_atmosphere_crowd.wav"), fade_out=0.4)
+stem_sfx.save(os.path.join(OUT, "stem_sfx.wav"), fade_out=0.4)
 print(f"audio done, gain reduction {gr:.1f} dB")
