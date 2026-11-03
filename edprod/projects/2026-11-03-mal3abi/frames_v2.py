@@ -9,7 +9,8 @@ import sys
 sys.path.insert(0, "edprod/tools/lib")
 from edprod_kit import *  # noqa
 
-OUT = "out/mal3abi/frames_v2"
+OUT = os.environ.get("OUT", "out/mal3abi/frames_v2")
+NOTAG = os.environ.get("NOTAG") == "1"
 os.makedirs(OUT, exist_ok=True)
 rng = np.random.default_rng(11)
 L = os.path.join(ASSETS, "layers")
@@ -109,6 +110,8 @@ def ctext(f, s, y, size=96, col=WHITE, weight="ExtraBold", glowcol=None, k=0.6, 
 
 
 def tag(f, n, label):
+    if NOTAG:
+        return
     t = text_rgba(f"{n:02d}  {label}", font("Bold", 32), (190, 195, 205))
     over(f, t, W - t.shape[1] - 40, H - 110, 0.8)
 
