@@ -25,3 +25,8 @@
 .vercel
 next-env.d.ts
 tsconfig.tsbuildinfo
+
+# video skills
+.claude/skills/node_modules/
+.claude/skills/video-use/.env
+.claude/skills/**/__pycache__/
