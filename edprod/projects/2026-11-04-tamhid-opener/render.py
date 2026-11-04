@@ -2,6 +2,7 @@
 run from repo root: python3 edprod/projects/2026-11-04-tamhid-opener/render.py
 """
 import os
+import subprocess
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -354,7 +355,23 @@ def render(t):
 DUST = [(rng2.uniform(80, W2 - 80), rng2.uniform(150, 900), rng2.uniform(0.8, 2.0), rng2.uniform(0.05, 0.35)) for _ in range(120)]
 
 if os.environ.get("MODE", "full") in ("full", "video"):
-    enc = Encoder(os.path.join(OUT, "video.mp4"), size=(W2, H2))
+    if os.environ.get("MASTER") == "1":   # high-quality master: ProRes 422 HQ, 10-bit, no H.264 generation loss
+        class _ProRes:
+            def __init__(self, path):
+                self.p = subprocess.Popen(["ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb48le", "-s", f"{W2}x{H2}",
+                                           "-r", str(FPS), "-i", "-", "-c:v", "prores_ks", "-profile:v", "3", "-pix_fmt", "yuv422p10le",
+                                           "-vendor", "apl0", "-color_primaries", "bt709", "-color_trc", "bt709", "-colorspace", "bt709", path],
+                                          stdin=subprocess.PIPE)
+
+            def write(self, f):
+                self.p.stdin.write((np.clip(f, 0, 1) * 65535 + 0.5).astype("<u2").tobytes())
+
+            def close(self):
+                self.p.stdin.close()
+                self.p.wait()
+        enc = _ProRes(os.path.join(OUT, "master_prores.mov"))
+    else:
+        enc = Encoder(os.path.join(OUT, "video.mp4"), size=(W2, H2))
     for n in range(int(DUR * FPS)):
         t = n / FPS
         f = render(t)
