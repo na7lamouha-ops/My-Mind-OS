@@ -7,7 +7,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from opener_lib import *  # noqa
 
-OUT = "out/tamhid-opener"
+OUT = os.path.join("out/tamhid-opener", os.environ.get("VARIANT", "key-on"))
 os.makedirs(OUT, exist_ok=True)
 DUR = 8.5
 rng2 = np.random.default_rng(9)
@@ -21,6 +21,11 @@ bmask = BORDER.max(-1) > 0.35
 BY, BX = np.where(bmask)
 BP = PERIM[BY, BX]
 BSIDE = BX < W2 / 2
+
+
+def frame_reveal_up(p):
+    m = np.clip((p - (1 - PERIM)) * 25, 0, 1)[..., None]
+    return BORDER * m
 
 
 def beam_head(p, left):
@@ -189,16 +194,34 @@ def shockwave(f, te):
     return out
 
 
-def key(f, S, logo_pos=None, pad_pos=None, a=1.0):
-    """the full key (ecommanita logo + tassyir controller) at scale S around KEY_C, or each part at its own pose."""
+VARIANT = os.environ.get("VARIANT", "key-on")      # logo | key-off | key-on
+STRANDS = rgba(os.path.join(LAY, "layer-light-strands.png"))
+STRANDS_IN_KEY = (1092 - 1075, 474.5 - 647.5)
+_lum = (PAD[..., :3] * np.array([0.299, 0.587, 0.114], np.float32)).sum(-1, keepdims=True)
+PAD_OFF = PAD.copy()
+PAD_OFF[..., :3] = np.clip(_lum * 0.45 * np.array([0.75, 0.9, 1.1], np.float32) + PAD[..., :3] * 0.12, 0, 1)
+PAD_OFF[..., 3] = PAD[..., 3] * np.clip(0.5 + _lum[..., 0] * 1.5, 0, 1)
+
+
+def put(f, img, cx, cy, w, a=1.0):
+    if w < 2 or a <= 0:
+        return
+    L = scaled(img, w / img.shape[1])
+    over(f, L, cx - L.shape[1] / 2, cy - L.shape[0] / 2, a)
+
+
+def key(f, S, logo_pos=None, pad_pos=None, a=1.0, pad_lit=1.0, strands=0.0, show_pad=True, show_logo=True):
+    """ecommanita logo + tassyir controller (+ light strands), as one key at scale S or each part at its own pose."""
     if logo_pos is None:
         logo_pos = (KEY_C[0] + LOGO_IN_KEY[0] * S, KEY_C[1] + LOGO_IN_KEY[1] * S, LOGO.shape[1] * S)
         pad_pos = (KEY_C[0] + PAD_IN_KEY[0] * S, KEY_C[1] + PAD_IN_KEY[1] * S, PAD.shape[1] * S)
-    for img, (cx, cy, w) in ((PAD, pad_pos), (LOGO, logo_pos)):
-        if w < 2:
-            continue
-        L = scaled(img, w / img.shape[1])
-        over(f, L, cx - L.shape[1] / 2, cy - L.shape[0] / 2, a)
+        if strands > 0:
+            put(f, STRANDS, KEY_C[0] + STRANDS_IN_KEY[0] * S, KEY_C[1] + STRANDS_IN_KEY[1] * S, STRANDS.shape[1] * S, a * strands)
+    if show_pad:
+        put(f, PAD_OFF, *pad_pos, a * (1 - pad_lit))
+        put(f, PAD, *pad_pos, a * pad_lit)
+    if show_logo:
+        put(f, LOGO, *logo_pos, a)
 
 
 def khaliya(f, t, a_all=1.0):
@@ -255,7 +278,16 @@ def render(t):
             pz = ease_out(min(1.0, (te - 0.12) / 1.0))
             S = lerp(0.03, KEY_S_BIG, pz)
             glow(f, *KEY_C, 420 * S / KEY_S_BIG + 40, (255, 170, 90), 0.28)
-            key(f, S, a=min(1.0, (te - 0.12) / 0.1))
+            a_in = min(1.0, (te - 0.12) / 0.1)
+            if VARIANT == "logo":
+                put(f, LOGO, KEY_C[0], KEY_C[1], LOGO.shape[1] * S * 1.75, a_in)
+            elif VARIANT == "key-off":
+                lit = ease_io((te - 1.05) / 0.35)              # power-up at ~4.95 s
+                key(f, S, a=a_in, pad_lit=lit, strands=lit)
+                if 0 < te - 1.05 < 0.4:
+                    glow(f, KEY_C[0] + PAD_IN_KEY[0] * S, KEY_C[1] + (PAD_IN_KEY[1] - 330) * S, 90, BLUE, 0.8 * (1 - (te - 1.05) / 0.4))
+            else:
+                key(f, S, a=a_in, strands=1.0)
         shards(f, te)
         embers(f, te)
         if te < 0.08:
@@ -265,42 +297,55 @@ def render(t):
             shake = (rng2.uniform(-12, 12) * (1 - te / 0.25), rng2.uniform(-8, 8) * (1 - te / 0.25))
         z = lerp(1.03, 1.0, ease_io(min(1, te / 1.5)))
     else:
-        # frame drawing + logo to its slot, then master
-        p = ease_io(min(1, (t - 5.4) / 1.2))
-        f = frame_reveal(p * 1.01)
-        if t < 6.95:
-            S = KEY_S_BIG
+        # 5.4-6.0 parts travel to their slots; 6.0 the controller fires the frame beams (bottom -> top); 7.0 they meet at the logo
+        pm = ease_io(min(1.0, (t - 5.4) / 0.6))
+        pb = ease_io(min(1.0, max(0.0, (t - 6.0) / 1.0)))
+        f = frame_reveal_up(pb)
+        S = KEY_S_BIG
+        if VARIANT == "logo":
+            l0 = (KEY_C[0], KEY_C[1], LOGO.shape[1] * S * 1.75)
+            p0 = (PAD_SLOT[0], H2 + 120, PAD_SLOT[2])        # controller rises from below, switched off
+        else:
             l0 = (KEY_C[0] + LOGO_IN_KEY[0] * S, KEY_C[1] + LOGO_IN_KEY[1] * S, LOGO.shape[1] * S)
             p0 = (KEY_C[0] + PAD_IN_KEY[0] * S, KEY_C[1] + PAD_IN_KEY[1] * S, PAD.shape[1] * S)
-            lp = tuple(lerp(a, b, p) for a, b in zip(l0, LOGO_SLOT))
-            pp = tuple(lerp(a, b, p) for a, b in zip(p0, PAD_SLOT))
-            key(f, 0, logo_pos=lp, pad_pos=pp, a=1 - ease_io((t - 6.65) / 0.25))
+        lp = tuple(lerp(x, y, pm) for x, y in zip(l0, LOGO_SLOT))
+        pp = tuple(lerp(x, y, pm) for x, y in zip(p0, PAD_SLOT))
+        lit = 1.0 if VARIANT != "logo" else ease_io((t - 5.9) / 0.15)
+        if t < 7.4:
+            fade_logo = 1 - ease_io((t - 7.0) / 0.3)
+            fade_pad = 1 - ease_io((t - 6.2) / 0.3)
+            key(f, 0, logo_pos=lp, pad_pos=pp, a=fade_pad, pad_lit=lit, show_logo=False)
+            key(f, 0, logo_pos=lp, pad_pos=pp, a=fade_logo, show_pad=False)
+        # controller power pulse at 6.0: its own light shoots the beams out
+        if 5.9 <= t < 6.6:
+            k = math.exp(-(t - 5.95) / 0.18) if t >= 5.95 else (t - 5.9) / 0.05
+            glow(f, PAD_SLOT[0], PAD_SLOT[1] - 45, 70, BLUE, 1.4 * k)
+            glow(f, PAD_SLOT[0], PAD_SLOT[1], 260, BLUE, 0.35 * k)
         for left, col in ((True, BLUE), (False, ORANGE)):
-            if p < 0.995:
-                h = beam_head(p, left)
+            if 0.0 < pb < 0.995:
+                h = beam_head(1 - pb, left)
                 if h:
                     glow(f, *h, 34, col, 1.4)
                     glow(f, *h, 130, col, 0.35)
-        # crossfade into the exact master (logo slot at 6.55, controller from 6.6)
-        cf_logo = ease_io((t - 6.5) / 0.25)
-        cf_pad = ease_io((t - 6.6) / 0.5)
-        mlogo = (logo_box[..., None]).astype(np.float32) * cf_logo
+        # crossfades into the exact master: controller once the beams leave it, logo when they arrive
+        cf_pad = ease_io((t - 6.15) / 0.3)
+        cf_logo = ease_io((t - 6.95) / 0.3)
         mpad = (pad_box[..., None]).astype(np.float32) * cf_pad
-        f = f * (1 - mlogo) + MASTER * mlogo
+        mlogo = (logo_box[..., None]).astype(np.float32) * cf_logo
         f = f * (1 - mpad) + MASTER * mpad
-        kall = ease_io((t - 6.6) / 0.8)
+        f = f * (1 - mlogo) + MASTER * mlogo
+        if 6.95 <= t < 7.6:                       # beams meet at the logo: hit
+            k = math.exp(-(t - 6.95) / 0.2)
+            glow(f, LOGO_SLOT[0], LOGO_SLOT[1], 260, (255, 210, 160), 0.45 * k)
+        kall = ease_io((t - 7.0) / 0.6)
         f = f * (1 - kall) + MASTER * kall
-        if t >= 7.4:
+        if t >= 7.6:
             f = MASTER.copy()
-        if 6.6 <= t < 7.4:
-            k = math.exp(-(t - 6.6) / 0.25)
-            glow(f, CX, 1000, 220, BLUE, 0.30 * k + 0.05)
-            glow(f, CX - 20, 935, 26, (255, 255, 255), 0.9 * k)
-        if t >= 7.0:                               # gold dust fading
-            k = max(0.0, 1 - (t - 7.0) / 1.5)
+        if t >= 7.2:                               # gold dust fading
+            k = max(0.0, 1 - (t - 7.2) / 1.3)
             f += HC_GOLD[20] * 0.06 * k
-            for (px, py, rr, a) in DUST:
-                glow(f, px, py - (t - 7.0) * 12, rr, (255, 205, 120), a * k)
+            for (px, py, rr, a_) in DUST:
+                glow(f, px, py - (t - 7.2) * 12, rr, (255, 205, 120), a_ * k)
         return f
     f = zoom(f, z, shake)
     return vignette(f)
@@ -422,11 +467,15 @@ for _ in range(26):                                   # gold shards falling / cl
     mix.place(tc, tone(r.uniform(2500, 6500), 0.25, r.uniform(0.02, 0.06), r.uniform(0.15, 0.4)), 0.25, pan=r.uniform(-0.9, 0.9))
 rumble = flt(r.standard_normal(int(2.0 * SR)), "low", 120) * np.exp(-np.arange(int(2.0 * SR)) / SR / 0.6)
 mix.place(3.92, rumble, 0.9)
-mix.place(5.45, zap(), 0.32, pan=-0.6)
-mix.place(5.65, zap(), 0.32, pan=0.6)
-for tc, pn in ((5.85, -0.9), (5.95, 0.9), (6.35, -0.8), (6.45, 0.8)):
+mix.place(5.4, whoosh(0.6), 0.18)
+mix.place(5.92, chime(), 0.22)
+mix.place(6.02, zap(), 0.32, pan=-0.6)
+mix.place(6.12, zap(), 0.32, pan=0.6)
+for tc, pn in ((6.25, -0.9), (6.3, 0.9), (6.75, -0.8), (6.8, 0.8)):
     mix.place(tc, crackle(0.25, 0.05), 0.25, pan=pn)
-mix.place(6.62, chime(), 0.22)
+mix.place(6.95, boom()[: int(1.2 * SR)] * 0.35 + 0, 0.5)
+if VARIANT == "key-off":
+    mix.place(4.92, chime(), 0.12)
 w = wind(1.6)
 mix.place(7.0, np.stack([w, np.roll(w, 1200)], 1), 0.05)
 b2 = buzz(1.2, 230) * np.linspace(0, 1, int(1.2 * SR))
