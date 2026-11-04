@@ -62,6 +62,145 @@ ASSEMBLY = [("ring", 0.50, 0.90, (0, 0)), ("hanger", 0.75, 1.15, (0, -160)), ("s
             ("shirt_r", 1.10, 1.50, (180, 40)), ("text", 1.30, 1.70, (0, 90))]
 
 
+# ================================================================ explosion assets
+from scipy.spatial import cKDTree
+
+PAD = rgba(os.path.join(LAY, "layer-controller-tassyir.png"))
+KEY_C = (CX, 540.0)
+KEY_S_BIG = 0.62
+LOGO_IN_KEY = (1089 - 1075, 221.5 - 647.5)     # logo centre relative to the key centre (canvas px)
+PAD_IN_KEY = (1075 - 1075, 872 - 647.5)
+LOGO_SLOT = (960.0, 92.0, 391.0)              # cx, cy, width in master-eclairs
+PAD_SLOT = (957.0, 976.0, 230.0)
+
+# al-KHALiYA as one RGBA on screen, then shattered into Voronoi shards
+_src = scaled(np.dstack([unpremul, alpha]), KS)
+KH_RGBA = np.zeros((H2, W2, 4), np.float32)
+_h, _w = _src.shape[:2]
+_x, _y = int(KOFF[0]), int(KOFF[1])
+KH_RGBA[_y:_y + _h, _x:_x + _w] = _src[:min(_h, H2 - _y), :min(_w, W2 - _x)]
+_a = KH_RGBA[..., 3] > 0.04
+_ys, _xs = np.where(_a)
+_rs = np.random.default_rng(21)
+_seeds = []
+for _ in range(90):
+    ang_ = _rs.uniform(0, 2 * math.pi)
+    rr = 330 * _rs.uniform(0, 1) ** 1.4
+    _seeds.append((HEX_C[0] + rr * math.cos(ang_), HEX_C[1] + rr * math.sin(ang_) * 1.1))
+_lab = cKDTree(np.array(_seeds)).query(np.stack([_xs, _ys], 1))[1]
+SHARDS = []
+for i in range(len(_seeds)):
+    sel = _lab == i
+    if sel.sum() < 30:
+        continue
+    py, px = _ys[sel], _xs[sel]
+    y0, y1, x0, x1 = py.min(), py.max() + 1, px.min(), px.max() + 1
+    piece = np.zeros((y1 - y0, x1 - x0, 4), np.float32)
+    piece[py - y0, px - x0] = KH_RGBA[py, px]
+    cx_, cy_ = px.mean(), py.mean()
+    d = np.array([cx_ - HEX_C[0], cy_ - HEX_C[1]])
+    dist = np.linalg.norm(d) + 1e-3
+    d = d / dist + _rs.normal(0, 0.25, 2)
+    d /= np.linalg.norm(d)
+    speed = 1500 * (1.25 - dist / 420) + _rs.uniform(0, 500)
+    SHARDS.append(dict(img=piece, c=(cx_, cy_), off=(x0 - cx_, y0 - cy_), v=d * speed, w=_rs.uniform(-520, 520),
+                       life=_rs.uniform(0.7, 1.25), grow=_rs.uniform(0.2, 0.9)))
+
+EMBERS = []
+for _ in range(340):
+    ang_ = _rs.uniform(0, 2 * math.pi)
+    sp_ = _rs.uniform(250, 1700) * _rs.uniform(0.4, 1) ** 0.5
+    EMBERS.append((HEX_C[0] + _rs.normal(0, 18), HEX_C[1] + _rs.normal(0, 18), math.cos(ang_) * sp_, math.sin(ang_) * sp_ * 0.85,
+                   _rs.uniform(0.45, 1.4), _rs.uniform(1, 3)))
+SMOKE = nd.gaussian_filter(_rs.standard_normal((H2 // 2, W2 // 2)).astype(np.float32), 24)
+SMOKE += 0.5 * nd.gaussian_filter(_rs.standard_normal((H2 // 2, W2 // 2)).astype(np.float32), 7)
+SMOKE = (SMOKE - SMOKE.min()) / (SMOKE.max() - SMOKE.min())
+
+
+def drag_pos(p0, v, t, k=2.4, g=320.0):
+    return (p0[0] + v[0] * (1 - math.exp(-k * t)) / k, p0[1] + v[1] * (1 - math.exp(-k * t)) / k + 0.5 * g * t * t)
+
+
+def shards(f, te):
+    for sh in SHARDS:
+        if te > sh["life"]:
+            continue
+        fade = 1 - ease_in3(te / sh["life"])
+        emit = 1 + 2.2 * math.exp(-te / 0.12)
+        img = sh["img"].copy()
+        img[..., :3] = np.clip(img[..., :3] * emit * np.array([1.0, 0.86, 0.62]) ** (emit - 1), 0, 1)
+        k = 1 + sh["grow"] * te
+        im = Image.fromarray((np.clip(img, 0, 1) * 255).astype(np.uint8), "RGBA")
+        if k != 1:
+            im = im.resize((max(1, int(im.width * k)), max(1, int(im.height * k))), Image.BILINEAR)
+        im = im.rotate(sh["w"] * te, resample=Image.BILINEAR, expand=True)
+        a = np.asarray(im).astype(np.float32) / 255
+        for j, dt in enumerate((-0.022, -0.011, 0.0)):        # motion blur
+            x, y = drag_pos(sh["c"], sh["v"], max(0.0, te + dt))
+            over(f, a, x - a.shape[1] / 2, y - a.shape[0] / 2, fade * (0.35 if j < 2 else 1.0))
+
+
+def embers(f, te):
+    im = Image.new("L", (W2, H2), 0)
+    im_c = Image.new("L", (W2, H2), 0)
+    d, dc = ImageDraw.Draw(im), ImageDraw.Draw(im_c)
+    for x0, y0, vx, vy, life, wdt in EMBERS:
+        if te > life:
+            continue
+        a = 1 - te / life
+        p1 = drag_pos((x0, y0), (vx, vy), te, k=1.8, g=520)
+        p0 = drag_pos((x0, y0), (vx, vy), max(0, te - 0.035), k=1.8, g=520)
+        d.line([p0, p1], fill=int(255 * a), width=int(wdt))
+        dc.line([p0, p1], fill=int(255 * a * a), width=int(wdt))
+    A = np.asarray(im).astype(np.float32)[..., None] / 255
+    C = np.asarray(im_c).astype(np.float32)[..., None] / 255
+    hot = np.array([1.0, 0.95, 0.75], np.float32)
+    warm = np.array([1.0, 0.45, 0.08], np.float32)
+    f += A * warm + C * hot * 0.8 + blur_(A, 5) * warm * 1.2
+
+
+def smoke(f, te):
+    if te <= 0:
+        return
+    p = min(1.0, te / 1.4)
+    R = 160 + 760 * ease_out(p)
+    sc = 1 + 0.7 * p
+    gy, gx = (yy[::2, ::2] - HEX_C[1]) / sc + HEX_C[1], (xx[::2, ::2] - HEX_C[0]) / sc + HEX_C[0]
+    n = nd.map_coordinates(SMOKE, [gy / 2, gx / 2], order=1, mode="reflect")
+    dist = np.hypot(xx[::2, ::2] - HEX_C[0], yy[::2, ::2] - HEX_C[1])
+    m = np.exp(-(dist / R) ** 2) * np.clip(n * 1.6 - 0.35, 0, 1) * (1 - p) ** 1.3
+    m = np.asarray(Image.fromarray((m * 255).astype(np.uint8)).resize((W2, H2), Image.BILINEAR)).astype(np.float32)[..., None] / 255
+    lit = np.exp(-(np.hypot(xx - HEX_C[0], yy - HEX_C[1]) / (R * 0.6)) ** 2)[..., None]
+    col = np.array([0.30, 0.24, 0.20], np.float32) + lit * np.array([0.55, 0.30, 0.10], np.float32)
+    f[:] = f * (1 - m * 0.55) + col * m * 0.55
+
+
+def shockwave(f, te):
+    if not (0 < te < 0.5):
+        return f
+    p = te / 0.5
+    r = 60 + 1500 * ease_out(p)
+    d = np.hypot(xx - HEX_C[0], yy - HEX_C[1]) + 1e-3
+    band = np.exp(-((d - r) / 45) ** 2) * (1 - p)
+    dx = (xx - HEX_C[0]) / d * band * 22
+    dy = (yy - HEX_C[1]) / d * band * 22
+    out = np.stack([nd.map_coordinates(f[..., c], [yy - dy, xx - dx], order=1, mode="nearest") for c in range(3)], -1)
+    out += band[..., None] * np.array([0.35, 0.30, 0.25], np.float32) * 0.6
+    return out
+
+
+def key(f, S, logo_pos=None, pad_pos=None, a=1.0):
+    """the full key (ecommanita logo + tassyir controller) at scale S around KEY_C, or each part at its own pose."""
+    if logo_pos is None:
+        logo_pos = (KEY_C[0] + LOGO_IN_KEY[0] * S, KEY_C[1] + LOGO_IN_KEY[1] * S, LOGO.shape[1] * S)
+        pad_pos = (KEY_C[0] + PAD_IN_KEY[0] * S, KEY_C[1] + PAD_IN_KEY[1] * S, PAD.shape[1] * S)
+    for img, (cx, cy, w) in ((PAD, pad_pos), (LOGO, logo_pos)):
+        if w < 2:
+            continue
+        L = scaled(img, w / img.shape[1])
+        over(f, L, cx - L.shape[1] / 2, cy - L.shape[0] / 2, a)
+
+
 def khaliya(f, t, a_all=1.0):
     for name, t0, t1, (dx, dy) in ASSEMBLY:
         p = ease_out((t - t0) / (t1 - t0))
@@ -101,38 +240,41 @@ def render(t):
             bullet_at(f, x, HEX_C[1], spin=spin if t < 3.7 else 0.0, halo=1.0 + 0.4 * (t >= 3.7))
             if t >= 3.7:
                 glow(f, *HEX_C, 40, (255, 255, 255), 1.2)
-    elif t < 4.6:
-        p = (t - 3.9) / 0.7
-        f += HC_CRACK[int(round(ease_out(p) * 10))] * 0.7 * (1 - 0.6 * p)
-        for name, dx, dy in (("ring", 0, 0), ("hanger", 0, -150), ("shirt_l", -170, 30), ("shirt_r", 170, 30), ("text", 0, 120)):
-            kh_layer(f, name, dx=dx * ease_out(p), dy=dy * ease_out(p), a=(1 - p) * 0.8, s=1 + 0.35 * ease_out(p))
-        r = 900 * ease_out(min(1, p * 1.6))
-        m = np.clip((r - SPK_R) / 60, 0, 1)[..., None]
-        f += SPK * m * (1 - 0.7 * p)
-        if t < 4.0:
-            f += (1 - (t - 3.9) / 0.1) * 0.85
-        if t < 4.08:
-            shake = (rng2.uniform(-9, 9), rng2.uniform(-6, 6))
-        z = 1.03
     elif t < 5.4:
-        p = (t - 4.6) / 0.8
-        f += HC_CRACK[10] * 0.22 * (1 - p)
-        glow(f, *HEX_C, 420, (255, 200, 150), 0.35 * (1 - 0.5 * p))
-        on = not (0.05 < t - 4.6 < 0.11 or 0.17 < t - 4.6 < 0.21)
-        if on:
-            w = LOGO_MID_W * lerp(0.9, 1.0, ease_out(p))
-            lg = scaled(LOGO, w / LOGO.shape[1])
-            over(f, lg, CX - lg.shape[1] / 2, HEX_C[1] - lg.shape[0] / 2, min(1, (t - 4.6) / 0.05))
-        z = lerp(1.03, 1.0, ease_io(p))
+        te = t - 3.9
+        # residual honeycomb, smoke, teaser sparks (lighter), shards, embers
+        f += HC_CRACK[int(round(ease_out(min(1, te / 0.7)) * 10))] * 0.55 * max(0.0, 1 - te / 1.0)
+        smoke(f, te)
+        r = 900 * ease_out(min(1, te * 2.2))
+        m = np.clip((r - SPK_R) / 60, 0, 1)[..., None]
+        f += SPK * m * 0.45 * max(0.0, 1 - te / 0.6)
+        glow(f, *HEX_C, 380, (255, 190, 120), 0.9 * math.exp(-te / 0.25))
+        glow(f, *HEX_C, 110, (255, 250, 235), 2.2 * math.exp(-te / 0.12))
+        # the key is born small inside the fireball and zooms up
+        if te > 0.12:
+            pz = ease_out(min(1.0, (te - 0.12) / 1.0))
+            S = lerp(0.03, KEY_S_BIG, pz)
+            glow(f, *KEY_C, 420 * S / KEY_S_BIG + 40, (255, 170, 90), 0.28)
+            key(f, S, a=min(1.0, (te - 0.12) / 0.1))
+        shards(f, te)
+        embers(f, te)
+        if te < 0.08:
+            f += (1 - te / 0.08) * 0.9
+        f = shockwave(f, te)
+        if te < 0.25:
+            shake = (rng2.uniform(-12, 12) * (1 - te / 0.25), rng2.uniform(-8, 8) * (1 - te / 0.25))
+        z = lerp(1.03, 1.0, ease_io(min(1, te / 1.5)))
     else:
         # frame drawing + logo to its slot, then master
         p = ease_io(min(1, (t - 5.4) / 1.2))
         f = frame_reveal(p * 1.01)
-        if t < 6.75:
-            w = lerp(LOGO_MID_W, LOGO_END_W, p)
-            cx, cy = lerp(LOGO_MID_C[0], LOGO_END_C[0], p), lerp(LOGO_MID_C[1], LOGO_END_C[1], p)
-            lg = scaled(LOGO, w / LOGO.shape[1])
-            over(f, lg, cx - lg.shape[1] / 2, cy - lg.shape[0] / 2, 1 - ease_io((t - 6.55) / 0.2))
+        if t < 6.95:
+            S = KEY_S_BIG
+            l0 = (KEY_C[0] + LOGO_IN_KEY[0] * S, KEY_C[1] + LOGO_IN_KEY[1] * S, LOGO.shape[1] * S)
+            p0 = (KEY_C[0] + PAD_IN_KEY[0] * S, KEY_C[1] + PAD_IN_KEY[1] * S, PAD.shape[1] * S)
+            lp = tuple(lerp(a, b, p) for a, b in zip(l0, LOGO_SLOT))
+            pp = tuple(lerp(a, b, p) for a, b in zip(p0, PAD_SLOT))
+            key(f, 0, logo_pos=lp, pad_pos=pp, a=1 - ease_io((t - 6.65) / 0.25))
         for left, col in ((True, BLUE), (False, ORANGE)):
             if p < 0.995:
                 h = beam_head(p, left)
@@ -274,7 +416,12 @@ mix.place(2.5, hum(1.2), 0.09)
 mix.place(3.9, boom(), 0.95)
 c = crackle(1.2, 0.03)
 mix.place(3.9, np.stack([c, np.roll(c, 700)], 1), 0.35)
-mix.place(4.5, whoosh(0.9), 0.35)
+mix.place(4.0, whoosh(1.1), 0.30)
+for _ in range(26):                                   # gold shards falling / clinking
+    tc = 4.05 + r.uniform(0, 1.0)
+    mix.place(tc, tone(r.uniform(2500, 6500), 0.25, r.uniform(0.02, 0.06), r.uniform(0.15, 0.4)), 0.25, pan=r.uniform(-0.9, 0.9))
+rumble = flt(r.standard_normal(int(2.0 * SR)), "low", 120) * np.exp(-np.arange(int(2.0 * SR)) / SR / 0.6)
+mix.place(3.92, rumble, 0.9)
 mix.place(5.45, zap(), 0.32, pan=-0.6)
 mix.place(5.65, zap(), 0.32, pan=0.6)
 for tc, pn in ((5.85, -0.9), (5.95, 0.9), (6.35, -0.8), (6.45, 0.8)):
