@@ -99,7 +99,7 @@ _فيديوهات الدورة والإعلانات من السكريبت حتى
 | `edprod-writer` | كاتب السكريبت بالدارجة | `video.script`, `video.hook-copy` | edprod-researcher, edprod-designer | video.facts→edprod-researcher, video.render-motion→edprod-motion, product.cod-strategy→cod-strategist | 2026-11-01 · سكريبت لقطة بلقطة قبل أي رندر |
 | `edprod-researcher` | مدقّق الحقائق والأرقام | `video.facts` | edprod-writer | video.script→edprod-writer | 2026-11-01 · كل معلومة أو رقم يتأكد قبل ما يطلع في الشاشة |
 | `edprod-designer` | المدير الفني: البريف والإحداثيات | `video.visual-brief` | edprod-motion | video.render-motion→edprod-motion | 2026-11-01 · تخطيط كل مشهد بالبيكسل وفحص المنطقة الآمنة |
-| `edprod-motion` | مهندس الحركة والرندر | `video.render-motion`, `video.opener` | edprod-reviewer | video.sound→edprod-sound, course.lesson-edit→course-editor, video.qc-export→edprod-reviewer | 2026-11-01 · تحريك البوسترات واللوقوات والافتتاحيات بالكود |
+| `edprod-motion` | مهندس الحركة والرندر | `video.render-motion`, `video.opener`, `video.reel-template` | edprod-reviewer | video.sound→edprod-sound, course.lesson-edit→course-editor, video.qc-export→edprod-reviewer | 2026-11-01 · تحريك البوسترات واللوقوات والافتتاحيات بالكود |
 | `edprod-sound` | مصمم الصوت | `video.sound` | edprod-reviewer | course.audio-clean→course-editor | 2026-11-01 · موسيقى ومؤثرات وميكساج -14 LUFS |
 | `edprod-reviewer` | المراقب والتصدير | `video.qc-export` | ads-analyst | video.render-motion→edprod-motion | 2026-11-01 · ما يخرج حتى فيديو بلا فحص |
 
@@ -114,7 +114,7 @@ _سلايدات الماتش 16:9، العناوين والكلمات، وحرك
 | `course-designer` | مخرّج سلايدات الدرس (match_slide.py) | `design.lesson-slides` | design-reviewer | design.slides-qc→design-reviewer, course.lesson-edit→course-editor | 2026-10-30 · JSON مصادق ← سلايدات 16:9 على القالب، بلا ما يعاود يرسم الماركة |
 | `design-reviewer` | بوابة السلايدات PASS/FAIL | `design.slides-qc` | motion-designer, course-editor | video.qc-export→edprod-reviewer | 2026-10-30 · حتى سلايد ما يخرج بلا ما يفوت على البوابة والعين |
 | `motion-designer` | موشن السلايدات: الحركات الخمسة | `design.slide-motion` | course-editor | video.render-motion→edprod-motion, video.opener→edprod-motion | 2026-10-30 · يحرّك السلايدات المصادقة: الصواعق، الشرارة، التمريرة، كرطة الحدث، الستائر |
-| `promo-designer` | الترويج الثابت: بوستر 4:5، كاروسال، ستوري | `design.promo-static` | ads-analyst | video.render-motion→edprod-motion, copy.titles→copywriter | 2026-10-30 · نقطة القوة تاع الدرس في بوستر، بالقالب برك |
+| `promo-designer` | الترويج الثابت: بوستر 4:5، كاروسال، ستوري | `design.promo-static` | ads-analyst | video.render-motion→edprod-motion, video.reel-template→edprod-motion, copy.titles→copywriter | 2026-10-30 · نقطة القوة تاع الدرس في بوستر، بالقالب برك |
 
 ## الدورة — القائد: `course-planner`
 
@@ -241,6 +241,7 @@ _محتوى الدورة ecommanita وتركيب الدروس من التسجي�
 | `video.hook-copy` | `edprod-writer` |
 | `video.opener` | `edprod-motion` |
 | `video.qc-export` | `edprod-reviewer` |
+| `video.reel-template` | `edprod-motion` |
 | `video.render-motion` | `edprod-motion` |
 | `video.script` | `edprod-writer` |
 | `video.sound` | `edprod-sound` |

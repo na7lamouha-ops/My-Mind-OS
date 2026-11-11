@@ -125,7 +125,7 @@ agents:
   edprod-motion:
     dept: edprod
     role: "مهندس الحركة والرندر"
-    owns: [video.render-motion, video.opener]
+    owns: [video.render-motion, video.opener, video.reel-template]
     never: {video.sound: edprod-sound, course.lesson-edit: course-editor, video.qc-export: edprod-reviewer}
     feeds: [edprod-reviewer]
     added: 2026-11-01
@@ -218,7 +218,7 @@ agents:
     dept: design
     role: "الترويج الثابت: بوستر 4:5، كاروسال، ستوري"
     owns: [design.promo-static]
-    never: {video.render-motion: edprod-motion, copy.titles: copywriter}
+    never: {video.render-motion: edprod-motion, video.reel-template: edprod-motion, copy.titles: copywriter}
     feeds: [ads-analyst]
     added: 2026-10-30
     why: "نقطة القوة تاع الدرس في بوستر، بالقالب برك"
