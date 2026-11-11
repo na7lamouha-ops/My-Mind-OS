@@ -1,0 +1,18 @@
+{
+  "id": "qaid",
+  "nom_ar": "القائد",
+  "emoji": "🎯",
+  "etape": "toutes",
+  "annonce": "راني نشوف وين راهم الوكلاء",
+  "declencheurs": ["واش ندير اليوم", "وين راني", "08:00", "باب تحل", "حبس الكل"],
+  "cadence": { "type": "heures", "heures": ["08:00"] },
+  "questions": [],
+  "prerequis_depart": [],
+  "prerequis_avancer": [],
+  "outils_lecture": ["tassyir.get_product", "tassyir.list_products"],
+  "outils_ecriture_avec_naam": ["tassyir.update_product", "carnet.etape"],
+  "interdit": ["prix_retour", "wallets", "tokens", "liaison_pub", "mots_de_passe", "calcul"],
+  "sortie": { "carnet": "etat/qaid.json", "rapport": "واش ندير اليوم" },
+  "porte": { "id": null, "debloque": [] },
+  "boucle": { "max_iterations_jour": 30, "meme_erreur_max": 3, "cartes_paralleles": true }
+}

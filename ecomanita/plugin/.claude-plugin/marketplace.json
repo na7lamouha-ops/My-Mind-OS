@@ -1,0 +1,14 @@
+{
+  "name": "ecom-manita",
+  "description": "Les agents ecom manita en mode manuel : un agent par discussion.",
+  "owner": {
+    "name": "ecom manita"
+  },
+  "plugins": [
+    {
+      "name": "ecom-manita",
+      "source": "./ecom-manita",
+      "description": "Manager, editeur, page produit Tassyir, testing Meta, scaling, coach, spy Ad Library, engagement Instagram : chacun dans sa discussion."
+    }
+  ]
+}

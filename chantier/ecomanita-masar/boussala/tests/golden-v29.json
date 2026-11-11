@@ -1,0 +1,24 @@
+{
+  "_source": "مأخوذة مباشرة من الأداة الحية al-khaliya.space (نشر 2026-10-21) — calcOneProduct بنفس المدخلات. أي فرق = خطأ في المحرّك.",
+  "base": { "target": 1000000, "rate": 245, "surplus": 20, "pack": 50, "delCost": 200, "retCost": 100, "confirmDays": 1, "retBackDays": 5, "payoutDays": 2, "prepDays": 5, "deliveryDays": 3, "persona": "beginner" },
+  "cases": [
+    { "name": "T1 روب لينا — كاش فقط", "settings": { "targetMode": "cash", "period": 40 },
+      "product": { "name": "a", "sell": 6800, "buy": 2300, "lead": 490, "conf": 57, "del": 50, "preorder": true, "dep": 50 },
+      "expect": { "leads": 2163, "delivered": 617, "finalProfit": 1002050, "netAfterAdsPerDel": 2200.7, "breakevenCPA": 1117.2, "beStock": 0.49, "starterCapital": 644000, "capDays": null, "cashK": 1.36, "leftValue": 448497.81, "leadsPerDay": 54.08, "roi": 155.6, "dayRecover": 13, "ab": 158981 } },
+    { "name": "T2 روب لينا — كاش + سلعة", "settings": { "targetMode": "mixed", "period": 40 },
+      "product": { "name": "a", "sell": 6800, "buy": 2300, "lead": 490, "conf": 57, "del": 50, "preorder": true, "dep": 50 },
+      "expect": { "leads": 1444, "delivered": 412, "finalProfit": 1002240, "netAfterAdsPerDel": 2430.7, "breakevenCPA": 1182.75, "starterCapital": 443000, "capDays": null, "cashK": 1, "leftValue": 0, "leadsPerDay": 36.1, "roi": 226.24, "dayRecover": 13 } },
+    { "name": "T3 ورشة بلا طلب مسبق", "settings": { "targetMode": "cash", "period": 40 },
+      "product": { "name": "b", "sell": 5500, "buy": 1700, "lead": 368, "conf": 57, "del": 50, "preorder": false },
+      "expect": { "leads": 2430, "delivered": 693, "finalProfit": 1003600, "netAfterAdsPerDel": 1988.77, "breakevenCPA": 934.8, "beStock": 0.44, "starterCapital": 593000, "capDays": null, "cashK": 1.38, "leftValue": 468712.01, "leadsPerDay": 60.75, "roi": 169.24, "dayRecover": 13, "ab": 149445 } },
+    { "name": "T4 جملة سلعة جاهزة (فائض 35%)", "settings": { "targetMode": "cash", "period": 40 },
+      "product": { "name": "c", "sell": 2900, "buy": 1300, "lead": 147, "conf": 60, "del": 55, "ready": true, "surp": 35 },
+      "expect": { "leads": 21270, "delivered": 7019, "finalProfit": 1000373, "netAfterAdsPerDel": 367.73, "breakevenCPA": 268.35, "beStock": 0.61, "starterCapital": 5025000, "capDays": null, "cashK": 2.58, "leftValue": 4773867.51, "leadsPerDay": 531.75, "roi": 19.91, "dayRecover": 17, "ab": 499313 } },
+    { "name": "T5 أرقام تسيير حقيقية، 30 يوم", "settings": { "targetMode": "cash", "period": 30, "retCost": 200, "surplus": 10 },
+      "product": { "name": "d", "sell": 5900, "buy": 2300, "lead": 503, "conf": 56.4, "del": 44.4, "preorder": true, "dep": 30 },
+      "expect": { "leads": 12072, "delivered": 3023, "finalProfit": 1000296, "netAfterAdsPerDel": 975.89, "breakevenCPA": 747.38, "beStock": 0.68, "starterCapital": 7208000, "capDays": null, "cashK": 2.95, "leftValue": 2297419.49, "leadsPerDay": 402.4, "roi": 13.88, "dayRecover": 20, "ab": 599891 } },
+    { "name": "T6 مدة قصيرة 20 يوم", "settings": { "targetMode": "cash", "period": 20 },
+      "product": { "name": "e", "sell": 6800, "buy": 2300, "lead": 490, "conf": 57, "del": 50, "preorder": true, "dep": 50 },
+      "expect": { "leads": 2848, "delivered": 812, "finalProfit": 1002050, "netAfterAdsPerDel": 2200.7, "breakevenCPA": 1117.2, "beStock": 0.49, "starterCapital": 2353000, "capDays": null, "cashK": 1.78, "leftValue": 882100.71, "leadsPerDay": 142.4, "roi": 42.59, "dayRecover": 15, "ab": 209328 } }
+  ]
+}

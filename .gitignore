@@ -31,3 +31,6 @@ tsconfig.tsbuildinfo
 .claude/skills/video-use/.env
 .claude/skills/**/__pycache__/
 __pycache__/
+# ecomanita
+ecomanita/bureau/config.local.json
+ecomanita/bureau/_dernier-tour-reel.json

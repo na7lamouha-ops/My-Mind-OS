@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<!-- la page vit à /station (sans barre) : la base garde les chemins relatifs « station.js » et « station.css » dans ce dossier -->
+<base href="/station/">
+<title>محطة ecom manita</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' shape-rendering='crispEdges'%3E%3Crect width='16' height='16' fill='%23070a12'/%3E%3Crect x='3' y='5' width='10' height='6' fill='%238b95ab'/%3E%3Crect x='4' y='6' width='8' height='4' fill='%23ffb347'/%3E%3Crect x='6' y='7' width='4' height='2' fill='%23fff3d6'/%3E%3Crect x='7' y='2' width='2' height='3' fill='%238b95ab'/%3E%3Crect x='7' y='11' width='2' height='3' fill='%238b95ab'/%3E%3Crect x='1' y='7' width='2' height='2' fill='%238b95ab'/%3E%3Crect x='13' y='7' width='2' height='2' fill='%238b95ab'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="station.css">
+</head>
+<body>
+
+<header class="hud" id="hud">
+  <div class="hud-titre">
+    <h1 class="titre">محطة <span class="latin" dir="ltr">ecom manita</span></h1>
+    <span class="methode"><span>الطريقة</span> <b class="latin" dir="ltr">2</b></span>
+    <a class="lien-methode" href="/" title="le bureau isométrique"><span>الطريقة</span> <b class="latin" dir="ltr">1</b></a>
+  </div>
+  <div class="hud-connecteurs">
+    <span class="etiquette">متصل بـ</span>
+    <span class="pastilles" id="connecteurs"><span class="pastille-vide">والو مازال</span></span>
+  </div>
+  <div class="hud-usage" title="tokens استهلكتهم المحطة في نافذة خمس سوايع، والمجموع من البداية">
+    <span class="etiquette">استهلاك المحطة</span>
+    <span class="chiffres latin" dir="ltr"><b id="usage-fenetre">0</b><small>/ 5 h</small></span>
+    <span class="chiffres latin" dir="ltr"><b id="usage-total">0</b><small>total</small></span>
+  </div>
+  <div class="hud-droite">
+    <span class="xp-total" title="XP تاع المحطة كاملة"><span class="etiquette">XP</span><b class="latin" id="xp-total" dir="ltr">0</b></span>
+    <span class="heure latin" id="heure" dir="ltr">--:--</span>
+    <button class="telegram-etat" id="hud-telegram" type="button" title="تيليغرام">
+      <span class="point" id="telegram-point"></span>
+      <span>تيليغرام</span>
+    </button>
+    <span class="lien-etat" id="lien-etat" hidden>المحطة ما تجاوبش</span>
+  </div>
+</header>
+
+<main class="app" id="app">
+  <section class="station" id="station" aria-label="المحطة">
+    <div class="station-outils">
+      <button type="button" class="bouton-mini" id="bouton-plier" aria-expanded="true">اطوي المحطة</button>
+    </div>
+    <div class="station-scene" id="scene">
+      <p class="chargement" id="station-chargement">المحطة راهي تتحضّر</p>
+    </div>
+    <div class="legende" aria-label="المفتاح">
+      <span><i class="lg lg-libre"></i>فارغ</span>
+      <span><i class="lg lg-encours"></i>راهي تخدم</span>
+      <span><i class="lg lg-attente"></i>تستنى كلمتك</span>
+      <span><i class="lg lg-echec"></i>ما كملاتش</span>
+    </div>
+  </section>
+
+  <aside class="panneau" id="panneau">
+    <nav class="onglets" role="tablist" aria-label="الأقسام تاع اللوحة">
+      <button type="button" role="tab" class="onglet actif" data-onglet="pont" aria-selected="true">الجسر <span class="compte latin" id="compte-attente" hidden>0</span></button>
+      <button type="button" role="tab" class="onglet" data-onglet="equipage" aria-selected="false">الطاقم</button>
+      <button type="button" role="tab" class="onglet" data-onglet="outbox" aria-selected="false">الصندوق</button>
+      <button type="button" role="tab" class="onglet" data-onglet="nuit" aria-selected="false">الليل</button>
+      <button type="button" role="tab" class="onglet" data-onglet="coach" aria-selected="false">الكوتش</button>
+      <button type="button" role="tab" class="onglet" data-onglet="journal" aria-selected="false">السجل</button>
+      <button type="button" role="tab" class="onglet" data-onglet="reglages" aria-selected="false">الإعدادات</button>
+    </nav>
+
+    <!-- الجسر : الأوامر والمهام -->
+    <section class="vue actif" id="vue-pont" role="tabpanel">
+      <form class="barre" id="formulaire-ordre" autocomplete="off">
+        <h2 class="h2 barre-titre">أعطي أمر للمانجر</h2>
+        <div class="barre-ligne">
+          <select id="ordre-departement" aria-label="القسم">
+            <option value="">يختار المانجر</option>
+          </select>
+          <select id="ordre-modele" aria-label="النموذج" class="latin">
+            <option value="sonnet">sonnet</option>
+            <option value="opus">opus</option>
+            <option value="fable">fable</option>
+          </select>
+        </div>
+        <textarea id="ordre-texte" rows="1" placeholder="اكتب المهمة ولا الصق لينك Drive تاع الشوتينغ" required></textarea>
+        <fieldset class="fiche-mission" id="fiche-mission" hidden>
+          <legend>فيش المهمة <span class="latin" dir="ltr">FICHE DE MISSION</span></legend>
+          <p class="fiche-note">كاين لينك تاع الشوتينغ — جاوب على هاذ الأسئلة قبل ما تبعث</p>
+          <label class="fm-ligne"><span>سعر الجملة (DA)</span><input type="number" min="1" step="1" inputmode="numeric" id="fm-gros" class="latin" placeholder="0" dir="ltr"></label>
+          <label class="fm-ligne"><span>سعر البيع (DA)</span><input type="number" min="1" step="1" inputmode="numeric" id="fm-detail" class="latin" placeholder="0" dir="ltr"></label>
+          <label class="fm-ligne"><span>تيست ولا بالستوك ؟</span><select id="fm-stock" class="latin" dir="ltr"><option value="test">test</option><option value="stock">stock</option></select></label>
+          <label class="fm-ligne"><span>الكونت تاع الإشهار</span><input type="text" id="fm-compte" class="latin" dir="ltr" placeholder="ad account"></label>
+          <label class="fm-ligne"><span>الصفحة Facebook / Instagram</span><input type="text" id="fm-page" class="latin" dir="ltr" placeholder="page"></label>
+          <label class="fm-ligne"><span>ميساج ولا سيت ؟</span><select id="fm-mode" class="latin" dir="ltr"><option value="message">message</option><option value="site">site</option></select></label>
+          <label class="fm-ligne"><span>البلاسمون ؟</span><select id="fm-placements" class="latin" dir="ltr"><option value="story+reels">story+reels</option><option value="broad">broad</option></select></label>
+          <p class="fiche-erreur" id="fm-erreur" hidden></p>
+        </fieldset>
+        <div class="barre-ligne barre-bas">
+          <label class="case"><input type="checkbox" id="ordre-besoin-ok"> لازم كلمتي قبل</label>
+          <button type="submit" class="bouton principal" id="bouton-envoyer">ابعث للمانجر</button>
+        </div>
+      </form>
+      <h2 class="h2">المهام</h2>
+      <div class="puces" id="puces-etats"></div>
+      <div class="liste" id="liste-missions">
+        <p class="vide">ما كاين حتى مهمة مازال</p>
+      </div>
+    </section>
+
+    <!-- الطاقم -->
+    <section class="vue" id="vue-equipage" role="tabpanel" hidden>
+      <div class="manager-carte" id="manager-carte"></div>
+      <div class="table-cadre" id="table-equipage"><p class="vide">الطاقم راه يتحضّر</p></div>
+    </section>
+
+    <!-- الصندوق : OUTBOX -->
+    <section class="vue" id="vue-outbox" role="tabpanel" hidden>
+      <div class="volet" id="volet-note" hidden>
+        <div class="volet-tete">
+          <strong id="volet-titre" dir="auto"></strong>
+          <button type="button" class="bouton-mini" id="volet-fermer">سكّر</button>
+        </div>
+        <div class="texte-livrable" id="volet-contenu"></div>
+      </div>
+      <p class="note-outbox">الملفات اللي خرجت من الكارني — اضغط على واحد باش تقراه</p>
+      <div class="fichiers" id="outbox-fichiers"><p class="vide">الصندوق فارغ مازال</p></div>
+      <h2 class="h2">المنتوجات في الكارني</h2>
+      <div class="table-cadre" id="outbox-produits"><p class="vide">ما كاين حتى منتوج</p></div>
+    </section>
+
+    <!-- الليل : quart de nuit -->
+    <section class="vue" id="vue-nuit" role="tabpanel" hidden>
+      <div class="absence" id="absence">
+        <div class="absence-tete">
+          <h2 class="h2">واش صرا وقت ما كنتش</h2>
+          <button type="button" class="bouton" id="bouton-vu">شفت</button>
+        </div>
+        <p class="absence-depuis"><span>من</span> <span class="latin chiffre" id="absence-depuis" dir="ltr">—</span></p>
+        <div class="absence-comptes" id="absence-comptes"></div>
+        <div class="absence-listes" id="absence-listes"></div>
+      </div>
+      <h2 class="h2">الروتينات تاع الليل</h2>
+      <div class="liste" id="liste-routines"><p class="vide">ما كاين حتى روتين</p></div>
+      <form class="barre" id="formulaire-routine" autocomplete="off">
+        <h2 class="h2 barre-titre">زيد روتين</h2>
+        <div class="barre-ligne">
+          <select id="routine-departement" aria-label="القسم" required></select>
+          <input type="time" id="routine-heure" value="18:00" class="latin" aria-label="الساعة" required>
+          <select id="routine-jours" aria-label="الأيام">
+            <option value="tous">كل يوم</option>
+            <option value="semaine">أيام الخدمة برك</option>
+          </select>
+        </div>
+        <textarea id="routine-texte" rows="1" placeholder="واش يدير هاذ الروتين" required></textarea>
+        <div class="barre-ligne barre-bas">
+          <label class="case"><input type="checkbox" id="routine-besoin-ok" checked> لازم كلمتي قبل</label>
+          <button type="submit" class="bouton principal">زيد</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- الكوتش -->
+    <section class="vue" id="vue-coach" role="tabpanel" hidden>
+      <p class="note-coach">المانجر والطاقم ما يهدروش مع الكليان — الكوتش برك</p>
+      <div class="conversation" id="conversation"><p class="vide">مازال ما هدرتوش</p></div>
+      <p class="ecrit" id="coach-ecrit" hidden>الكوتش راه يكتب<span class="points"><i></i><i></i><i></i></span></p>
+      <form class="saisie" id="formulaire-coach" autocomplete="off">
+        <textarea id="coach-texte" rows="1" placeholder="اسأل الكوتش" required></textarea>
+        <button type="submit" class="bouton principal" id="bouton-ab3ath">ابعث</button>
+      </form>
+    </section>
+
+    <!-- السجل -->
+    <section class="vue" id="vue-journal" role="tabpanel" hidden>
+      <pre class="journal latin" id="journal" dir="ltr"></pre>
+    </section>
+
+    <!-- الإعدادات : كل كليان يريّح المكتب كيما يحب -->
+    <section class="vue" id="vue-reglages" role="tabpanel" hidden>
+      <form class="barre reglages" id="formulaire-reglages" autocomplete="off">
+        <h2 class="h2 barre-titre">الإعدادات تاع البيزنس</h2>
+        <p class="fiche-note">كل حاجة هنا تتسجّل في الجهاز تاعك برك — ما تروح لحتى واحد</p>
+        <label class="rg-ligne"><span>اسم البيزنس تاعك</span><input type="text" id="rg-nom" dir="auto" required maxlength="80"></label>
+        <label class="rg-ligne"><span>الموديل</span><select id="rg-modele" class="latin" dir="ltr"><option value="sonnet">sonnet</option><option value="opus">opus</option><option value="fable">fable</option></select></label>
+        <div class="rg-lecture"><span>البور</span><span class="latin" id="rg-port" dir="ltr">—</span></div>
+        <div class="rg-lecture"><span>الدار تاع الميموار</span><span class="latin chemin" id="rg-maison" dir="ltr">—</span></div>
+
+        <fieldset class="rg-bloc">
+          <legend>تيليغرام</legend>
+          <label class="rg-ligne"><span>المفتاح تاع الروبو (BotFather)</span><input type="password" id="rg-token" class="latin" dir="ltr" autocomplete="new-password" spellcheck="false"></label>
+          <label class="rg-ligne"><span><span class="latin" dir="ltr">chat_id</span> — الرقم تاعك، يعطيهولك <span class="latin" dir="ltr">@userinfobot</span></span><input type="text" id="rg-chat" class="latin" dir="ltr" inputmode="numeric" spellcheck="false"></label>
+          <p class="rg-aide">المفتاح يبقى في الجهاز تاعك برك — ما يرجعش يبان مكتوب، يبان مخبّي</p>
+          <div class="rg-actions">
+            <span class="rg-etat" id="rg-tg-etat"></span>
+            <button type="button" class="bouton" id="rg-essai" disabled>جرّب تيليغرام</button>
+            <button type="button" class="bouton-mini" id="rg-effacer">امسح المفتاح</button>
+          </div>
+        </fieldset>
+
+        <fieldset class="rg-bloc">
+          <legend>التكاليف الثابتة تاعك</legend>
+          <label class="rg-ligne"><span>التغليف (DA)</span><input type="number" id="rg-emballage" class="latin" dir="ltr" min="0" step="1" inputmode="numeric"></label>
+          <label class="rg-ligne"><span>الرجوع (DA)</span><input type="number" id="rg-retour" class="latin" dir="ltr" min="0" step="1" inputmode="numeric"></label>
+          <label class="rg-ligne"><span>التوصيل (DA)</span><input type="number" id="rg-livraison" class="latin" dir="ltr" min="0" step="1" inputmode="numeric"></label>
+        </fieldset>
+
+        <fieldset class="rg-bloc">
+          <legend>النسب اللي تعرفها</legend>
+          <label class="rg-ligne"><span>التأكيد (%)</span><input type="number" id="rg-confirmation" class="latin" dir="ltr" min="0" max="100" step="1" inputmode="numeric"></label>
+          <label class="rg-ligne"><span>التوصيل (%)</span><input type="number" id="rg-livraison-pct" class="latin" dir="ltr" min="0" max="100" step="1" inputmode="numeric"></label>
+        </fieldset>
+
+        <label class="rg-ligne"><span>الولايات</span><textarea id="rg-wilayas" rows="1" dir="auto" placeholder="الولايات اللي تخدم فيهم"></textarea></label>
+        <label class="rg-ligne"><span>الكريات تاع التيست لكل موديل (العادة)</span><select id="rg-creas"><option value="1">واحد</option><option value="2">زوج</option><option value="3">ثلاثة</option><option value="4">أربعة</option></select></label>
+        <p class="rg-aide">الروبو يسقسيك مرة وحدة على كل لينك — أربعة على الأكثر</p>
+        <label class="rg-ligne"><span>الأتيلي</span><input type="text" id="rg-atelier" class="latin" dir="ltr" spellcheck="false" placeholder="le dossier ecom-manita"></label>
+        <p class="fiche-erreur" id="rg-erreur" hidden></p>
+        <div class="barre-ligne barre-bas">
+          <span class="etiquette" id="rg-statut"></span>
+          <button type="submit" class="bouton principal" id="rg-sauver">سجّل</button>
+        </div>
+      </form>
+    </section>
+  </aside>
+</main>
+
+<!-- تيليغرام -->
+<dialog class="fiche" id="fiche-telegram">
+  <form method="dialog" class="fiche-tete">
+    <div>
+      <h2>السّاس تاع تيليغرام</h2>
+      <p class="latin fiche-nom" dir="ltr">TELEGRAM</p>
+    </div>
+    <button class="bouton-mini" type="submit" aria-label="سكّر">✕</button>
+  </form>
+  <div class="fiche-corps" id="telegram-corps"></div>
+</dialog>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<script src="station.js"></script>
+</body>
+</html>
