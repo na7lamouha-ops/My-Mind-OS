@@ -1,105 +1,165 @@
-# سجل الفريق — the single source of truth for who does what.
+# سجل الإمبراطورية — the single source of truth for who does what.
 #
-# Rules (checked by: python3 .claude/team/team.py check)
+# Checked by: python3 .claude/team/team.py check
 #   1. Every agent in .claude/agents/ has exactly one entry here, and every entry has a file.
-#   2. A task key ("owns") belongs to ONE agent only. Two agents never own the same task.
-#   3. Before adding an agent: python3 .claude/team/team.py who "<the job in a few words>"
-#      If someone already owns it -> give the job to them (or widen their file). Do not hire a twin.
-#   4. "never" lists the neighbouring tasks the agent must hand off, with the key of who owns them.
+#   2. A task key ("owns") belongs to ONE agent only.
+#   3. "never" = neighbouring tasks the agent hands off (key -> its real owner).
+#   4. "feeds" = agents that receive this agent's output (the links of the org chart).
+#   5. Every agent file carries the team contract (TEAM-CONTRACT markers).
+# Before hiring: python3 .claude/team/team.py who "<job>"  — the owner gets the job, never a twin.
 #
-# Task keys: <area>.<job>. Areas: video, course, store, ads, product, team.
+# Task keys: <area>.<job>. Areas: video, course, store, growth (product/ads/crm), team.
 
-teams:
-  edprod: "فريق الفيديو — إنتاج فيديوهات الدورة والإعلانات (المخرج: سكيل edprod)"
-  course: "فريق الدورة — تركيب الدروس من التسجيلات الحقيقية"
-  business: "فريق البيزنس — تسيير، الإعلانات، اختيار المنتجات"
-  team: "إدارة الفريق نفسه — السجل والتوظيف"
+departments:
+  hq:
+    name: "القيادة"
+    lead: chief          # the main Claude session running the «empire» skill (not a subagent)
+    mission: "يستقبل طلب المالك، يوجّهو للمولى، يشغّل التدفقات، ويحرس السجل"
+  growth:
+    name: "النمو"
+    lead: cod-strategist
+    mission: "واش نبيعو، بشحال، وكيفاش نجيبو الزبون ونحافظو عليه"
+  store:
+    name: "المتجر"
+    lead: tassyir-ops
+    mission: "تسيير: الكومندات، الستوك، الصفحات، الأرقام"
+  edprod:
+    name: "الفيديو"
+    lead: edprod         # the «edprod» skill (director)
+    mission: "فيديوهات الدورة والإعلانات من السكريبت حتى التصدير"
+  course:
+    name: "الدورة"
+    lead: course-planner
+    mission: "محتوى الدورة ecommanita وتركيب الدروس من التسجيلات الحقيقية"
 
 agents:
+  # ---------------------------------------------------------------- hq
+  team-manager:
+    dept: hq
+    role: "مسؤول السجل والتوظيف"
+    owns: [team.registry, team.hire, team.lessons]
+    never: {}
+    feeds: []
+    added: 2026-11-11
+    why: "باش ما يكونوش جوج وكلاء يديرو نفس المهمة"
+
+  # ---------------------------------------------------------------- growth
+  cod-strategist:
+    dept: growth
+    role: "إستراتيجي المنتج COD (قائد النمو)"
+    owns: [product.cod-strategy, product.confirm-script, product.scale-cut]
+    never: {ads.analysis: ads-analyst, video.script: edprod-writer, store.products-stock: tassyir-ops}
+    feeds: [edprod-writer, store-builder, tassyir-ops, ads-analyst, crm-whatsapp]
+    added: 2026-11-11
+    why: "منتج -> زاوية، عرض، Max CPL، خطة تاست، سكريبت التأكيد، قرار سكايل/قطع"
+
+  ads-analyst:
+    dept: growth
+    role: "محلل إعلانات Meta"
+    owns: [ads.analysis, ads.changes]
+    never: {product.scale-cut: cod-strategist, video.script: edprod-writer, store.finance-report: tassyir-ops}
+    feeds: [cod-strategist]
+    added: 2026-11-11
+    why: "قراءة الحملات وCPL، وأي تبديل في الإعلانات بموافقة برك"
+
+  crm-whatsapp:
+    dept: growth
+    role: "علاقة الزبائن على واتساب"
+    owns: [crm.messages, crm.campaigns, crm.abandoned-carts]
+    never: {product.confirm-script: cod-strategist, store.orders: tassyir-ops}
+    feeds: [tassyir-ops, cod-strategist]
+    added: 2026-11-11
+    why: "الرسائل اللي تستنى رد، السلات المتروكة، الحملات — بموافقة قبل أي إرسال"
+
+  # ---------------------------------------------------------------- store
+  tassyir-ops:
+    dept: store
+    role: "مسيّر تسيير (قائد المتجر)"
+    owns: [store.orders, store.products-stock, store.finance-report]
+    never: {ads.analysis: ads-analyst, product.cod-strategy: cod-strategist, store.landing-page: store-builder}
+    feeds: [cod-strategist, ads-analyst]
+    added: 2026-11-11
+    why: "خدمة يومية على تسيير، يقرا بحرية وما يبدّل والو بلا موافقة"
+
+  store-builder:
+    dept: store
+    role: "باني صفحات المتجر واللاندينغ"
+    owns: [store.landing-page, store.design]
+    never: {store.products-stock: tassyir-ops, video.render-motion: edprod-motion}
+    feeds: [ads-analyst]
+    added: 2026-11-11
+    why: "صفحة المنتج هي اللي تبيع: تصميم، أقسام، معاينة، والنشر بموافقة"
+
+  # ---------------------------------------------------------------- edprod
   edprod-writer:
-    team: edprod
+    dept: edprod
     role: "كاتب السكريبت بالدارجة"
     owns: [video.script, video.hook-copy]
     never: {video.facts: edprod-researcher, video.render-motion: edprod-motion, product.cod-strategy: cod-strategist}
+    feeds: [edprod-researcher, edprod-designer]
     added: 2026-11-01
     why: "سكريبت لقطة بلقطة قبل أي رندر"
 
   edprod-researcher:
-    team: edprod
+    dept: edprod
     role: "مدقّق الحقائق والأرقام"
     owns: [video.facts]
     never: {video.script: edprod-writer}
+    feeds: [edprod-writer]
     added: 2026-11-01
-    why: "كل معلومة تاريخية أو رقم يتأكد قبل ما يطلع في الشاشة"
+    why: "كل معلومة أو رقم يتأكد قبل ما يطلع في الشاشة"
 
   edprod-designer:
-    team: edprod
+    dept: edprod
     role: "المدير الفني: البريف والإحداثيات"
     owns: [video.visual-brief]
     never: {video.render-motion: edprod-motion}
+    feeds: [edprod-motion]
     added: 2026-11-01
     why: "تخطيط كل مشهد بالبيكسل وفحص المنطقة الآمنة"
 
   edprod-motion:
-    team: edprod
+    dept: edprod
     role: "مهندس الحركة والرندر"
     owns: [video.render-motion, video.opener]
     never: {video.sound: edprod-sound, course.lesson-edit: course-editor, video.qc-export: edprod-reviewer}
+    feeds: [edprod-reviewer]
     added: 2026-11-01
     why: "تحريك البوسترات واللوقوات والافتتاحيات بالكود"
 
   edprod-sound:
-    team: edprod
+    dept: edprod
     role: "مصمم الصوت"
     owns: [video.sound]
     never: {course.audio-clean: course-editor}
+    feeds: [edprod-reviewer]
     added: 2026-11-01
     why: "موسيقى ومؤثرات وميكساج -14 LUFS"
 
   edprod-reviewer:
-    team: edprod
+    dept: edprod
     role: "المراقب والتصدير"
     owns: [video.qc-export]
     never: {video.render-motion: edprod-motion}
+    feeds: [ads-analyst]
     added: 2026-11-01
     why: "ما يخرج حتى فيديو بلا فحص"
 
+  # ---------------------------------------------------------------- course
+  course-planner:
+    dept: course
+    role: "مخطط محتوى الدورة (قائد الدورة)"
+    owns: [course.curriculum, course.lesson-outline]
+    never: {video.script: edprod-writer, course.lesson-edit: course-editor}
+    feeds: [course-editor, edprod-writer]
+    added: 2026-11-11
+    why: "واش يتقرا في كل درس، بأي ترتيب، وواش يتصوّر قبل ما يسجّل المالك"
+
   course-editor:
-    team: course
-    role: "مونتير الدروس: كاميرا + شاشة على ديزاين الدورة"
+    dept: course
+    role: "مونتير الدروس: كاميرا + شاشة"
     owns: [course.lesson-edit, course.sync, course.audio-clean, course.captions]
-    never: {video.opener: edprod-motion, video.qc-export: edprod-reviewer, video.script: edprod-writer}
+    never: {video.opener: edprod-motion, video.qc-export: edprod-reviewer, course.lesson-outline: course-planner}
+    feeds: [edprod-reviewer]
     added: 2026-11-11
-    why: "الدروس تتسجل بالكاميرا والشاشة وتتركب بـ course_layout.py — تسجيلات حقيقية برك، بلا أفتار"
-
-  tassyir-ops:
-    team: business
-    role: "مسيّر تسيير: كومندات، ستوك، منتجات، أرقام"
-    owns: [store.orders, store.products-stock, store.finance-report]
-    never: {ads.analysis: ads-analyst, product.cod-strategy: cod-strategist}
-    added: 2026-11-11
-    why: "خدمة يومية على تسيير، يقرا بحرية وما يبدّل والو بلا موافقة صاحب البيزنس"
-
-  ads-analyst:
-    team: business
-    role: "محلل إعلانات Meta"
-    owns: [ads.analysis, ads.changes]
-    never: {product.cod-strategy: cod-strategist, video.script: edprod-writer, store.finance-report: tassyir-ops}
-    added: 2026-11-11
-    why: "قراءة الحملات، CPL، وين يروح الدراهم — وأي تبديل في الإعلانات بموافقة برك"
-
-  cod-strategist:
-    team: business
-    role: "إستراتيجي المنتج COD"
-    owns: [product.cod-strategy, product.confirm-script]
-    never: {ads.analysis: ads-analyst, video.script: edprod-writer}
-    added: 2026-11-11
-    why: "منتج -> زاوية، عرض، Max CPL، خطة تاست، سكريبت التأكيد"
-
-  team-manager:
-    team: team
-    role: "مسؤول الفريق: السجل والتوظيف"
-    owns: [team.registry, team.hire]
-    never: {}
-    added: 2026-11-11
-    why: "باش ما يكونوش جوج وكلاء يديرو نفس المهمة"
+    why: "الدروس تتركب بـ course_layout.py — تسجيلات حقيقية برك، بلا أفتار"

@@ -3,8 +3,9 @@
 - Talk to the owner in Algerian Darija / Arabic. Send a single video as MP4 (ZIP only for multi-file packs).
 - Never generate the owner's face, avatar, talking head or voice. Real recordings only.
 
-## The agent team (one owner per task)
-- Register: `.claude/team/registry.yaml` (truth) → `.claude/team/TEAM.md` (readable, generated).
-- Before delegating or hiring: `python3 .claude/team/team.py who "<job>"` and give the job to its owner.
-- New agent / «زيد وكيل»: follow the `team-manager` agent's procedure; `python3 .claude/team/team.py table` must say «ok» before committing.
-- Video work is led by the `edprod` skill (director); course lessons go to `course-editor`; store → `tassyir-ops`; ads → `ads-analyst`; product strategy → `cod-strategist`.
+## The agent empire (one owner per task, linked by flows, every job logged once)
+- Entry point: the `empire` skill (you are the chief). Video work → the `edprod` director skill.
+- `.claude/team/registry.yaml` departments, agents, task keys, links · `flows.yaml` cross-department flows with approval gates
+- `.claude/team/LESSONS.md` the owner's standing rules (every agent reads it) · `journal.jsonl` the work log · `TEAM.md` generated view
+- `python3 .claude/team/team.py who|flow|claim|done|board|table` — `table` must print «ok» before committing.
+- New agent / «زيد وكيل» → the `team-manager` agent.

@@ -1,0 +1,67 @@
+# التدفقات — how the departments are linked. Each step is a task key; its owner (from registry.yaml) does it.
+# A step can be a list = run in parallel. "gate" = stop and wait for the owner's «أكّد» before going on.
+# Each step receives the previous step's handoff note (see TEAM-CONTRACT in every agent file).
+# Run with: python3 .claude/team/team.py flow <name>
+
+flows:
+  new-product:
+    name: "منتج جديد من الفكرة حتى الإعلان"
+    trigger: "المالك يبعث منتج، صورة، رابط، ولا إعلان منافس"
+    steps:
+      - product.cod-strategy
+      - gate: "المالك يوافق على الزاوية والعرض والسعر"
+      - [store.products-stock, video.script]          # product created INACTIVE · script written
+      - [store.landing-page, video.facts]
+      - gate: "المالك يأكد السكريبت والصفحة"
+      - video.visual-brief
+      - [video.render-motion, video.sound]
+      - video.qc-export
+      - gate: "المالك يوافق على الفيديو وعلى إطلاق الإعلان والميزانية"
+      - ads.changes
+      - ads.analysis                                     # after 3 days of spend
+      - store.finance-report
+      - product.scale-cut
+
+  lesson:
+    name: "درس جديد في الدورة"
+    trigger: "المالك يحب يسجّل درس، ولا يبعث تسجيلات"
+    steps:
+      - course.lesson-outline
+      - gate: "المالك يأكد المخطط ويسجّل (كاميرا + شاشة + تصفيقة في البداية)"
+      - course.sync
+      - course.audio-clean
+      - course.lesson-edit
+      - course.captions
+      - video.qc-export
+      - gate: "المالك يشوف الدرس كامل"
+
+  course-promo:
+    name: "إعلان للدورة"
+    trigger: "المالك يحب يروّج للدورة ولا لحلقة من «اندلاع الدورة»"
+    steps:
+      - course.curriculum
+      - video.script
+      - video.facts
+      - gate: "المالك يأكد السكريبت"
+      - video.visual-brief
+      - [video.render-motion, video.sound]
+      - video.qc-export
+      - gate: "المالك يوافق على النشر والميزانية"
+      - ads.changes
+      - ads.analysis
+
+  daily:
+    name: "تقرير الصباح"
+    trigger: "«واش صرا اليوم»، «تقرير»، «وين راني»"
+    steps:
+      - [store.orders, ads.analysis, crm.messages]
+      - store.finance-report
+
+  weekly:
+    name: "مراجعة الأسبوع: سكايل ولا قطع"
+    trigger: "نهاية الأسبوع، ولا «نراجعو المنتجات»"
+    steps:
+      - [store.finance-report, ads.analysis, crm.abandoned-carts]
+      - product.scale-cut
+      - gate: "المالك يقرر"
+      - [ads.changes, store.products-stock]
