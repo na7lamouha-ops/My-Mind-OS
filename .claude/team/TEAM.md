@@ -12,6 +12,7 @@ flowchart TB
   chief --> growth["النمو · cod-strategist"]
   chief --> store["المتجر · tassyir-ops"]
   chief --> edprod["الفيديو · edprod"]
+  chief --> design["الديزاين · design-director"]
   chief --> course["الدورة · course-planner"]
   chief --- team_manager("team-manager")
   growth --- ads_analyst("ads-analyst")
@@ -24,6 +25,11 @@ flowchart TB
   edprod --- edprod_sound("edprod-sound")
   edprod --- edprod_reviewer("edprod-reviewer")
   course --- course_editor("course-editor")
+  design --- copywriter("copywriter")
+  design --- course_designer("course-designer")
+  design --- design_reviewer("design-reviewer")
+  design --- motion_designer("motion-designer")
+  design --- promo_designer("promo-designer")
   %% روابط الخدمة (feeds)
   growth -.-> edprod_writer
   growth -.-> store_builder
@@ -46,6 +52,15 @@ flowchart TB
   course -.-> course_editor
   course -.-> edprod_writer
   course_editor -.-> edprod_reviewer
+  design -.-> copywriter
+  design -.-> course_designer
+  copywriter -.-> design
+  copywriter -.-> promo_designer
+  course_designer -.-> design_reviewer
+  design_reviewer -.-> motion_designer
+  design_reviewer -.-> course_editor
+  motion_designer -.-> course_editor
+  promo_designer -.-> ads_analyst
 ```
 
 ## القيادة — القائد: `chief`
@@ -87,6 +102,19 @@ _فيديوهات الدورة والإعلانات من السكريبت حتى
 | `edprod-motion` | مهندس الحركة والرندر | `video.render-motion`, `video.opener` | edprod-reviewer | video.sound→edprod-sound, course.lesson-edit→course-editor, video.qc-export→edprod-reviewer | 2026-11-01 · تحريك البوسترات واللوقوات والافتتاحيات بالكود |
 | `edprod-sound` | مصمم الصوت | `video.sound` | edprod-reviewer | course.audio-clean→course-editor | 2026-11-01 · موسيقى ومؤثرات وميكساج -14 LUFS |
 | `edprod-reviewer` | المراقب والتصدير | `video.qc-export` | ads-analyst | video.render-motion→edprod-motion | 2026-11-01 · ما يخرج حتى فيديو بلا فحص |
+
+## الديزاين — القائد: `design-director`
+
+_سلايدات الماتش 16:9، العناوين والكلمات، وحركات السلايدات (ecommanita-design-kit) — أمر «درس XX»_
+
+| الوكيل | الدور | يملك | يعطي خدمتو لـ | ما يديرش (مولاها) | تزاد · علاش |
+|---|---|---|---|---|---|
+| `design-director` | مخرج الديزاين: lesson-XX.json من course-sync (قائد الديزاين) | `design.lesson-json` | copywriter, course-designer | course.curriculum→course-planner, design.lesson-slides→course-designer | 2026-10-30 · كل درس يتحول لـ 3 حتى 6 أفكار = لاعبين، من course-sync بلا اختراع |
+| `copywriter` | الكوبيرايتر: الاسم، العناوين، الشعارات، الكابشن | `copy.titles`, `copy.captions` | design-director, promo-designer | video.script→edprod-writer, video.hook-copy→edprod-writer, design.lesson-json→design-director | 2026-10-30 · الكلمة اللي تخلي الواحد يحس بالماتش — 3 حتى 5 خيارات والمدرّب يختار |
+| `course-designer` | مخرّج سلايدات الدرس (match_slide.py) | `design.lesson-slides` | design-reviewer | design.slides-qc→design-reviewer, course.lesson-edit→course-editor | 2026-10-30 · JSON مصادق ← سلايدات 16:9 على القالب، بلا ما يعاود يرسم الماركة |
+| `design-reviewer` | بوابة السلايدات PASS/FAIL | `design.slides-qc` | motion-designer, course-editor | video.qc-export→edprod-reviewer | 2026-10-30 · حتى سلايد ما يخرج بلا ما يفوت على البوابة والعين |
+| `motion-designer` | موشن السلايدات: الحركات الخمسة | `design.slide-motion` | course-editor | video.render-motion→edprod-motion, video.opener→edprod-motion | 2026-10-30 · يحرّك السلايدات المصادقة: الصواعق، الشرارة، التمريرة، كرطة الحدث، الستائر |
+| `promo-designer` | الترويج الثابت: بوستر 4:5، كاروسال، ستوري | `design.promo-static` | ads-analyst | video.render-motion→edprod-motion, copy.titles→copywriter | 2026-10-30 · نقطة القوة تاع الدرس في بوستر، بالقالب برك |
 
 ## الدورة — القائد: `course-planner`
 
@@ -165,12 +193,25 @@ _محتوى الدورة ecommanita وتركيب الدروس من التسجي�
 4. `ads.changes` → `ads-analyst`
 4. `store.products-stock` → `tassyir-ops`
 
+### `lesson-slides` — «درس XX»: سلايدات الدرس
+يبدا كي: «درس 08»، «سلايدات الدرس XX» (سكيل design-lesson)
+
+1. `design.lesson-json` → `design-director`
+2. `copy.titles` → `copywriter`
+3. ⛔ **توقف:** المدرّب يصادق على lesson-XX.json
+4. `design.lesson-slides` → `course-designer`
+5. `design.slides-qc` → `design-reviewer`
+6. `design.slide-motion` → `motion-designer`
+7. ⛔ **توقف:** المدرّب يشوف السلايدات
+
 ## فهرس المهام
 
 | المهمة | المولى |
 |---|---|
 | `ads.analysis` | `ads-analyst` |
 | `ads.changes` | `ads-analyst` |
+| `copy.captions` | `copywriter` |
+| `copy.titles` | `copywriter` |
 | `course.audio-clean` | `course-editor` |
 | `course.captions` | `course-editor` |
 | `course.curriculum` | `course-planner` |
@@ -180,6 +221,11 @@ _محتوى الدورة ecommanita وتركيب الدروس من التسجي�
 | `crm.abandoned-carts` | `crm-whatsapp` |
 | `crm.campaigns` | `crm-whatsapp` |
 | `crm.messages` | `crm-whatsapp` |
+| `design.lesson-json` | `design-director` |
+| `design.lesson-slides` | `course-designer` |
+| `design.promo-static` | `promo-designer` |
+| `design.slide-motion` | `motion-designer` |
+| `design.slides-qc` | `design-reviewer` |
 | `product.cod-strategy` | `cod-strategist` |
 | `product.confirm-script` | `cod-strategist` |
 | `product.scale-cut` | `cod-strategist` |

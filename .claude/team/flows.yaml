@@ -65,3 +65,15 @@ flows:
       - product.scale-cut
       - gate: "المالك يقرر"
       - [ads.changes, store.products-stock]
+
+  lesson-slides:
+    name: "«درس XX»: سلايدات الدرس"
+    trigger: "«درس 08»، «سلايدات الدرس XX» (سكيل design-lesson)"
+    steps:
+      - design.lesson-json
+      - copy.titles
+      - gate: "المدرّب يصادق على lesson-XX.json"
+      - design.lesson-slides
+      - design.slides-qc
+      - design.slide-motion
+      - gate: "المدرّب يشوف السلايدات"

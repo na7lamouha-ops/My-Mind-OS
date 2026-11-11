@@ -27,6 +27,10 @@ departments:
     name: "الفيديو"
     lead: edprod         # the «edprod» skill (director)
     mission: "فيديوهات الدورة والإعلانات من السكريبت حتى التصدير"
+  design:
+    name: "الديزاين"
+    lead: design-director
+    mission: "سلايدات الماتش 16:9، العناوين والكلمات، وحركات السلايدات (ecommanita-design-kit) — أمر «درس XX»"
   course:
     name: "الدورة"
     lead: course-planner
@@ -163,3 +167,58 @@ agents:
     feeds: [edprod-reviewer]
     added: 2026-11-11
     why: "الدروس تتركب بـ course_layout.py — تسجيلات حقيقية برك، بلا أفتار"
+
+  # ---------------------------------------------------------------- design (from the design-kit session, 30/10)
+  design-director:
+    dept: design
+    role: "مخرج الديزاين: lesson-XX.json من course-sync (قائد الديزاين)"
+    owns: [design.lesson-json]
+    never: {course.curriculum: course-planner, design.lesson-slides: course-designer}
+    feeds: [copywriter, course-designer]
+    added: 2026-10-30
+    why: "كل درس يتحول لـ 3 حتى 6 أفكار = لاعبين، من course-sync بلا اختراع"
+
+  copywriter:
+    dept: design
+    role: "الكوبيرايتر: الاسم، العناوين، الشعارات، الكابشن"
+    owns: [copy.titles, copy.captions]
+    never: {video.script: edprod-writer, video.hook-copy: edprod-writer, design.lesson-json: design-director}
+    feeds: [design-director, promo-designer]
+    added: 2026-10-30
+    why: "الكلمة اللي تخلي الواحد يحس بالماتش — 3 حتى 5 خيارات والمدرّب يختار"
+
+  course-designer:
+    dept: design
+    role: "مخرّج سلايدات الدرس (match_slide.py)"
+    owns: [design.lesson-slides]
+    never: {design.slides-qc: design-reviewer, course.lesson-edit: course-editor}
+    feeds: [design-reviewer]
+    added: 2026-10-30
+    why: "JSON مصادق ← سلايدات 16:9 على القالب، بلا ما يعاود يرسم الماركة"
+
+  design-reviewer:
+    dept: design
+    role: "بوابة السلايدات PASS/FAIL"
+    owns: [design.slides-qc]
+    never: {video.qc-export: edprod-reviewer}
+    feeds: [motion-designer, course-editor]
+    added: 2026-10-30
+    why: "حتى سلايد ما يخرج بلا ما يفوت على البوابة والعين"
+
+  motion-designer:
+    dept: design
+    role: "موشن السلايدات: الحركات الخمسة"
+    owns: [design.slide-motion]
+    never: {video.render-motion: edprod-motion, video.opener: edprod-motion}
+    feeds: [course-editor]
+    added: 2026-10-30
+    why: "يحرّك السلايدات المصادقة: الصواعق، الشرارة، التمريرة، كرطة الحدث، الستائر"
+
+  promo-designer:
+    dept: design
+    role: "الترويج الثابت: بوستر 4:5، كاروسال، ستوري"
+    owns: [design.promo-static]
+    never: {video.render-motion: edprod-motion, copy.titles: copywriter}
+    feeds: [ads-analyst]
+    added: 2026-10-30
+    why: "نقطة القوة تاع الدرس في بوستر، بالقالب برك"
