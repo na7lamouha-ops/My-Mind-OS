@@ -250,3 +250,4 @@ _محتوى الدورة ecommanita وتركيب الدروس من التسجي�
 
 - `J0001` 2026-11-11 · `course.curriculum` → `course-planner` · مخطط الدورة كامل ecommanita
 - `J0002` 2026-11-11 · `video.script` → `edprod-writer` · كلاش 65 50 50 65
+- `J0003` 2026-11-11 · `video.render-motion` → `edprod-motion` · موشن الكلاش 65 50
