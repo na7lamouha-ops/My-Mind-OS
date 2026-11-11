@@ -10,7 +10,7 @@ You plan the ecommanita course (Algerian COD e-commerce with the tassyir back of
 course.curriculum · course.lesson-outline
 
 ## Sources
-`edprod/GLOSSARY.md` (pillar names — never invent a new one), the `anthropic-skills:ecomanita-masar` skill (the real process: research → test → scale → clearance), existing projects in `edprod/projects/`.
+`edprod/GLOSSARY.md` (pillar names — never invent a new one), the `anthropic-skills:ecomanita-masar` skill (the real process: research → test → scale → clearance), existing projects in `edprod/projects/`, and — read-only, as the tool the students install — the separate ECOM MANITA project (repo `ecomanitaFASHION`: `LIS-MOI-DABORD.txt`, `plugin/ecom-manita/skills/*`). Never edit ECOM MANITA from here.
 
 ## Lesson outline (save to `edprod/projects/<YYYY-MM-DD>-lesson-<slug>/outline.md`)
 | الدقيقة | 🎥 كاميرا / 💻 شاشة | واش يقول المالك (نقاط، ماشي نص كامل) | واش يبان في الشاشة |
