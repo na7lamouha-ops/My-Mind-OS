@@ -1,0 +1,105 @@
+# سجل الفريق — the single source of truth for who does what.
+#
+# Rules (checked by: python3 .claude/team/team.py check)
+#   1. Every agent in .claude/agents/ has exactly one entry here, and every entry has a file.
+#   2. A task key ("owns") belongs to ONE agent only. Two agents never own the same task.
+#   3. Before adding an agent: python3 .claude/team/team.py who "<the job in a few words>"
+#      If someone already owns it -> give the job to them (or widen their file). Do not hire a twin.
+#   4. "never" lists the neighbouring tasks the agent must hand off, with the key of who owns them.
+#
+# Task keys: <area>.<job>. Areas: video, course, store, ads, product, team.
+
+teams:
+  edprod: "فريق الفيديو — إنتاج فيديوهات الدورة والإعلانات (المخرج: سكيل edprod)"
+  course: "فريق الدورة — تركيب الدروس من التسجيلات الحقيقية"
+  business: "فريق البيزنس — تسيير، الإعلانات، اختيار المنتجات"
+  team: "إدارة الفريق نفسه — السجل والتوظيف"
+
+agents:
+  edprod-writer:
+    team: edprod
+    role: "كاتب السكريبت بالدارجة"
+    owns: [video.script, video.hook-copy]
+    never: {video.facts: edprod-researcher, video.render-motion: edprod-motion, product.cod-strategy: cod-strategist}
+    added: 2026-11-01
+    why: "سكريبت لقطة بلقطة قبل أي رندر"
+
+  edprod-researcher:
+    team: edprod
+    role: "مدقّق الحقائق والأرقام"
+    owns: [video.facts]
+    never: {video.script: edprod-writer}
+    added: 2026-11-01
+    why: "كل معلومة تاريخية أو رقم يتأكد قبل ما يطلع في الشاشة"
+
+  edprod-designer:
+    team: edprod
+    role: "المدير الفني: البريف والإحداثيات"
+    owns: [video.visual-brief]
+    never: {video.render-motion: edprod-motion}
+    added: 2026-11-01
+    why: "تخطيط كل مشهد بالبيكسل وفحص المنطقة الآمنة"
+
+  edprod-motion:
+    team: edprod
+    role: "مهندس الحركة والرندر"
+    owns: [video.render-motion, video.opener]
+    never: {video.sound: edprod-sound, course.lesson-edit: course-editor, video.qc-export: edprod-reviewer}
+    added: 2026-11-01
+    why: "تحريك البوسترات واللوقوات والافتتاحيات بالكود"
+
+  edprod-sound:
+    team: edprod
+    role: "مصمم الصوت"
+    owns: [video.sound]
+    never: {course.audio-clean: course-editor}
+    added: 2026-11-01
+    why: "موسيقى ومؤثرات وميكساج -14 LUFS"
+
+  edprod-reviewer:
+    team: edprod
+    role: "المراقب والتصدير"
+    owns: [video.qc-export]
+    never: {video.render-motion: edprod-motion}
+    added: 2026-11-01
+    why: "ما يخرج حتى فيديو بلا فحص"
+
+  course-editor:
+    team: course
+    role: "مونتير الدروس: كاميرا + شاشة على ديزاين الدورة"
+    owns: [course.lesson-edit, course.sync, course.audio-clean, course.captions]
+    never: {video.opener: edprod-motion, video.qc-export: edprod-reviewer, video.script: edprod-writer}
+    added: 2026-11-11
+    why: "الدروس تتسجل بالكاميرا والشاشة وتتركب بـ course_layout.py — تسجيلات حقيقية برك، بلا أفتار"
+
+  tassyir-ops:
+    team: business
+    role: "مسيّر تسيير: كومندات، ستوك، منتجات، أرقام"
+    owns: [store.orders, store.products-stock, store.finance-report]
+    never: {ads.analysis: ads-analyst, product.cod-strategy: cod-strategist}
+    added: 2026-11-11
+    why: "خدمة يومية على تسيير، يقرا بحرية وما يبدّل والو بلا موافقة صاحب البيزنس"
+
+  ads-analyst:
+    team: business
+    role: "محلل إعلانات Meta"
+    owns: [ads.analysis, ads.changes]
+    never: {product.cod-strategy: cod-strategist, video.script: edprod-writer, store.finance-report: tassyir-ops}
+    added: 2026-11-11
+    why: "قراءة الحملات، CPL، وين يروح الدراهم — وأي تبديل في الإعلانات بموافقة برك"
+
+  cod-strategist:
+    team: business
+    role: "إستراتيجي المنتج COD"
+    owns: [product.cod-strategy, product.confirm-script]
+    never: {ads.analysis: ads-analyst, video.script: edprod-writer}
+    added: 2026-11-11
+    why: "منتج -> زاوية، عرض، Max CPL، خطة تاست، سكريبت التأكيد"
+
+  team-manager:
+    team: team
+    role: "مسؤول الفريق: السجل والتوظيف"
+    owns: [team.registry, team.hire]
+    never: {}
+    added: 2026-11-11
+    why: "باش ما يكونوش جوج وكلاء يديرو نفس المهمة"
