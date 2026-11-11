@@ -1,1 +1,2 @@
 {"id": "J0001", "task": "course.curriculum", "agent": "course-planner", "subject": "مخطط الدورة كامل ecommanita", "flow": null, "status": "open", "opened": "2026-11-11", "closed": null, "output": null}
+{"id": "J0002", "task": "video.script", "agent": "edprod-writer", "subject": "كلاش 65 50 50 65", "flow": "course-promo", "status": "open", "opened": "2026-11-11", "closed": null, "output": null}

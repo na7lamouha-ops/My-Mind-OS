@@ -249,3 +249,4 @@ _محتوى الدورة ecommanita وتركيب الدروس من التسجي�
 ## الخدمات المفتوحة
 
 - `J0001` 2026-11-11 · `course.curriculum` → `course-planner` · مخطط الدورة كامل ecommanita
+- `J0002` 2026-11-11 · `video.script` → `edprod-writer` · كلاش 65 50 50 65
