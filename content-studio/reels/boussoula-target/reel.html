@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>Boussoula — Arba3a Tujjar</title>
+<style>
+@font-face{font-family:Tajawal;font-weight:800;src:url(assets/Tajawal-ExtraBold.ttf)}
+@font-face{font-family:Tajawal;font-weight:700;src:url(assets/Tajawal-Bold.ttf)}
+:root{--bg:#0b0b0b;--acc:#FFD24C;--red:#E5484D;--card:#F4EFE2;--grey:#9a9a9a;--green:#3ddc84;--line:#2b2b2b}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1080px;height:1920px;overflow:hidden;background:var(--bg)}
+body{font-family:Tajawal,sans-serif;color:#fff;direction:rtl}
+.abs{position:absolute}
+.ltr{direction:ltr;unicode-bidi:isolate;display:inline-block}
+#stage{position:absolute;inset:0;overflow:hidden}
+#glow{position:absolute;inset:0;background:radial-gradient(900px 900px at 50% 38%,rgba(255,210,76,.13),transparent 70%)}
+#hex{position:absolute;inset:0;opacity:.07;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='84' height='146' viewBox='0 0 84 146'%3E%3Cpath d='M42 2l40 23v46L42 94 2 71V25z M42 94v52' fill='none' stroke='%23FFD24C' stroke-width='2.5'/%3E%3C/svg%3E");background-size:84px 146px}
+#progress{top:118px;left:80px;display:flex;gap:10px;direction:ltr}
+#progress i{width:46px;height:9px;border-radius:5px;background:var(--line);display:block}
+#progress i.on{background:var(--acc)}
+#pill{top:100px;right:140px;background:var(--acc);color:#111;font-weight:800;font-size:36px;padding:8px 28px;border-radius:40px}
+#brand{top:160px;left:80px;font-size:28px;color:var(--grey);font-weight:700}
+.scene{position:absolute;inset:0;opacity:0}
+.t1,.t2{position:absolute;left:80px;right:140px;text-align:center;font-weight:800;white-space:nowrap;line-height:1.2}
+.t1{top:250px;font-size:92px}
+.t2{top:372px;font-size:96px;color:var(--acc)}
+.vis{position:absolute;top:560px;left:80px;right:140px;height:620px;display:flex;align-items:center;justify-content:center}
+.card{background:var(--card);color:#141414;border-radius:28px;box-shadow:0 30px 60px rgba(0,0,0,.5)}
+.note{font-size:26px;color:var(--grey);font-weight:700}
+#cap{position:absolute;top:1250px;left:80px;right:140px;display:flex;justify-content:center;flex-wrap:wrap;gap:16px;min-height:90px}
+#cap span{font-size:66px;font-weight:800;display:inline-block;opacity:0}
+#cap span.hi{background:var(--acc);color:#111;padding:0 14px;border-radius:12px}
+#av{left:80px;top:1390px;width:220px;height:220px}
+#av .ring{position:absolute;inset:0;border-radius:50%;border:7px solid var(--acc);box-shadow:0 0 0 6px #0b0b0b,0 18px 40px rgba(0,0,0,.6);overflow:hidden;background:#111}
+#av img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0}
+#avname{position:absolute;left:330px;top:1470px;font-size:34px;font-weight:800}
+#avname small{display:block;font-size:24px;color:var(--grey);font-weight:700}
+#wipe{position:absolute;inset:0;background:var(--acc);transform:translateX(110%)}
+#inter{position:absolute;inset:0;background:var(--acc);color:#111;opacity:0;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center}
+#inter .big{font-size:100px;font-weight:800;line-height:1.35;white-space:nowrap}
+#inter .big b{display:inline-block;background:#111;color:var(--acc);padding:0 30px;border-radius:20px;margin-top:20px}
+#fade{position:absolute;inset:0;background:#000;opacity:0}
+
+/* pawns */
+.pawn{width:96px;height:96px;border-radius:50%;background:#1b1b1b;border:5px solid #444;display:grid;place-items:center;font-size:46px;font-weight:800;color:#ddd;position:absolute}
+.pawn.gold{background:var(--acc);border-color:#fff3c4;color:#111;box-shadow:0 0 60px rgba(255,210,76,.7)}
+/* S0 */
+#flag0{position:absolute;top:30px;left:50%;transform:translateX(-50%);font-size:100px}
+#startline{position:absolute;bottom:120px;left:60px;right:60px;height:8px;background:repeating-linear-gradient(90deg,#fff 0 24px,#111 24px 48px);border-radius:4px}
+/* S1 loop */
+#loop{position:absolute;width:520px;height:520px;left:50%;top:50%;margin:-260px 0 0 -260px}
+#same{position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);background:var(--red);color:#fff;font-size:40px;font-weight:800;padding:6px 26px;border-radius:14px;white-space:nowrap}
+/* S2 road */
+#flag2{position:absolute;top:10px;left:50%;transform:translateX(-50%);text-align:center}
+#flag2 .f{font-size:120px;line-height:1}
+#flag2 .l{font-size:38px;font-weight:800;color:var(--acc)}
+#road i{position:absolute;left:50%;width:14px;height:44px;margin-left:-7px;border-radius:7px;background:var(--acc)}
+#q2{position:absolute;bottom:20px;left:50%;margin-left:70px;font-size:110px;color:var(--red);font-weight:800}
+/* S3 speed / wall / garage */
+#gauge{position:absolute;left:50%;top:40px;width:460px;height:250px;margin-left:-230px}
+#gneedle{position:absolute;left:50%;bottom:0;width:12px;height:200px;margin-left:-6px;background:var(--red);border-radius:6px;transform-origin:50% 100%}
+#glab{position:absolute;top:300px;left:0;right:0;text-align:center;font-size:44px;font-weight:800}
+#wall{position:absolute;top:0;bottom:0;right:-40px;width:160px;background:repeating-linear-gradient(0deg,#7a3b2e 0 46px,#2a1410 46px 52px);border-radius:10px;opacity:0}
+#crash{position:absolute;inset:-200px;background:var(--red);opacity:0}
+#garage{position:absolute;inset:0;opacity:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+#roof{width:0;height:0;border-left:380px solid transparent;border-right:380px solid transparent;border-bottom:110px solid #2a2a2a}
+#gbox{width:760px;height:330px;background:#141414;border:5px solid #2a2a2a;border-top:none;display:grid;grid-template-columns:repeat(6,1fr);align-content:end;gap:10px;padding:20px}
+#gbox i{display:block;height:60px;border-radius:8px;background:#b8894a;border-top:8px solid #d9a866;opacity:0}
+#glbl{margin-top:20px;font-size:44px;font-weight:800;color:var(--red)}
+/* S5 split */
+#goal{padding:18px 44px;font-size:56px;font-weight:800;border-radius:24px;background:#141414;border:4px solid var(--acc);color:var(--acc)}
+#rules{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:34px;width:800px}
+.rule{padding:22px 20px;text-align:center}
+.rule .v{font-size:54px;font-weight:800;color:#111}
+.rule .k{font-size:30px;font-weight:700;color:#555;margin-top:4px}
+#arrived{margin-top:26px;font-size:44px;font-weight:800;color:var(--green)}
+/* S6 recap */
+#tl{width:780px;height:180px;position:relative}
+#tl .line{position:absolute;top:70px;left:40px;right:40px;height:10px;background:var(--line);border-radius:5px}
+#tl .fill{position:absolute;top:70px;right:40px;height:10px;background:var(--acc);border-radius:5px;width:0}
+#tl .tick{position:absolute;top:58px;width:6px;height:34px;background:#555;border-radius:3px}
+#tl .lb{position:absolute;top:110px;font-size:38px;font-weight:800}
+#head{font-size:120px;margin-bottom:30px}
+/* S7 */
+#link{padding:26px 46px;font-size:64px;font-weight:800}
+#free{background:var(--green);color:#0b0b0b;font-size:40px;font-weight:800;padding:6px 26px;border-radius:30px}
+#motto{font-size:44px;font-weight:800;color:var(--acc);text-align:center}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="glow"></div><div id="hex"></div>
+  <div id="progress" class="abs"><i></i><i></i><i></i><i></i></div>
+  <div id="brand" class="abs">🧭 البوصلة · التارغت</div>
+  <div id="pill" class="abs"></div>
+
+  <!-- S0 hook -->
+  <div class="scene" id="s0">
+    <div class="t1" id="s0t1">تعلّمتو التارغت.</div>
+    <div class="t2" id="s0t2">وطبّقتوه؟</div>
+    <div class="vis"><div style="position:relative;width:820px;height:620px">
+      <div id="flag0">🎯</div><div id="startline"></div>
+      <div class="pawn" id="pa" style="bottom:150px;right:70px">س</div>
+      <div class="pawn" id="pb" style="bottom:150px;right:270px">ر</div>
+      <div class="pawn" id="pc" style="bottom:150px;right:470px">ك</div>
+      <div class="pawn" id="pd" style="bottom:150px;right:670px">ي</div>
+    </div></div>
+  </div>
+
+  <!-- S1 challenge loop -->
+  <div class="scene" id="s1">
+    <div class="t1" id="s1t1">تارغت = تحدي.</div>
+    <div class="t2" id="s1t2">ويرجع لنفس البلاصة.</div>
+    <div class="vis"><div style="position:relative;width:820px;height:620px">
+      <svg id="loop" viewBox="0 0 520 520"><circle cx="260" cy="260" r="220" fill="none" stroke="#2b2b2b" stroke-width="14" stroke-dasharray="26 18"/>
+        <circle id="trail" cx="260" cy="260" r="220" fill="none" stroke="#FFD24C" stroke-width="14" stroke-linecap="round" transform="rotate(90 260 260)"/></svg>
+      <div class="pawn" id="p1">س</div>
+      <div id="same">نفس النقطة ↺</div>
+    </div></div>
+  </div>
+
+  <!-- S2 destination without road -->
+  <div class="scene" id="s2">
+    <div class="t1" id="s2t1">يعرف وين رايح.</div>
+    <div class="t2" id="s2t2">ونسى الطريق.</div>
+    <div class="vis"><div style="position:relative;width:820px;height:620px">
+      <div id="flag2"><div class="f">🎯</div><div class="l">الهدف</div></div>
+      <div id="road"></div>
+      <div class="pawn" id="p2" style="bottom:20px;left:50%;margin-left:-48px">ر</div>
+      <div id="q2">؟</div>
+    </div></div>
+  </div>
+
+  <!-- S3 profit per piece: speed, wall, garage -->
+  <div class="scene" id="s3">
+    <div class="t1" id="s3t1">البروفيت في القطعة.</div>
+    <div class="t2" id="s3t2">وموديل واحد.</div>
+    <div class="vis"><div id="s3box" style="position:relative;width:820px;height:620px">
+      <div id="speed" style="position:absolute;inset:0">
+        <svg id="gauge" viewBox="0 0 460 250"><path d="M30 240 A200 200 0 0 1 430 240" fill="none" stroke="#2b2b2b" stroke-width="26" stroke-linecap="round"/>
+          <path id="garc" d="M30 240 A200 200 0 0 1 430 240" fill="none" stroke="#FFD24C" stroke-width="26" stroke-linecap="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/></svg>
+        <div id="gneedle" style="top:90px;bottom:auto"></div>
+        <div id="glab">فيتاس 🚀 بموديل واحد</div>
+        <div class="pawn" id="p3" style="bottom:60px;left:40px">ك</div>
+        <div id="wall"></div>
+      </div>
+      <div id="crash"></div>
+      <div id="garage"><div id="roof"></div><div id="gbox"></div><div id="glbl">📦 الستوك… في القاراج</div></div>
+    </div></div>
+  </div>
+
+  <!-- S5 split into rules -->
+  <div class="scene" id="s5">
+    <div class="t1" id="s5t1">قسّمو.</div>
+    <div class="t2" id="s5t2">واحترم قوانينو.</div>
+    <div class="vis" style="flex-direction:column">
+      <div id="goal">🎯 <span class="ltr">100</span> مليون · <span class="ltr">40</span> يوم</div>
+      <div id="rules">
+        <div class="card rule" id="r1"><div class="v"><span class="ltr">36</span> ليد</div><div class="k">في النهار</div></div>
+        <div class="card rule" id="r2"><div class="v">مؤكّد + متتبّع</div><div class="k">الفريق</div></div>
+        <div class="card rule" id="r3"><div class="v"><span class="ltr">61</span> مليون</div><div class="k">رأس المال</div></div>
+        <div class="card rule" id="r4"><div class="v">الستوك</div><div class="k">محسوب من الأول</div></div>
+      </div>
+      <div id="arrived">✓ وصل بالراحة</div>
+      <div class="note" style="margin-top:10px">مثال البوصلة — ماشي وعد • الأسماء تمثيلية</div>
+    </div>
+  </div>
+
+  <!-- S6 recap -->
+  <div class="scene" id="s6">
+    <div class="t1" id="s6t1">من رقم في الراس.</div>
+    <div class="t2" id="s6t2">لطريق بالنهار.</div>
+    <div class="vis" style="flex-direction:column">
+      <div id="head">🧠 ← 🗓️</div>
+      <div id="tl"><div class="line"></div><div class="fill" id="tlfill"></div><div id="ticks"></div>
+        <div class="lb" style="right:0">🎯 الهدف</div><div class="lb" style="left:0">اليوم <span class="ltr">1</span></div></div>
+    </div>
+  </div>
+
+  <!-- S7 CTA -->
+  <div class="scene" id="s7">
+    <div class="t1" id="s7t1">حط التارغت تاعك.</div>
+    <div class="t2" id="s7t2">وشوف الطريق.</div>
+    <div class="vis" style="flex-direction:column;gap:34px">
+      <div id="free">مجاناً</div>
+      <div class="card" id="link"><span class="ltr">al-khaliya.space</span></div>
+      <div id="motto">البوصلة لا تعدك… ترسم المسار.</div>
+    </div>
+  </div>
+
+  <div id="cap"></div>
+  <div id="av" class="abs"><div class="ring">
+    <img id="a-neutral" src="assets/av-neutral.png"><img id="a-serious" src="assets/av-serious.png">
+    <img id="a-thinking" src="assets/av-thinking.png"><img id="a-surprised" src="assets/av-surprised.png">
+    <img id="a-smile" src="assets/av-smile.png">
+  </div></div>
+  <div id="avname">NA7LA<small>النحلة</small></div>
+
+  <div id="inter"><div class="big">التارغت ما يتّحداش…<br><b>يتقسّم.</b></div></div>
+  <div id="wipe"></div>
+  <div id="fade"></div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const cl=x=>Math.max(0,Math.min(1,x)), P=(t,a,b)=>cl((t-a)/(b-a));
+const eo=x=>1-Math.pow(1-x,3), eio=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+const eb=x=>{const c1=1.70158,c3=c1+1;return 1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2)};
+function rise(id,t,a,d=.45,dy=50){const p=eo(P(t,a,a+d));const e=$(id);e.style.opacity=p;e.style.transform=`translateY(${(1-p)*dy}px)`}
+function pop(id,t,a,d=.4,from=.6){const p=P(t,a,a+d);const e=$(id);e.style.opacity=Math.min(1,p*2);e.style.transform=`scale(${from+(1-from)*eb(p)})`}
+
+// ── timeline (Rule 1: interrupt at ~54%) ──
+const S=[[0,6.2],[6.2,12.8],[12.8,19.2],[19.2,28.4],[28.4,31.6],[31.6,43.0],[43.0,46.6],[46.6,53.2]];
+const DUR=53.2, INT=4;
+const SCN=['s0','s1','s2','s3',null,'s5','s6','s7'];
+const CH=[null,'01 · التحدي','02 · الوجهة','03 · القطعة',null,'04 · القسمة',null,null];
+const PROG=[0,1,2,3,3,4,4,4];
+const MOOD=[[0,'neutral'],[3.2,'serious'],[6.2,'neutral'],[9.4,'surprised'],[12.8,'thinking'],[19.2,'neutral'],[23.4,'surprised'],[26,'serious'],[31.6,'neutral'],[40.6,'smile']];
+const CAP=[
+ [0.2,2.2,'كامل تعلّمتو *التارغت*…'],[2.2,4.4,'بصح أربعة تجار، أربعة تارغتات،'],[4.4,6.1,'*واحد برك* وصل مرتاح.'],
+ [6.5,8.6,'سمير سمّى التارغت *تحدي*.'],[8.6,10.6,'حمّس روحو، طاح، نهض، عاود…'],[10.6,12.7,'ورجع لنفس *النقطة*.'],
+ [13.1,15.6,'رياض فهم بلي التارغت هو *وين رايح*.'],[15.6,17.4,'حط الرقم في راسو…'],[17.4,19.1,'ونسى *الطريق*.'],
+ [19.5,21.8,'كريم سمع غير *البروفيت في القطعة*.'],[21.8,23.6,'ركب، قلّع فيتاس بموديل واحد…'],[23.6,25.4,'ودخل في *حيط*.'],[25.4,28.3,'والستوك؟ في *القاراج*.'],
+ [31.9,33.6,'يوسف *قسّمو*:'],[33.6,35.4,'100 مليون في 40 يوم ولاو'],[35.4,36.8,'*36 ليد* في النهار،'],[36.8,38.0,'مؤكّد ومتتبّع،'],[38.0,39.2,'*61 مليون* رأس مال،'],[39.2,40.6,'والستوك محسوب من الأول.'],[40.6,42.9,'احترم القوانين… ووصل *بالراحة*.'],
+ [43.2,44.9,'من تارغت *في الراس*…'],[44.9,46.5,'لطريق *بالنهار*.'],
+ [46.8,48.9,'حط التارغت تاعك في البوصلة،'],[48.9,51.0,'وتوريك *النص الأول* من الطريق.'],[51.0,53.0,'مجاناً في al-khaliya.space']
+];
+
+// static builds
+for(let i=0;i<9;i++){const r=document.createElement('i');r.style.top=(150+i*42)+'px';$('road').appendChild(r)}
+for(let i=0;i<18;i++)$('gbox').appendChild(document.createElement('i'));
+for(let i=1;i<8;i++){const k=document.createElement('div');k.className='tick';k.style.right=(40+i*87)+'px';$('ticks').appendChild(k)}
+function fit(){document.querySelectorAll('.t1,.t2').forEach(e=>{let fs=parseFloat(getComputedStyle(e).fontSize);while(e.scrollWidth>e.clientWidth+1&&fs>40){fs-=2;e.style.fontSize=fs+'px'}})}
+document.fonts.ready.then(fit);
+const cap=$('cap');let capIdx=-2;
+function setCap(i){cap.innerHTML='';capIdx=i;if(i<0)return;
+  CAP[i][2].replace(/\*([^*]+)\*/g,(m,g)=>g.split(' ').map(w=>'*'+w+'*').join(' ')).split(' ').forEach(w=>{const s=document.createElement('span');const hi=w.includes('*');s.textContent=w.replace(/\*/g,'');if(hi)s.className='hi';
+    if(!/[؀-ۿ]/.test(s.textContent)){s.style.direction='ltr';s.style.unicodeBidi='isolate'}cap.appendChild(s)})}
+
+function render(t){
+  let k=S.findIndex(([a,b])=>t>=a&&t<b); if(k<0)k=S.length-1;
+  const a=S[k][0], lt=t-a;
+  SCN.forEach((id,i)=>{if(id)$(id).style.opacity=(i===k)?1:0});
+  $('pill').style.opacity=CH[k]?1:0; if(CH[k])$('pill').textContent=CH[k];
+  [...$('progress').children].forEach((e,i)=>e.className=i<PROG[k]?'on':'');
+  const id=SCN[k]; if(id){rise(id+'t1',t,a+0.05,.4,30);rise(id+'t2',t,a+0.45,.45,30)}
+
+  if(k===0){['pa','pb','pc','pd'].forEach((p,i)=>pop(p,t,0.4+i*0.35,.4));pop('flag0',t,0.2,.4);
+    const g=P(t,4.4,4.8);$('pd').className='pawn'+(g>0?' gold':'');$('pd').style.transform+=` translateY(${-eo(g)*40}px)`}
+  if(k===1){pop('p1',t,a+0.2,.35);const prog=eio(P(t,a+0.6,a+5.6))*1.0;const ang=Math.PI/2+prog*2*Math.PI;
+    const r=220,cx=410,cy=310+ (Math.sin(prog*Math.PI*4)*0);const fall=Math.max(0,Math.sin(prog*Math.PI*3))*0;
+    const x=cx+r*Math.cos(ang)-48, y=cy+r*Math.sin(ang)-48+fall; const e=$('p1'); e.style.left=x+'px'; e.style.top=y+'px';
+    e.style.transform+=` rotate(${(lt>2.4&&lt<3.2)?Math.sin(lt*30)*25:0}deg)`;
+    const tr=$('trail');const L=2*Math.PI*220;tr.setAttribute('stroke-dasharray',L);tr.setAttribute('stroke-dashoffset',L*(1-prog));
+    pop('same',t,a+5.4,.35,1.4)}
+  if(k===2){pop('flag2',t,a+0.3,.45);pop('p2',t,a+0.6,.35);
+    [...$('road').children].forEach((r,i)=>{const on=P(t,a+0.9+i*0.12,a+1.1+i*0.12);const off=P(t,a+3.0+(8-i)*0.25,a+3.3+(8-i)*0.25);r.style.opacity=on*(1-off)});
+    pop('q2',t,a+5.0,.35,1.5)}
+  if(k===3){const s=eio(P(t,a+0.6,a+3.8));$('garc').setAttribute('stroke-dashoffset',100-s*100);$('gneedle').style.transform=`rotate(${-90+s*180+Math.sin(t*40)*s*3}deg)`;
+    rise('glab',t,a+0.8,.4);const px=40+eo(P(t,a+2.4,a+4.4))*560;$('p3').style.left=px+'px';pop('p3',t,a+0.3,.3);
+    const w=eo(P(t,a+3.2,a+3.6));$('wall').style.opacity=w;$('wall').style.transform=`translateX(${(1-w)*120}px)`;
+    const hit=a+4.4;const c=P(t,hit,hit+0.06)*(1-P(t,hit+0.06,hit+0.5));$('crash').style.opacity=c*0.45;
+    const sh=t>hit&&t<hit+0.5?Math.sin((t-hit)*90)*24*(1-(t-hit)/0.5):0;$('s3box').style.transform=`translateX(${sh}px)`;
+    const gin=P(t,hit+0.7,hit+1.1);$('speed').style.opacity=1-gin;$('garage').style.opacity=gin;
+    const n=Math.round(18*eo(P(t,hit+1.0,hit+3.2)));[...$('gbox').children].forEach((e,i)=>e.style.opacity=i<n?1:0);
+    rise('glbl',t,hit+2.6,.4)}
+  if(k===5){pop('goal',t,a+0.5,.45);['r1','r2','r3','r4'].forEach((r,i)=>pop(r,t,[a+3.8,a+5.2,a+6.4,a+7.6][i],.4,.5));pop('arrived',t,a+9.2,.4);
+    $('goal').style.borderColor=t>a+9.2?'#3ddc84':'#FFD24C'}
+  if(k===6){pop('head',t,a+0.2,.4);rise('tl',t,a+0.5,.4);$('tlfill').style.width=(eo(P(t,a+0.9,a+3.0))*700)+'px'}
+  if(k===7){pop('free',t,a+0.4,.35);pop('link',t,a+0.8,.45,.7);rise('motto',t,a+2.0,.5)}
+
+  // interrupt: 8-frame fade, hard cut, sentence rises
+  const ti=S[INT][0];
+  $('fade').style.opacity=t<ti?0.85*P(t,ti-8/30,ti):0;
+  $('inter').style.opacity=k===INT?1:0;
+  if(k===INT){const p=eo(P(t,ti+0.1,ti+0.6));const g=$('inter').firstElementChild;g.style.opacity=p;g.style.transform=`translateY(${(1-p)*40}px)`;
+    const b=$('inter').querySelector('b');const q=eb(P(t,ti+1.2,ti+1.6));b.style.transform=`scale(${0.6+0.4*q})`}
+
+  // 9-frame wipe at every chapter change (not into the interrupt: that is a hard cut)
+  let wx=110;
+  for(let i=1;i<S.length;i++){if(i===INT)continue;const f=(t-(S[i][0]-4/30))*30;if(f>=0&&f<=9)wx=f<=4?110*(1-f/4):(f<=5?0:-110*(f-5)/4)}
+  $('wipe').style.transform=`translateX(${wx}%)`;
+
+  const ci=CAP.findIndex(c=>t>=c[0]&&t<c[1]);
+  if(ci!==capIdx)setCap(ci);
+  if(ci>=0){const [c0,c1]=CAP[ci];const sp=[...cap.children];const per=Math.min(.33,(c1-c0-.3)/sp.length);
+    sp.forEach((s,i)=>{const p=P(t,c0+i*per,c0+i*per+0.2);s.style.opacity=Math.min(1,p*1.5);s.style.transform=`translateY(${(1-eo(p))*18}px) scale(${.8+.2*eb(p)})`})}
+  cap.style.opacity=k===INT?0:1;
+
+  let m='neutral';for(const [tm,mm] of MOOD)if(t>=tm)m=mm;
+  ['neutral','serious','thinking','surprised','smile'].forEach(x=>{$('a-'+x).style.opacity=x===m?1:0});
+  const talk=ci>=0?Math.abs(Math.sin(t*9))*4:0;
+  $('av').style.transform=`scale(${eb(P(t,0.1,0.6))*(1+Math.sin(t*2)*0.012)}) translateY(${-talk}px)`;
+  $('av').style.opacity=k===INT?0:1; $('avname').style.opacity=(k===INT?0:1)*P(t,0.4,0.8);
+  $('stage').style.opacity=1-P(t,DUR-0.4,DUR);
+}
+window.render=render; window.DUR=DUR; window.fit=fit;
+render(0);
+</script>
+</body>
+</html>
