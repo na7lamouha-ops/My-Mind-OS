@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>Boussoula — Hissab el Khorja</title>
+<style>
+@font-face{font-family:Tajawal;font-weight:800;src:url(assets/Tajawal-ExtraBold.ttf)}
+@font-face{font-family:Tajawal;font-weight:700;src:url(assets/Tajawal-Bold.ttf)}
+:root{--bg:#0b0b0b;--acc:#FFD24C;--red:#E5484D;--card:#F4EFE2;--grey:#9a9a9a;--green:#3ddc84}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1080px;height:1920px;overflow:hidden;background:var(--bg)}
+body{font-family:Tajawal,sans-serif;color:#fff;direction:rtl}
+.abs{position:absolute}
+.ltr{direction:ltr;unicode-bidi:isolate;display:inline-block}
+#stage{position:absolute;inset:0;overflow:hidden}
+#glow{position:absolute;inset:0;background:radial-gradient(900px 900px at 50% 38%,rgba(255,210,76,.13),transparent 70%)}
+#hex{position:absolute;inset:0;opacity:.07;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='84' height='146' viewBox='0 0 84 146'%3E%3Cpath d='M42 2l40 23v46L42 94 2 71V25z M42 94v52 M2 71l-0 0' fill='none' stroke='%23FFD24C' stroke-width='2.5'/%3E%3C/svg%3E");background-size:84px 146px}
+/* top bar */
+#progress{top:118px;left:80px;display:flex;gap:10px;direction:ltr}
+#progress i{width:46px;height:9px;border-radius:5px;background:#2b2b2b;display:block}
+#progress i.on{background:var(--acc)}
+#pill{top:100px;right:140px;background:var(--acc);color:#111;font-weight:800;font-size:36px;padding:8px 28px;border-radius:40px}
+#brand{top:160px;left:80px;font-size:28px;color:var(--grey);font-weight:700}
+/* scenes */
+.scene{position:absolute;inset:0;opacity:0}
+.t1{position:absolute;top:250px;left:80px;right:140px;text-align:center;white-space:nowrap;font-weight:800;font-size:92px;line-height:1.2}
+.t2{position:absolute;top:372px;left:80px;right:140px;text-align:center;white-space:nowrap;font-weight:800;font-size:96px;color:var(--acc);line-height:1.2}
+.vis{position:absolute;top:560px;left:80px;right:140px;height:620px;display:flex;align-items:center;justify-content:center}
+.card{background:var(--card);color:#141414;border-radius:28px;box-shadow:0 30px 60px rgba(0,0,0,.5)}
+.note{font-size:26px;color:var(--grey);font-weight:700}
+/* captions */
+#cap{position:absolute;top:1250px;left:80px;right:140px;display:flex;justify-content:center;flex-wrap:wrap;gap:16px;min-height:90px}
+#cap span{font-size:66px;font-weight:800;display:inline-block;opacity:0}
+#cap span.hi{background:var(--acc);color:#111;padding:0 14px;border-radius:12px}
+/* avatar */
+#av{left:80px;top:1390px;width:220px;height:220px}
+#av .ring{position:absolute;inset:0;border-radius:50%;border:7px solid var(--acc);box-shadow:0 0 0 6px #0b0b0b,0 18px 40px rgba(0,0,0,.6);overflow:hidden;background:#111}
+#av img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0}
+#avname{position:absolute;left:330px;top:1470px;font-size:34px;font-weight:800}
+#avname small{display:block;font-size:24px;color:var(--grey);font-weight:700}
+/* wipe + interrupt */
+#wipe{position:absolute;inset:0;background:var(--acc);transform:translateX(110%)}
+#wipe::after{content:"";position:absolute;inset:0;opacity:.18;background-image:inherit}
+#inter{position:absolute;inset:0;background:var(--acc);color:#111;opacity:0;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:0 60px;text-align:center}
+#inter .big{font-size:96px;white-space:nowrap;font-weight:800;line-height:1.35}
+#inter .big b{color:var(--red)}
+#fade{position:absolute;inset:0;background:#000;opacity:0}
+
+/* S0 doors */
+.door{width:300px;height:470px;border-radius:24px 24px 6px 6px;position:relative;display:flex;align-items:flex-end;justify-content:center;padding-bottom:28px;font-size:46px;font-weight:800}
+.door .knob{position:absolute;top:240px;left:34px;width:22px;height:22px;border-radius:50%}
+#d-in{background:linear-gradient(180deg,#ffe48f,var(--acc));color:#111;box-shadow:0 0 90px rgba(255,210,76,.55)}
+#d-in .knob{background:#111}
+#d-out{background:#1c1c1c;border:3px dashed #3a3a3a;color:#555}
+#d-out .knob{background:#333}
+#d-q{position:absolute;top:120px;width:100%;text-align:center;font-size:150px;color:var(--red)}
+/* S1 list */
+.row{display:flex;align-items:center;gap:24px;width:760px;padding:24px 34px;border-radius:24px;border:3px solid #2b2b2b;margin:12px 0;font-size:52px;font-weight:800;background:#141414}
+.row .ck{width:56px;height:56px;border-radius:50%;background:var(--acc);color:#111;display:grid;place-items:center;font-size:36px}
+.row .n{margin-inline-start:auto;font-size:30px;color:var(--grey)}
+#exitrow{border-style:dashed;color:#555}
+#exitrow .ck{background:#2b2b2b;color:var(--red)}
+/* S2 warehouse */
+#shelf{width:760px;display:grid;grid-template-columns:repeat(8,1fr);gap:12px;padding:26px;border-radius:24px;background:#141414;border:3px solid #2b2b2b}
+#shelf i{display:block;height:62px;border-radius:8px;background:#b8894a;border-top:8px solid #d9a866;opacity:0}
+#cnt{font-size:150px;font-weight:800;color:var(--acc);line-height:1}
+#tag{position:absolute;top:30px;left:30px;background:var(--red);color:#fff;font-size:52px;font-weight:800;padding:8px 30px;border-radius:14px;transform:rotate(-8deg)}
+/* S3 fork */
+.path{width:330px;padding:30px 20px;text-align:center}
+.path .h{font-size:56px;font-weight:800}
+.path .s{font-size:30px;color:#555;font-weight:700;margin-top:8px}
+#gap{background:#111;border:4px solid var(--acc);color:var(--acc);border-radius:24px;padding:16px 40px;font-size:64px;font-weight:800}
+/* S4 compass + timeline */
+#comp{width:300px;height:300px;border-radius:50%;border:12px solid var(--acc);position:relative;background:#141414}
+#needle{position:absolute;left:50%;top:50%;width:26px;height:240px;margin:-120px 0 0 -13px}
+#needle .n1{position:absolute;top:0;left:0;width:0;height:0;border-left:13px solid transparent;border-right:13px solid transparent;border-bottom:120px solid var(--red)}
+#needle .n2{position:absolute;bottom:0;left:0;width:0;height:0;border-left:13px solid transparent;border-right:13px solid transparent;border-top:120px solid #eee}
+#tl{width:760px;height:140px;position:relative}
+#tl .line{position:absolute;top:58px;left:40px;right:40px;height:8px;background:#2b2b2b;border-radius:4px}
+#tl .fill{position:absolute;top:58px;right:40px;height:8px;background:var(--acc);border-radius:4px;width:0}
+#tl .dot{position:absolute;top:40px;width:44px;height:44px;border-radius:50%;background:var(--acc)}
+#tl .lb{position:absolute;top:96px;font-size:36px;font-weight:800}
+/* S5 cta */
+#link{padding:26px 46px;font-size:64px;font-weight:800}
+#free{background:var(--green);color:#0b0b0b;font-size:40px;font-weight:800;padding:6px 26px;border-radius:30px}
+#motto{font-size:44px;font-weight:800;color:var(--acc);text-align:center}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="glow"></div><div id="hex"></div>
+
+  <div id="progress" class="abs"><i></i><i></i><i></i><i></i></div>
+  <div id="brand" class="abs">🧭 البوصلة · حساب الخرجة</div>
+  <div id="pill" class="abs">01 · الدخول</div>
+
+  <!-- S0 hook -->
+  <div class="scene" id="s0">
+    <div class="t1" id="s0t1">علّموك تحسب الربح.</div>
+    <div class="t2" id="s0t2">والخرجة؟</div>
+    <div class="vis" style="gap:70px">
+      <div class="door" id="d-in"><span class="knob"></span>دخول</div>
+      <div class="door" id="d-out"><span class="knob"></span><div id="d-q">؟</div>خروج</div>
+    </div>
+  </div>
+
+  <!-- S1 entry -->
+  <div class="scene" id="s1">
+    <div class="t1" id="s1t1">علّموك الدخول.</div>
+    <div class="t2" id="s1t2">برك.</div>
+    <div class="vis" style="flex-direction:column">
+      <div class="row" id="r1"><span class="ck">✓</span>المنتج<span class="n">كيفاش تختار</span></div>
+      <div class="row" id="r2"><span class="ck">✓</span>الأدس<span class="n">كيفاش تطلق</span></div>
+      <div class="row" id="r3"><span class="ck">✓</span>التأكيد<span class="n">كيفاش تأكّد</span></div>
+      <div class="row" id="exitrow"><span class="ck">✕</span>الخرجة<span class="n">حتى واحد</span></div>
+    </div>
+  </div>
+
+  <!-- S2 warehouse -->
+  <div class="scene" id="s2">
+    <div class="t1" id="s2t1">وصلت الهدف.</div>
+    <div class="t2" id="s2t2">ووقفت.</div>
+    <div class="vis" style="flex-direction:column;gap:26px">
+      <div style="position:relative"><div id="shelf"></div><div id="tag">خسارة؟</div></div>
+      <div style="display:flex;align-items:baseline;gap:20px"><span id="cnt" class="ltr">0</span><span style="font-size:52px;font-weight:800">قطعة راقدة</span></div>
+      <div class="note">مثال البوصلة — نادية (شخصية تمثيلية)</div>
+    </div>
+  </div>
+
+  <!-- S3 decision -->
+  <div class="scene" id="s3">
+    <div class="t1" id="s3t1">ماشي خسارة. ماشي ربح.</div>
+    <div class="t2" id="s3t2">قرار.</div>
+    <div class="vis" style="flex-direction:column;gap:30px">
+      <div style="background:#141414;border:3px solid #2b2b2b;border-radius:20px;padding:14px 40px;font-size:46px;font-weight:800" id="box158">📦 نفس الـ <span class="ltr">158</span> قطعة</div>
+      <div style="display:flex;gap:40px">
+        <div class="card path" id="p1"><div class="h">⏹ توقف</div><div class="s">تصفّي الباقي</div></div>
+        <div class="card path" id="p2"><div class="h">▶ تكمل</div><div class="s">تبيع بالخطة</div></div>
+      </div>
+      <div id="gap">الفرق ≈ <span class="ltr">27</span> مليون</div>
+      <div class="note">مثال محسوب بالبوصلة — ماشي وعد</div>
+    </div>
+  </div>
+
+  <!-- S4 day one -->
+  <div class="scene" id="s4">
+    <div class="t1" id="s4t1">يتحسب قبل ما تشري.</div>
+    <div class="t2" id="s4t2">من النهاية.</div>
+    <div class="vis" style="flex-direction:column;gap:46px">
+      <div id="comp"><div id="needle"><div class="n1"></div><div class="n2"></div></div></div>
+      <div id="tl"><div class="line"></div><div class="fill" id="tlfill"></div>
+        <div class="dot" style="right:20px"></div><div class="lb" style="right:0">🎯 الهدف</div>
+        <div class="dot" id="d1" style="left:20px;background:#2b2b2b"></div><div class="lb" style="left:0">اليوم <span class="ltr">1</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S5 CTA -->
+  <div class="scene" id="s5">
+    <div class="t1" id="s5t1">شحال ستوك يبقالك؟</div>
+    <div class="t2" id="s5t2">قبل ما تشري.</div>
+    <div class="vis" style="flex-direction:column;gap:34px">
+      <div id="free">مجاناً</div>
+      <div class="card" id="link"><span class="ltr">al-khaliya.space</span></div>
+      <div id="motto">البوصلة لا تعدك… ترسم المسار.</div>
+    </div>
+  </div>
+
+  <div id="cap"></div>
+
+  <div id="av" class="abs"><div class="ring">
+    <img id="a-neutral" src="assets/av-neutral.png"><img id="a-serious" src="assets/av-serious.png">
+    <img id="a-thinking" src="assets/av-thinking.png"><img id="a-surprised" src="assets/av-surprised.png">
+    <img id="a-smile" src="assets/av-smile.png">
+  </div></div>
+  <div id="avname">NA7LA<small>النحلة</small></div>
+
+  <div id="inter"><div class="big">الستوك اللي يبقى…<br>ماشي <b>خسارة</b>،<br>وماشي ربح.</div></div>
+  <div id="wipe"></div>
+  <div id="fade"></div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const cl=x=>Math.max(0,Math.min(1,x)), P=(t,a,b)=>cl((t-a)/(b-a));
+const eo=x=>1-Math.pow(1-x,3);
+const eb=x=>{const c1=1.70158,c3=c1+1;return 1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2)};
+function rise(id,t,a,d=.45,dy=50){const p=eo(P(t,a,a+d));const e=$(id);e.style.opacity=p;e.style.transform=`translateY(${(1-p)*dy}px)`}
+function pop(id,t,a,d=.4,from=.6){const p=P(t,a,a+d);const e=$(id);e.style.opacity=Math.min(1,p*2);e.style.transform=`scale(${from+(1-from)*eb(p)})`}
+
+// scene timeline [start,end]; chapter changes get a 9-frame wipe (measured on the reference)
+const S=[[0,5.2],[5.2,13.6],[13.6,25.2],[25.2,29.4],[29.4,40.2],[40.2,47.6],[47.6,53.5]];
+const DUR=53.5;
+const CH=[null,'01 · الدخول','02 · المخزن',null,'03 · القرار','04 · النهار الأول',null];
+const PROG=[0,1,2,2,3,4,4];
+const SCN=['s0','s1','s2',null,'s3','s4','s5'];
+const MOOD=[[0,'serious'],[2.6,'neutral'],[5.2,'neutral'],[13.6,'thinking'],[18.4,'surprised'],[21.5,'serious'],[29.4,'serious'],[36,'surprised'],[40.2,'neutral'],[44,'smile'],[47.6,'smile']];
+// captions: [start,end,text]; *word* = highlight. Words land one by one (≤0.33s apart).
+const CAP=[
+ [0.2,2.6,'كامل علّموك تحسب *الربح*…'],[2.6,5.1,'حتى واحد ما علّمك تحسب *الخرجة* تاعك.'],
+ [5.4,7.6,'كيفاش تختار المنتج،'],[7.6,9.6,'كيفاش تطلق الأدس،'],[9.6,11.3,'كيفاش تأكّد…'],[11.3,13.5,'كلش على *الدخول*.'],
+ [13.8,16.0,'نادية وصلت الهدف ووقفت.'],[16.0,18.3,'حلّت المخزن:'],[18.3,20.2,'*158* قطعة.'],[20.2,22.4,'فلوس *راقدة*.'],[22.4,25.0,'حسبتها *خسارة*.'],
+ [29.6,31.6,'هو *قرار*:'],[31.6,33.8,'توقف ولا تكمل.'],[33.8,36.4,'على نفس الـ 158 قطعة،'],[36.4,40.0,'الفرق قريب *27* مليون.'],
+ [40.4,42.6,'وهذا القرار يتحسب'],[42.6,44.2,'*قبل* ما تشري.'],[44.2,46.0,'البوصلة تبدا من *النهاية*'],[46.0,47.5,'وترجع بيك لليوم 1.'],
+ [47.8,50.0,'شوف شحال *ستوك* يبقالك…'],[50.0,51.6,'قبل ما تشري.'],[51.6,53.4,'مجاناً في al-khaliya.space']
+];
+
+// fit titles on one line (shrink font until it fits the safe width)
+function fit(){document.querySelectorAll('.t1,.t2').forEach(e=>{let fs=parseFloat(getComputedStyle(e).fontSize);
+  while(e.scrollWidth>e.clientWidth+1&&fs>40){fs-=2;e.style.fontSize=fs+'px'}})}
+document.fonts.ready.then(fit);
+// build static bits
+const shelf=$('shelf');for(let i=0;i<32;i++){shelf.appendChild(document.createElement('i'))}
+const cap=$('cap');let capIdx=-1;
+function setCap(i){cap.innerHTML='';capIdx=i;if(i<0)return;
+  CAP[i][2].split(' ').forEach(w=>{const s=document.createElement('span');const hi=w.includes('*');s.textContent=w.replace(/\*/g,'');if(hi)s.className='hi';
+    if(/[A-Za-z0-9]/.test(s.textContent)&&!/[؀-ۿ]/.test(s.textContent)){s.style.direction='ltr';s.style.unicodeBidi='isolate'}cap.appendChild(s)})}
+
+function render(t){
+  // which scene
+  let k=S.findIndex(([a,b])=>t>=a&&t<b); if(k<0)k=S.length-1;
+  const [a,b]=S[k], lt=t-a;
+  SCN.forEach((id,i)=>{if(id)$(id).style.opacity=(i===k)?1:0});
+  // header
+  const showHeader=k!==3;
+  $('pill').style.opacity=(CH[k]&&showHeader)?1:0; if(CH[k])$('pill').textContent=CH[k];
+  [...$('progress').children].forEach((e,i)=>e.className=i<PROG[k]?'on':'');
+  // headline lines
+  const id=SCN[k];
+  if(id){rise(id+'t1',t,a+0.05,.4,30);rise(id+'t2',t,a+0.45,.45,30)}
+  // per-scene visuals
+  if(k===0){pop('d-in',t,0.3,.45);pop('d-out',t,1.6,.45);const q=$('d-q');q.style.opacity=P(t,2.8,3.1);q.style.transform=`scale(${.5+.5*eb(P(t,2.8,3.2))}) rotate(${Math.sin(t*6)*6}deg)`}
+  if(k===1){['r1','r2','r3'].forEach((r,i)=>rise(r,t,a+0.3+i*2.1,.4,40));rise('exitrow',t,a+6.3,.45,40);
+    $('exitrow').style.transform+=` translateX(${Math.sin(Math.max(0,t-(a+6.8))*30)*Math.max(0,1-(t-(a+6.8))*3)*14}px)`}
+  if(k===2){const n=Math.round(32*eo(P(t,a+2.4,a+6.4)));[...shelf.children].forEach((e,i)=>e.style.opacity=i<n?1:0);
+    const c=Math.round(158*eo(P(t,a+4.6,a+6.6)));$('cnt').textContent=c;$('cnt').style.color=c===158?'#FFD24C':'#fff';
+    pop('tag',t,a+8.8,.35,1.8)}
+  if(k===4){rise('box158',t,a+0.5,.4);pop('p1',t,a+2.3,.4);pop('p2',t,a+3.1,.4);pop('gap',t,a+7.0,.45,.5)}
+  if(k===5){pop('comp',t,a+0.3,.45);const r=-180*eo(P(t,a+3.8,a+5.4));$('needle').style.transform=`rotate(${-90+r+Math.sin(t*3)*3}deg)`;
+    rise('tl',t,a+1.0,.4);const f=eo(P(t,a+4.0,a+6.2));$('tlfill').style.width=(f*680)+'px';$('d1').style.background=f>.98?'#FFD24C':'#2b2b2b'}
+  if(k===6){pop('free',t,a+0.4,.35);pop('link',t,a+0.8,.45,.7);rise('motto',t,a+2.0,.5)}
+
+  // interrupt: 8-frame fade before, hard cut, sentence rises
+  $('fade').style.opacity=0.85*P(t,25.2-8/30,25.2)*(t<25.2?1:0);
+  $('inter').style.opacity=(k===3)?1:0;
+  if(k===3){const p=eo(P(t,25.3,25.8));const bg=$('inter').firstElementChild;bg.style.opacity=p;bg.style.transform=`translateY(${(1-p)*40}px)`}
+
+  // wipe at chapter/scene changes (except into the interrupt = hard cut)
+  let wx=110;
+  for(let i=1;i<S.length;i++){if(i===3)continue;const w0=S[i][0]-4/30;const f=(t-w0)*30;
+    if(f>=0&&f<=9){wx=f<=4?110*(1-f/4):(f<=5?0:-110*(f-5)/4)}}
+  $('wipe').style.transform=`translateX(${wx}%)`;
+
+  // captions (word by word)
+  const ci=CAP.findIndex(c=>t>=c[0]&&t<c[1]);
+  if(ci!==capIdx)setCap(ci);
+  if(ci>=0){const [c0,c1]=CAP[ci];const sp=[...cap.children];const per=Math.min(.33,(c1-c0-.3)/sp.length);
+    sp.forEach((s,i)=>{const p=P(t,c0+i*per,c0+i*per+0.2);s.style.opacity=Math.min(1,p*1.5);s.style.transform=`translateY(${(1-eo(p))*18}px) scale(${.8+.2*eb(p)})`})}
+  cap.style.opacity=k===3?0:1;
+
+  // avatar: expression swaps (cross-fade 0.15s), breathing, tiny "talk" bob while a caption is on
+  let m='neutral';for(const [tm,mm] of MOOD)if(t>=tm)m=mm;
+  ['neutral','serious','thinking','surprised','smile'].forEach(x=>{$('a-'+x).style.opacity=x===m?1:0});
+  const talk=ci>=0?Math.abs(Math.sin(t*9))*4:0;
+  const avIn=eb(P(t,0.1,0.6));
+  $('av').style.transform=`scale(${avIn*(1+Math.sin(t*2)*0.012)}) translateY(${-talk}px)`;
+  $('av').style.opacity=k===3?0:1; $('avname').style.opacity=(k===3?0:1)*P(t,0.4,0.8);
+  // end: fade out last 0.4s
+  $('stage').style.opacity=1-P(t,DUR-0.4,DUR);
+}
+window.render=render; window.DUR=DUR;
+render(0);
+</script>
+</body>
+</html>
