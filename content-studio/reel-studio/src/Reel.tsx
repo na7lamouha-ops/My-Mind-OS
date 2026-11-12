@@ -1,5 +1,5 @@
 import React from 'react';
-import { AbsoluteFill, Audio, Sequence, spring, staticFile, useCurrentFrame, useVideoConfig } from 'remotion';
+import { AbsoluteFill, Audio, interpolate, Sequence, spring, staticFile, useCurrentFrame, useVideoConfig } from 'remotion';
 import { Mascot } from './Mascot';
 import { theme } from './theme';
 import { chunkCaptions, sceneFrames } from './timing';
@@ -28,29 +28,37 @@ const Captions: React.FC<{ say: string; frames: number; dark?: boolean }> = ({ s
   const { fps } = useVideoConfig();
   const chunks = chunkCaptions(say, frames);
   const c = chunks.find((x) => f >= x.start && f < x.end) ?? chunks[chunks.length - 1];
-  const pop = spring({ frame: f - c.start, fps, config: { damping: 11, mass: 0.5 } });
+  // Reference reel: words land one by one (~0.33s apart), each with a 6-frame pop.
+  const per = (c.end - c.start) / c.words.length;
   return (
-    <div style={{ display: 'flex', gap: 18, justifyContent: 'center', flexWrap: 'wrap', transform: `scale(${0.85 + pop * 0.15})`, opacity: Math.min(1, pop * 1.6) }}>
-      {c.words.map((w, i) => (
-        <span
-          key={i}
-          style={{
-            fontSize: 64,
-            fontWeight: 700,
-            color: w.hi ? theme.highlightText : dark ? theme.bg : theme.text,
-            background: w.hi ? theme.accent : 'transparent',
-            padding: w.hi ? '0 14px' : 0,
-            borderRadius: 10,
-          }}
-        >
-          {w.text}
-        </span>
-      ))}
+    <div style={{ display: 'flex', gap: 18, justifyContent: 'center', flexWrap: 'wrap' }}>
+      {c.words.map((w, i) => {
+        const at = c.start + i * per;
+        const k = spring({ frame: f - at, fps, config: { damping: 12, mass: 0.4 }, durationInFrames: 6 });
+        return (
+          <span
+            key={i}
+            style={{
+              fontSize: 64,
+              fontWeight: 700,
+              color: w.hi ? theme.highlightText : dark ? theme.bg : theme.text,
+              background: w.hi ? theme.accent : 'transparent',
+              padding: w.hi ? '0 14px' : 0,
+              borderRadius: 10,
+              opacity: f >= at ? Math.min(1, k * 1.5) : 0,
+              transform: `translateY(${(1 - k) * 18}px) scale(${0.8 + k * 0.2})`,
+              display: 'inline-block',
+            }}
+          >
+            {w.text}
+          </span>
+        );
+      })}
     </div>
   );
 };
 
-const SceneView: React.FC<{ s: Scene; frames: number; script: ReelScript }> = ({ s, frames, script }) => {
+const SceneView: React.FC<{ s: Scene; frames: number; script: ReelScript; fadeOut?: boolean }> = ({ s, frames, script, fadeOut }) => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
   const t1 = spring({ frame: f, fps, config: { damping: 14 } });
@@ -70,7 +78,7 @@ const SceneView: React.FC<{ s: Scene; frames: number; script: ReelScript }> = ({
   }
 
   return (
-    <AbsoluteFill style={{ background: theme.bg }}>
+    <AbsoluteFill style={{ background: theme.bg, opacity: fadeOut ? interpolate(f, [frames - 8, frames], [1, 0.15], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) : 1 }}>
       <Grid color={theme.grid} />
       {/* top bar */}
       <div style={{ position: 'absolute', top: 110, left: 70, right: 70, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -105,22 +113,87 @@ const SceneView: React.FC<{ s: Scene; frames: number; script: ReelScript }> = ({
   );
 };
 
+/** Panel wipe measured on the reference: 9 frames, enters from the right, fully covers at frame 4, exits left. */
+const Wipe: React.FC = () => {
+  const f = useCurrentFrame();
+  const x = interpolate(f, [0, 4, 5, 9], [100, 0, 0, -100], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+  return (
+    <AbsoluteFill style={{ transform: `translateX(${x}%)`, background: theme.accent }}>
+      <Grid color="rgba(0,0,0,0.08)" />
+    </AbsoluteFill>
+  );
+};
+
+const Sfx: React.FC<{ at: number; src: string; volume?: number }> = ({ at, src, volume = 1 }) => (
+  <Sequence from={Math.max(0, at)} durationInFrames={60}>
+    <Audio src={staticFile(`sfx/${src}.wav`)} volume={volume} />
+  </Sequence>
+);
+
 export const Reel: React.FC<{ script: ReelScript }> = ({ script }) => {
-  let from = 0;
+  const sfx = script.sfx !== false;
+  const starts: number[] = [];
+  let acc = 0;
+  for (const s of script.scenes) {
+    starts.push(acc);
+    acc += sceneFrames(s, script.pace);
+  }
+  const total = acc;
+  const interruptAt = script.scenes.map((s, i) => (s.interrupt ? starts[i] : -1)).filter((x) => x >= 0);
+
   return (
     <AbsoluteFill style={{ background: theme.bg, color: theme.text, fontFamily: theme.sans, direction: 'rtl' }}>
       {script.scenes.map((s, i) => {
         const frames = sceneFrames(s, script.pace);
-        const el = (
-          <Sequence key={i} from={from} durationInFrames={frames}>
-            <SceneView s={s} frames={frames} script={script} />
+        const next = script.scenes[i + 1];
+        return (
+          <Sequence key={i} from={starts[i]} durationInFrames={frames}>
+            <SceneView s={s} frames={frames} script={script} fadeOut={!!next?.interrupt} />
           </Sequence>
         );
-        from += frames;
-        return el;
       })}
+
+      {/* transitions + sound design, all derived from the script */}
+      {script.scenes.map((s, i) => {
+        if (i === 0) return null;
+        const prev = script.scenes[i - 1];
+        const at = starts[i];
+        const frames = sceneFrames(s, script.pace);
+        const out: React.ReactNode[] = [];
+        if (s.interrupt) {
+          // hard cut + sub boom; music drops out (see musicVolume)
+          if (sfx) out.push(<Sfx key="b" at={at} src="boom" volume={0.9} />);
+        } else if (prev.interrupt || s.chapter !== prev.chapter) {
+          out.push(
+            <Sequence key="w" from={at - 4} durationInFrames={10}>
+              <Wipe />
+            </Sequence>,
+          );
+          // sound leads picture: whoosh starts ~0.3s before the panel
+          if (sfx) out.push(<Sfx key="s" at={at - 4 - (prev.interrupt ? 17 : 9)} src={prev.interrupt ? 'whoosh-big' : 'whoosh'} volume={0.8} />);
+        }
+        if (sfx && s.visual && s.visual.type !== 'none') {
+          const v = s.visual;
+          out.push(<Sfx key="p" at={at + 8} src="pop" volume={0.45} />);
+          if (v.type === 'checklist' || v.type === 'funnel') {
+            const n = v.type === 'checklist' ? v.items.length : v.steps.length;
+            const per = (frames * (v.type === 'checklist' ? 0.75 : 0.7)) / n;
+            for (let k = 0; k < n; k++) out.push(<Sfx key={'t' + k} at={at + 6 + Math.round(k * per)} src="tick" volume={0.6} />);
+          }
+          if (v.type === 'card') out.push(<Sfx key="ty" at={at + 10} src="typing" volume={0.35} />);
+        }
+        return <React.Fragment key={i}>{out}</React.Fragment>;
+      })}
+      {sfx && script.scenes[0].visual && <Sfx at={8} src="pop" volume={0.45} />}
+      {sfx && <Sfx at={total - 36} src="sting" volume={0.5} />}
+
       {script.voiceover && <Audio src={staticFile(script.voiceover)} />}
-      {script.music && <Audio src={staticFile(script.music)} volume={0.12} />}
+      {script.music && (
+        <Audio
+          src={staticFile(script.music)}
+          volume={(f) => (interruptAt.some((t) => f >= t - 9 && f < t + 12) ? 0 : 0.12)}
+        />
+      )}
     </AbsoluteFill>
   );
 };

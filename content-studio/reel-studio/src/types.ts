@@ -38,5 +38,7 @@ export type ReelScript = {
   /** Optional files inside public/: recorded voice + music bed. */
   voiceover?: string;
   music?: string;
+  /** Sound design (whoosh/pop/tick/boom/sting from public/sfx). Default on. */
+  sfx?: boolean;
   scenes: Scene[];
 };

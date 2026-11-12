@@ -7,6 +7,7 @@
 | [`01-analyse-reel-rakan.md`](01-analyse-reel-rakan.md) | تحليل خبير للريل: السكريبت كامل، الإلقاء، الميكانيزمات، الهوية البصرية، الأرقام |
 | [`02-strategie-2-versions.md`](02-strategie-2-versions.md) | النسخة A (حسابك) + النسخة B (حسابات faceless) + الدورة إلى 8 حلقات + خطة أسبوع 1 |
 | [`prompts/`](prompts) | البرومبتات الثلاثة تاعنا: 01 تجهيز، 02 الذوق، 03 المونتاج |
+| [`03-timing-transitions-sfx.md`](03-timing-transitions-sfx.md) | التوقيت، الترانزيسيون والأصوات مقاسين frame بـ frame + ملفات الـ SFX في [`sfx/`](sfx) |
 | [`reel-studio/`](reel-studio) | قالب Remotion: JSON يخرج ريل 1080×1920. فيه EP01 جاهز |
 
 ## المجلد على جهازك (نصيحة rakan، مطبّقة)
