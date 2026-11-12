@@ -8,6 +8,7 @@
 | [`02-strategie-2-versions.md`](02-strategie-2-versions.md) | النسخة A (حسابك) + النسخة B (حسابات faceless) + الدورة إلى 8 حلقات + خطة أسبوع 1 |
 | [`prompts/`](prompts) | البرومبتات الثلاثة تاعنا: 01 تجهيز، 02 الذوق، 03 المونتاج |
 | [`03-timing-transitions-sfx.md`](03-timing-transitions-sfx.md) | التوقيت، الترانزيسيون والأصوات مقاسين frame بـ frame + ملفات الـ SFX في [`sfx/`](sfx) |
+| [`RULE-01-reel-charah.md`](RULE-01-reel-charah.md) | **قاعدة 1**: الريل الشارح، القاعدة اللي نكتبو ونصمّمو عليها |
 | [`reel-studio/`](reel-studio) | قالب Remotion: JSON يخرج ريل 1080×1920. فيه EP01 جاهز |
 
 ## المجلد على جهازك (نصيحة rakan، مطبّقة)
@@ -32,6 +33,8 @@ node render.mjs ep01-marge     # يخرج out/ep01-marge.mp4
 node render.mjs ep01-marge --still 300   # صورة (للكاروسيل)
 ```
 حلقة جديدة: انسخ `scripts/ep01-marge.json`، بدّل `id` والمشاهد، وزيدها في `src/Root.tsx`.
+
+**الحساب:** `"theme": "boussoula" | "ecomanita" | "tassyir"` (نفس الـ layout تاع النوع 1، يتبدّل البراند برك).
 
 **صيغة المشهد:** `chapter`, `progress`, `title1` (عريض)، `title2` (خط الرقعة الذهبي)، `visual` (`equation | checklist | funnel | countUp | versus | keyword | card`)، `say` (الكلام، والكلمة بين `*نجوم*` تتلوّن)، `interrupt` (شاشة ذهبية)، `mascot` (`talk | think | wink`)، `duration` (اختياري، وإلا يتحسب من عدد الكلمات بسرعة 2.6 كلمة/ثانية).
 

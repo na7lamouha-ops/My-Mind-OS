@@ -5,9 +5,11 @@ import { FPS, H, W } from './theme';
 import { totalFrames } from './timing';
 import type { ReelScript } from './types';
 import ep01 from '../scripts/ep01-marge.json';
+import eco01 from '../scripts/eco01-abwab.json';
+import tas01 from '../scripts/tas01-talabiya.json';
 
 // Every JSON in scripts/ becomes a composition. Add new episodes here.
-const scripts = [ep01] as ReelScript[];
+const scripts = [ep01, eco01, tas01] as ReelScript[];
 
 export const Root: React.FC = () => (
   <>

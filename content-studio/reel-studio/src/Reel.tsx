@@ -1,7 +1,7 @@
 import React from 'react';
 import { AbsoluteFill, Audio, interpolate, Sequence, spring, staticFile, useCurrentFrame, useVideoConfig } from 'remotion';
 import { Mascot } from './Mascot';
-import { theme } from './theme';
+import { applyTheme, theme } from './theme';
 import { chunkCaptions, sceneFrames } from './timing';
 import type { ReelScript, Scene } from './types';
 import { VisualView } from './Visuals';
@@ -42,7 +42,7 @@ const Captions: React.FC<{ say: string; frames: number; dark?: boolean }> = ({ s
               fontSize: 64,
               fontWeight: 700,
               color: w.hi ? theme.highlightText : dark ? theme.bg : theme.text,
-              background: w.hi ? theme.accent : 'transparent',
+              background: w.hi ? theme.highlight : 'transparent',
               padding: w.hi ? '0 14px' : 0,
               borderRadius: 10,
               opacity: f >= at ? Math.min(1, k * 1.5) : 0,
@@ -68,7 +68,7 @@ const SceneView: React.FC<{ s: Scene; frames: number; script: ReelScript; fadeOu
     // Pattern interrupt: inverted colours, one big calligraphic sentence.
     const k = spring({ frame: f, fps, config: { damping: 18 } });
     return (
-      <AbsoluteFill style={{ background: theme.accent, color: theme.bg, alignItems: 'center', justifyContent: 'center', padding: 90 }}>
+      <AbsoluteFill style={{ background: theme.interruptBg, color: theme.interruptText, alignItems: 'center', justifyContent: 'center', padding: 90 }}>
         <div style={{ position: 'absolute', top: 120, right: 90, fontSize: 34, fontWeight: 700, direction: 'ltr' }}>{script.handle}</div>
         <div style={{ fontFamily: theme.callig, fontSize: 104, lineHeight: 1.55, textAlign: 'center', opacity: k, transform: `translateY(${(1 - k) * 40}px)` }}>
           {s.say.replace(/\*/g, '')}
@@ -131,6 +131,7 @@ const Sfx: React.FC<{ at: number; src: string; volume?: number }> = ({ at, src, 
 );
 
 export const Reel: React.FC<{ script: ReelScript }> = ({ script }) => {
+  applyTheme(script.theme);
   const sfx = script.sfx !== false;
   const starts: number[] = [];
   let acc = 0;

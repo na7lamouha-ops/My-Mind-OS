@@ -29,8 +29,12 @@ export type Scene = {
   mascot?: 'talk' | 'think' | 'wink';
 };
 
+import type { ThemeName } from './theme';
+
 export type ReelScript = {
   id: string;
+  /** Account brand: boussoula | ecomanita | tassyir (Type 1 layout is the same for all). */
+  theme?: ThemeName;
   handle: string;
   totalChapters: number;
   /** Words per second used for auto timing (Rakan's reel ≈ 2.6). */

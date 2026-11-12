@@ -20,13 +20,13 @@ export const Mascot: React.FC<{ mood?: 'talk' | 'think' | 'wink'; size?: number 
     <div style={{ width: size, height: size, transform: `scale(${pop})` }}>
       <svg viewBox="0 0 200 200" width={size} height={size}>
         <circle cx="100" cy="100" r="92" fill={theme.accent} />
-        <circle cx="100" cy="100" r="80" fill={theme.surface} />
+        <circle cx="100" cy="100" r="80" fill="#18161f" />
         {[0, 90, 180, 270].map((a) => (
           <rect key={a} x="97" y="24" width="6" height="12" rx="2" fill={theme.accent} transform={`rotate(${a} 100 100)`} />
         ))}
         <g transform={`rotate(${needle} 100 100)`} opacity={0.35}>
           <polygon points="100,30 108,100 92,100" fill={theme.bad} />
-          <polygon points="100,170 108,100 92,100" fill={theme.text} />
+          <polygon points="100,170 108,100 92,100" fill="#f0f0f5" />
         </g>
         {/* eyes */}
         <circle cx="76" cy="90" r="16" fill="#fff" />
@@ -35,11 +35,11 @@ export const Mascot: React.FC<{ mood?: 'talk' | 'think' | 'wink'; size?: number 
         ) : (
           <circle cx="124" cy="90" r="16" fill="#fff" />
         )}
-        {!blink && <circle cx="78" cy={92 + lookUp} r="7" fill={theme.bg} />}
-        {!blink && mood !== 'wink' && <circle cx="126" cy={92 + lookUp} r="7" fill={theme.bg} />}
-        {blink && <rect x="60" y="88" width="32" height="5" rx="2" fill={theme.bg} />}
+        {!blink && <circle cx="78" cy={92 + lookUp} r="7" fill="#0b0a10" />}
+        {!blink && mood !== 'wink' && <circle cx="126" cy={92 + lookUp} r="7" fill="#0b0a10" />}
+        {blink && <rect x="60" y="88" width="32" height="5" rx="2" fill="#0b0a10" />}
         {/* mouth */}
-        <ellipse cx="100" cy="132" rx={mood === 'think' ? 7 : 16} ry={mouth} fill={theme.bg} />
+        <ellipse cx="100" cy="132" rx={mood === 'think' ? 7 : 16} ry={mouth} fill="#0b0a10" />
         {mood === 'think' && (
           <g fill={theme.accent} opacity={interpolate(f % 30, [0, 15, 30], [0.3, 1, 0.3])}>
             <circle cx="160" cy="40" r="6" />
