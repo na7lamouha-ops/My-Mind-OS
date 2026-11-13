@@ -1,0 +1,10 @@
+{
+  "_doc": "المسار = نفس مدخلات MOOD GUIDE + أول يوم بيع. يتحفظ مرة وحدة قبل التاست، والمتابعة تقارن بيه.",
+  "startDate": "2026-10-23",
+  "settings": { "target": 1000000, "period": 40, "targetMode": "cash", "rate": 245, "pack": 50, "delCost": 200, "retCost": 100, "surplus": 20, "persona": "beginner", "abandon": 15, "abRec": 25 },
+  "products": [
+    { "name": "روب لينا", "sell": 6800, "buy": 2300, "leadUsd": 2.0, "conf": 57, "del": 50, "preorder": true, "dep": 50 },
+    { "name": "طقم لينا", "sell": 5500, "buy": 1700, "leadUsd": 1.5, "conf": 57, "del": 50, "preorder": true, "dep": 50 }
+  ],
+  "selection": null
+}

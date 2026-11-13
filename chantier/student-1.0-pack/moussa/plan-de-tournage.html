@@ -1,0 +1,707 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Formation Manita, plan de tournage</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Noto+Kufi+Arabic:wght@600;800&display=swap">
+<style>
+/* Layout : une colonne de lecture RTL ; en haut les deux parties (A : comment c'est fabriqué, B : l'app), puis une fiche par module, puis les prises, puis ce qui doit être prouvé avant la caméra. Rouge « REC » = à prouver. */
+:root{
+  --bg:#f2f3f1; --panel:#ffffff; --ink:#1a2120; --mute:#5b6764; --line:#d4dad7;
+  --accent:#1f5f8b; --accent-soft:#e3edf5;
+  --ok:#2c7a4b; --ok-soft:#e2f2e8;
+  --part:#a5670f; --part-soft:#fbefdc;
+  --rec:#b3261e; --rec-soft:#f9e3e1;
+  --f-display:"Noto Kufi Arabic","IBM Plex Sans Arabic",Tahoma,sans-serif;
+  --f-body:"IBM Plex Sans Arabic","Segoe UI",Tahoma,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121716; --panel:#1a2120; --ink:#e5ebe9; --mute:#9aa7a3; --line:#2d3836;
+  --accent:#6fb0dc; --accent-soft:#17283a;
+  --ok:#6cc893; --ok-soft:#163023;
+  --part:#eeaa52; --part-soft:#33261a;
+  --rec:#f08b84; --rec-soft:#3a1e1c; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121716; --panel:#1a2120; --ink:#e5ebe9; --mute:#9aa7a3; --line:#2d3836;
+  --accent:#6fb0dc; --accent-soft:#17283a;
+  --ok:#6cc893; --ok-soft:#163023;
+  --part:#eeaa52; --part-soft:#33261a;
+  --rec:#f08b84; --rec-soft:#3a1e1c; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.8 var(--f-body);margin:0}
+.wrap{max-width:900px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 72px;display:flex;flex-direction:column;gap:44px}
+.wrap>*{min-width:0}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.45}
+h1{font-size:1.8rem;font-weight:800}
+h2{font-size:1.3rem;font-weight:800;display:flex;flex-wrap:wrap;gap:10px;align-items:baseline}
+h3{font-size:1.06rem;font-weight:600}
+p{margin:0}
+.fr{direction:ltr;unicode-bidi:isolate;font-family:var(--f-mono);font-size:.86em}
+.lat{direction:ltr;unicode-bidi:isolate}
+.eyebrow{font:500 .76rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent);direction:ltr;text-align:right}
+.lead{color:var(--mute);max-width:64ch}
+header{display:flex;flex-direction:column;gap:10px}
+section{display:flex;flex-direction:column;gap:16px}
+.h-fr{font:500 .74rem var(--f-mono);color:var(--mute);letter-spacing:.06em;text-transform:uppercase;direction:ltr}
+
+/* légende */
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;color:var(--mute);font-size:.88rem}
+.st{font:500 .72rem var(--f-mono);padding:2px 9px;border-radius:999px;border:1px solid;white-space:nowrap;direction:ltr;unicode-bidi:isolate;display:inline-block;line-height:1.7}
+.st.ok{color:var(--ok);background:var(--ok-soft);border-color:var(--ok)}
+.st.part{color:var(--part);background:var(--part-soft);border-color:var(--part)}
+.st.rec{color:var(--rec);background:var(--rec-soft);border-color:var(--rec)}
+.st.rec::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--rec);margin-inline-end:6px;vertical-align:1px}
+
+/* les deux parties */
+.axes{display:grid;grid-template-columns:1fr;gap:12px}
+.band{border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:8px;border:1px solid var(--line);background:var(--panel)}
+.band.a{border-inline-start:4px solid var(--accent)}
+.band.b{border-inline-start:4px solid var(--ok)}
+.band.m{border-inline-start:4px solid var(--part)}
+.band.bridge{border-style:dashed}
+.band .row{display:flex;flex-wrap:wrap;gap:6px}
+.code{font:600 .74rem var(--f-mono);padding:2px 8px;border-radius:6px;background:var(--bg);border:1px solid var(--line);color:var(--ink);direction:ltr;unicode-bidi:isolate;white-space:nowrap}
+
+/* décisions */
+.decide{background:var(--part-soft);border:1px solid var(--part);border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:10px}
+.decide ol{margin:0;padding-inline-start:22px;display:flex;flex-direction:column;gap:6px}
+
+/* tableaux */
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+table{border-collapse:collapse;width:100%;direction:ltr;font:14px/1.5 var(--f-mono);font-variant-numeric:tabular-nums;min-width:640px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;color:var(--mute);font-size:.78rem;letter-spacing:.04em;text-transform:uppercase;background:var(--bg)}
+tr:last-child td{border-bottom:0}
+td .st{font-size:.68rem}
+
+/* fiches de module */
+.mods{display:flex;flex-direction:column;gap:14px}
+.mod{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px;display:flex;flex-direction:column;gap:12px}
+.mod-h{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.mod-h h3{flex:1 1 220px}
+.meta{display:flex;flex-wrap:wrap;gap:6px;color:var(--mute);font-size:.85rem;align-items:center}
+.cols{display:grid;grid-template-columns:1fr;gap:12px}
+@media (min-width:760px){.cols{grid-template-columns:1.25fr 1fr}}
+.cols>div{min-width:0;display:flex;flex-direction:column;gap:6px}
+.lbl{font:600 .78rem var(--f-display);color:var(--mute)}
+ol.screen,ul.need{margin:0;padding-inline-start:22px;display:flex;flex-direction:column;gap:4px}
+ul.need li::marker{color:var(--rec)}
+.bridge-line{border-inline-start:3px solid var(--ok);background:var(--ok-soft);padding:10px 14px;border-radius:0 8px 8px 0;font-weight:500}
+.warn{color:var(--rec);font-weight:500}
+.note{color:var(--mute);font-size:.9rem}
+
+/* prises */
+.takes{display:flex;flex-direction:column;gap:10px}
+.take{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;align-items:start}
+.take input{width:20px;height:20px;margin-top:6px;accent-color:var(--ok);grid-row:span 3}
+.take input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.take b{font-family:var(--f-display);font-weight:600}
+.take .meta{grid-column:2}
+.take.done{opacity:.6}
+
+/* règles */
+ul.rules{margin:0;padding-inline-start:22px;display:flex;flex-direction:column;gap:6px}
+.why{margin:0;display:grid;grid-template-columns:1fr;gap:8px}
+@media (min-width:640px){.why{grid-template-columns:repeat(3,1fr)}}
+.why>div{min-width:0;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.why dt{font:600 .78rem var(--f-display);color:var(--accent)}
+.why dd{margin:0;font-size:.92rem}
+.why>div:nth-child(3) dt{color:var(--rec)}
+.script{border-top:1px dashed var(--line);padding-top:10px}
+.script summary{cursor:pointer;font:600 .92rem var(--f-display);color:var(--accent)}
+.script summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sc{display:flex;flex-direction:column;gap:4px;margin-top:10px}
+.sc p{margin:0}
+.sc ol{margin:0;padding-inline-start:22px;display:flex;flex-direction:column;gap:6px}
+.sl{font:600 .74rem var(--f-display);padding:1px 10px;border-radius:999px;align-self:flex-start}
+.sl.say{background:var(--accent-soft);color:var(--accent)}
+.sl.do{background:var(--part-soft);color:var(--part)}
+.sl.work{background:var(--ok-soft);color:var(--ok)}
+.sl.end{background:var(--rec-soft);color:var(--rec)}
+footer{color:var(--mute);font-size:.86rem;display:flex;flex-direction:column;gap:6px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+
+.lois{display:grid;gap:10px;margin:8px 0 14px}
+.loi{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--bg)}
+.loi b{display:block;margin-bottom:4px}
+.loi p{margin:0}
+.loi .story{color:var(--mute);margin-top:6px;font-size:.95rem}
+.loi .story .lbl{display:block;margin:0 0 2px}
+.lnum{color:var(--accent);font-weight:700;margin-left:6px}
+.lrow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:10px 0}
+.lrow .lbl{margin:0 0 0 6px}
+.fam h4{margin:12px 0 6px;font-size:1rem;color:var(--accent)}
+.angs{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px}
+.ang{border:1px solid var(--line);border-radius:10px;padding:8px 12px;background:var(--bg)}
+.ang b{display:block;margin-bottom:4px}
+.ang p{margin:2px 0;font-size:.95rem}
+.ang .k{color:var(--mute);font-size:.82rem;margin-left:6px}
+.flow{border:1px solid var(--accent);background:var(--accent-soft);border-radius:10px;padding:10px 14px;margin:10px 0}
+.flow ol{margin:6px 0 0;padding-right:20px}
+.ex6{border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:8px 0}
+.ex6 summary{cursor:pointer;font-weight:700;color:var(--accent)}
+.ex6 .k{color:var(--mute);font-size:.85rem;margin-left:6px}
+.ex6 p{margin:6px 0}
+.ex6 h4{margin:12px 0 6px;font-size:1rem;color:var(--accent)}
+.tree{direction:ltr;text-align:left;overflow-x:auto;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;font-family:var(--f-mono,monospace);font-size:.8rem;line-height:1.5;margin:6px 0;white-space:pre}
+.kws{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px;margin:6px 0 12px}
+.kw{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--bg)}
+.kw-h{font-family:var(--f-mono,monospace);font-weight:600;color:var(--accent);text-align:right}
+.kw-q{font-weight:700;margin:4px 0}
+.kw p{margin:4px 0}
+.kw .k{color:var(--mute);font-size:.82rem;margin-left:6px}
+.lchip{border:1px solid var(--accent);color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:2px 10px;font-size:.88rem}
+</style>
+
+<div class="wrap" dir="rtl" lang="ar">
+<header>
+  <p class="eyebrow">Formation ecom manita · plan de tournage · version 0.3.9 · 26/10/2026</p>
+  <h1>البلان تاع التصوير، كلمة بكلمة : واش تقول، واش دير</h1>
+  <p class="lead">الفورماسيون تمشي كيما الأولى : نبداو بالميندسيت، من بعد نشرحو كيفاش تصنعت الأوتوماسيون أجون بأجون، باش لي ما يعرفش <span class="lat">Claude</span> يقدر يصنعها وحدو. وفي الأخير نديوهم للآب لي تدير الطريق كامل بلينك واحد. لكل موديل : واش تقول، واش دير، وواش تحكي وClaude يخدم.</p>
+  <div class="legend">
+    <span><span class="st ok">Prêt</span> تقدر تصوّرو كيما راهو</span>
+    <span><span class="st part">Partiel</span> صوّر غير الجزء لي خدم</span>
+    <span><span class="st rec">Jamais prouvé</span> ما تصوّرش وعد ما كانش</span>
+  </div>
+</header>
+<section id="axes"><h2>المحاور الكبار <span class="h-fr">Les grands axes</span></h2><div class="axes"><div class="band m"><h3>الافتتاح : الميندسيت</h3><p>عشرين قانون تاع تاجر، كل قانون مع قصة قصيرة. الربح هو الكاش لي رجع، كلش يتولد محبوس، والقرار بالمعطيات.</p><div class="row"><span class="code">M0 Mindset</span></div></div><div class="band m"><h3>الأساس : <span class="lat">Claude</span> من الصفر</h3><p>لواحد عمرو ما استعمل <span class="lat">Claude</span> : واش هو، الأبليكاسيون تاع البيرو، الأجون، الكونيكتور، وكيفاش تبني بيه وحدك.</p><div class="row"><span class="code">M1 Claude de zéro</span><span class="code">M2 Construire avec Claude</span><span class="code">Lexique</span></div></div><div class="band a"><h3>الجزء الأول : كيفاش تصنعت الأوتوماسيون</h3><p>كيما شرحنا <span class="lat">Trello</span> في الفورماسيون الأولى : كل أجون وحدو، واش يعاونا، كيفاش يديرها بسرعة، قداش تتعب باليد، وكيفاش تصنع. بالترتيب تاع الطريق.</p><div class="row"><span class="code">M3 Recherche produit</span><span class="code">M4 Spy Ad Library d'un pays</span><span class="code">M5 Spy engagement Instagram</span><span class="code">M6 Analyse, angles, textes</span><span class="code">M7 Montage</span><span class="code">M8 Porte break-even</span><span class="code">M9 Boussole</span><span class="code">M10 Page produit Tassyir</span><span class="code">M11 Média buying + UTM</span><span class="code">M12 Testing + lecture du soir</span><span class="code">M13 Scaling</span><span class="code">M14 Manager</span><span class="code">M15 Carnet du business</span><span class="code">M16 Coach</span></div></div><div class="band bridge"><h3>القنطرة : المكتب، الحماية والتنصيب</h3><p>كلش يتجمع في مهمة وحدة تمشي مرحلة بمرحلة، بالحمايات المكتوبة في الكود، والكليان ينصّبها بميساج ملصوق.</p><div class="row"><span class="code">M17 Bureau, mission en 19 étapes</span><span class="code">M18 Protections et mots-clés</span><span class="code">M19 Installation chez le client</span></div></div><div class="band b"><h3>الجزء الثاني : الآب، كلش بكليك</h3><p>كيما ديناهم للـ <span class="lat">ERP</span> في الفورماسيون الأولى : لينك درايف واحد، والأسئلة بالأزرار في الآب وفي تيليغرام.</p><div class="row"><span class="code">M20 App + Telegram</span></div></div><div class="band m"><h3>الختام : الميندسيت تاع المدة الطويلة</h3><p>الخسارة في التيست معلومة، ما تطلّعش بلا معطيات، والقرار عندك.</p><div class="row"><span class="code">M21 Mindset</span></div></div></div><div class="decide"><h3>واش تبدّل مع النسخة الأخيرة</h3><ol>
+<li><b>الشكل : تختار ✓</b> الأجونات أولاً، والآب في الأخير، وكل موديل يكمل بجملة تشوّق للآب.</li>
+<li><b>الميندسيت :</b> عشرين قانون من الفيشي تاع الميندسيت، وكل قانون مع القصة لي تمشي معاه، كلمة بكلمة.</li>
+<li><b>المكتب :</b> الموديل تاع المكتب يورّي المهمة مرحلة بمرحلة، من لينك درايف حتى الكومبانيا المحبوسة و« لانسي ».</li>
+<li><b>الأرقام :</b> كل رقم في الجداول جاي من الشرح الكامل تاع النسخة الأخيرة، بالدينار وبالدولار.</li>
+<li><b>قبل الكاميرا :</b> كاين حوايج الشرح يقولهم بزوج طرق. راهم في جدول وحدهم تحت، ولازم يتحسمو قبل ما يتصوّرو.</li>
+</ol></div></section>
+<section id="vue"><h2>الموديلات في جدول <span class="h-fr">Vue d'ensemble</span></h2><div class="tbl" dir="ltr" lang="fr"><table><thead><tr><th>Code</th><th>Module</th><th>Agent / outil</th><th>Prise</th><th>Statut</th><th>Filmable</th></tr></thead><tbody><tr><td>M0</td><td>Mindset, ouverture</td><td>aucun</td><td>P1</td><td><span class="st ok">Prêt</span></td><td>maintenant</td></tr><tr><td>M1</td><td>Claude de zéro</td><td>app bureau (web en passant)</td><td>P2</td><td><span class="st part">Prêt à écrire</span></td><td>maintenant</td></tr><tr><td>M2</td><td>Construire avec Claude</td><td>app bureau + extension Chrome</td><td>P2</td><td><span class="st part">Méthode</span></td><td>après un essai bureau → extension</td></tr><tr><td>M3</td><td>Recherche produit</td><td>recherche-produit-cod (hors paquet vendu)</td><td>P2</td><td><span class="st part">Méthode</span></td><td>maintenant</td></tr><tr><td>M4</td><td>Spy Ad Library d'un pays</td><td>spy</td><td>P2</td><td><span class="st part">Partiel</span></td><td>maintenant, sans l'onglet SPY</td></tr><tr><td>M5</td><td>Spy engagement Instagram</td><td>engagement</td><td>P3</td><td><span class="st part">Partiel</span></td><td>après correction du LIS-MOI</td></tr><tr><td>M6</td><td>Analyse, angles, textes</td><td>règles (aucun agent vidéo)</td><td>P3</td><td><span class="st part">Méthode + règles</span></td><td>maintenant</td></tr><tr><td>M7</td><td>Montage</td><td>editeur</td><td>P4</td><td><span class="st part">Lot réel une fois</span></td><td>après un lot d'essai</td></tr><tr><td>M8</td><td>Porte break-even</td><td>manita-testing.py --break-even</td><td>P5</td><td><span class="st part">Règle du code</span></td><td>maintenant, exemple fictif</td></tr><tr><td>M9</td><td>Boussole</td><td>/boussole + site « بوصلة التاجر »</td><td>P5</td><td><span class="st part">Marge OK</span></td><td>marge maintenant, capital après correction</td></tr><tr><td>M10</td><td>Page produit Tassyir</td><td>page</td><td>P5</td><td><span class="st rec">Jamais prouvé</span></td><td>après preuve</td></tr><tr><td>M11</td><td>Média buying + UTM</td><td>testing</td><td>P6</td><td><span class="st rec">Jamais prouvé</span></td><td>après un vrai test</td></tr><tr><td>M12</td><td>Testing + lecture du soir</td><td>testing</td><td>P6</td><td><span class="st rec">Jamais prouvé</span></td><td>après un vrai test</td></tr><tr><td>M13</td><td>Scaling</td><td>scaling</td><td>P6</td><td><span class="st rec">Jamais prouvé</span></td><td>après un gagnant</td></tr><tr><td>M14</td><td>Manager</td><td>manager</td><td>P6</td><td><span class="st part">Partiel</span></td><td>avec P6</td></tr><tr><td>M15</td><td>Carnet du business</td><td>manita-carnet.py</td><td>P6</td><td><span class="st part">À relire</span></td><td>avec P6</td></tr><tr><td>M16</td><td>Coach</td><td>coach</td><td>P6</td><td><span class="st part">Partiel</span></td><td>avec P6</td></tr><tr><td>M17</td><td>Bureau, mission en 19 étapes</td><td>bureau localhost:4620 + Telegram</td><td>P7</td><td><span class="st rec">Jamais prouvé chez un client</span></td><td>sur un PC de test</td></tr><tr><td>M18</td><td>Protections et mots-clés</td><td>code (meta-mcp, missions, moteur…)</td><td>P7</td><td><span class="st part">Règle du code</span></td><td>maintenant</td></tr><tr><td>M19</td><td>Installation chez le client</td><td>installeur 0.3.9</td><td>P7</td><td><span class="st part">Windows à prouver</span></td><td>Mac maintenant, Windows sur un vrai PC</td></tr><tr><td>M20</td><td>App + Telegram + extension</td><td>app Tassyir, Manita Board</td><td>P8</td><td><span class="st rec">Jamais prouvé</span></td><td>en dernier</td></tr><tr><td>M21</td><td>Mindset, clôture</td><td>aucun</td><td>P1</td><td><span class="st ok">Prêt</span></td><td>maintenant</td></tr></tbody></table></div></section>
+<section id="modules"><h2>كل موديل بالتفصيل <span class="h-fr">Modules</span></h2>
+<p class="note">لكل موديل : واش يعاونا، واش يبان في الشاشة، الأرقام، واش لازم يكون واجد قبل الكاميرا، القانون لي يبان فيه، والسكريبت كلمة بكلمة.</p>
+<div class="decide" style="background:var(--accent-soft);border-color:var(--accent)"><h3>كل فيديو أجون يمشي بنفس الترتيب</h3><ol>
+<li><b>واش يعاونا :</b> المشكل لي يحلّو، في جملة.</li>
+<li><b>بسرعة :</b> يديرها قدامهم بكليك ولا ببرومبت.</li>
+<li><b>باليد :</b> نفس الخدمة بلا أجون، وقداش تتعب. مثال : الـ <span class="lat">SKU</span> تصويرة بتصويرة في صفحة المنتوج.</li>
+<li><b>البروسيس :</b> كيفاش تصنع، خطوة بخطوة، في أبليكاسيون البيرو.</li>
+<li><b>وClaude يخدم :</b> الجملة لي تقولها وهو يخدم، باش لي يشوف يفهم قداش الخدمة كبيرة.</li>
+<li><b>الجملة الأخيرة :</b> نفس الحاجة في الآب.</li>
+</ol></div>
+<div class="mods">
+<article class="mod" id="m0">
+<div class="mod-h"><span class="code">M0</span><h3>الميندسيت : القوانين قبل الأدوات</h3><span class="st ok">Prêt</span></div>
+<div class="meta">ما كانش أجون. عشرين قانون تاع تاجر، كل قانون مع قصة قصيرة</div>
+
+<div class="cols"><div><span class="lbl">على الشاشة</span><ol class="screen"><li>الوجه قدام الكاميرا، والقوانين يبانو واحد بواحد.</li><li>كل قانون : الجملة، ومن بعد القصة لي تمشي معاه، ومن بعد « واش نتعلّمو ».</li><li>في الأخير : « هاذ القوانين، الماشينة تطبّقهم وحدها، ونورّيكم وين ».</li></ol></div>
+<div><span class="lbl">قبل ما تصوّر</span><ul class="need"><li>القصص بأسامي مخترعة، وتتقال كأمثلة، ماشي نتائج كليان.</li><li>الأفكار تاع البوصلة تتشرح بالكلام تاعك، ما تتنسخش النصوص تاعها.</li></ul><span class="lbl">الجملة الأخيرة</span><p class="bridge-line">هاذ القوانين مكتوبين داخل الأجونات والمكتب. في كل فيديو نورّيكم وين الماشينة تطبّق واحد منهم وحدها.</p></div></div>
+<span class="lbl">القوانين العشرين، كل واحد مع القصة تاعو</span><div class="lois"><div class="loi"><b><span class="lnum">القانون الأول</span> ابدا من النهاية</b><p>قبل الموديل : شحال تحب تربح، كاش، وفي شحال من وقت، وبأنهي رأس مال. المنتوج يجي من بعد باش يخدم الهدف.</p><p class="story"><span class="lbl">القصة : الهدف قبل المنتوج</span>واحد جاب موديل شاب، صرف، باع، وفي آخر الشهر ما عرفش واش هاذا مليح ولا لا، لخاطر ما كانش عندو هدف يقارن بيه.</p></div><div class="loi"><b><span class="lnum">القانون الثاني</span> الربح هو الكاش لي رجع</b><p>المبيعات ماشي ربح، السلعة في الرف ماشي ربح، والكوليات في الطريق ماشي ربح.</p><p class="story"><span class="lbl">القصة : مبيعات كبار والجيب فارغ</span>واحد يقول للناس « درت مبيعات كبار هاذ الشهر ». بصح نص الكوليات راجعين، الستوك مكدّس، والكاش ما يغطّيش حتى البوب.</p></div><div class="loi"><b><span class="lnum">القانون الثالث</span> احسب على الكولي الواصل</b><p>الربح على الكولي = القبض ناقص البوب، السلعة، الروتور، والعمولة.</p></div><div class="loi"><b><span class="lnum">القانون الرابع</span> المارج بالدينار ماشي بالنسبة</b><p>نسبة كبيرة تبان مليحة، بصح شوف واش يبقالك في يدك على كل كولي.</p><p class="story"><span class="lbl">القصة : مارج كبير وشوية في الجيب</span>وحدة فرحانة بالمارج الكبير. في آخر الشهر حسبت الكولي الواصل : البوب، الروتور، التوصيل، العمولة. بقالها شوية برك.</p></div><div class="loi"><b><span class="lnum">القانون الخامس</span> حتى رقم من الراس</b><p>الحساب باليد ديما متفائل. الأداة تحسب، وانت تقرر.</p><p class="story"><span class="lbl">القصة : الحساب باليد</span>واحد حسب في الورقة : « رابح ». نسى التوصيل والعمولة. الموديل كان خاسر من البداية، وصرف عليه أسابيع.</p></div><div class="loi"><b><span class="lnum">القانون السادس</span> البوب ماشي ديما هي المشكل</b><p>قبل ما تحبس بوب، شوف التأكيد والتوصيل.</p><p class="story"><span class="lbl">القصة : البوب الخاسرة لي كانت رابحة</span>واحد حبس بوب لخاطر التأكيد ضعيف. من بعد فهم : أول مكالمة كانت تجي بعد ساعات. البوب كانت مليحة، المشكل في التيليفون.</p></div><div class="loi"><b><span class="lnum">القانون السابع</span> احسب السقف قبل أول دينار</b><p>أقصى ليد تخلّصو، وشحال تصرف قبل « ستوب ». هكا التوقيف يولّي قرار، ماشي خوف.</p></div><div class="loi"><b><span class="lnum">القانون الثامن</span> التيست طلب قبل الستوك</b><p>ما تخيّطش قبل ما تعرف بلي يبيع. المأكّد بلا ستوك هو أصدق إشارة.</p><p class="story"><span class="lbl">القصة : مأكّد بلا ستوك</span>وحدة دارت تيست بلا ما تخيّط. جاوها مأكّدات والسلعة ماكانتش. خافت، بصح هاذا أحسن خبر : الزبونات قالو « واه » لموديل ما كانش موجود.</p></div><div class="loi"><b><span class="lnum">القانون التاسع</span> احكم على الحاجة الصحيحة</b><p>في التيست على المأكّدة، من بعد على الواصلة.</p></div><div class="loi"><b><span class="lnum">القانون العاشر</span> متغيّر واحد في المرة</b><p>بين فيديو وفيديو بدّل حاجة وحدة، وإلا ما تعرفش واش ربّح.</p></div><div class="loi"><b><span class="lnum">القانون الحادي عشر</span> واجب واحد في المرة</b><p>واش، علاش بالدينار، وين، وكيفاش تعرف بلي كمّلت. اللي يمسّ الدراهم أولاً.</p></div><div class="loi"><b><span class="lnum">القانون الثاني عشر</span> الإنقاذ قبل الأسئلة</b><p>حساب ينزف : قول شحال يخسر، علاش، وثلاث حوايج اليوم برك.</p></div><div class="loi"><b><span class="lnum">القانون الثالث عشر</span> الستوك كاش محبوس</b><p>احسبو بثمن الشراء، وشحال من نهار يغطّي. ستوك راقد بزاف = ممنوع تخيّط جديد.</p><p class="story"><span class="lbl">القصة : آخر طلبية للورشة</span>تاجر عرف وقتاش يعطي آخر طلبية للورشة قبل ما يكمل الموسم، وصفّى شوية بشوية. السلعة الراقدة نقصت، والكاش طلع.</p></div><div class="loi"><b><span class="lnum">القانون الرابع عشر</span> ما تكبّرش قبل ما الكل يلحق</b><p>البوب، التأكيد، والورشة يكبرو مع بعض.</p><p class="story"><span class="lbl">القصة : الورشة ما لحقتش</span>موديل ضرب. طلّع البوب بزاف في يومين. المؤكّدة وحدها والورشة بطيئة. الكوموندات تكدّسو والتأكيد طاح.</p></div><div class="loi"><b><span class="lnum">القانون الخامس عشر</span> ما تزيدش بعد نهار خاسر</b><p>تطلّع غير بعد نهار رابح، وبالدرجات.</p><p class="story"><span class="lbl">القصة : زاد بعد نهار خاسر</span>البارح البوب خسرت. قال « نطلّع البودجي باش نعوّض ». اليوم خسر ضعف.</p></div><div class="loi"><b><span class="lnum">القانون السادس عشر</span> ديما عندك الخليفة</b><p>موديل في التيست، موديلات يبيعو، وواحد احتياط. حضّر الخليفة قبل ما يموت المنتوج.</p><p class="story"><span class="lbl">القصة : الكرياتيف ولا المنافس؟</span>المبيعات طاحو، ونقّص السعر. بصح كانت بوب وحدة برك لي طاحت. الكرياتيف تعب، ماشي السوق.</p></div><div class="loi"><b><span class="lnum">القانون السابع عشر</span> المسار ماشي وعد</b><p>البوصلة ما تقولش « راح تربح ». تقول « بأرقامك اليوم، الطريق يوصل لهنا ».</p></div><div class="loi"><b><span class="lnum">القانون الثامن عشر</span> الروافع لي ما تكلّفش</b><p>السحب كل نهار، التوصيل أحسن، التأكيد أسرع، عرض القطعتين، ستوك زايد أقل.</p><p class="story"><span class="lbl">القصة : السحب كل نهار</span>كانت تسحب من شركة التوصيل مرة في الجمعة. بدّلت لكل نهار. نفس المبيعات، بصح رأس المال لي يلزمها نقص بزاف.</p></div><div class="loi"><b><span class="lnum">القانون التاسع عشر</span> نتيجة فارغة خير من « تقريباً »</b><p>إذا السباي ما لقى والو واضح، خير من موديل فاتر ياكل الدراهم والوقت.</p></div><div class="loi"><b><span class="lnum">القانون العشرين</span> اللي ما يتسجّلش ما يتصلحش</b><p>القبض يتسجّل، الرواجع تتعالج، كل روتور بسبب، و« كمّلت » تتعاود تتفحص.</p><p class="story"><span class="lbl">القصة : القبض صفر</span>الباك أوفيس يقول القبض صفر، وشركة التوصيل عندها دراهمو. ما كانش يسجّل القبض، ويحسب روحو خاسر.</p></div></div>
+<details class="script" open><summary>السكريبت كلمة بكلمة</summary>
+<div class="sc"><span class="sl say">قول</span><p>« مرحبا بيكم. قبل ما نحلّو حتى أداة، لازم نتفقو على طريقة التفكير. لي يدخل للإيكومرس بالأدوات بلا عقلية، يخسر الدراهم بزربة. »</p><p>« في الدفع عند الاستلام، الكوموند ماشي بيعة. البيعة هي الكولي لي وصل وتخلّص، والربح هو الكاش لي رجع للجيب. »</p><p>« وحتى حاجة ما تصرف دراهم بلا كلمتك. الماشينة تحضّر وتبني، بصح تخلي كلش محبوس حتى تقول انت « لانسي ». »</p></div>
+<div class="sc"><span class="sl do">دير</span><ol><li><b>القانون على الشاشة</b> نقراه، ونسكت شوية.</li><li><b>القصة</b> نحكيها كيما صرات، بلا أسامي حقيقية.</li><li><b>« واش نتعلّمو »</b> جملة وحدة، باش تبقى في الراس.</li></ol></div>
+<div class="sc"><span class="sl say">قول</span><p>« القانون الأول : ابدا من النهاية. قبل الموديل : شحال تحب تربح، كاش، وفي شحال من وقت، وبأنهي رأس مال. المنتوج يجي من بعد باش يخدم الهدف. »</p><p>« نحكيلكم قصة. واحد جاب موديل شاب، صرف، باع، وفي آخر الشهر ما عرفش واش هاذا مليح ولا لا، لخاطر ما كانش عندو هدف يقارن بيه. »</p><p>« واش نتعلّمو : ابدا من النهاية. »</p></div>
+<div class="sc"><span class="sl say">قول</span><p>« القانون الثاني : الربح هو الكاش لي رجع. المبيعات ماشي ربح، السلعة في الرف ماشي ربح، والكوليات في الطريق ماشي ربح. »</p><p>« نحكيلكم قصة. واحد يقول للناس « درت مبيعات كبار هاذ الشهر ». بصح نص الكوليات راجعين، الستوك مكدّس، والكاش ما يغطّيش حتى البوب. »</p><p>« واش نتعلّمو : الربح هو الكاش لي رجع. »</p></div>
+<div class="sc"><span class="sl say">قول</span><p>« القانون الثالث : احسب على الكولي الواصل. الربح على الكولي = القبض ناقص البوب، السلعة، الروتور، والعمولة. »</p></div>
+<div class="sc"><span class="sl say">قول</span><p>« القانون الرابع : المارج بالدينار ماشي بالنسبة. نسبة كبيرة تبان مليحة، بصح شوف واش يبقالك في يدك على كل كولي. »</p><p>« نحكيلكم قصة. وحدة فرحانة بالمارج الكبير. في آخر الشهر حسبت الكولي الواصل : البوب، الروتور، التوصيل، العمولة. بقالها شوية برك. »</p><p>« واش نتعلّمو : المارج بالدينار ماشي بالنسبة. »</p></div>
+<div class="sc"><span class="sl say">قول</span><p>« القانون الخامس : حتى رقم من الراس. الحساب باليد ديما متفائل. الأداة تحسب، وانت تقرر. »</p><p>« نحكيلكم قصة. واحد حسب في الورقة : « رابح ». نسى التوصيل والعمولة. الموديل كان خاسر من البداية، وصرف عليه أسابيع. »</p><p>« واش نتعلّمو : حتى رقم من الراس. »</p></div>
+<div class="sc"><span class="sl say">قول</span><p>« القانون السادس : البوب ماشي ديما هي المشكل. قبل ما تحبس بوب، شوف التأكيد والتوصيل. »</p><p>« نحكيلكم قصة. واحد حبس بوب لخاطر التأكيد ضعيف. من بعد فهم : أول مكالمة كانت تجي بعد ساعات. البوب كانت مليحة، المشكل في التيليفون. »</p><p>« واش نتعلّمو : البوب ماشي ديما هي المشكل. »</p></div>
+<div class="sc"><span class="sl say">قول</span><p>« القانون السابع : احسب السقف قبل أول دينار. أقصى ليد تخلّصو، وشحال تصرف قبل « ستوب ». هكا التوقيف يولّي قرار، ماشي خوف. »</p></div>
+<div class="sc"><span class="sl say">قول</span><p>« القانون الثامن : التيست طلب قبل الستوك. ما تخيّطش قبل ما تعرف بلي يبيع. المأكّد بلا ستوك هو أصدق إشارة. »</p><p>« نحكيلكم قصة. وحدة دارت تيست بلا ما تخيّط. جاوها مأكّدات والسلعة ماكانتش. خافت، بصح هاذا أحسن خبر : الزبونات قالو « واه » لموديل ما كانش موجود. »</p><p>« واش نتعلّمو : التيست طلب قبل الستوك. »</p></div>
+<div class="sc"><span class="sl say">قول</span><p>« القانون التاسع : احكم على الحاجة الصحيحة. في التيست على المأكّدة، من بعد على الواصلة. »</p></div>
+<div class="sc"><span class="sl say">قول</span><p>« القانون العاشر : متغيّر واحد في المرة. بين فيديو وفيديو بدّل حاجة وحدة، وإلا ما تعرفش واش ربّح. »</p></div>
+<div class="sc"><span class="sl say">قول</span><p>« القانون الحادي عشر : واجب واحد في المرة. واش، علاش بالدينار، وين، وكيفاش تعرف بلي كمّلت. اللي يمسّ الدراهم أولاً. »</p></div>
+<div class="sc"><span class="sl say">قول</span><p>« القانون الثاني عشر : الإنقاذ قبل الأسئلة. حساب ينزف : قول شحال يخسر، علاش، وثلاث حوايج اليوم برك. »</p></div>
+<div class="sc"><span class="sl say">قول</span><p>« القانون الثالث عشر : الستوك كاش محبوس. احسبو بثمن الشراء، وشحال من نهار يغطّي. ستوك راقد بزاف = ممنوع تخيّط جديد. »</p><p>« نحكيلكم قصة. تاجر عرف وقتاش يعطي آخر طلبية للورشة قبل ما يكمل الموسم، وصفّى شوية بشوية. السلعة الراقدة نقصت، والكاش طلع. »</p><p>« واش نتعلّمو : الستوك كاش محبوس. »</p></div>
+<div class="sc"><span class="sl say">قول</span><p>« القانون الرابع عشر : ما تكبّرش قبل ما الكل يلحق. البوب، التأكيد، والورشة يكبرو مع بعض. »</p><p>« نحكيلكم قصة. موديل ضرب. طلّع البوب بزاف في يومين. المؤكّدة وحدها والورشة بطيئة. الكوموندات تكدّسو والتأكيد طاح. »</p><p>« واش نتعلّمو : ما تكبّرش قبل ما الكل يلحق. »</p></div>
+<div class="sc"><span class="sl say">قول</span><p>« القانون الخامس عشر : ما تزيدش بعد نهار خاسر. تطلّع غير بعد نهار رابح، وبالدرجات. »</p><p>« نحكيلكم قصة. البارح البوب خسرت. قال « نطلّع البودجي باش نعوّض ». اليوم خسر ضعف. »</p><p>« واش نتعلّمو : ما تزيدش بعد نهار خاسر. »</p></div>
+<div class="sc"><span class="sl say">قول</span><p>« القانون السادس عشر : ديما عندك الخليفة. موديل في التيست، موديلات يبيعو، وواحد احتياط. حضّر الخليفة قبل ما يموت المنتوج. »</p><p>« نحكيلكم قصة. المبيعات طاحو، ونقّص السعر. بصح كانت بوب وحدة برك لي طاحت. الكرياتيف تعب، ماشي السوق. »</p><p>« واش نتعلّمو : ديما عندك الخليفة. »</p></div>
+<div class="sc"><span class="sl say">قول</span><p>« القانون السابع عشر : المسار ماشي وعد. البوصلة ما تقولش « راح تربح ». تقول « بأرقامك اليوم، الطريق يوصل لهنا ». »</p></div>
+<div class="sc"><span class="sl say">قول</span><p>« القانون الثامن عشر : الروافع لي ما تكلّفش. السحب كل نهار، التوصيل أحسن، التأكيد أسرع، عرض القطعتين، ستوك زايد أقل. »</p><p>« نحكيلكم قصة. كانت تسحب من شركة التوصيل مرة في الجمعة. بدّلت لكل نهار. نفس المبيعات، بصح رأس المال لي يلزمها نقص بزاف. »</p><p>« واش نتعلّمو : الروافع لي ما تكلّفش. »</p></div>
+<div class="sc"><span class="sl say">قول</span><p>« القانون التاسع عشر : نتيجة فارغة خير من « تقريباً ». إذا السباي ما لقى والو واضح، خير من موديل فاتر ياكل الدراهم والوقت. »</p></div>
+<div class="sc"><span class="sl say">قول</span><p>« القانون العشرين : اللي ما يتسجّلش ما يتصلحش. القبض يتسجّل، الرواجع تتعالج، كل روتور بسبب، و« كمّلت » تتعاود تتفحص. »</p><p>« نحكيلكم قصة. الباك أوفيس يقول القبض صفر، وشركة التوصيل عندها دراهمو. ما كانش يسجّل القبض، ويحسب روحو خاسر. »</p><p>« واش نتعلّمو : اللي ما يتسجّلش ما يتصلحش. »</p></div>
+<div class="sc"><span class="sl end">سكّر</span><p>« هاذ القوانين ماشي نصايح. هوما القوانين تاع الماشينة. يلا نبداو. »</p></div>
+</details>
+
+</article>
+<article class="mod" id="m1">
+<div class="mod-h"><span class="code">M1</span><h3><span class="lat">Claude</span> من الصفر، في أبليكاسيون البيرو</h3><span class="st part">Prêt à écrire</span></div>
+<div class="meta">لواحد عمرو ما استعمل <span class="lat">Claude</span></div>
+
+<div class="cols"><div><span class="lbl">على الشاشة</span><ol class="screen"><li>واش هو <span class="lat">Claude</span> : ذكاء اصطناعي تهدر معاه بالكتابة، يقرا، يكتب، ويخدم بالأدوات لي تعطيهولو.</li><li>الحساب المدفوع، أبليكاسيون البيرو، والأونغلي <span class="lat">Code</span> في <span class="lat">Local.</span></li><li>كيفاش تهدر معاه : جملة واضحة، حاجة وحدة في المرة، محادثة جديدة لكل خدمة.</li><li>الأجون : ورقة تعليمات وأداة. <span class="lat">Claude</span> يقراها ويولّي خبير في خدمة وحدة.</li><li>الكونيكتور : الباب الرسمي لـ <span class="lat">Tassyir</span> و <span class="lat">Meta</span>، بلا ما يعرف المودباس.</li><li>الإكستونسيون <span class="lat">Claude in Chrome</span> : <span class="lat">Claude</span> يورّي على الشاشة وين يكليكي.</li><li><span class="lat">Claude</span> يقدر يغلط : كل « كمّلت » تتعاود تتفحص.</li><li>المودباس والتوكنات ما يتكتبوش في الشات.</li></ol></div>
+<div><span class="lbl">قبل ما تصوّر</span><ul class="need"><li>كونت <span class="lat">Claude</span> نقي، بلا محادثات قدام.</li><li>السوما تاع الأبونمو تتقرا نهار التصوير.</li></ul><span class="lbl">الجملة الأخيرة</span><p class="bridge-line">دروك فهمتو كيفاش <span class="lat">Claude</span> يخدم. في الآب، ما تحتاجوش حتى هاذي : لينك، وأزرار.</p></div></div>
+<span class="lbl">الأرقام لي يبانو على الشاشة</span><div class="tbl" dir="ltr" lang="fr"><table><thead><tr><th>Règle</th><th>Valeur</th></tr></thead><tbody><tr><td>Abonnement</td><td>Claude Pro au minimum</td></tr><tr><td>Onglet</td><td>Code → Local → dossier → Auto</td></tr></tbody></table></div>
+
+<div class="lrow"><span class="lbl">القانون لي يبان هنا</span><span class="lchip">حتى رقم من الراس</span><span class="lchip">اللي ما يتسجّلش ما يتصلحش</span></div>
+<details class="script" open><summary>السكريبت كلمة بكلمة</summary>
+<div class="sc"><span class="sl say">قول</span><p>« بزاف يحسبو الذكاء الاصطناعي شات تسقسيه ويجاوبك. اليوم تشوفو حاجة أخرى : <span class="lat">Claude</span> يخدم في الـ <span class="lat">PC</span>، يحل الفيشيات، يكتب، ويدخل للبوتيك وللبوب من الأبواب الرسميين. »</p></div>
+<div class="sc"><span class="sl do">دير وقول</span><ol><li><b>claude.ai ← Settings ← Billing ← Pro</b> « بلا الأبونمو المدفوع، الأونغلي <span class="lat">Code</span> ما يتحلش، وهو لي نخدمو بيه. »</li><li><b><span class="lat">claude.com/download ←</span> تنصيب</b> « الويب مليح للهدرة. الخدمة الحقيقية في البيرو، هنا <span class="lat">Claude</span> يشوف الفيشيات. »</li><li><b>Code ← Local ← Select folder ← Auto</b> « <span class="lat">Local</span> معناها يخدم في هاذ الـ <span class="lat">PC. Cloud</span> ما يشوف والو من الـ <span class="lat">PC.</span> »</li><li><b>« قولّي واش كاين في هاذ الدوسي »</b> « شوفو : قرا الفيشيات، وجاوب على واش لقى. ما خمّمش. »</li><li><b>Settings ← Connectors</b> « الكونيكتور هو البريز لي يخلّي <span class="lat">Claude</span> يقرا ويكتب في <span class="lat">Tassyir</span> و <span class="lat">Meta.</span> »</li></ol></div>
+<div class="sc"><span class="sl work">وClaude يخدم، احكي</span><p>« كي يكتب هكذا، راهو يقرا قبل ما يجاوب. هاذي أول حاجة تفرّق بين واحد يخدم بالذكاء الاصطناعي وواحد يلعب بيه. »</p></div>
+<div class="sc"><span class="sl end">سكّر</span><p>« عندكم الأساس. في الفيديو الجاي نبنيو بيه حاجة حقيقية. »</p></div>
+</details>
+
+</article>
+<article class="mod" id="m2">
+<div class="mod-h"><span class="code">M2</span><h3>كيفاش تبني بـ <span class="lat">Claude</span> وحدك</h3><span class="st part">Méthode</span></div>
+<div class="meta">أبليكاسيون البيرو تبني، والإكستونسيون تكمّل وين البيرو ما يقدرش يكليكي</div>
+<dl class="why"><div><dt>واش يعاونا</dt><dd>تبني أي أوتوماسيون بلا ما تكتب كود.</dd></div><div><dt>بسرعة</dt><dd>برومبت واحد : لاندينغ بيج تخرج في دقيقة.</dd></div><div><dt>باليد</dt><dd>ساعات في محرر الصفحات، وما تجيش مليحة.</dd></div></dl>
+
+<div class="cols"><div><span class="lbl">على الشاشة</span><ol class="screen"><li>تقول واش تحب يخرج، ماشي كيفاش.</li><li><span class="lat">Claude</span> يقرا قبل ما يكتب.</li><li>حاجة وحدة في المرة، والنسخة القديمة محفوظة.</li><li>البرهان : الكونترول يطيح على القديم وينجح على الجديد.</li><li>وين يلزم يكليكي في سيت : يكتب سكريبت، يتلصق في الإكستونسيون، وهي تكمّل.</li><li>الأزرار لي فيها دراهم، تضغطهم انت.</li></ol></div>
+<div><span class="lbl">قبل ما تصوّر</span><ul class="need"><li>تجربة كاملة من البيرو للإكستونسيون على كونت تجربة.</li><li>مثال آمن : حتى حاجة ما تصرف دراهم.</li></ul><span class="lbl">الجملة الأخيرة</span><p class="bridge-line">بهاذ الطريقة تبناو كامل الأجونات لي جايين.</p></div></div>
+<div class="lrow"><span class="lbl">القانون لي يبان هنا</span><span class="lchip">متغيّر واحد في المرة</span><span class="lchip">واجب واحد في المرة</span><span class="lchip">اللي ما يتسجّلش ما يتصلحش</span></div>
+<details class="script" open><summary>السكريبت كلمة بكلمة</summary>
+<div class="sc"><span class="sl say">قول</span><p>« واش نورّيكم دروك هو السر تاع الفورماسيون كاملة : كيفاش تخلي <span class="lat">Claude</span> يبني بلاصتك. »</p></div>
+<div class="sc"><span class="sl do">دير وقول</span><ol><li><b>« اصنعلي لاندينغ بيج لفستة : عنوان، تصويرة، وزر كوموندي »</b> « جملة وحدة. شوفو. »</li><li><b>الصفحة تخرج</b> « دقيقة. »</li><li><b>محرر صفحات فارغ</b> « نفس الحاجة بيدك : القالب، العنوان، التصويرة، الألوان. ساعة، ساعتين. »</li><li><b>الطريقة على الشاشة</b> « قول واش تحب. خليه يقرا. حاجة وحدة في المرة. وطالب البرهان. »</li><li><b>سكريبت ← الإكستونسيون تاع <span class="lat">Chrome</span></b> « كي يلزم يضغط في سيت، يكتبلك سكريبت. الإكستونسيون تكمّل قدام عينيك. »</li></ol></div>
+<div class="sc"><span class="sl work">وClaude يخدم، احكي</span><p>« ما كتبت حتى سطر كود. الكود يكتبو هو. انت تعرف واش تحب، وتعرف تقول لا. »</p></div>
+<div class="sc"><span class="sl end">سكّر</span><p>« بهاذ الطريقة تبنيو أي أوتوماسيون. »</p></div>
+</details>
+
+</article>
+<article class="mod" id="m3">
+<div class="mod-h"><span class="code">M3</span><h3>البحث على المنتوج</h3><span class="st part">Méthode</span></div>
+<div class="meta"><span class="lat">Agent recherche-produit-cod</span> · ماشي في الباكي لي يتباع</div>
+<dl class="why"><div><dt>واش يعاونا</dt><dd>تلقى موديل يستاهل التيست، بالسعر الحقيقي.</dd></div><div><dt>بسرعة</dt><dd>تعطيه النيش في جملة، ويرجعلك فيشة.</dd></div><div><dt>باليد</dt><dd>ساعات في الصفحات، وتنسى منين جات كل معلومة.</dd></div></dl>
+
+<div class="cols"><div><span class="lbl">على الشاشة</span><ol class="screen"><li>تبدا من الهدف : شحال تحب تربح، وفي شحال من وقت.</li><li>البحث بالكتابة، كل معلومة ومصدرها.</li><li>سعر المنافس، والمارج محسوب عليه.</li><li>الفيشة للأتوليي بالتصويرة.</li></ol></div>
+<div><span class="lbl">قبل ما تصوّر</span><ul class="need"><li>نيش تجربة، ماشي موديل حقيقي.</li><li>تقول بلي هاذ الأجون ماشي في الباكي.</li></ul><span class="lbl">الجملة الأخيرة</span><p class="bridge-line">في الآب، الموديل لي يعجبك يولّي كارطة، ومن الكارطة يبدا الطريق.</p></div></div>
+<div class="lrow"><span class="lbl">القانون لي يبان هنا</span><span class="lchip">ابدا من النهاية</span><span class="lchip">نتيجة فارغة خير من « تقريباً »</span></div>
+<details class="script" open><summary>السكريبت كلمة بكلمة</summary>
+<div class="sc"><span class="sl say">قول</span><p>« الموديل الغالط يخسّرك قبل ما تبدا. وقبل الموديل، الهدف. »</p></div>
+<div class="sc"><span class="sl do">دير وقول</span><ol><li><b>الهدف</b> « شحال، وفي شحال من وقت، وبأنهي رأس مال. »</li><li><b>النيش في جملة</b> « وهو يبدا. »</li><li><b>كل معلومة ومصدرها</b> « حتى حاجة بلا مصدر. »</li><li><b>باليد</b> « ساعات، وورقة فيها أسعار ما تتفكرش منين جبتهم. »</li></ol></div>
+<div class="sc"><span class="sl work">وClaude يخدم، احكي</span><p>« راهو يقارن الأسعار. خدمة نهار يديرها في دقايق، وكل رقم مربوط بمصدرو. »</p></div>
+<div class="sc"><span class="sl end">سكّر</span><p>« المنتوج كاين. نشوفو شكون راه يبيع فيه. »</p></div>
+</details>
+
+</article>
+<article class="mod" id="m4">
+<div class="mod-h"><span class="code">M4</span><h3>السباي : <span class="lat">Ad Library</span> تاع بلاد</h3><span class="st part">Partiel</span></div>
+<div class="meta"><span class="lat">Agent spy</span> · « <span class="lat">spy dz</span> / <span class="lat">morocco</span> / <span class="lat">egypte</span> / <span class="lat">iraq</span> / <span class="lat">tunis</span> » في <span class="lat">Claude</span> ولا في تيليغرام</div>
+<dl class="why"><div><dt>واش يعاونا</dt><dd>تعرف شكون يربح في بلاد، وشمن موديل.</dd></div><div><dt>بسرعة</dt><dd>كلمة وحدة، والرابور يجي.</dd></div><div><dt>باليد</dt><dd><span class="lat">Ad Library</span> صفحة بصفحة، والتواريخ بيدك : أسبوع.</dd></div></dl>
+
+<div class="cols"><div><span class="lbl">على الشاشة</span><ol class="screen"><li>كلمة وحدة في المرة، والبوب الخدّامين برك.</li><li>الصفحات لي عندها زوج بوب ولا بوب بسعر.</li><li>المنتوج يتقرا من النص، عمرو بالتخمين.</li><li>الحكم تعطيه أداة الحساب، عمرو باليد.</li><li>الدرجات التسعة، والموجات.</li><li>تصاور الموديلين لي يرجعو أكثر.</li><li>يتفحص صفحات بالعين.</li><li>الرابور في <span class="lat">Claude</span> ولا في تيليغرام.</li></ol></div>
+<div><span class="lbl">قبل ما تصوّر</span><ul class="need"><li>سباي حقيقي جديد على بلاد وحدة.</li><li class="warn">ما تورّيش الأونغلي <span class="lat">SPY</span> في الآب : عمرو ما تعمّر في الحقيقة.</li><li class="warn"><span class="lat">SPY</span> في تيليغرام : الروبو مباشرة ولا <span class="lat">Worker</span>، تتصلح قبل.</li></ul><span class="lbl">الجملة الأخيرة</span><p class="bridge-line">في الآب، كل بوتيك تولّي كارطة، وتتبّعها بزر.</p></div></div>
+<span class="lbl">الأرقام لي يبانو على الشاشة</span><div class="tbl" dir="ltr" lang="fr"><table><thead><tr><th>Règle</th><th>Valeur</th></tr></thead><tbody><tr><td>Fenêtre</td><td>30 jours, pubs actives</td></tr><tr><td>Pages</td><td>40 au plus</td></tr><tr><td>Vague</td><td>pubs créées dans la même heure</td></tr><tr><td>Vagues différentes</td><td>12 h d'écart au moins</td></tr><tr><td>Degré 1</td><td>sans stock, scale après production : trou 3 à 15 j puis plus de pubs</td></tr><tr><td>Degré 2</td><td>avec stock, gagnant : pas de trou de 3 j, 3 vagues et plus</td></tr><tr><td>Degré 3</td><td>avec stock, scale : 2 vagues</td></tr><tr><td>Degré 4</td><td>nouveau modèle</td></tr><tr><td>Degré 5</td><td>re-test</td></tr><tr><td>Degré 6</td><td>test : une vague</td></tr><tr><td>Degré 7</td><td>revenu après arrêt : trou &gt; 15 j</td></tr><tr><td>Degré 8</td><td>dormante</td></tr><tr><td>Degré 9</td><td>grossiste</td></tr></tbody></table></div>
+
+<div class="lrow"><span class="lbl">القانون لي يبان هنا</span><span class="lchip">نتيجة فارغة خير من « تقريباً »</span></div>
+<details class="script" open><summary>السكريبت كلمة بكلمة</summary>
+<div class="sc"><span class="sl say">قول</span><p>« بلاصة ما تخمّم واش يبيع، تشوف واش راهم يصرفو عليه. <span class="lat">Ad Library</span> تورّي البوب تاع كل صفحة، وهاذ الأجون يقراها بلاصتك. »</p></div>
+<div class="sc"><span class="sl do">دير وقول</span><ol><li><b>« spy dz »</b> « كلمة وحدة. »</li><li><b>الصفحات</b> « يخلّي غير لي عندهم بوب بزاف ولا بوب بسعر. »</li><li><b>الموجات</b> « بوب تخلقو في نفس الساعة = موجة. زوج موجات متباعدين = راه يعاود يصرف. »</li><li><b>الدرجات</b> « من « بلا ستوك ويسكالي بعد إنتاج » حتى « نايمة ». »</li><li><b>باليد</b> « صفحة بصفحة، تاريخ بتاريخ، أسبوع كامل. »</li></ol></div>
+<div class="sc"><span class="sl work">وClaude يخدم، احكي</span><p>« راهو يقرا كل بوب تاع كل صفحة، يحسب الموجات، ويحكم بأداة، ماشي بالعين. هاذا هو الفرق بين التخمين والمعلومة. »</p></div>
+<div class="sc"><span class="sl end">سكّر</span><p>« « صفر منتوج خير من منتوج فاتر ». نشوفو دروك واش يجبد الناس. »</p></div>
+</details>
+
+</article>
+<article class="mod" id="m5">
+<div class="mod-h"><span class="code">M5</span><h3>سباي الإنغاجمان في إنستغرام</h3><span class="st part">Partiel</span></div>
+<div class="meta"><span class="lat">Agent engagement</span> · قراية برك، بالباب الرسمي تاع <span class="lat">Meta</span></div>
+<dl class="why"><div><dt>واش يعاونا</dt><dd>تشوف واش يجبد الناس.</dd></div><div><dt>بسرعة</dt><dd>الليستة تتقرا وحدها، والرابور يخرج.</dd></div><div><dt>باليد</dt><dd>كونت بكونت، ريل بريل : مستحيل على بزاف كونتات.</dd></div></dl>
+
+<div class="cols"><div><span class="lbl">على الشاشة</span><ol class="screen"><li>الكلي : كونت إنستغرام برو مربوط بصفحة، <span class="lat">App Meta</span>، والتوكن يحطو التاجر بيدو في فيشي.</li><li>الليستة تاع البروفايلات.</li><li>الإيقاع : شوية بين كل بروفايل، وراحة كي يقرب للحد.</li><li>الفيديوات لي فاتو الحد، والجدول.</li><li>« المشاهدات ماشي مبيعات ».</li></ol></div>
+<div><span class="lbl">قبل ما تصوّر</span><ul class="need"><li>التوكن ما يبانش في الكاميرا.</li><li class="warn"><span class="lat">engagement</span> ناقص من <span class="lat">LIS-MOI</span> : تتصلح قبل.</li></ul><span class="lbl">الجملة الأخيرة</span><p class="bridge-line">في الآب، الكونت لي يعجبك يروح للكاتالوغ بزر.</p></div></div>
+<span class="lbl">الأرقام لي يبانو على الشاشة</span><div class="tbl" dir="ltr" lang="fr"><table><thead><tr><th>Règle</th><th>Valeur</th></tr></thead><tbody><tr><td>Seuil</td><td>&gt; 200 000 vues en 30 jours</td></tr><tr><td>Rythme</td><td>10 à 15 s entre profils ; pause 15 min au-delà de 75 % de la limite</td></tr><tr><td>Jeton</td><td>60 jours, dans ig-spy.json</td></tr><tr><td>Sorties</td><td>videos-200k.txt, modeles.html, tableau</td></tr></tbody></table></div>
+
+<div class="lrow"><span class="lbl">القانون لي يبان هنا</span><span class="lchip">نتيجة فارغة خير من « تقريباً »</span></div>
+<details class="script" open><summary>السكريبت كلمة بكلمة</summary>
+<div class="sc"><span class="sl say">قول</span><p>« البوب تقولك واش يبيع. إنستغرام يقولك واش يجبد. الزوج مهمين. »</p></div>
+<div class="sc"><span class="sl do">دير وقول</span><ol><li><b>الكلي في فيشي</b> « ماشي في الشات. »</li><li><b>الليستة</b> « البروفايلات بالاسم الصحيح. »</li><li><b>الإيقاع</b> « يستنى بين كل بروفايل، باش ما يتحبسش. »</li><li><b>الجدول</b> « الفيديوات لي جبدو بزاف. »</li><li><b>باليد</b> « كونت بكونت، ريل بريل. »</li></ol></div>
+<div class="sc"><span class="sl work">وClaude يخدم، احكي</span><p>« المشاهدات ماشي مبيعات. هاذي علامة، والبرهان يجي من التيست. »</p></div>
+<div class="sc"><span class="sl end">سكّر</span><p>« عندنا الفيديوات لي تجبد. نتعلمو نقراوهم. »</p></div>
+</details>
+
+</article>
+<article class="mod" id="m6">
+<div class="mod-h"><span class="code">M6</span><h3>تحليل الفيديوات والأنغلات والنصوص</h3><span class="st part">Méthode + règles</span></div>
+<div class="meta">ما كانش أجون يحلّل الفيديوات. الأنغلات والأكروشات والنصوص مكتوبين في القواعد</div>
+<dl class="why"><div><dt>واش يعاونا</dt><dd>تفهم علاش فيديو يخدم، وتكتب نص يبيع.</dd></div><div><dt>بسرعة</dt><dd>الأكروشات والأنغلات حاضرين، والنصوص يتكتبو ويتفحصو.</dd></div><div><dt>باليد</dt><dd>تكتب من راسك، وتنسى الاعتراضات.</dd></div></dl>
+
+<div class="cols"><div><span class="lbl">على الشاشة</span><ol class="screen"><li>خمس كلمات، كل كلمة بسؤال بالدارجة : <span class="lat">Niche</span>، <span class="lat">Persona</span>، <span class="lat">Event</span>، <span class="lat">Styling</span>، و <span class="lat">Angle.</span> الشرح تاع كل وحدة في الكارطات تحت.</li><li><span class="lat">Persona</span> و <span class="lat">Event</span> و <span class="lat">Styling</span> يبانو في الفيديو. <span class="lat">Angle</span> يبان في النص.</li><li>الأكروش : الثواني الأولى تاع الفيديو، تقول شكون ووين، باش هي تحس بلي الهدرة عليها.</li><li>الزاوية : علاش تشري. تبان في النص تاع الإعلان : الراحة، الأناقة، الهدية، ساترة وعصرية.</li><li>في <span class="lat">Meta</span> : كومبانيا، أدسات لكل فيديو، وفي الأدسات الإعلانات، كل إعلان بزاوية وعلامتها في الرابط.</li><li>إذن شكون ووين يتجرّبو بالفيديوات، وعلاش تتجرّب بالنصوص.</li><li>الاستهداف يبقى <span class="lat">Broad</span>، وشكون ووين ما يدخلوش في فيلتر الجمهور : الفيديو هو لي يختار الناس، و <span class="lat">Meta</span> يتعلّم من شكون حبس، شاف، وكوموندا.</li><li>خارج الموسم : تبيع البلاصة لي تتلبس فيها، وما تخبّيش القماش.</li><li>لكل فيديو : الأكروش، السين، الطول، الموسيقى.</li><li>الأكروشات : عرس، حجاب، سهرة، خرجة، طالبة، خدمة، دار. الشرح والكود يسمّيوهم « نيشات »، وهوما في الحقيقة شكون ولا وقتاش.</li><li>الزوايا : الوجع، الصورة، الدليل، الاعتراض، المناسبة.</li><li>بنك الأنغلات : الأناقة، الراحة، الجودة، الموضة، الهدية، جهاز العروسة، وغيرهم.</li><li>الأوجاع الأربعة : المقاس، ماشي كيما الفيديو، الليفرور يطلب سعر آخر، نخلّص بلا ما نشوف.</li><li>النص : الهوك، المنتوج، الاعتراض، السعر في سطرو، « اطلبي من الرابط ».</li><li>الفحوص العشرة قبل ما يخرج، والقراية بالصوت.</li><li>سعر البوب = سعر الصفحة، وإلا ما نلانسيوش.</li></ol></div>
+<div><span class="lbl">قبل ما تصوّر</span><ul class="need"><li>الشرح والكود يقولو « نيشات » لـ <span class="lat">Persona</span> و <span class="lat">Event</span> : في الفورماسيون نقولو الكلمة الصحيحة، ونشرحو بلي الكود يسمّيها « نيش ».</li><li><span class="lat">Creative testing</span> ماشي في السيستام : الكود يدير أدسات لكل فيديو. قولها كطريقة تدير بيها في <span class="lat">Ads Manager</span>، ماشي كخدمة تاع الأجون.</li><li>المثال تاع الموديل : تصاور تجربة، ضبّب أي سمية ولا ماركة.</li><li class="warn">« عربية بسيطة » في السكريبت والأدوات تفرض الدارجة : تتصلح قبل.</li><li class="warn"><span class="lat">Primary</span> : أربعة حتى عشرة في القانون، وثلاثة حتى عشرة في الفحص : تتوحّد.</li></ul><span class="lbl">الجملة الأخيرة</span><p class="bridge-line">في الآب، كل أنغل يتسجّل مع البوب، وتشوف شكون جاب الكولي الواصل.</p></div></div>
+<span class="lbl">الأرقام لي يبانو على الشاشة</span><div class="tbl" dir="ltr" lang="fr"><table><thead><tr><th>Règle</th><th>Valeur</th></tr></thead><tbody><tr><td>Accroches</td><td>70 = 7 personas ou events × 10 (le code dit « niches »)</td></tr><tr><td>Angles par produit</td><td>5 au moins</td></tr><tr><td>Primary text</td><td>4 à 10 lignes</td></tr><tr><td>Titre / description</td><td>40 / 60 caractères au plus</td></tr><tr><td>Interdits</td><td>« COD », faux avis, prix répété, promesse de gain</td></tr></tbody></table></div>
+
+<span class="lbl">الكلمات الخمسة : الكلمة، السؤال، وواش تفيد</span><div class="kws"><div class="kw"><div class="kw-h" dir="ltr">Niche</div><p class="kw-q">شنو راك تبيع، ولمن ؟</p><p>السوق كامل.</p><p><span class="k">تفيد</span>تعرف وين راك تلعب، وما تبيعش كلش لكل الناس.</p><p><span class="k">مثال</span>لبسة النسا الساترة.</p></div><div class="kw"><div class="kw-h" dir="ltr">Persona</div><p class="kw-q">شكون تلبسها ؟</p><p>الزبونة بالضبط.</p><p><span class="k">تفيد</span>الزبونة تشوف وحدة كيفها في الفيديو، تحس بلي الهدرة عليها، وتحبس. وميتا يتعلّم منها ويجيب ناس يشبهولها، بلا ما تفيلتري الجمهور.</p><p><span class="k">مثال</span>طالبة محجبة.</p></div><div class="kw"><div class="kw-h" dir="ltr">Event</div><p class="kw-q">وقتاش ووين ؟</p><p>النهار ولا البلاصة لي تلبسها فيه.</p><p><span class="k">تفيد</span>تعطيها سبب تشري دروك، وتبيع حتى خارج الموسم، لخاطر راك تبيع البلاصة ماشي الموسم.</p><p><span class="k">مثال</span>كل نهار في الجامعة، ولا نهار العرس.</p></div><div class="kw"><div class="kw-h" dir="ltr">Styling</div><p class="kw-q">كيفاش تلبسها ؟</p><p>واش تحط معاها.</p><p><span class="k">تفيد</span>تتخيّل روحها لابستها بالحوايج لي عندها، وتشوف واش تستلم بالضبط، والروتور ينقص.</p><p><span class="k">مثال</span>مع الخمار، الباسكي والصاك.</p></div><div class="kw"><div class="kw-h" dir="ltr">Angle</div><p class="kw-q">علاش تشريها ؟</p><p>الحجة لي تقنعها تكوموندي.</p><p><span class="k">تفيد</span>النص يجاوب على واش يهمّها هي، وفي القراية تعرف أنهي حجة باعت.</p><p><span class="k">مثال</span>مريحة من الصباح للعشية في الجامعة.</p></div></div>
+<div class="flow"><span class="lbl">Angle بمثال تاع السوق</span><p>زوج زبونات قدام نفس اللونصومبل، عند نفس البيّاع. الأولى تخاف تتقلّق نهار كامل في الجامعة، يقولها « السروال واسع، مريحة من الصباح للعشية ». الثانية تحب تبان شابة، يقولها « شوفي الخيط الأحمر، هو لي يفرّق ». نفس اللبسة، بصح كل وحدة سمعت حجة أخرى. الحجة هي <span class="lat">Angle.</span></p><ol><li><b>الراحة</b> : « من الصباح للعشية في الجامعة، السروال الواسع ما يقلّقكش. »</li><li><b>الأناقة</b> : « لبسة كحلة، بصح الخيط الأحمر يخلّي كلش يشوفك. »</li><li><b>ساترة وعصرية</b> : « واسعة، كمام طوال، وتبقاي على الموضة. »</li><li><b>السعر مقابل الجودة</b> : « قماش يدوم، بسعر يقدر عليه الطالب. »</li></ol><p>نفس الفيديو، والنص هو لي يتبدّل. التيست يقول أنهي حجة جابت الكولي الواصل بأرخص كوست.</p></div>
+<span class="lbl">الأمثلة : شكون ووين في الفيديو، وعلاش في النص</span><div class="fam"><h4>الجبّة</h4><div class="angs"><div class="ang"><b>الماما في الدار نهار الضياف</b><p><span class="k">في الفيديو</span>« تستقبلي الضياف وانتي مرتاحة وشابة. »</p><p><span class="k">في النص</span>الراحة كل نهار</p></div><div class="ang"><b>العروسة الجديدة في دار راجلها</b><p><span class="k">في الفيديو</span>« أول صباح في دار نسيبتك. »</p><p><span class="k">في النص</span>جهاز العروسة</p></div><div class="ang"><b>لعشية رمضان</b><p><span class="k">في الفيديو</span>« من الكوزينة للسهرة بلا ما تبدّلي. »</p><p><span class="k">في النص</span>الراحة كل نهار</p></div></div></div><div class="fam"><h4>الطرز والتقليدي</h4><div class="angs"><div class="ang"><b>أخت العروسة نهار الحنّة</b><p><span class="k">في الفيديو</span>« تبانى بلا ما تسرقي الضو من العروسة. »</p><p><span class="k">في النص</span>الأناقة</p></div><div class="ang"><b>العيد عند الجدّة</b><p><span class="k">في الفيديو</span>« لبسة العيد لي تفرّح الكبار. »</p><p><span class="k">في النص</span>ساترة وعصرية</p></div></div></div><div class="fam"><h4>الخرجة</h4><div class="angs"><div class="ang"><b>القهوة مع الصحابات</b><p><span class="k">في الفيديو</span>« بسيطة، بصح كلش يسقسيك منين جبتيها. »</p><p><span class="k">في النص</span>الموضة</p></div></div></div><div class="fam"><h4>السهرة</h4><div class="angs"><div class="ang"><b>عرس صاحبتها</b><p><span class="k">في الفيديو</span>« ما تلبسيش نفس الروبة لي شافوها عليك. »</p><p><span class="k">في النص</span>لوكس كيما الماركات الكبار</p></div><div class="ang"><b>المحجبة في العرس</b><p><span class="k">في الفيديو</span>« سهرة وساترة في نفس الوقت. »</p><p><span class="k">في النص</span>ساترة وعصرية</p></div></div></div><div class="fam"><h4>الطالبة</h4><div class="angs"><div class="ang"><b>الطالبة المحجبة في القسم</b><p><span class="k">في الفيديو</span>« شيك وانتي قاعدة في الأمفي. »</p><p><span class="k">في النص</span>ساترة وعصرية</p></div><div class="ang"><b>نهار التخرّج</b><p><span class="k">في الفيديو</span>« الصورة لي تبقى طول العمر. »</p><p><span class="k">في النص</span>الأناقة</p></div></div></div><div class="fam"><h4>الخدمة</h4><div class="angs"><div class="ang"><b>الموظفة في البيرو</b><p><span class="k">في الفيديو</span>« رسمية ومريحة من الصباح للعشية. »</p><p><span class="k">في النص</span>للخدمة والخرجات</p></div><div class="ang"><b>المعلّمة قدام القسم</b><p><span class="k">في الفيديو</span>« ساترة وأنيقة قدام التلاميذ. »</p><p><span class="k">في النص</span>ساترة وعصرية</p></div><div class="ang"><b>أول نهار في خدمة جديدة</b><p><span class="k">في الفيديو</span>« الانطباع الأول. »</p><p><span class="k">في النص</span>الأناقة</p></div></div></div><div class="fam"><h4>الماما والحامل</h4><div class="angs"><div class="ang"><b>الحامل</b><p><span class="k">في الفيديو</span>« واسعة، تكبر معاك، وتبقي شابة. »</p><p><span class="k">في النص</span>حل لمشكل</p></div><div class="ang"><b>الماما مع الذراري في الخرجة</b><p><span class="k">في الفيديو</span>« تجري وراهم ولبستك ما تخسرش. »</p><p><span class="k">في النص</span>الراحة كل نهار</p></div></div></div><div class="fam"><h4>الهدية</h4><div class="angs"><div class="ang"><b>البنت تشري لمّها</b><p><span class="k">في الفيديو</span>« هدية تلبسها ماشي تخبّيها. »</p><p><span class="k">في النص</span>الهدية</p></div><div class="ang"><b>الراجل يشري لمرتو</b><p><span class="k">في الفيديو</span>« ما تغلطش في المقاس، نعاونوك. »</p><p><span class="k">في النص</span>الهدية</p></div></div></div><div class="fam"><h4>خارج الموسم</h4><div class="angs"><div class="ang"><b>قطعة صيفية في الشتا</b><p><span class="k">في الفيديو</span>« تحت الجاكيت ولا داخل الدار. »</p><p><span class="k">في النص</span>الدفا ولا الخفة</p></div><div class="ang"><b>قطعة شتوية في الصيف</b><p><span class="k">في الفيديو</span>« للسهرات لي يبرد فيها الليل. »</p><p><span class="k">في النص</span>الدفا ولا الخفة</p></div></div></div>
+<div class="flow"><span class="lbl">كيفاش يتحطّو في Meta</span><ol><li><b>الكومبانيا</b> : موديل واحد.</li><li><b>الأدسات</b> : فيديو واحد، يعني شكون ووين، والاستهداف <span class="lat">Broad</span>.</li><li><b>الإعلان</b> : زاوية وحدة في النص، وعلامتها في الرابط.</li><li><b>القراية</b> : أنهي فيديو، وأنهي زاوية، جابو الكولي الواصل.</li></ol></div>
+<span class="lbl">مثال كامل على كل عائلة : الموديل، شكون ووين، والتيستين</span><p class="note">الفيديو الرابح والزاوية الرابحة مكتوبين كمثال باش تفهم الطريقة. في الحقيقة، القراية على الكولي الواصل هي لي تقول.</p><details class="ex6"><summary>الطالبة</summary><p><span class="k">الموديل</span>لونصومبل كحل، الفيستة بالخيط الأحمر، الكمام واسعين، والسروال واسع، يتلبس مع باسكي. لبسة كل نهار، شيك وبسيطة.</p><p><span class="k">شكون ووين يمشيو</span>الطالبة، الخدمة، الخرجة، والمحجبة.</p><p><span class="k">لي يخرجو</span>العروسة والسهرة يخرجو، لخاطر الزبونة ما تصدّقش بلي تلبسو في الحنّة ولا في السهرة.</p><h4>التيست الأول : أنهي فيديو يجبد، والنص نفسو في الكل</h4><pre class="tree" dir="ltr">Campagne : ensemble noir liseré rouge — test vidéos
+└─ Ad set : Broad, 25 wilayas, budget du jour (Creative testing)
+   ├─ Ad 1 : vidéo étudiante (amphi, basket)   + texte « confort »
+   ├─ Ad 2 : vidéo bureau (chaussures fermées) + texte « confort »
+   ├─ Ad 3 : vidéo café avec les amies         + texte « confort »
+   └─ Ad 4 : vidéo avec khimar                 + texte « confort »</pre><h4>التيست الثاني : أنهي زاوية تبيع، والفيديو الرابح في الكل</h4><pre class="tree" dir="ltr">Campagne : ensemble noir liseré rouge — test angles
+└─ Ad set : Broad, 25 wilayas, budget du jour (Creative testing)
+   ├─ Ad 1 : vidéo étudiante + texte « confort »
+   ├─ Ad 2 : vidéo étudiante + texte « élégance (le liseré rouge) »
+   ├─ Ad 3 : vidéo étudiante + texte « couvrante et moderne »
+   └─ Ad 4 : vidéo étudiante + texte « travail et sorties »</pre><p class="bridge-line">مثال على النتيجة : فيديو الطالبة مع الأناقة. نعرفو علاش ربح، لخاطر ما بدّلنا حتى مرة زوج حوايج مع بعض.</p></details><details class="ex6"><summary>الجبّة</summary><p><span class="k">الموديل</span>جبّة دار خفيفة، بطرز صغير في الصدر.</p><p><span class="k">شكون ووين يمشيو</span>الماما نهار الضياف، العروسة الجديدة في دار راجلها، وعشية رمضان.</p><p><span class="k">لي يخرجو</span>الخدمة والجامعة يخرجو، لخاطر الجبّة تتلبس في الدار.</p><h4>التيست الأول : أنهي فيديو يجبد، والنص نفسو في الكل</h4><pre class="tree" dir="ltr">Campagne : jebba d'intérieur brodée — test vidéos
+└─ Ad set : Broad, 25 wilayas, budget du jour (Creative testing)
+   ├─ Ad 1 : vidéo maman reçoit les invités           + texte « confort toute la journée »
+   ├─ Ad 2 : vidéo jeune mariée chez la belle-famille + texte « confort toute la journée »
+   └─ Ad 3 : vidéo soirée de ramadan                  + texte « confort toute la journée »</pre><h4>التيست الثاني : أنهي زاوية تبيع، والفيديو الرابح في الكل</h4><pre class="tree" dir="ltr">Campagne : jebba d'intérieur brodée — test angles
+└─ Ad set : Broad, 25 wilayas, budget du jour (Creative testing)
+   ├─ Ad 1 : vidéo jeune mariée + texte « confort toute la journée »
+   ├─ Ad 2 : vidéo jeune mariée + texte « élégance »
+   ├─ Ad 3 : vidéo jeune mariée + texte « trousseau de la mariée »
+   └─ Ad 4 : vidéo jeune mariée + texte « cadeau »</pre><p class="bridge-line">مثال على النتيجة : فيديو العروسة الجديدة مع جهاز العروسة. نعرفو علاش ربح، لخاطر ما بدّلنا حتى مرة زوج حوايج مع بعض.</p></details><details class="ex6"><summary>الطرز والتقليدي</summary><p><span class="k">الموديل</span>كاراكو ولا قفطان خفيف بالطرز، للمناسبات.</p><p><span class="k">شكون ووين يمشيو</span>أخت العروسة نهار الحنّة، العيد عند الجدّة، والمحجبة في العرس.</p><p><span class="k">لي يخرجو</span>الخدمة والخرجة يخرجو، لخاطر هاذي لبسة مناسبات.</p><h4>التيست الأول : أنهي فيديو يجبد، والنص نفسو في الكل</h4><pre class="tree" dir="ltr">Campagne : karakou brodé léger — test vidéos
+└─ Ad set : Broad, 25 wilayas, budget du jour (Creative testing)
+   ├─ Ad 1 : vidéo sœur de la mariée au henné + texte « élégance »
+   ├─ Ad 2 : vidéo l'aïd chez la grand-mère   + texte « élégance »
+   └─ Ad 3 : vidéo invitée voilée au mariage  + texte « élégance »</pre><h4>التيست الثاني : أنهي زاوية تبيع، والفيديو الرابح في الكل</h4><pre class="tree" dir="ltr">Campagne : karakou brodé léger — test angles
+└─ Ad set : Broad, 25 wilayas, budget du jour (Creative testing)
+   ├─ Ad 1 : vidéo sœur de la mariée + texte « élégance »
+   ├─ Ad 2 : vidéo sœur de la mariée + texte « couvrante et moderne »
+   ├─ Ad 3 : vidéo sœur de la mariée + texte « luxe comme les grandes marques »
+   └─ Ad 4 : vidéo sœur de la mariée + texte « trousseau de la mariée »</pre><p class="bridge-line">مثال على النتيجة : فيديو أخت العروسة مع الأناقة. نعرفو علاش ربح، لخاطر ما بدّلنا حتى مرة زوج حوايج مع بعض.</p></details><details class="ex6"><summary>الخرجة</summary><p><span class="k">الموديل</span>لونصومبل كتان خفيف، قميجة واسعة وسروال.</p><p><span class="k">شكون ووين يمشيو</span>القهوة مع الصحابات، الماما مع الذراري في الخرجة، والطالبة.</p><p><span class="k">لي يخرجو</span>السهرة تخرج، لخاطر القماش بسيط.</p><h4>التيست الأول : أنهي فيديو يجبد، والنص نفسو في الكل</h4><pre class="tree" dir="ltr">Campagne : ensemble en lin — test vidéos
+└─ Ad set : Broad, 25 wilayas, budget du jour (Creative testing)
+   ├─ Ad 1 : vidéo café avec les amies              + texte « tendance »
+   ├─ Ad 2 : vidéo maman avec les enfants en sortie + texte « tendance »
+   └─ Ad 3 : vidéo étudiante                        + texte « tendance »</pre><h4>التيست الثاني : أنهي زاوية تبيع، والفيديو الرابح في الكل</h4><pre class="tree" dir="ltr">Campagne : ensemble en lin — test angles
+└─ Ad set : Broad, 25 wilayas, budget du jour (Creative testing)
+   ├─ Ad 1 : vidéo café avec les amies + texte « tendance »
+   ├─ Ad 2 : vidéo café avec les amies + texte « confort toute la journée »
+   ├─ Ad 3 : vidéo café avec les amies + texte « travail et sorties »
+   └─ Ad 4 : vidéo café avec les amies + texte « prix contre qualité »</pre><p class="bridge-line">مثال على النتيجة : فيديو الصحابات مع الموضة. نعرفو علاش ربح، لخاطر ما بدّلنا حتى مرة زوج حوايج مع بعض.</p></details><details class="ex6"><summary>السهرة</summary><p><span class="k">الموديل</span>روبة سهرة طويلة، كمام طوال، ساترة.</p><p><span class="k">شكون ووين يمشيو</span>عرس صاحبتها، المحجبة في العرس، ونهار التخرّج.</p><p><span class="k">لي يخرجو</span>الخدمة والدار يخرجو.</p><h4>التيست الأول : أنهي فيديو يجبد، والنص نفسو في الكل</h4><pre class="tree" dir="ltr">Campagne : robe de soirée longue — test vidéos
+└─ Ad set : Broad, 25 wilayas, budget du jour (Creative testing)
+   ├─ Ad 1 : vidéo mariage d'une amie        + texte « luxe comme les grandes marques »
+   ├─ Ad 2 : vidéo invitée voilée au mariage + texte « luxe comme les grandes marques »
+   └─ Ad 3 : vidéo remise des diplômes       + texte « luxe comme les grandes marques »</pre><h4>التيست الثاني : أنهي زاوية تبيع، والفيديو الرابح في الكل</h4><pre class="tree" dir="ltr">Campagne : robe de soirée longue — test angles
+└─ Ad set : Broad, 25 wilayas, budget du jour (Creative testing)
+   ├─ Ad 1 : vidéo invitée voilée + texte « luxe comme les grandes marques »
+   ├─ Ad 2 : vidéo invitée voilée + texte « couvrante et moderne »
+   ├─ Ad 3 : vidéo invitée voilée + texte « élégance »
+   └─ Ad 4 : vidéo invitée voilée + texte « qualité »</pre><p class="bridge-line">مثال على النتيجة : فيديو المحجبة مع ساترة وعصرية. نعرفو علاش ربح، لخاطر ما بدّلنا حتى مرة زوج حوايج مع بعض.</p></details><details class="ex6"><summary>الخدمة</summary><p><span class="k">الموديل</span>تايور سروال وفيستة، لون هادي.</p><p><span class="k">شكون ووين يمشيو</span>الموظفة في البيرو، المعلّمة قدام القسم، وأول نهار في خدمة جديدة.</p><p><span class="k">لي يخرجو</span>العروسة والسهرة يخرجو.</p><h4>التيست الأول : أنهي فيديو يجبد، والنص نفسو في الكل</h4><pre class="tree" dir="ltr">Campagne : tailleur pantalon — test vidéos
+└─ Ad set : Broad, 25 wilayas, budget du jour (Creative testing)
+   ├─ Ad 1 : vidéo employée au bureau           + texte « travail et sorties »
+   ├─ Ad 2 : vidéo enseignante devant la classe + texte « travail et sorties »
+   └─ Ad 3 : vidéo premier jour au travail      + texte « travail et sorties »</pre><h4>التيست الثاني : أنهي زاوية تبيع، والفيديو الرابح في الكل</h4><pre class="tree" dir="ltr">Campagne : tailleur pantalon — test angles
+└─ Ad set : Broad, 25 wilayas, budget du jour (Creative testing)
+   ├─ Ad 1 : vidéo premier jour au travail + texte « travail et sorties »
+   ├─ Ad 2 : vidéo premier jour au travail + texte « élégance »
+   ├─ Ad 3 : vidéo premier jour au travail + texte « couvrante et moderne »
+   └─ Ad 4 : vidéo premier jour au travail + texte « qualité »</pre><p class="bridge-line">مثال على النتيجة : فيديو أول نهار في الخدمة مع الأناقة. نعرفو علاش ربح، لخاطر ما بدّلنا حتى مرة زوج حوايج مع بعض.</p></details><details class="ex6"><summary>الماما والحامل</summary><p><span class="k">الموديل</span>روبة واسعة بالحزام، تتحل وتتسكّر.</p><p><span class="k">شكون ووين يمشيو</span>الحامل، الماما مع الذراري في الخرجة، والماما في الدار.</p><p><span class="k">لي يخرجو</span>الجامعة والسهرة يخرجو.</p><h4>التيست الأول : أنهي فيديو يجبد، والنص نفسو في الكل</h4><pre class="tree" dir="ltr">Campagne : robe ample à ceinture — test vidéos
+└─ Ad set : Broad, 25 wilayas, budget du jour (Creative testing)
+   ├─ Ad 1 : vidéo femme enceinte                   + texte « solution à un problème »
+   ├─ Ad 2 : vidéo maman avec les enfants en sortie + texte « solution à un problème »
+   └─ Ad 3 : vidéo maman à la maison                + texte « solution à un problème »</pre><h4>التيست الثاني : أنهي زاوية تبيع، والفيديو الرابح في الكل</h4><pre class="tree" dir="ltr">Campagne : robe ample à ceinture — test angles
+└─ Ad set : Broad, 25 wilayas, budget du jour (Creative testing)
+   ├─ Ad 1 : vidéo femme enceinte + texte « solution à un problème »
+   ├─ Ad 2 : vidéo femme enceinte + texte « confort toute la journée »
+   ├─ Ad 3 : vidéo femme enceinte + texte « élégance »
+   └─ Ad 4 : vidéo femme enceinte + texte « prix contre qualité »</pre><p class="bridge-line">مثال على النتيجة : فيديو الحامل مع الراحة. نعرفو علاش ربح، لخاطر ما بدّلنا حتى مرة زوج حوايج مع بعض.</p></details><details class="ex6"><summary>الهدية</summary><p><span class="k">الموديل</span>جبّة ولا لونصومبل في علبة هدية.</p><p><span class="k">شكون ووين يمشيو</span>البنت تشري لمّها، والراجل يشري لمرتو. هنا لي يشري ماشي لي يلبس : الفيديو يهدر مع لي يشري.</p><h4>التيست الأول : أنهي فيديو يجبد، والنص نفسو في الكل</h4><pre class="tree" dir="ltr">Campagne : coffret cadeau — test vidéos
+└─ Ad set : Broad, 25 wilayas, budget du jour (Creative testing)
+   ├─ Ad 1 : vidéo fille qui offre à sa mère + texte « cadeau »
+   └─ Ad 2 : vidéo mari qui offre à sa femme + texte « cadeau »</pre><h4>التيست الثاني : أنهي زاوية تبيع، والفيديو الرابح في الكل</h4><pre class="tree" dir="ltr">Campagne : coffret cadeau — test angles
+└─ Ad set : Broad, 25 wilayas, budget du jour (Creative testing)
+   ├─ Ad 1 : vidéo fille qui offre à sa mère + texte « cadeau »
+   ├─ Ad 2 : vidéo fille qui offre à sa mère + texte « qualité »
+   ├─ Ad 3 : vidéo fille qui offre à sa mère + texte « prix contre qualité »
+   └─ Ad 4 : vidéo fille qui offre à sa mère + texte « taille : on vous aide »</pre><p class="bridge-line">مثال على النتيجة : فيديو البنت لمّها مع الهدية. نعرفو علاش ربح، لخاطر ما بدّلنا حتى مرة زوج حوايج مع بعض.</p></details><details class="ex6"><summary>خارج الموسم</summary><p><span class="k">الموديل</span>روبة كتان صيفية، تتباع في الشتا.</p><p><span class="k">شكون ووين يمشيو</span>داخل الدار، تحت الجاكيت، والطالبة في القسم. تبيع البلاصة، وما تخبّيش بلي القماش خفيف.</p><p><span class="k">لي يخرجو</span>البحر يخرج، لخاطر ماشي وقتو.</p><h4>التيست الأول : أنهي فيديو يجبد، والنص نفسو في الكل</h4><pre class="tree" dir="ltr">Campagne : robe d'été en lin — test vidéos
+└─ Ad set : Broad, 25 wilayas, budget du jour (Creative testing)
+   ├─ Ad 1 : vidéo à la maison         + texte « chaleur ou légèreté »
+   ├─ Ad 2 : vidéo sous la veste       + texte « chaleur ou légèreté »
+   └─ Ad 3 : vidéo étudiante en classe + texte « chaleur ou légèreté »</pre><h4>التيست الثاني : أنهي زاوية تبيع، والفيديو الرابح في الكل</h4><pre class="tree" dir="ltr">Campagne : robe d'été en lin — test angles
+└─ Ad set : Broad, 25 wilayas, budget du jour (Creative testing)
+   ├─ Ad 1 : vidéo sous la veste + texte « chaleur ou légèreté »
+   ├─ Ad 2 : vidéo sous la veste + texte « confort toute la journée »
+   ├─ Ad 3 : vidéo sous la veste + texte « tendance »
+   └─ Ad 4 : vidéo sous la veste + texte « prix contre qualité »</pre><p class="bridge-line">مثال على النتيجة : فيديو تحت الجاكيت مع الدفا ولا الخفة. نعرفو علاش ربح، لخاطر ما بدّلنا حتى مرة زوج حوايج مع بعض.</p></details>
+<div class="lrow"><span class="lbl">القانون لي يبان هنا</span><span class="lchip">متغيّر واحد في المرة</span></div>
+<details class="script" open><summary>السكريبت كلمة بكلمة</summary>
+<div class="sc"><span class="sl say">قول</span><p>« فيديو يجيب بزاف مشاهدات وفيديو ما يشوفو حتى واحد. الفرق ماشي زهر. »</p><p>« قبل ما تصوّر حتى فيديو، جاوب على أربع أسئلة. شكون تلبسها ؟ هاذي هي <span class="lat">Persona.</span> وقتاش ووين ؟ هاذا هو <span class="lat">Event.</span> كيفاش تلبسها ؟ هاذا هو <span class="lat">Styling.</span> وعلاش تشريها ؟ هاذي هي <span class="lat">Angle.</span> إذا ما عرفتش تجاوب، ما تعرفش لمن راك تبيع. »</p><p>« باش تفهمو <span class="lat">Angle</span> : زوج زبونات يوقفو قدام نفس اللبسة عند نفس البيّاع. الأولى تخاف تتقلّق نهار كامل، يقولها « مريحة من الصباح للعشية ». الثانية تحب تبان شابة، يقولها « شوفي الخيط الأحمر ». نفس اللبسة، بصح كل وحدة سمعت سبب آخر. هاذا السبب هو <span class="lat">Angle</span> : الحجة لي تقنعها. »</p><p>« الاستهداف تخليه واسع. ما تقولش لـ <span class="lat">Meta</span> « جيبلي الطالبات ». الفيديو هو لي يقولها : الطالبة تشوف طالبة في القسم، تحبس، تشوف، وتكوموندي. <span class="lat">Meta</span> يشوف شكون كوموندا، ويقلّب على ناس يشبهولهم. »</p><p>« والموسم ؟ ما تبيعش الموسم، تبيع البلاصة. القسم داخل، والدار داخل، والسهرة في الليل. بصح ما تكذبش على القماش، لخاطر الكذبة ترجعلك روتور. »</p></div>
+<div class="sc"><span class="sl do">دير وقول</span><ol><li><b>جدول الأمثلة</b> « نقرا كل سطر : شكون ووين في الفيديو، والجملة، وعلاش في النص. »</li><li><b><span class="lat">Ads Manager</span> : الكومبانيا ← الأدسات</b> « كل أدسات فيه فيديو. فيديو الطالبة في أدسات، وفيديو الماما في أدسات آخر. »</li><li><b>الإعلانات داخل الأدسات</b> « كل إعلان بزاوية، والعلامة تاعها في الرابط، باش نعرفو أنهي زاوية جابت الكولي. »</li><li><b>المثال : اللونصومبل الكحل</b> « هاذ الموديل لبسة كل نهار. الطالبة، الخدمة، الخرجة، والمحجبة. العروسة والسهرة يخرجو، لخاطر ما تصدّقش بلي تلبسو تمّ. »</li><li><b>التيست الأول في <span class="lat">Ads Manager</span></b> « نفس النص في الإعلانات كاملين، وكل إعلان بفيديو لـ <span class="lat">Persona</span> ولا <span class="lat">Event</span> آخر. هكذا نعرفو أنهي فيديو يجبد. »</li><li><b>التيست الثاني</b> « الفيديو الرابح في الإعلانات كاملين، وكل إعلان بزاوية. هكذا نعرفو أنهي زاوية تبيع. »</li><li><b>Creative testing</b> « هاذي أداة في <span class="lat">Meta</span> تخلّي كل إعلان ياخذ نصيبو من البودجي، باش المقارنة تكون بالعدل. »</li><li><b>الأكروش</b> « الثواني الأولى هي كلش. »</li><li><b>الزاوية</b> « الوجع، الصورة، الدليل، الاعتراض، المناسبة. »</li><li><b>الأوجاع الأربعة</b> « كل نص يجاوب عليهم. »</li><li><b>الفحوص</b> « حتى « <span class="lat">COD</span> »، حتى رأي مزيّف، حتى وعد بالربح. »</li></ol></div>
+<div class="sc"><span class="sl work">وClaude يخدم، احكي</span><p>« وهو يكتب، شوفو : كل أنغل خرج بنص وحدو، والنص يجاوب على المقاس وعلى « ماشي كيما الفيديو ». ومن بعد، كل فيديو في أدسات وحدو، وكل زاوية في إعلان بعلامتها. في القراية، ما نقولوش « البوب خدمت »، نقولو « فيديو الطالبة جاب كوليات واصلين، وزاوية الراحة هي لي باعت ». هاذي معلومة تسوى دراهم. »</p></div>
+<div class="sc"><span class="sl end">سكّر</span><p>« عندنا الأنغلات. نصنعو الفيديوات. »</p></div>
+</details>
+
+</article>
+<article class="mod" id="m7">
+<div class="mod-h"><span class="code">M7</span><h3>المونتاج</h3><span class="st part">Lot réel une fois</span></div>
+<div class="meta"><span class="lat">Agent editeur</span> · لينك درايف ← فيديوات ← تصاور ← فيزيال</div>
+<dl class="why"><div><dt>واش يعاونا</dt><dd>فيديوات البوب بلا مونتور.</dd></div><div><dt>بسرعة</dt><dd>لينك درايف واحد.</dd></div><div><dt>باليد</dt><dd>فيديو مليح ياخذ ساعة، وبزاف فيديوات لكل مانوكان.</dd></div></dl>
+
+<div class="cols"><div><span class="lbl">على الشاشة</span><ol class="screen"><li>التحميل، الفرز، وتأكيد كل موديل على تصويرة.</li><li>التصاور من الفيديوات لكل لون، والتاجر يسمّي اللونات بالأزرار.</li><li>المونتاج : سينات قصار، موسيقى، الإيقاع حسب عدد اللونات، <span class="lat">natif</span> بلا <span class="lat">flou.</span></li><li>الكونترول : الطول، الصوت، موديل واحد.</li><li>الألبوم في تيليغرام.</li><li>الفيديو المرفوض يروح لـ _a_supprimer، عمرو يتمسح.</li></ol></div>
+<div><span class="lbl">قبل ما تصوّر</span><ul class="need"><li>شوتينغ تجربة، ماشي الرشز الحقيقيين.</li><li class="warn"><span class="lat">POV</span> : <span class="lat">LISEZ-MOI</span> يقول بلا، والأجون مازال يسقسي : تتصلح.</li><li class="warn">التصاور : الشوتينغ أولاً ولا الفيديوات : تتوحّد.</li></ul><span class="lbl">الجملة الأخيرة</span><p class="bridge-line">في الآب، تلصق لينك الدرايف، والباقي أسئلة بالأزرار.</p></div></div>
+<span class="lbl">الأرقام لي يبانو على الشاشة</span><div class="tbl" dir="ltr" lang="fr"><table><thead><tr><th>Règle</th><th>Valeur</th></tr></thead><tbody><tr><td>Vidéos</td><td>10 par mannequin, &gt; 10 s (visé 15 à 25 s), 90 s au plus</td></tr><tr><td>Scènes</td><td>9 par vidéo, 1 à 3 s</td></tr><tr><td>Musiques</td><td>10 au moins, &gt; 12 s, sans paroles</td></tr><tr><td>Photos page</td><td>6 au moins, 4 par couleur</td></tr><tr><td>Visuels pub</td><td>1080 × 1350, 150 à 300 Ko, 5 par couleur</td></tr><tr><td>Durée</td><td>≈ 20 min par modèle</td></tr></tbody></table></div>
+
+<div class="lrow"><span class="lbl">القانون لي يبان هنا</span><span class="lchip">متغيّر واحد في المرة</span></div>
+<details class="script" open><summary>السكريبت كلمة بكلمة</summary>
+<div class="sc"><span class="sl say">قول</span><p>« المونتاج هو أكثر حاجة تاكل الوقت في الإيكومرس. »</p></div>
+<div class="sc"><span class="sl do">دير وقول</span><ol><li><b>لينك مفتوح</b> « لينك واحد، حتى لو فيه بزاف موديلات. »</li><li><b>الموديل في تصويرة</b> « صحيح ولا ماشي صحيح. ما يكمّلش على غلطة. »</li><li><b>اللونات بالأزرار</b> « انت تسمّي، هو ما يخمّنش. »</li><li><b>الفيديوات</b> « سينات وموسيقى مختلفين. »</li><li><b>باليد</b> « ساعة لفيديو واحد. حسبو. »</li></ol></div>
+<div class="sc"><span class="sl work">وClaude يخدم، احكي</span><p>« راهو يقص، يختار، يركّب، ويعاود يفحص كل فيديو. والفيديو القصير يرفضو وحدو. »</p></div>
+<div class="sc"><span class="sl end">سكّر</span><p>« الفيديوات واجدين. قبل ما نصرفو، نحسبو. »</p></div>
+</details>
+
+</article>
+<article class="mod" id="m8">
+<div class="mod-h"><span class="code">M8</span><h3>بورت الربح : <span class="lat">break-even</span></h3><span class="st part">Règle du code</span></div>
+<div class="meta"><span class="lat">Outil manita-testing.py</span> --<span class="lat">break-even</span> · نفس الصيغة في <span class="lat">testing</span> و <span class="lat">scaling</span> و <span class="lat">coach</span> والبوصلة</div>
+<dl class="why"><div><dt>واش يعاونا</dt><dd>تعرف قبل ما تصرف واش راك تخسر.</dd></div><div><dt>بسرعة</dt><dd>تجاوب على الأسئلة، والحكم يخرج.</dd></div><div><dt>باليد</dt><dd>إكسل، وتنسى مصروف ولا زوج، والحساب يطلع متفائل.</dd></div></dl>
+
+<div class="cols"><div><span class="lbl">على الشاشة</span><ol class="screen"><li>المارج على الواصلة : السعر ناقص السلعة، الأومبالاج، التوصيل، وعمولة <span class="lat">COD.</span></li><li>الصافي على مية كوموند، والحد على الكوموند، على المأكّدة، وعلى الواصلة.</li><li>المصاريف الخمسة ديما، حتى لو صفر.</li><li>إذا رابح : الحد الأقصى مكتوب بالدينار وبالدولار.</li><li>إذا خاسر : أزرار « نحبسو / كمّل على مسؤوليتي »، و« نكمّل » ماشي « لانسي ».</li><li>الديسجونكتور : صرف بلا حتى مأكّدة يحبس وحدو.</li></ol></div>
+<div><span class="lbl">قبل ما تصوّر</span><ul class="need"><li>أرقام المثال مخترعة ومكتوبة « مثال ».</li><li class="warn">سعر الدولار ماشي واحد في كل الأدوات : يتوحّد قبل.</li><li class="warn">« فوق » ولا « يساوي » في البورت : تتوحّد.</li></ul><span class="lbl">الجملة الأخيرة</span><p class="bridge-line">في المكتب، البورت تتحسب قبل كل كومبانيا، والخسارة تتقال قبل ما تتصرف.</p></div></div>
+<span class="lbl">الأرقام لي يبانو على الشاشة</span><div class="tbl" dir="ltr" lang="fr"><table><thead><tr><th>Règle</th><th>Valeur</th></tr></thead><tbody><tr><td>Marge livrée</td><td>prix − achat − emballage − livraison − frais COD</td></tr><tr><td>Net / 100 commandes</td><td>livrées × marge − retours × coût retour</td></tr><tr><td>Break-even / commande</td><td>net ÷ 100</td></tr><tr><td>Exemple (fictif)</td><td>5 900 − 2 300 − 50 − 400 − 100 = 3 050 DA (≈ 11,96 USD)</td></tr><tr><td>Disjoncteur site</td><td>dépense ≥ 3 × break-even sans confirmée</td></tr><tr><td>Disjoncteur message</td><td>dépense ≥ 5 × break-even</td></tr></tbody></table></div>
+
+<div class="lrow"><span class="lbl">القانون لي يبان هنا</span><span class="lchip">احسب على الكولي الواصل</span><span class="lchip">حتى رقم من الراس</span><span class="lchip">احسب السقف قبل أول دينار</span></div>
+<details class="script" open><summary>السكريبت كلمة بكلمة</summary>
+<div class="sc"><span class="sl say">قول</span><p>« أغلى غلطة في الدفع عند الاستلام : تلانسي موديل خاسر من الأول وما تعرفش. »</p></div>
+<div class="sc"><span class="sl do">دير وقول</span><ol><li><b>المصاريف الخمسة</b> « حتى لو واحد فيهم صفر، يتكتب. »</li><li><b>الحد</b> « هاذا أقصى ما تصرف على الكوموند بلا ما تخسر. »</li><li><b>الخاسر</b> « يحبس ويسقسيك. »</li><li><b>باليد</b> « مصروف منسي يغلّط الحساب في الاتجاه لي يدفعك تلانسي. »</li></ol></div>
+<div class="sc"><span class="sl work">وClaude يخدم، احكي</span><p>« ما يخترعش رقم، لخاطر رقم غالط هنا يخسّرك دراهم حقيقية. »</p></div>
+<div class="sc"><span class="sl end">سكّر</span><p>« عرفنا الحد. نشوفو الحاسبة لي ترسم الطريق كامل. »</p></div>
+</details>
+
+</article>
+<article class="mod" id="m9">
+<div class="mod-h"><span class="code">M9</span><h3>البوصلة : الحاسبة لي ترسم الطريق</h3><span class="st part">Marge OK</span></div>
+<div class="meta">الصفحة /boussole في المكتب، والسيت « بوصلة التاجر »</div>
+<dl class="why"><div><dt>واش يعاونا</dt><dd>ترسم الطريق : الهدف، رأس المال، الكوموندات في النهار.</dd></div><div><dt>بسرعة</dt><dd>تعمّر الخانات وتشوف.</dd></div><div><dt>باليد</dt><dd>الكالكولاتريس، وتحسب على الكوموند ماشي على الواصل.</dd></div></dl>
+
+<div class="cols"><div><span class="lbl">على الشاشة</span><ol class="screen"><li>قبل ما تبدا : واش الهدف ممكن برأس المال لي عندك؟</li><li>تختار أنهي منتوج : العائد وهامش الأمان.</li><li>تحضّر التيست : السقف، والستوب.</li><li>تحكم : مقبول، نقتلو، نصلّحو حاجة وحدة، نكمّلو.</li><li>تصنع بلا ما تغرق : بوابة الإنتاج وتقسيم الطلبية.</li><li>تكبّر بلا ما تحرق، والخزينة.</li><li>إذا خاسر : <span class="lat">CPL max</span>، التوصيل الأدنى، التأكيد الأدنى، السعر الأدنى.</li></ol></div>
+<div><span class="lbl">قبل ما تصوّر</span><ul class="need"><li>الأفكار بالكلام تاعك، ما تنسخش النصوص ولا الكود تاع السيت : الحقوق محفوظة.</li><li class="warn">رأس المال، « رجوع رأس المال » والمردودية كانو غالطين في النسخة الثالثة تاع السيت : ما يتصوّروش حتى يتصلحو.</li><li>القفل تاع الوضع المتقدم ما يحمي والو في النسخة الثالثة.</li></ul><span class="lbl">الجملة الأخيرة</span><p class="bridge-line">في الآب، البوصلة تحسب بالنسب الحقيقيين لي يجيو من الكوموندات.</p></div></div>
+<span class="lbl">الأرقام لي يبانو على الشاشة</span><div class="tbl" dir="ltr" lang="fr"><table><thead><tr><th>Règle</th><th>Valeur</th></tr></thead><tbody><tr><td>sommet</td><td>break-even par commande</td></tr><tr><td>marge</td><td>break-even par livrée</td></tr><tr><td>Capital de départ</td><td>stock × achat + pub ÷ 3</td></tr><tr><td>Produit faible</td><td>rendement &lt; 15 %</td></tr></tbody></table></div>
+
+<div class="lrow"><span class="lbl">القانون لي يبان هنا</span><span class="lchip">ابدا من النهاية</span><span class="lchip">المسار ماشي وعد</span><span class="lchip">الروافع لي ما تكلّفش</span></div>
+<details class="script" open><summary>السكريبت كلمة بكلمة</summary>
+<div class="sc"><span class="sl say">قول</span><p>« البوصلة ما تقولش « راح تربح ». تقول « بأرقامك اليوم، الطريق يوصل لهنا ». »</p></div>
+<div class="sc"><span class="sl do">دير وقول</span><ol><li><b>الهدف ورأس المال</b> « واش ممكن؟ »</li><li><b>الروافع</b> « السحب كل نهار، التأكيد أسرع، عرض القطعتين. »</li><li><b>نبدّل نسبة التوصيل شوية</b> « شوفو الربح كيفاش يتبدّل. »</li></ol></div>
+<div class="sc"><span class="sl work">وClaude يخدم، احكي</span><p>« نفس المنتوج، نسبة توصيل تتبدّل شوية، والربح يتبدّل بزاف. هاذا علاش ما نخمّموش. »</p></div>
+<div class="sc"><span class="sl end">سكّر</span><p>« الأرقام صحاح. نبنيو الصفحة. »</p></div>
+</details>
+
+</article>
+<article class="mod" id="m10">
+<div class="mod-h"><span class="code">M10</span><h3>صفحة المنتوج في <span class="lat">Tassyir</span></h3><span class="st rec">Jamais prouvé</span></div>
+<div class="meta"><span class="lat">Agent page</span> · الكونيكتور تاع <span class="lat">Tassyir</span></div>
+<dl class="why"><div><dt>واش يعاونا</dt><dd>صفحة كاملة ومرتبة بلا ما تكتب.</dd></div><div><dt>بسرعة</dt><dd>برومبت ولا كليك : العنوان، الوصف، التصاور والـ <span class="lat">SKU.</span></dd></div><div><dt>باليد</dt><dd>كل <span class="lat">SKU</span> لون بلون وتاي بتاي، تصويرة بتصويرة : الـ <span class="lat">SKU</span> وحدهم يتعّبوك.</dd></div></dl>
+
+<div class="cols"><div><span class="lbl">على الشاشة</span><ol class="screen"><li>السؤال الإجباري على المقاسات : وحدهم ولا مجموعين، بالحروف ولا بالأرقام.</li><li>الـ <span class="lat">SKU</span> : البوتيك، الموديل، اللون، المقاس.</li><li>ترتيب التصاور : عمرهم زوج تصاور من نفس اللون ورا بعضاهم.</li><li>الوصف : تصويرة ونص بالتناوب، والسطر الأخير فيه السعر والتوصيل والخلاص عند الاستلام.</li><li>المنتوج يتخلق مخبّي، الوصف وحدو، يعاود يقرا، ومن بعد يتنشر.</li><li>الستوك مقاس بمقاس.</li></ol></div>
+<div><span class="lbl">قبل ما تصوّر</span><ul class="need"><li class="warn">صفحة من الباكي تتنشر في الحقيقة : عمرها ما تبرهنت.</li><li class="warn">« نشرها » : الكود ينشر مباشرة وبلايص مازال يسقسيو : يتوحّد.</li><li>بوتيك تجربة، والسمية مضبّبة.</li></ul><span class="lbl">الجملة الأخيرة</span><p class="bridge-line">في الآب، الصفحة تتصنع وحدها وتشوفها قبل ما تتنشر.</p></div></div>
+<span class="lbl">الأرقام لي يبانو على الشاشة</span><div class="tbl" dir="ltr" lang="fr"><table><thead><tr><th>Règle</th><th>Valeur</th></tr></thead><tbody><tr><td>SKU</td><td>SHOP-M05-NOI-SM : A–Z, 0–9, « - »</td></tr><tr><td>Couleur</td><td>3 lettres : NOI, BLA, BEI, MRN, CRM…</td></tr><tr><td>Photos</td><td>6 à 15 ; galerie Tassyir 20 au plus</td></tr><tr><td>Description</td><td>5 paires photo / texte au moins ; texte ≤ 6 lignes</td></tr><tr><td>Mots interdits</td><td>COD, مضمون, تربح, مليونير…</td></tr><tr><td>Prix</td><td>1 500 à 59 000 DA (≈ 5,9 à 231,4 USD)</td></tr></tbody></table></div>
+
+<div class="lrow"><span class="lbl">القانون لي يبان هنا</span><span class="lchip">اللي ما يتسجّلش ما يتصلحش</span></div>
+<details class="script" open><summary>السكريبت كلمة بكلمة</summary>
+<div class="sc"><span class="sl say">قول</span><p>« الصفحة هي البوتيك. هاذ الأجون يبنيها كاملة في <span class="lat">Tassyir.</span> »</p></div>
+<div class="sc"><span class="sl do">دير وقول</span><ol><li><b>المقاسات</b> « هاذا السؤال الوحيد لي ما يجاوبش عليه بلاصتك. »</li><li><b>الـ <span class="lat">SKU</span></b> « كل لون، كل تاي. »</li><li><b>الترتيب</b> « عمرهم زوج تصاور من نفس اللون ورا بعضاهم. »</li><li><b>باليد : <span class="lat">SKU</span> واحد</b> « هاذا واحد. موديل فيه بزاف ألوان وبزاف تايات… هنا تتعب. »</li></ol></div>
+<div class="sc"><span class="sl work">وClaude يخدم، احكي</span><p>« راهو يعاود يقرا الصفحة كيما تسجّلت، باش الغلطة يلقاها هو قبل الزبونة. »</p></div>
+<div class="sc"><span class="sl end">سكّر</span><p>« الصفحة واجدة. نجيبولها الناس. »</p></div>
+</details>
+
+</article>
+<article class="mod" id="m11">
+<div class="mod-h"><span class="code">M11</span><h3>الميديا باينغ وفيلترات المعطيات</h3><span class="st rec">Jamais prouvé</span></div>
+<div class="meta"><span class="lat">Agent testing</span> · <span class="lat">UTM</span> و <span class="lat">Tassyir</span></div>
+<dl class="why"><div><dt>واش يعاونا</dt><dd>تعرف أي بوب تجيب كولي يتخلص.</dd></div><div><dt>بسرعة</dt><dd>الروابط معلّمين وحدهم، والجدول يخرج.</dd></div><div><dt>باليد</dt><dd>المصروف من <span class="lat">Meta</span>، الكوموندات من <span class="lat">Tassyir</span>، وإكسل كل صباح.</dd></div></dl>
+
+<div class="cols"><div><span class="lbl">على الشاشة</span><ol class="screen"><li>التيست : كومبانيا وحدة لكل موديل، أدسات لكل فيديو، <span class="lat">ABO</span>، <span class="lat">Broad</span>، <span class="lat">Reels</span> و <span class="lat">Story</span> برك.</li><li>المفتاح تاع التيست : نفس البوتيك والموديل والسعر والفيديوات = نفس التيست، عمرو دوبل.</li><li>الأسامي في <span class="lat">Meta</span>، والبحث ديما بالرقم.</li><li>الرابط : <span class="lat">utm_source</span>، <span class="lat">utm_medium</span>، <span class="lat">utm_campaign</span> بالموديل والمفتاح، <span class="lat">utm_content</span> بالزاوية.</li><li><span class="lat">Tassyir</span> يعطي الشجرة : <span class="lat">source</span>، <span class="lat">campaign</span>، <span class="lat">content.</span></li><li>إذا كلش « (<span class="lat">not set</span>) » : ما نفرّقوش بالتقريب، وما نطلّعوش.</li><li>الكوست على الكولي الواصل هو لي يحكم.</li></ol></div>
+<div><span class="lbl">قبل ما تصوّر</span><ul class="need"><li class="warn">كيفاش <span class="lat">Tassyir</span> يعمّر <span class="lat">UTM</span> في كوموند حقيقية : ما تجرّبش.</li><li class="warn">خمسة روابط <span class="lat">UTM</span> يتخلقو بصح الفيديوات أربعة على الأكثر : تتصلح.</li><li>في المود ميساج : الزاوية تتكتب باليد في الملاحظة.</li></ul><span class="lbl">الجملة الأخيرة</span><p class="bridge-line">في الآب، الفيلترات يتدارو وحدهم.</p></div></div>
+<span class="lbl">الأرقام لي يبانو على الشاشة</span><div class="tbl" dir="ltr" lang="fr"><table><thead><tr><th>Règle</th><th>Valeur</th></tr></thead><tbody><tr><td>Budget test</td><td>7 USD (1 785 DA) par ad set si 1–2 vidéos ; 5 USD (1 275 DA) si 3–4</td></tr><tr><td>Ciblage</td><td>Broad, 25 wilayas du nord (regions, jamais countries DZ)</td></tr><tr><td>Placements</td><td>Reels + Story, sans Feed</td></tr><tr><td>Clé de test</td><td>SHA-256 boutique|modèle|prix|vidéos, 12 caractères</td></tr><tr><td>Lien</td><td>?utm_source=facebook&amp;utm_medium=cpc&amp;utm_campaign=&lt;modèle&gt;-&lt;clé&gt;&amp;utm_content=ANGLE-A1</td></tr><tr><td>daily_budget</td><td>en centimes : 7 $ = 700</td></tr><tr><td>Spend cap</td><td>interdit</td></tr></tbody></table></div>
+
+<div class="lrow"><span class="lbl">القانون لي يبان هنا</span><span class="lchip">البوب ماشي ديما هي المشكل</span><span class="lchip">احكم على الحاجة الصحيحة</span><span class="lchip">متغيّر واحد في المرة</span></div>
+<details class="script" open><summary>السكريبت كلمة بكلمة</summary>
+<div class="sc"><span class="sl say">قول</span><p>« الميديا باينغ ماشي تخرج بوب. هو تعرف أي بوب تجيب الدراهم. »</p></div>
+<div class="sc"><span class="sl do">دير وقول</span><ol><li><b>الرابط والبطاقة</b> « بلا <span class="lat">UTM</span>، تشوف الكوموندات وما تعرفش أنهي فيديو جابهم. »</li><li><b>المفتاح</b> « إذا عاودت بالغلط، يلقى نفس التيست وما يدوبليش. »</li><li><b>الشجرة في <span class="lat">Tassyir</span></b> « كل زاوية، شحال وصلّت وشحال رجعت. »</li></ol></div>
+<div class="sc"><span class="sl work">وClaude يخدم، احكي</span><p>« بنفس البوب، واحد يربح وواحد يخسر. لي يقرا الكوست على الواصل يعرف واش يقطع. »</p></div>
+<div class="sc"><span class="sl end">سكّر</span><p>« نلانسيو التيست. »</p></div>
+</details>
+
+</article>
+<article class="mod" id="m12">
+<div class="mod-h"><span class="code">M12</span><h3>التيستينغ : من الكومبانيا المحبوسة حتى القراية تاع الليل</h3><span class="st rec">Jamais prouvé</span></div>
+<div class="meta"><span class="lat">Agent testing</span> · الكلمة « لانسي »</div>
+<dl class="why"><div><dt>واش يعاونا</dt><dd>التيست مبني صح ومحبوس حتى تقرر، ومقروء كل ليلة.</dd></div><div><dt>بسرعة</dt><dd>كلمة « لانسي ».</dd></div><div><dt>باليد</dt><dd>أدسات بأدسات، ولاية بولاية، وقراية كل ليلة بيدك.</dd></div></dl>
+
+<div class="cols"><div><span class="lbl">على الشاشة</span><ol class="screen"><li>قبل : كرياتيف، صفحة في الأنترنت، ستوك لكل مقاس، <span class="lat">Meta</span>، بيكسل، بودجي، مصاريف، سعر الدولار.</li><li>كلش يتخلق <span class="lat">PAUSED</span>، ويتعاود يتقرا.</li><li>« كلش واجد وموقّف. حتى دينار ما يتصرف حتى تقولي انت ».</li><li>« <span class="lat">ok</span> » ولا « واه » ماهمش « لانسي ».</li><li>التشغيل بالرقم، مرة وحدة، ويتعاود يتقرا.</li><li>كل ليلة : يقرا <span class="lat">Tassyir</span> و <span class="lat">Meta</span>، يكتب في الكارني، ويبعث التقرير.</li><li>القرارات بالترتيب : ديسجونكتور، بكري، ما كفاش، بدّل كرياتيف، رابح، خسارة خفيفة، خسارة ثقيلة.</li></ol></div>
+<div><span class="lbl">قبل ما تصوّر</span><ul class="need"><li class="warn">لانسي حقيقي عند <span class="lat">Meta</span> : عمرو ما صرا.</li><li>صوّر غير السؤال و « ماشي دروك » إذا ما تحبش تصرف.</li><li class="warn">شكون يحبس وقتاش : <span class="lat">testing</span> يحبس وحدو، الكوتش عمرو. يتقال بالصح.</li></ul><span class="lbl">الجملة الأخيرة</span><p class="bridge-line">في الآب، اللانسي زر واحد، والمصروف مكتوب قدامك.</p></div></div>
+<span class="lbl">الأرقام لي يبانو على الشاشة</span><div class="tbl" dir="ltr" lang="fr"><table><thead><tr><th>Règle</th><th>Valeur</th></tr></thead><tbody><tr><td>Lot</td><td>un seul « لانسي » ; heures : +1 h 30 puis +2 h par modèle</td></tr><tr><td>Rapport du soir</td><td>après 20:30, 3 essais toutes les 20 min</td></tr><tr><td>TROP_TOT</td><td>avant le 3e jour</td></tr><tr><td>DONNEES_INSUFFISANTES</td><td>site : &lt; 10 commandes</td></tr><tr><td>PERTE_LEGERE</td><td>coût entre la limite et 1,5 × la limite</td></tr><tr><td>PERTE_LOURDE</td><td>&gt; 1,5 × la limite</td></tr><tr><td>Base « test »</td><td>confirmées</td></tr><tr><td>Base « stock »</td><td>livrées + en route × 0,30 + confirmées non expédiées × taux</td></tr></tbody></table></div>
+
+<div class="lrow"><span class="lbl">القانون لي يبان هنا</span><span class="lchip">احسب السقف قبل أول دينار</span><span class="lchip">التيست طلب قبل الستوك</span><span class="lchip">احكم على الحاجة الصحيحة</span><span class="lchip">ما تزيدش بعد نهار خاسر</span></div>
+<details class="script" open><summary>السكريبت كلمة بكلمة</summary>
+<div class="sc"><span class="sl say">قول</span><p>« التيست هو البلاصة لي تولّي فيها الدراهم معلومة. »</p></div>
+<div class="sc"><span class="sl do">دير وقول</span><ol><li><b>الكومبانيا محبوسة</b> « كلش واجد، ولا دورو خرج. »</li><li><b>« لانسي »</b> « هاذي هي الكلمة. « <span class="lat">ok</span> » ماشي « لانسي ». »</li><li><b>تقرير الليل</b> « كل ليلة، سطر بسطر. »</li><li><b>القرار</b> « بالترتيب، وانت تقرر في الخسارة. »</li></ol></div>
+<div class="sc"><span class="sl work">وClaude يخدم، احكي</span><p>« كل حاجة تصنعت، بصح ولا دورو خرج. هاذي هي الحماية. »</p></div>
+<div class="sc"><span class="sl end">سكّر</span><p>« لقينا رابح؟ نكبّروه. »</p></div>
+</details>
+
+</article>
+<article class="mod" id="m13">
+<div class="mod-h"><span class="code">M13</span><h3>السكالينغ</h3><span class="st rec">Jamais prouvé</span></div>
+<div class="meta"><span class="lat">Agent scaling</span> · الكلمات « طلّع » و « لانسي »</div>
+<dl class="why"><div><dt>واش يعاونا</dt><dd>تكبّر الرابح بلا ما تحرقو.</dd></div><div><dt>بسرعة</dt><dd>كلمة وحدة.</dd></div><div><dt>باليد</dt><dd>تلقى الـ <span class="lat">post ID</span>، تبني <span class="lat">CBO</span>، وتخاف تغلط في البودجي.</dd></div></dl>
+
+<div class="cols"><div><span class="lbl">على الشاشة</span><ol class="screen"><li>باب السكايل : خمس شروط، شرط ناقص = مسكّر.</li><li>ترتيب الزوايا على الربح الصافي.</li><li>سقف الستوك يعطي البودجي.</li><li>الرابح : أرخص كوست بشرط نتائج كافية.</li><li>كومبانيا <span class="lat">CBO</span> على نفس البوست، <span class="lat">PAUSED</span>، و « لانسي ».</li><li>الطلوع : بالدرجات، مرة كل يومين، عمرو بعد نهار خاسر.</li><li>الجماهير : نحيّدو لي شراو، ومن بعد <span class="lat">lookalike.</span></li></ol></div>
+<div><span class="lbl">قبل ما تصوّر</span><ul class="need"><li class="warn">تيست حقيقي فيه رابح : ما كانش.</li><li class="warn">« <span class="lat">budget cap atteint</span> » مازال في ليستة الضرورة والسقف ممنوع : يتصلح.</li></ul><span class="lbl">الجملة الأخيرة</span><p class="bridge-line">في الآب، الرابح يبان وحدو، وتطلّعو بكلمة.</p></div></div>
+<span class="lbl">الأرقام لي يبانو على الشاشة</span><div class="tbl" dir="ltr" lang="fr"><table><thead><tr><th>Règle</th><th>Valeur</th></tr></thead><tbody><tr><td>Porte 1</td><td>confirmées ÷ commandes ≥ 50 %</td></tr><tr><td>Porte 2</td><td>(livrées + en route × 0,30) ÷ expédiées ≥ 40 %</td></tr><tr><td>Porte 3</td><td>livrées ≥ 20</td></tr><tr><td>Porte 4</td><td>coût / livrée ≤ break-even / livrée</td></tr><tr><td>Porte 5</td><td>stock &gt; 0</td></tr><tr><td>Échelle</td><td>72 h sans toucher, puis +30 % si coût ≤ 70 % du break-even, sinon +20 %, une fois / 48 h</td></tr><tr><td>Plancher Meta</td><td>260 DA / jour</td></tr></tbody></table></div>
+
+<div class="lrow"><span class="lbl">القانون لي يبان هنا</span><span class="lchip">ما تكبّرش قبل ما الكل يلحق</span><span class="lchip">ما تزيدش بعد نهار خاسر</span><span class="lchip">ديما عندك الخليفة</span></div>
+<details class="script" open><summary>السكريبت كلمة بكلمة</summary>
+<div class="sc"><span class="sl say">قول</span><p>« السكالينغ هو البلاصة لي يحرقو فيها الناس الأرباح تاعهم. »</p></div>
+<div class="sc"><span class="sl do">دير وقول</span><ol><li><b>الباب</b> « شرط ناقص، مسكّر. بلا متوسط. »</li><li><b>نفس البوست</b> « الكومنتار واللايكات يبقاو. »</li><li><b>الدرجات</b> « عمرو بعد نهار خاسر. »</li></ol></div>
+<div class="sc"><span class="sl work">وClaude يخدم، احكي</span><p>« الباب المحلول يعطيك الحق تسقسي، ماشي تطلّع وحدك. »</p></div>
+<div class="sc"><span class="sl end">سكّر</span><p>« شكون يدير هاذا كامل مجموع؟ المانجر. »</p></div>
+</details>
+
+</article>
+<article class="mod" id="m14">
+<div class="mod-h"><span class="code">M14</span><h3>المانجر</h3><span class="st part">Partiel</span></div>
+<div class="meta"><span class="lat">Agent manager</span> · يمشّي الموديل : <span class="lat">editeur ← page ← testing ← coach ← scaling</span></div>
+<dl class="why"><div><dt>واش يعاونا</dt><dd>كل الأجونات يخدمو بالترتيب بلاصتك.</dd></div><div><dt>بسرعة</dt><dd>طلب واحد : « واش نديرو اليوم؟ ».</dd></div><div><dt>باليد</dt><dd>تحل كل أجون وحدو، وتتبع الترتيب بيدك.</dd></div></dl>
+
+<div class="cols"><div><span class="lbl">على الشاشة</span><ol class="screen"><li>قبل ما يهدر : يتحقق من التنصيب ويقرا الحالة.</li><li>الميساج الأول : جدول الموديلات و « واش نديرو اليوم؟ ».</li><li>الطريق <span class="lat">A</span> : موديل جديد. <span class="lat">L</span> : لوط. <span class="lat">B</span> : موديل بدا. <span class="lat">C</span> : قراية الليل.</li><li>كل باب يحتاج دليل قبل ما يفوت.</li><li>يكتب غير في الفيشة تاع الموديل وفي الكارني.</li></ol></div>
+<div><span class="lbl">قبل ما تصوّر</span><ul class="need"><li>السكيل تاع البلوغين وتاع المكتب ماهمش نفس الفيشي : أي واحد يتصوّر؟</li></ul><span class="lbl">الجملة الأخيرة</span><p class="bridge-line">في المكتب، المانجر هو المهمة لي تمشي وحدها.</p></div></div>
+<div class="lrow"><span class="lbl">القانون لي يبان هنا</span><span class="lchip">واجب واحد في المرة</span></div>
+<details class="script" open><summary>السكريبت كلمة بكلمة</summary>
+<div class="sc"><span class="sl say">قول</span><p>« كل واش شفتوه، أجون بأجون. المانجر هو لي يخدّمهم بالترتيب. »</p></div>
+<div class="sc"><span class="sl do">دير وقول</span><ol><li><b>الجدول</b> « وين راه كل موديل. »</li><li><b>الطريق</b> « الخطوة الجاية = أول دليل ناقص. »</li><li><b>باليد</b> « تحل كل أجون وحدو. »</li></ol></div>
+<div class="sc"><span class="sl work">وClaude يخدم، احكي</span><p>« ما يهدرش مع التاجر. الكوتش هو لي يهدر. »</p></div>
+<div class="sc"><span class="sl end">سكّر</span><p>« وين يكتب واش قاس؟ في الكارني. »</p></div>
+</details>
+
+</article>
+<article class="mod" id="m15">
+<div class="mod-h"><span class="code">M15</span><h3>الكارني : الذاكرة تاع البيزنس</h3><span class="st part">À relire</span></div>
+<div class="meta">Outil manita-carnet.py · mesures.csv, produits/, decisions.md</div>
+<dl class="why"><div><dt>واش يعاونا</dt><dd>الأرقام الحقيقية تاع كل نهار في بلاصة وحدة.</dd></div><div><dt>بسرعة</dt><dd>المكتب يكتب وحدو كل ليلة.</dd></div><div><dt>باليد</dt><dd>كراس ولا إكسل، ونهار تنسى يطيح كلش.</dd></div></dl>
+
+<div class="cols"><div><span class="lbl">على الشاشة</span><ol class="screen"><li>الفيشة تاع الموديل مرة وحدة.</li><li>القياس تاع كل نهار.</li><li>القرارات.</li><li>يرفض : كلمات السر، التوكنات، التيليفونات، الإيميلات.</li><li>المقاس يغلب على المعلن كي تكون الكوموندات كافية.</li></ol></div>
+<div><span class="lbl">قبل ما تصوّر</span><ul class="need"><li class="warn">العتبة مرة ثلاثين ومرة خمسة وعشرين : يتوحّد ولا يتشرح.</li></ul><span class="lbl">الجملة الأخيرة</span><p class="bridge-line">في الآب، الكارني يتعمّر وحدو، وانت تقراه.</p></div></div>
+<span class="lbl">الأرقام لي يبانو على الشاشة</span><div class="tbl" dir="ltr" lang="fr"><table><thead><tr><th>Règle</th><th>Valeur</th></tr></thead><tbody><tr><td>Mesuré &gt; déclaré</td><td>à partir de 30 commandes (carnet) ou 25 confirmées (lecture livrée)</td></tr></tbody></table></div>
+
+<div class="lrow"><span class="lbl">القانون لي يبان هنا</span><span class="lchip">اللي ما يتسجّلش ما يتصلحش</span></div>
+<details class="script" open><summary>السكريبت كلمة بكلمة</summary>
+<div class="sc"><span class="sl say">قول</span><p>« الكارني هو الذاكرة. »</p></div>
+<div class="sc"><span class="sl do">دير وقول</span><ol><li><b>الفيشة</b> « مرة. »</li><li><b>السطر تاع النهار</b> « كل ليلة. »</li><li><b>سمية زبونة</b> « يرفض. »</li></ol></div>
+<div class="sc"><span class="sl work">وClaude يخدم، احكي</span><p>« الأرقام لي قلتها في الأول تتبدّل بالحقيقة. »</p></div>
+<div class="sc"><span class="sl end">سكّر</span><p>« وشكون يقرالك الكارني؟ الكوتش. »</p></div>
+</details>
+
+</article>
+<article class="mod" id="m16">
+<div class="mod-h"><span class="code">M16</span><h3>الكوتش : الصوت الوحيد</h3><span class="st part">Partiel</span></div>
+<div class="meta"><span class="lat">Agent coach</span> · ما يأمر حتى أجون، وما يحبس والو وحدو</div>
+<dl class="why"><div><dt>واش يعاونا</dt><dd>واحد يقرالك الأرقام ويقولك واش تدير.</dd></div><div><dt>بسرعة</dt><dd>تسقسيه، ولا التقرير يجي.</dd></div><div><dt>باليد</dt><dd>تقرا وحدك وتقرر بالإحساس.</dd></div></dl>
+
+<div class="cols"><div><span class="lbl">على الشاشة</span><ol class="screen"><li>يجاوب على اللبسة قبل.</li><li>يقرا النسب الحقيقية، و <span class="lat">ROAS</span> على الواصلة.</li><li>الأوديت : أربع فحوص يحبسو، وثلاثة خطيرين، وواحد متوسط.</li><li>باب الإنتاج : المأكّدات الكافية قبل البون دو كوموند.</li><li>كالوندري الروتور.</li><li>نصيحة المأكّدة : القطعة الثانية بتخفيض.</li><li>قبل كل باب، زوج طرق : نقطعو ولا ننقصو.</li><li>« رأيي : نحبسو دروك »، والتاجر يقرر.</li></ol></div>
+<div><span class="lbl">قبل ما تصوّر</span><ul class="need"><li>التيست ثلاثة أيام، وباب الإنتاج يتحكم بعد : يتشرح.</li></ul><span class="lbl">الجملة الأخيرة</span><p class="bridge-line">في الآب، الكوتش يجيك في تيليغرام كل ليلة.</p></div></div>
+<span class="lbl">الأرقام لي يبانو على الشاشة</span><div class="tbl" dir="ltr" lang="fr"><table><thead><tr><th>Règle</th><th>Valeur</th></tr></thead><tbody><tr><td>ROAS</td><td>encaissé ÷ (pub + frais)</td></tr><tr><td>Porte production</td><td>&lt; 3 couleurs : 35 confirmées ; ≥ 3 : 50</td></tr><tr><td>Bon de commande</td><td>10 pièces min par référence, reste selon les confirmées</td></tr><tr><td>Lecture livrée</td><td>dès J10 (site), J12 (message) ou 25 confirmées</td></tr></tbody></table></div>
+
+<div class="lrow"><span class="lbl">القانون لي يبان هنا</span><span class="lchip">البوب ماشي ديما هي المشكل</span><span class="lchip">الإنقاذ قبل الأسئلة</span><span class="lchip">الستوك كاش محبوس</span><span class="lchip">ما تكبّرش قبل ما الكل يلحق</span></div>
+<details class="script" open><summary>السكريبت كلمة بكلمة</summary>
+<div class="sc"><span class="sl say">قول</span><p>« الكوتش هو الصوت الوحيد لي تسمعو. »</p></div>
+<div class="sc"><span class="sl do">دير وقول</span><ol><li><b>السؤال على اللبسة</b> « يجاوب أولاً. »</li><li><b>الأوديت</b> « شوفو : ثمانية فحوص. »</li><li><b>رأيو</b> « وانت تقرر. »</li></ol></div>
+<div class="sc"><span class="sl work">وClaude يخدم، احكي</span><p>« ما يقطع والو بلا « واه ». »</p></div>
+<div class="sc"><span class="sl end">سكّر</span><p>« كيفاش كلش هاذا يمشي وحدو؟ المكتب. »</p></div>
+</details>
+
+</article>
+<article class="mod" id="m17">
+<div class="mod-h"><span class="code">M17</span><h3>المكتب : المهمة مرحلة بمرحلة</h3><span class="st rec">Jamais prouvé chez un client</span></div>
+<div class="meta">المكتب في المتصفح · الصفحات : المكتب، <span class="lat">station</span>، <span class="lat">boussole</span> · تيليغرام</div>
+<dl class="why"><div><dt>واش يعاونا</dt><dd>من لينك درايف حتى الكومبانيا المحبوسة، وحدو.</dd></div><div><dt>بسرعة</dt><dd>لينك في تيليغرام.</dd></div><div><dt>باليد</dt><dd>كل أجون تحلّو بيدك، وتستنى.</dd></div></dl>
+
+<div class="cols"><div><span class="lbl">على الشاشة</span><ol class="screen"><li>الأونغليات : الموديلات، الخدمات، الكوتش، الكارني، الروتين، الجورنال، الإعدادات، التحضير.</li><li>/station : الطاقم بالبيكسل آرت.</li><li>الاستقبال في تيليغرام : الأسئلة بالأزرار، سؤال في المرة.</li><li>اللوط : تحميل، لوحات، قرايتين ومقارنة، دوسي لكل موديل، تأكيد، « ابدا ».</li><li>المهمة : تحميل، فرز، تصاور، اللونات، مونتاج، كونترول، تصاور في <span class="lat">Tassyir</span>، نصوص، تحضير، صفحة، نشر، بورت، بودجي، فيديوات لـ <span class="lat">Meta</span>، أسامي وروابط، كومبانيا محبوسة، « لانسي »، تشغيل.</li><li>في كل فشل : « عاود » ولا « حبس ».</li><li><span class="lat">Claude</span> في كل خطوة بلا <span class="lat">shell</span> وبلا أنترنت، والليستة تاع « عمرها ».</li></ol></div>
+<div><span class="lbl">قبل ما تصوّر</span><ul class="need"><li class="warn">المكتب عند كليان : عمرو ما تبرهن.</li><li class="warn">الفيرسيون تاع البلوغين وتاع المكتب ماشي كيف كيف : تتوحّد قبل.</li><li>« الكتابة غير بعد لانسي » : الصح « التشغيل غير بعد لانسي ».</li></ul><span class="lbl">الجملة الأخيرة</span><p class="bridge-line">هاذا هو الأوتوماسيون كامل. في الآب، نفس الشي من لينك.</p></div></div>
+<span class="lbl">الأرقام لي يبانو على الشاشة</span><div class="tbl" dir="ltr" lang="fr"><table><thead><tr><th>Règle</th><th>Valeur</th></tr></thead><tbody><tr><td>Adresse</td><td>http://localhost:4620 ; pages /, /station, /boussole</td></tr><tr><td>Étapes de mission</td><td>19</td></tr><tr><td>Telegram</td><td>lecture toutes les 25 s</td></tr><tr><td>Claude</td><td>un à la fois ; sonnet par défaut, haiku pour 4 étapes</td></tr><tr><td>Jamais</td><td>confirmer, annuler, expédier une commande ; finance ; boost ; suppression Meta</td></tr><tr><td>Mission</td><td>reprend après extinction du PC</td></tr></tbody></table></div>
+
+<div class="lrow"><span class="lbl">القانون لي يبان هنا</span><span class="lchip">الربح هو الكاش لي رجع</span><span class="lchip">اللي ما يتسجّلش ما يتصلحش</span></div>
+<details class="script" open><summary>السكريبت كلمة بكلمة</summary>
+<div class="sc"><span class="sl say">قول</span><p>« هنا كلش يتجمع. المكتب يخدم في الـ <span class="lat">PC</span>، وانت تهدر معاه من تيليغرام. »</p></div>
+<div class="sc"><span class="sl do">دير وقول</span><ol><li><b>لينك درايف للروبو</b> « والأسئلة تجي وحدة بوحدة. »</li><li><b>الأونغلي الموديلات</b> « شوفو كل مرحلة كيفاش تتقدم. »</li><li><b>/station</b> « الطاقم يخدم. »</li><li><b>« لانسي »</b> « مرة وحدة. عمرو ما يشعّل زوج مرات. »</li></ol></div>
+<div class="sc"><span class="sl work">وClaude يخدم، احكي</span><p>« كل خطوة <span class="lat">Claude</span> يخدم فيها بالأدوات المسموحة برك. ما يقدرش يأكّد كوموند، ما يقدرش يمسح. هاذي حماية مكتوبة في الكود، ماشي وعد. »</p></div>
+<div class="sc"><span class="sl end">سكّر</span><p>« وكيفاش هاذا يتنصب عند الكليان؟ »</p></div>
+</details>
+
+</article>
+<article class="mod" id="m18">
+<div class="mod-h"><span class="code">M18</span><h3>الحماية والكلمات</h3><span class="st part">Règle du code</span></div>
+<div class="meta">meta-mcp.mjs, missions.mjs, moteur.mjs, controles.mjs, verifier.mjs</div>
+<dl class="why"><div><dt>واش يعاونا</dt><dd>حتى غلطة ما تحرق الدراهم.</dd></div><div><dt>بسرعة</dt><dd>الكود يمنع وحدو.</dd></div><div><dt>باليد</dt><dd>تراقب كل حاجة بعينك.</dd></div></dl>
+
+<div class="cols"><div><span class="lbl">على الشاشة</span><ol class="screen"><li>كلش يتخلق <span class="lat">PAUSED</span>، حتى لو <span class="lat">Claude</span> بعث حاجة أخرى.</li><li>سقف الصرف مرفوض.</li><li>التشغيل يحتاج باب يتستعمل مرة وحدة.</li><li>حتى مسيح في <span class="lat">Meta.</span></li><li>توكن ملصوق في تيليغرام يتمسح.</li><li>جدول الكلمات : لانسي، ماشي دروك، ابدا، نكمّل، طلّع، الغي، سقسيني، عاود.</li></ol></div>
+<div><span class="lbl">قبل ما تصوّر</span><ul class="need"><li class="warn"><span class="lat">Engagement</span> ناقص من <span class="lat">LIS-MOI</span>، والأجونات ثمانية ماشي سبعة.</li></ul><span class="lbl">الجملة الأخيرة</span><p class="bridge-line">في الآب، نفس الحمايات، ونفس الكلمات بالأزرار.</p></div></div>
+<span class="lbl">الأرقام لي يبانو على الشاشة</span><div class="tbl" dir="ltr" lang="fr"><table><thead><tr><th>Règle</th><th>Valeur</th></tr></thead><tbody><tr><td>ok / واه / oui</td><td>ne sont PAS « لانسي »</td></tr><tr><td>نكمّل</td><td>accepte un break-even perdant, n'active rien</td></tr><tr><td>واه (écrit)</td><td>envoie des numéros clients à Meta</td></tr></tbody></table></div>
+
+<div class="lrow"><span class="lbl">القانون لي يبان هنا</span><span class="lchip">اللي ما يتسجّلش ما يتصلحش</span></div>
+<details class="script" open><summary>السكريبت كلمة بكلمة</summary>
+<div class="sc"><span class="sl say">قول</span><p>« الثقة في الماشينة ما تجيش بالكلام. تجي من الحماية المكتوبة في الكود. »</p></div>
+<div class="sc"><span class="sl do">دير وقول</span><ol><li><b>PAUSED</b> « حتى لو طلبتو، يتخلق محبوس. »</li><li><b>الكلمات</b> « كل كلمة وواش تدير. »</li></ol></div>
+<div class="sc"><span class="sl work">وClaude يخدم، احكي</span><p>« وهو يخلق، شوفو : طلبنا منو يخلق حاجة شاعلة، ورجّعها محبوسة. ماشي لخاطر <span class="lat">Claude</span> فهم، لخاطر الكود ما يخليهش. هاذي هي الثقة لي تتبنى. »</p></div>
+<div class="sc"><span class="sl end">سكّر</span><p>« نشوفو التنصيب. »</p></div>
+</details>
+
+</article>
+<article class="mod" id="m19">
+<div class="mod-h"><span class="code">M19</span><h3>التنصيب عند الكليان</h3><span class="st part">Windows à prouver</span></div>
+<div class="meta">الكليان يلصق ميساج، و <span class="lat">Claude</span> يكمّل</div>
+<dl class="why"><div><dt>واش يعاونا</dt><dd>الكليان ينصّب بلا تقني.</dd></div><div><dt>بسرعة</dt><dd>ميساج واحد ملصوق.</dd></div><div><dt>باليد</dt><dd><span class="lat">Node</span> و <span class="lat">Python</span> و <span class="lat">FFmpeg</span> و <span class="lat">cloudflared</span> بيدو، ويحبس.</dd></div></dl>
+
+<div class="cols"><div><span class="lbl">على الشاشة</span><ol class="screen"><li>واش يلزم : <span class="lat">PC</span>، <span class="lat">Claude Pro</span>، <span class="lat">Tassyir</span>، كونت <span class="lat">Meta</span> وصفحة، تيليغرام، موسيقى.</li><li><span class="lat">Claude in Chrome</span> يتنصّب أولاً.</li><li>الزيب يتحل، والإنستالاتور حتى « <span class="lat">VERDICT: INSTALLE</span> ».</li><li>الكونيكتورات، البوتيك، والولايات.</li><li>توكن <span class="lat">Meta</span> بالتفصيل، يتلصق بيد التاجر.</li><li>الأرقام سؤال بسؤال.</li><li><span class="lat">BotFather</span> والروبو.</li><li>الدوبو : <span class="lat">tunnel</span>، والتخزين في <span class="lat">Cloudflare</span> غير إذا ما خدمش.</li><li>الموسيقى، والتحقق : كلش <span class="lat">PASSE.</span></li><li>الشرح للتاجر : الـ <span class="lat">PC</span> يبقى شاعل.</li></ol></div>
+<div><span class="lbl">قبل ما تصوّر</span><ul class="need"><li class="warn"><span class="lat">Windows</span> على <span class="lat">PC</span> حقيقي : ما تبرهنش عندنا.</li><li class="warn">توكن <span class="lat">Meta</span> : « لازم » في <span class="lat">LIS-MOI</span> و « اختياري » في الدليل : يتوحّد.</li><li>المفاتيح : الكاميرا على جنب.</li></ul><span class="lbl">الجملة الأخيرة</span><p class="bridge-line">مرة وحدة. ومن بعد، كل نهار، لينك واحد.</p></div></div>
+<span class="lbl">الأرقام لي يبانو على الشاشة</span><div class="tbl" dir="ltr" lang="fr"><table><thead><tr><th>Règle</th><th>Valeur</th></tr></thead><tbody><tr><td>Version</td><td>ecom manita 0.3.9 (bureau Windows)</td></tr><tr><td>Installeur</td><td>5 à 20 min</td></tr><tr><td>Wilayas</td><td>25 du nord, jamais un pays entier</td></tr><tr><td>Code boutique</td><td>2 à 8 lettres</td></tr><tr><td>Créas / modèle</td><td>1 à 4, défaut 4</td></tr><tr><td>Jeton Meta</td><td>Expiration : Jamais ; ads_management, ads_read, business_management, pages_read_engagement, pages_show_list</td></tr><tr><td>R2</td><td>Visa, Mastercard ou PayPal ; CIB et Edahabia refusées</td></tr></tbody></table></div>
+
+<details class="script" open><summary>السكريبت كلمة بكلمة</summary>
+<div class="sc"><span class="sl say">قول</span><p>« كامل واش شفتوه، يتنصب عند أي واحد. الكليان يلصق ميساج، و <span class="lat">Claude</span> يكمّل. »</p></div>
+<div class="sc"><span class="sl do">دير وقول</span><ol><li><b><span class="lat">Code ← Local ←</span> الدوسي ← الميساج</b> « وهو يبدا. »</li><li><b>الفنيترة الزرقة</b> « « <span class="lat">INSTALLE</span> » وحدها هي الصحيحة. »</li><li><b>التوكن</b> « يلصقو التاجر بيدو، عمرو في الشات. »</li><li><b>كلش <span class="lat">PASSE</span></b> « قبل أول خدمة. »</li></ol></div>
+<div class="sc"><span class="sl work">وClaude يخدم، احكي</span><p>« الفنيترة الزرقة تنصّب كل الأدوات. خدمة تقني ساعات، هنا <span class="lat">Claude</span> يديرها وانت تشوف. »</p></div>
+<div class="sc"><span class="sl end">سكّر</span><p>« مرة وحدة، ومن بعد لينك. »</p></div>
+</details>
+
+</article>
+<article class="mod" id="m20">
+<div class="mod-h"><span class="code">M20</span><h3>الآب وتيليغرام : كلش بكليك</h3><span class="st rec">Jamais prouvé</span></div>
+<div class="meta">الآب تاع <span class="lat">Manita</span> في <span class="lat">Tassyir</span>، و <span class="lat">Manita Board</span>، والإكستونسيون</div>
+<dl class="why"><div><dt>واش يعاونا</dt><dd>كلش في بلاصة وحدة.</dd></div><div><dt>بسرعة</dt><dd>لينك واحد.</dd></div><div><dt>باليد</dt><dd>كامل الموديلات لي فاتو.</dd></div></dl>
+
+<div class="cols"><div><span class="lbl">على الشاشة</span><ol class="screen"><li>لينك درايف في « المحادثة ».</li><li>نفس السؤال في الآب وفي تيليغرام، والجواب الأول يسكّر الزوج.</li><li>الناقص يتعمّر في الكارطة.</li><li>الأونغلي <span class="lat">SPY</span> والكاتالوغ.</li><li>الإكستونسيون : تصويرة تولّي كارطة.</li></ol></div>
+<div><span class="lbl">قبل ما تصوّر</span><ul class="need"><li class="warn">الآب في الداشبورد الحقيقي تاع <span class="lat">Tassyir</span> : عمرها ما تجرّبت.</li><li>التصاور تاع الروبو في المحادثة : البانك برك.</li><li>الماك يبقى شاعل : ما تقولش « طفي ».</li></ul><span class="lbl">الجملة الأخيرة</span><p class="bridge-line">هذا هو الـ <span class="lat">ERP</span> تاع الإيكومرس : لينك واحد، وانت لي تقرر.</p></div></div>
+<details class="script" open><summary>السكريبت كلمة بكلمة</summary>
+<div class="sc"><span class="sl say">قول</span><p>« تفكرو الفورماسيون الأولى : شفنا <span class="lat">Trello</span>، ومن بعد الـ <span class="lat">ERP</span> لي يدير كلش بكليك. هاذا هو. »</p></div>
+<div class="sc"><span class="sl do">دير وقول</span><ol><li><b>لينك في « المحادثة »</b> « وحدو. »</li><li><b>الأسئلة في الزوج</b> « تجاوب في وحدة، الأخرى تتسكّر. »</li><li><b>« لانسي » بزر</b> « والمصروف مكتوب. »</li></ol></div>
+<div class="sc"><span class="sl work">وClaude يخدم، احكي</span><p>« كل واش تعلمتوه، راهو يصرا هنا وحدو. ولي فهم البروسيس، يعرف واش يصرا ورا كل زر. »</p></div>
+<div class="sc"><span class="sl end">سكّر</span><p>« لينك واحد، وانت لي تقرر. »</p></div>
+</details>
+
+</article>
+<article class="mod" id="m21">
+<div class="mod-h"><span class="code">M21</span><h3>الميندسيت : المدة الطويلة</h3><span class="st ok">Prêt</span></div>
+<div class="meta">الختام</div>
+
+<div class="cols"><div><span class="lbl">على الشاشة</span><ol class="screen"><li>الوجه قدام الكاميرا.</li><li>الخسارة في التيست معلومة شريتها.</li><li>ما تطلّعش بلا معطيات.</li><li>الماشينة تخدم، والقرار عندك.</li></ol></div>
+<div><span class="lbl">قبل ما تصوّر</span><ul class="need"><li>والو.</li></ul><span class="lbl">الجملة الأخيرة</span><p class="bridge-line">الخطوة الجاية : اللينك تاع الآب.</p></div></div>
+<div class="lrow"><span class="lbl">القانون لي يبان هنا</span><span class="lchip">واجب واحد في المرة</span><span class="lchip">ديما عندك الخليفة</span><span class="lchip">المسار ماشي وعد</span></div>
+<details class="script" open><summary>السكريبت كلمة بكلمة</summary>
+<div class="sc"><span class="sl say">قول</span><p>« وصلنا للأخير. »</p></div>
+<div class="sc"><span class="sl do">دير وقول</span><ol><li>« الخسارة في التيست ماشي فشل. »</li><li>« ما تطلّعش البودجي بلا معطيات، حتى كي تكون فرحان. »</li><li>« لي يكمّل هو لي يربح. »</li></ol></div>
+<div class="sc"><span class="sl end">سكّر</span><p>« الخطوة الجاية : اللينك تاع الآب. »</p></div>
+</details>
+
+</article>
+
+</div></section>
+<section id="prises"><h2>التصوير بالبريزات <span class="h-fr">Prises</span></h2>
+<p class="note">الموديلات لي يتصوّرو في نفس البريزة مجموعين. علّم البريزة كي تكمّلها : العلامة تبقى في هاذ الجهاز برك.</p>
+<div class="takes" id="takes"><label class="take"><input type="checkbox" id="p1"><b><span class="code">P1</span> وجه قدام الكاميرا</b><span class="meta"><span class="code">M0</span><span class="code">M21</span> · نفس الضو ونفس البلاصة، والقوانين على الشاشة</span><span class="meta"><span class="st ok">Maintenant</span></span></label><label class="take"><input type="checkbox" id="p2"><b><span class="code">P2</span> الشاشة تاع <span class="lat">Claude</span></b><span class="meta"><span class="code">M1</span><span class="code">M2</span><span class="code">M3</span><span class="code">M4</span> · كونت نقي، نيش تجربة، سباي حقيقي على بلاد</span><span class="meta"><span class="st ok">Maintenant</span><span class="st part">Extension : après essai</span></span></label><label class="take"><input type="checkbox" id="p3"><b><span class="code">P3</span> إنستغرام والنصوص</b><span class="meta"><span class="code">M5</span><span class="code">M6</span> · نفس الفيديوات تخدم للزوج</span><span class="meta"><span class="st part">Après correction</span></span></label><label class="take"><input type="checkbox" id="p4"><b><span class="code">P4</span> المونتاج</b><span class="meta"><span class="code">M7</span> · شوتينغ تجربة، الانتظار يتقص</span><span class="meta"><span class="st part">Après un lot d'essai</span></span></label><label class="take"><input type="checkbox" id="p5"><b><span class="code">P5</span> الحساب والصفحة</b><span class="meta"><span class="code">M8</span><span class="code">M9</span><span class="code">M10</span> · أرقام مثال، وبوتيك تجربة في <span class="lat">Tassyir</span></span><span class="meta"><span class="st ok">Porte : maintenant</span><span class="st rec">Page : après preuve</span></span></label><label class="take"><input type="checkbox" id="p6"><b><span class="code">P6</span> <span class="lat">Ads Manager</span> و <span class="lat">Tassyir</span></b><span class="meta"><span class="code">M11</span><span class="code">M12</span><span class="code">M13</span><span class="code">M14</span><span class="code">M15</span><span class="code">M16</span> · نفس المعطيات للكل</span><span class="meta"><span class="st rec">Après un vrai test lu au 3e jour</span></span></label><label class="take"><input type="checkbox" id="p7"><b><span class="code">P7</span> المكتب والتنصيب</b><span class="meta"><span class="code">M17</span><span class="code">M18</span><span class="code">M19</span> · <span class="lat">PC</span> تجربة، ويندوز بريزة وحدها</span><span class="meta"><span class="st part">Mac maintenant</span><span class="st rec">Windows à prouver</span></span></label><label class="take"><input type="checkbox" id="p8"><b><span class="code">P8</span> الآب والتيليفون</b><span class="meta"><span class="code">M20</span> · المتصفح والتيليفون جنب لجنب</span><span class="meta"><span class="st rec">En dernier</span></span></label></div></section>
+<section id="contra"><h2>لازم يتحسم قبل الكاميرا <span class="h-fr">Contradictions de la dernière version</span></h2>
+<p class="note">الشرح الكامل يقول هاذ الحوايج بزوج طرق. كل سطر يتحسم، ومن بعد يتصوّر الموديل لي يمسّو.</p><div class="tbl" dir="ltr" lang="fr"><table><thead><tr><th>#</th><th>Sujet</th><th>Ce que dit la version 0.3.9</th><th>À faire</th></tr></thead><tbody><tr><td>1</td><td>Version</td><td>plugin.json 0.3.8, bureau.json 0.3.9-windows ; pas de 0.3.9 sur GitHub</td><td>choisir une seule règle, puis filmer</td></tr><tr><td>2</td><td>« Écriture après لانسي »</td><td>c'est l'ACTIVATION qui attend لانسي ; page publiée et campagne PAUSED avant</td><td>choisir une seule règle, puis filmer</td></tr><tr><td>3</td><td>Disjoncteur</td><td>testing arrête seul, le coach jamais : le dire</td><td>choisir une seule règle, puis filmer</td></tr><tr><td>4</td><td>Porte 50 %</td><td>texte « au-dessus », code « ≥ »</td><td>choisir une seule règle, puis filmer</td></tr><tr><td>5</td><td>Confirmées</td><td>tantôt somme des statuts, tantôt « confirmed » seul</td><td>choisir une seule règle, puis filmer</td></tr><tr><td>6</td><td>« Publier »</td><td>publication directe, mais certains endroits demandent encore</td><td>choisir une seule règle, puis filmer</td></tr><tr><td>7</td><td>Spend cap</td><td>interdit, mais « budget cap atteint » reste dans le scaling</td><td>choisir une seule règle, puis filmer</td></tr><tr><td>8</td><td>Primary text</td><td>4–10 lignes (règle) contre 3–10 (contrôle)</td><td>choisir une seule règle, puis filmer</td></tr><tr><td>9</td><td>Durée du test</td><td>3 jours, porte production jugée J4 à J6</td><td>choisir une seule règle, puis filmer</td></tr><tr><td>10</td><td>Mesuré &gt; déclaré</td><td>30 commandes (carnet) contre 25 confirmées (lecture)</td><td>choisir une seule règle, puis filmer</td></tr><tr><td>11</td><td>Taux du dollar</td><td>255 testing, 260 carnet et plancher Meta, 280 EUR</td><td>choisir une seule règle, puis filmer</td></tr><tr><td>12</td><td>POV</td><td>LISEZ-MOI : sans ; l'éditeur demande encore le style</td><td>choisir une seule règle, puis filmer</td></tr><tr><td>13</td><td>Photos</td><td>shooting d'abord (bureau) ou vidéos (éditeur, manager)</td><td>choisir une seule règle, puis filmer</td></tr><tr><td>14</td><td>Jeton Meta</td><td>« obligatoire » (LIS-MOI) contre « optionnel » (guide)</td><td>choisir une seule règle, puis filmer</td></tr><tr><td>15</td><td>Skills</td><td>plugin et bureau différents (manager 103 Ko contre 20 Ko)</td><td>choisir une seule règle, puis filmer</td></tr><tr><td>16</td><td>Rapport 5 blocs</td><td>jamais appelé dans la chaîne</td><td>choisir une seule règle, puis filmer</td></tr><tr><td>17</td><td>SPY Telegram</td><td>Worker Cloudflare ou robot direct</td><td>choisir une seule règle, puis filmer</td></tr><tr><td>18</td><td>Engagement</td><td>absent de LIS-MOI (7 agents au lieu de 8)</td><td>choisir une seule règle, puis filmer</td></tr><tr><td>19</td><td>Langue des angles</td><td>« arabe simple » contre darija imposée</td><td>choisir une seule règle, puis filmer</td></tr><tr><td>20</td><td>Liens UTM</td><td>5 créés, 4 vidéos au plus</td><td>choisir une seule règle, puis filmer</td></tr></tbody></table></div></section>
+<section id="a-prouver"><h2>لازم يتبرهن قبل الكاميرا <span class="h-fr">À prouver avant la caméra</span></h2>
+<p class="note">كل سطر هنا ما يتصوّرش كوعد حتى يتبرهن في الحقيقة.</p>
+<div class="tbl" dir="ltr" lang="fr"><table><thead><tr><th>#</th><th>Point</th><th>État</th><th>Bloque</th></tr></thead><tbody><tr><td>1</td><td>Un vrai lancement « لانسي » chez Meta</td><td>jamais fait</td><td>M12 M13 M20</td></tr><tr><td>2</td><td>L'étape Meta du produit vendu (campagnes créées en pause)</td><td>jamais prouvée en vrai</td><td>M11 M12 M17</td></tr><tr><td>3</td><td>La page Tassyir créée et publiée depuis le produit</td><td>jamais</td><td>M10 M20</td></tr><tr><td>4</td><td>Le bureau 0.3.9 chez un client : mission de bout en bout</td><td>jamais</td><td>M17 M19</td></tr><tr><td>5</td><td>Un robot Telegram chez un client</td><td>jamais</td><td>M17 M19 M20</td></tr><tr><td>6</td><td>Windows, sur un vrai PC</td><td>jamais ; demande un vrai PC</td><td>M19</td></tr><tr><td>7</td><td>L'origine de bout en bout (code SPY dans utm_campaign jusqu'à la lecture)</td><td>jamais</td><td>M4 M5 M11</td></tr><tr><td>8</td><td>Le spy Ad Library qui remplit l'onglet SPY de l'app</td><td>jamais</td><td>M4 M20</td></tr><tr><td>9</td><td>Le spy engagement lancé depuis Telegram</td><td>répondeur éteint</td><td>M5</td></tr><tr><td>10</td><td>Le remplissage de l'UTM par Tassyir sur une vraie commande</td><td>non testé</td><td>M11</td></tr><tr><td>11</td><td>Titre et description dans la créa (placements exclus, Reels compris)</td><td>défaut vu dans le code</td><td>M11 M12</td></tr><tr><td>12</td><td>L'app dans le vrai tableau de bord Tassyir</td><td>jamais</td><td>M20</td></tr><tr><td>13</td><td>Photos du robot dans « المحادثة »</td><td>banc seulement</td><td>M20</td></tr><tr><td>14</td><td>Le « de A à Z » depuis la page produit de l'app</td><td>ouvert</td><td>M20</td></tr><tr><td>15</td><td>Visuels statiques de l'éditeur</td><td>ne pas montrer avant un vrai lot</td><td>M7</td></tr><tr><td>16</td><td>Un seul taux du dollar (1 USD = 255 DA) dans tous les outils</td><td>encore 255 / 260 / 280 dans 0.3.9</td><td>M8 M9 M15</td></tr><tr><td>17</td><td>Anonymat du paquet</td><td>textes relus le 23/10 ; images non relues</td><td>M19</td></tr><tr><td>18</td><td>Jeton Meta du bureau en clair</td><td>ne pas dire « protégé »</td><td>M19</td></tr><tr><td>19</td><td>Le PC du client reste allumé</td><td>ne pas promettre « PC éteint »</td><td>M17 M20</td></tr><tr><td>20</td><td>Question à boutons qui ne se repose pas</td><td>correctif prêt, pas posé</td><td>M17 M20</td></tr><tr><td>21</td><td>Boussole v3 : capital, « retour du capital », rendement, mode avancé</td><td>faux au 12/10</td><td>M9</td></tr><tr><td>22</td><td>Script écrit par l'app bureau, exécuté par l'extension Chrome</td><td>jamais filmé de bout en bout</td><td>M2</td></tr><tr><td>23</td><td>Une seule version (plugin 0.3.8 / bureau 0.3.9)</td><td>deux versions</td><td>M17 M19</td></tr><tr><td>24</td><td>Les 20 contradictions ci-dessous</td><td>à trancher</td><td>toutes</td></tr></tbody></table></div>
+<h3>واش تبرهن في الحقيقة <span class="h-fr">Déjà prouvé</span></h3>
+<div class="tbl" dir="ltr" lang="fr"><table><thead><tr><th>Quoi</th><th>Preuve</th><th>Limite</th></tr></thead><tbody><tr><td>Chaîne Drive → montage → page → campagne en pause</td><td>un lot d'un modèle, 12/10</td><td>chaîne du vendeur, pas le produit vendu</td></tr><tr><td>Spy Ad Library d'un pays</td><td>lancé en vrai, rapport sur Telegram</td><td>rien vers l'app</td></tr><tr><td>Spy engagement, lot 1</td><td>lu en vrai, vidéos sur Telegram</td><td>lecture partielle</td></tr><tr><td>Paquet client ouvert à neuf</td><td>229/229 contrôles, 23/10</td><td>Mac seul, pas Windows</td></tr><tr><td>Manquants remplis sur la carte de l'app</td><td>banc complet, vitest 153/153</td><td>banc, pas chez un client</td></tr></tbody></table></div></section>
+<section id="lexique"><h2>القاموس : كل كلمة تقنية <span class="h-fr">Lexique</span></h2>
+<p class="note">كل كلمة تتشرح نهار تبان أول مرة على الشاشة.</p>
+<div class="tbl"><table><thead><tr><th>Terme</th><th>بالدارجة</th><th>Où on le voit</th></tr></thead><tbody><tr><td>Claude</td><td dir="rtl" lang="ar" style="text-align:right;font-family:var(--f-body)">الذكاء الاصطناعي لي تهدر معاه</td><td>IA à qui on écrit</td></tr><tr><td>App bureau</td><td dir="rtl" lang="ar" style="text-align:right;font-family:var(--f-body)">أبليكاسيون <span class="lat">Claude</span> في الـ <span class="lat">PC</span>، فيها الأونغلي <span class="lat">Code</span></td><td>Code → Local</td></tr><tr><td>Agent (skill)</td><td dir="rtl" lang="ar" style="text-align:right;font-family:var(--f-body)">دوسي فيه التعليمات تاع خدمة وحدة</td><td>SKILL.md + outil</td></tr><tr><td>Connecteur</td><td dir="rtl" lang="ar" style="text-align:right;font-family:var(--f-body)">الباب الرسمي بين <span class="lat">Claude</span> ومنصة أخرى</td><td>Tassyir, Meta Ads</td></tr><tr><td>Extension Chrome</td><td dir="rtl" lang="ar" style="text-align:right;font-family:var(--f-body)"><span class="lat">Claude</span> يكليكي في المتصفح</td><td>Claude in Chrome</td></tr><tr><td>Jeton (token)</td><td dir="rtl" lang="ar" style="text-align:right;font-family:var(--f-body)">مفتاح سري يعطي الحق للأداة</td><td>jamais dans le chat</td></tr><tr><td>Bureau</td><td dir="rtl" lang="ar" style="text-align:right;font-family:var(--f-body)">المكتب : الصفحة لي تمشّي المهمة في الـ <span class="lat">PC</span></td><td>localhost:4620</td></tr><tr><td>Mission</td><td dir="rtl" lang="ar" style="text-align:right;font-family:var(--f-body)">الطريق كامل تاع موديل، مرحلة بمرحلة</td><td>19 étapes</td></tr><tr><td>Lot</td><td dir="rtl" lang="ar" style="text-align:right;font-family:var(--f-body)">بزاف موديلات في لينك درايف واحد</td><td>un « ابدا »</td></tr><tr><td>Station</td><td dir="rtl" lang="ar" style="text-align:right;font-family:var(--f-body)">الطاقم بالبيكسل آرت لي يورّي شكون يخدم</td><td>/station</td></tr><tr><td>Robot Telegram</td><td dir="rtl" lang="ar" style="text-align:right;font-family:var(--f-body)">الحساب لي يسقسي بالأزرار في تيليغرام</td><td>BotFather</td></tr><tr><td>PAUSED</td><td dir="rtl" lang="ar" style="text-align:right;font-family:var(--f-body)">الحاجة تتصنع بصح محبوسة</td><td>rien ne dépense</td></tr><tr><td>لانسي</td><td dir="rtl" lang="ar" style="text-align:right;font-family:var(--f-body)">الكلمة الوحيدة لي تشعّل</td><td>ok / واه ne suffisent pas</td></tr><tr><td>ABO / CBO</td><td dir="rtl" lang="ar" style="text-align:right;font-family:var(--f-body)">البودجي على كل أدسات، ولا على الكومبانيا كاملة</td><td>test / scaling</td></tr><tr><td>Ad set</td><td dir="rtl" lang="ar" style="text-align:right;font-family:var(--f-body)">المجموعة لي فيها البوب، بالبودجي والولايات تاعها</td><td>un par vidéo en test</td></tr><tr><td>Post ID</td><td dir="rtl" lang="ar" style="text-align:right;font-family:var(--f-body)">الرقم تاع البوب لي يخلّي اللايكات والكومنتار</td><td>scaling</td></tr><tr><td>UTM</td><td dir="rtl" lang="ar" style="text-align:right;font-family:var(--f-body)">العلامة في اللينك لي تقول منين جات الكوموند</td><td>utm_campaign, utm_content</td></tr><tr><td>Clé de test</td><td dir="rtl" lang="ar" style="text-align:right;font-family:var(--f-body)">البصمة لي تمنع نفس التيست يتعاود</td><td>12 caractères</td></tr><tr><td>Confirmée / Livrée</td><td dir="rtl" lang="ar" style="text-align:right;font-family:var(--f-body)">الكوموند لي تأكّدت / الكولي لي وصل وتخلّص</td><td>COD</td></tr><tr><td>Coût par livrée</td><td dir="rtl" lang="ar" style="text-align:right;font-family:var(--f-body)">المصروف مقسوم على الكوليات الواصلين</td><td>le chiffre qui décide</td></tr><tr><td>Break-even</td><td dir="rtl" lang="ar" style="text-align:right;font-family:var(--f-body)">الحد لي تحتو تخسر</td><td>porte de rentabilité</td></tr><tr><td>Disjoncteur</td><td dir="rtl" lang="ar" style="text-align:right;font-family:var(--f-body)">يحبس وحدو كي يتصرف بزاف بلا نتيجة</td><td>testing</td></tr><tr><td>Porte de scaling</td><td dir="rtl" lang="ar" style="text-align:right;font-family:var(--f-body)">الشروط لي لازم يتحلّو قبل ما تكبّر</td><td>5 portes</td></tr><tr><td>ROAS</td><td dir="rtl" lang="ar" style="text-align:right;font-family:var(--f-body)">القبض مقسوم على المصروف، على الواصلة برك</td><td>coach</td></tr><tr><td>Ad Library</td><td dir="rtl" lang="ar" style="text-align:right;font-family:var(--f-body)">المكتبة العامة تاع البوب في <span class="lat">Meta</span></td><td>spy pays</td></tr><tr><td>Niche</td><td dir="rtl" lang="ar" style="text-align:right;font-family:var(--f-body)">السوق : شنو راك تبيع، ولمن</td><td>module 6</td></tr><tr><td>Persona</td><td dir="rtl" lang="ar" style="text-align:right;font-family:var(--f-body)">شكون تلبسها : الزبونة بالضبط</td><td>vidéo</td></tr><tr><td>Event</td><td dir="rtl" lang="ar" style="text-align:right;font-family:var(--f-body)">وقتاش ووين تلبسها</td><td>vidéo</td></tr><tr><td>Styling</td><td dir="rtl" lang="ar" style="text-align:right;font-family:var(--f-body)">كيفاش تلبسها : واش تحط معاها</td><td>vidéo</td></tr><tr><td>Angle</td><td dir="rtl" lang="ar" style="text-align:right;font-family:var(--f-body)">علاش تشريها : الحجة لي تقنعها</td><td>texte de l'annonce</td></tr><tr><td>Vague / degré</td><td dir="rtl" lang="ar" style="text-align:right;font-family:var(--f-body)">بوب تخلقو مع بعض / الحكم على الصفحة</td><td>spy</td></tr><tr><td>Carnet</td><td dir="rtl" lang="ar" style="text-align:right;font-family:var(--f-body)">الكراس لي يتكتب فيه واش تقاس كل نهار</td><td>manita-carnet.py</td></tr><tr><td>Boussole</td><td dir="rtl" lang="ar" style="text-align:right;font-family:var(--f-body)">الحاسبة لي ترسم الطريق</td><td>/boussole + site</td></tr></tbody></table></div></section>
+<section id="regles"><h2>قواعد الشاشة <span class="h-fr">Règles de tournage</span></h2><ul class="rules"><li>جهاز نقي ولا كونت تجربة : حتى سمية تاع بوتيك، صفحة، كونت ولا رقم حقيقي ما يبان.</li><li>ضبّب كل كود، كل لينك وكل سمية تاع كونت في <span class="lat">Ads Manager</span>، <span class="lat">Tassyir</span>، تيليغرام والمكتب.</li><li>المفاتيح والتوكنات : الكاميرا على جنب كي يتلصقو.</li><li>كل رقم في مثال مخترع، ويتقال « مثال ».</li><li>ما تصوّرش لانسي حقيقي إذا ما تحبش تصرف : صوّر السؤال و« ماشي دروك ».</li><li>وClaude يخدم، ما تسكتش : احكي واش راه يدير وعلاش هاذي خدمة كبيرة.</li><li>كل « كيفاش تصنع » يتورّى في أبليكاسيون البيرو.</li><li>اهدر كيما يكون لي يشوف عمرو ما حل <span class="lat">Claude</span> : كل كلمة تقنية تتشرح نهار تبان.</li><li>الحوايج لي في الجدول تاع الكونترادكسيونات يتحسمو قبل ما يتصوّرو.</li><li>كل حاجة مكتوبة بالأحمر تتقال كيما راهي، ولا ما تتصوّرش.</li></ul></section>
+<footer>
+  <p>Sources : explication complète ecom manita 0.3.9 ; fichier mindset (20 lois, histoires) ; PROCESS-COMPLET-PAS-A-PAS.md et ACCES-ET-CONNEXIONS.md (23/10) ; PLAN-VIDEOS.md ; analyse de la boussole v3.</p>
+  <p>Montants en DA et en USD, 1 USD = 255 DA. Les histoires sont des exemples aux prénoms inventés. Boussole : idées expliquées avec ses propres mots, textes et code du site non copiés (droits réservés). Confirmation des commandes : aucun agent, donc aucun module.</p>
+</footer>
+</div>
+<script>
+(function(){
+  var KEY='plan-tournage-prises';
+  var state={};
+  try{state=JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch(e){state={};}
+  document.querySelectorAll('#takes input[type=checkbox]').forEach(function(cb){
+    var lab=cb.closest('.take');
+    if(state[cb.id]){cb.checked=true;lab.classList.add('done');}
+    cb.addEventListener('change',function(){
+      state[cb.id]=cb.checked; lab.classList.toggle('done',cb.checked);
+      try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}
+    });
+  });
+})();
+</script>
+
+</body></html>

@@ -1,0 +1,4 @@
+{"id": "J0001", "task": "course.curriculum", "agent": "course-planner", "subject": "مخطط الدورة كامل ecommanita", "flow": null, "status": "open", "opened": "2026-11-11", "closed": null, "output": null}
+{"id": "J0002", "task": "video.script", "agent": "edprod-writer", "subject": "كلاش 65 50 50 65", "flow": "course-promo", "status": "open", "opened": "2026-11-11", "closed": null, "output": null}
+{"id": "J0003", "task": "video.render-motion", "agent": "edprod-motion", "subject": "موشن الكلاش 65 50", "flow": "course-promo", "status": "open", "opened": "2026-11-11", "closed": null, "output": null}
+{"id": "J0004", "task": "video.reel-template", "agent": "edprod-motion", "subject": "قالب الريل 9:16 كيما الدورة", "flow": null, "status": "done", "opened": "2026-11-11", "closed": "2026-11-12", "output": "template.py + export_pack.py · pack zip"}
