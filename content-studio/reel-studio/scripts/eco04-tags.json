@@ -1,0 +1,131 @@
+{
+ "id": "eco04-tags",
+ "theme": "ecomanita",
+ "handle": "@ecomanita",
+ "totalChapters": 4,
+ "pace": 2.6,
+ "scenes": [
+  {
+   "title1": "منتجاتك في تسيير.",
+   "title2": "وين راهم؟",
+   "visual": {
+    "type": "checklist",
+    "items": [
+     {
+      "name": "TEST"
+     },
+     {
+      "name": "VALIDE"
+     },
+     {
+      "name": "SCALE"
+     },
+     {
+      "name": "DESTOCK"
+     }
+    ]
+   },
+   "say": "عندك بزاف منتجات في تسيير. تعرف كل واحد *وين راه*؟ أربع تاغات يقولولك.",
+   "mascot": "think"
+  },
+  {
+   "chapter": "01 · TEST",
+   "progress": 1,
+   "title1": "TEST.",
+   "title2": "تحت التجربة.",
+   "visual": {
+    "type": "card",
+    "lines": [
+     "VALIDE ✓",
+     "FIX ⚙",
+     "ECHEC ✕"
+    ],
+    "tag": "حكم التاست"
+   },
+   "say": "*TEST*: المنتج في التاست. والتاست يخرج بحكم: VALIDE، FIX، ولا ECHEC."
+  },
+  {
+   "chapter": "02 · VALIDE",
+   "progress": 2,
+   "title1": "VALIDE.",
+   "title2": "نجح التاست.",
+   "visual": {
+    "type": "card",
+    "lines": [
+     "الإنتاج والتوصيل",
+     "الموصّلة تحت السقف"
+    ]
+   },
+   "say": "*VALIDE*: نجح. هنا الإنتاج والتوصيل، والموصّلة تحت السقف."
+  },
+  {
+   "chapter": "03 · SCALE",
+   "progress": 3,
+   "title1": "SCALE.",
+   "title2": "بالشروط.",
+   "visual": {
+    "type": "card",
+    "lines": [
+     "الأرقام صحاح",
+     "الشروط كاملين",
+     "وكلمة «نعم»"
+    ]
+   },
+   "say": "*SCALE*: تكبّر، بصح غير كي الأرقام *صحاح* والشروط كاملين."
+  },
+  {
+   "chapter": "04 · DESTOCK",
+   "progress": 4,
+   "title1": "DESTOCK.",
+   "title2": "التصفية.",
+   "visual": {
+    "type": "card",
+    "lines": [
+     "الستوك يخلاص",
+     "الكاش يرجع"
+    ]
+   },
+   "say": "*DESTOCK*: التصفية. الستوك يخلاص والكاش *يرجع*."
+  },
+  {
+   "interrupt": true,
+   "say": "منتج بلا تاغ… قرار بلا مرحلة.",
+   "duration": 3.8
+  },
+  {
+   "progress": 4,
+   "title1": "من «نشوف».",
+   "title2": "لمرحلة واضحة.",
+   "visual": {
+    "type": "checklist",
+    "items": [
+     {
+      "name": "TEST"
+     },
+     {
+      "name": "VALIDE"
+     },
+     {
+      "name": "SCALE"
+     },
+     {
+      "name": "DESTOCK"
+     }
+    ]
+   },
+   "say": "من «نشوف»… لكل منتج *مرحلة* واضحة، وواجب واحد في المرة."
+  },
+  {
+   "progress": 4,
+   "title1": "اكتب",
+   "title2": "في التعليقات.",
+   "visual": {
+    "type": "keyword",
+    "word": "المسار",
+    "sub": "والمراحل كاملين"
+   },
+   "say": "اكتب *المسار* ونبعثلك المراحل العشرة. وتابع: الحلقة الجاية، *التاست*.",
+   "mascot": "wink"
+  }
+ ]
+}
