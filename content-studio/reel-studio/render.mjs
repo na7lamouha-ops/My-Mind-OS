@@ -3,6 +3,8 @@
 import { bundle } from '@remotion/bundler';
 import { renderMedia, renderStill, selectComposition } from '@remotion/renderer';
 import path from 'node:path';
+import { execFileSync } from 'node:child_process';
+import fs from 'node:fs';
 
 const id = process.argv[2] ?? 'ep01-marge';
 const stillAt = process.argv.indexOf('--still');
@@ -25,5 +27,9 @@ if (stillAt > -1) {
     browserExecutable,
     onProgress: ({ progress }) => process.stdout.write(`\r${Math.round(progress * 100)}%`),
   });
-  console.log(`\nout/${id}.mp4 (${composition.durationInFrames / composition.fps}s)`);
+  // loudness: -14 LUFS with a voice-over, -16 for SFX only (RULE-01 §5)
+  const target = composition.props?.script?.voiceover ? -14 : -16;
+  execFileSync('ffmpeg', ['-y', '-v', 'error', '-i', `out/${id}.mp4`, '-c:v', 'copy', '-af', `loudnorm=I=${target}:TP=-1.5:LRA=11`, '-c:a', 'aac', '-b:a', '192k', '-movflags', '+faststart', `out/${id}.tmp.mp4`]);
+  fs.renameSync(`out/${id}.tmp.mp4`, `out/${id}.mp4`);
+  console.log(`\nout/${id}.mp4 (${composition.durationInFrames / composition.fps}s, ${target} LUFS)`);
 }

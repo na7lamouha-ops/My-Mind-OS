@@ -124,15 +124,35 @@ const Wipe: React.FC = () => {
   );
 };
 
-const Sfx: React.FC<{ at: number; src: string; volume?: number }> = ({ at, src, volume = 1 }) => (
-  <Sequence from={Math.max(0, at)} durationInFrames={60}>
-    <Audio src={staticFile(`sfx/${src}.wav`)} volume={volume} />
+// Sound packs: [file in public/, peak time in seconds]. A sound is placed so its PEAK lands on the
+// event (wipe, cut, reveal): that is the measured rule "sound leads picture" from RULE-01.
+type Pack = Record<string, [string, number]>;
+const PACKS: Record<string, { gain: number; s: Pack }> = {
+  ours: { gain: 1, s: { whoosh: ['sfx/whoosh.wav', 0.3], whooshBig: ['sfx/whoosh-big.wav', 0.55], boom: ['sfx/boom.wav', 0],
+    pop: ['sfx/pop.wav', 0], tick: ['sfx/tick.wav', 0], typing: ['sfx/typing.wav', 0], sting: ['sfx/sting.wav', 0] } },
+  // Moath Alherani SFX Pack (free for videos, do not re-upload the pack): kept local, see public/sfx-moath/
+  moath: { gain: 0.5, s: { whoosh: ['sfx-moath/02_Swoosh.wav', 0.23], whooshBig: ['sfx-moath/01_Whoosh.wav', 0.59],
+    riser: ['sfx-moath/05_Riser.wav', 2.79], boom: ['sfx-moath/03_Boom.wav', 0], impact: ['sfx-moath/06_Impact_Hit.wav', 0.09],
+    pop: ['sfx-moath/09_Pop.wav', 0], tick: ['sfx-moath/08_UI_Click.wav', 0], typing: ['sfx-moath/12_Keyboard_Typing.wav', 0.04],
+    glitch: ['sfx-moath/10_Glitch.wav', 0.1], sting: ['sfx-moath/11_Ding.wav', 0] } },
+};
+
+const Sfx: React.FC<{ at: number; file: string; volume?: number; frames?: number }> = ({ at, file, volume = 1, frames = 100 }) => (
+  <Sequence from={Math.max(0, at)} durationInFrames={frames}>
+    <Audio src={staticFile(file)} volume={volume} />
   </Sequence>
 );
 
 export const Reel: React.FC<{ script: ReelScript }> = ({ script }) => {
   applyTheme(script.theme);
   const sfx = script.sfx !== false;
+  const pack = PACKS[script.sfxPack ?? 'ours'] ?? PACKS.ours;
+  /** Place sound `name` so that its peak lands on frame `at` (skipped if the pack has no such sound). */
+  const play = (out: React.ReactNode[], name: string, at: number, vol: number, key: string) => {
+    const snd = pack.s[name];
+    if (!sfx || !snd) return;
+    out.push(<Sfx key={key} at={at - Math.round(snd[1] * 30)} file={snd[0]} volume={vol * pack.gain} frames={name === 'riser' ? 100 : 75} />);
+  };
   const starts: number[] = [];
   let acc = 0;
   for (const s of script.scenes) {
@@ -162,31 +182,36 @@ export const Reel: React.FC<{ script: ReelScript }> = ({ script }) => {
         const frames = sceneFrames(s, script.pace);
         const out: React.ReactNode[] = [];
         if (s.interrupt) {
-          // hard cut + sub boom; music drops out (see musicVolume)
-          if (sfx) out.push(<Sfx key="b" at={at} src="boom" volume={0.9} />);
+          // riser builds into the cut, boom on the cut; music drops out (see music volume)
+          play(out, 'riser', at, 0.7, 'r');
+          play(out, 'boom', at, 0.9, 'b');
         } else if (prev.interrupt || s.chapter !== prev.chapter) {
           out.push(
             <Sequence key="w" from={at - 4} durationInFrames={10}>
               <Wipe />
             </Sequence>,
           );
-          // sound leads picture: whoosh starts ~0.3s before the panel
-          if (sfx) out.push(<Sfx key="s" at={at - 4 - (prev.interrupt ? 17 : 9)} src={prev.interrupt ? 'whoosh-big' : 'whoosh'} volume={0.8} />);
+          play(out, prev.interrupt ? 'whooshBig' : 'whoosh', at - 4, 0.8, 's');
         }
-        if (sfx && s.visual && s.visual.type !== 'none') {
+        if (s.visual && s.visual.type !== 'none') {
           const v = s.visual;
-          out.push(<Sfx key="p" at={at + 8} src="pop" volume={0.45} />);
+          play(out, 'pop', at + 8, 0.45, 'p');
           if (v.type === 'checklist' || v.type === 'funnel') {
             const n = v.type === 'checklist' ? v.items.length : v.steps.length;
             const per = (frames * (v.type === 'checklist' ? 0.75 : 0.7)) / n;
-            for (let k = 0; k < n; k++) out.push(<Sfx key={'t' + k} at={at + 6 + Math.round(k * per)} src="tick" volume={0.6} />);
+            for (let k = 0; k < n; k++) play(out, 'tick', at + 6 + Math.round(k * per), 0.6, 't' + k);
           }
-          if (v.type === 'card') out.push(<Sfx key="ty" at={at + 10} src="typing" volume={0.35} />);
+          if (v.type === 'card') {
+            if (v.lines.some((l) => l.startsWith('❌'))) play(out, 'glitch', at + 10, 0.5, 'g');
+            else play(out, 'typing', at + 10, 0.35, 'ty');
+          }
+          if (v.type === 'countUp') play(out, 'impact', at + Math.round(frames * 0.55), 0.6, 'im');
+          if (v.type === 'versus') play(out, 'impact', at + Math.round(frames * 0.35) + 4, 0.6, 'im');
         }
         return <React.Fragment key={i}>{out}</React.Fragment>;
       })}
-      {sfx && script.scenes[0].visual && <Sfx at={8} src="pop" volume={0.45} />}
-      {sfx && <Sfx at={total - 36} src="sting" volume={0.5} />}
+      {sfx && script.scenes[0].visual && (() => { const o: React.ReactNode[] = []; play(o, 'pop', 8, 0.45, 'p0'); return o; })()}
+      {sfx && (() => { const o: React.ReactNode[] = []; play(o, 'sting', total - 36, 0.5, 'end'); return o; })()}
 
       {script.voiceover && <Audio src={staticFile(script.voiceover)} />}
       {script.music && (

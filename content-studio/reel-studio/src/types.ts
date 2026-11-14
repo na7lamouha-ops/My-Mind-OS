@@ -44,5 +44,7 @@ export type ReelScript = {
   music?: string;
   /** Sound design (whoosh/pop/tick/boom/sting from public/sfx). Default on. */
   sfx?: boolean;
+  /** Sound pack: 'ours' (synthesized, in repo) or 'moath' (Moath Alherani pack, kept local). */
+  sfxPack?: 'ours' | 'moath';
   scenes: Scene[];
 };

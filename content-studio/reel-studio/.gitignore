@@ -1,2 +1,4 @@
 node_modules/
 out/
+# Moath SFX pack: free to use in videos, not to re-upload -> never commit
+public/sfx-moath/
