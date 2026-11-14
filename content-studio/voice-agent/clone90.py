@@ -28,6 +28,7 @@ def load16(path):
 
 def spk(tts, y16):
     """Speaker embedding over 4 s chunks of a 16 kHz signal."""
+    y16 = np.asarray(y16, dtype=np.float32)
     hop = 16000 * 4
     chunks = [y16[i:i + hop] for i in range(0, max(1, len(y16) - hop // 2), hop)] or [y16]
     return tts.ve.embeds_from_wavs([c for c in chunks if len(c) > 16000], sample_rate=16000, as_spk=True)
@@ -43,7 +44,7 @@ def eq_match(gen, sr, ref16):
     gain_db = np.convolve(gain_db, np.ones(25) / 25, mode='same').clip(-6, 6)
     S = librosa.stft(g, n_fft=n_fft)
     out = librosa.istft(S * (10 ** (gain_db / 20))[:, None], length=len(g))
-    return librosa.resample(out, orig_sr=16000, target_sr=sr)
+    return librosa.resample(out, orig_sr=16000, target_sr=sr).astype(np.float32)
 
 
 def main(real_path, lines_path, out):
@@ -78,6 +79,8 @@ def main(real_path, lines_path, out):
             continue
         cands.append((cos(spk(tts, clip), target), i))
     cands = sorted(cands, reverse=True)[:6]
+    if os.environ.get('REF_AT'):                       # skip the search when the best ref is already known
+        cands = [(1.0, int(float(os.environ['REF_AT']) * 16000))]
     test = lines[0]['text']
     best_ref = None
     for rep, i in cands:
@@ -94,6 +97,13 @@ def main(real_path, lines_path, out):
     # 3. best take per line
     pieces, report = [], []
     for li, line in enumerate(lines):
+        cache = f'{out}.line{li}.wav'
+        if os.path.exists(cache):                      # resume: keep takes already chosen
+            y, _ = sf.read(cache, dtype='float32')
+            meta = json.load(open(cache + '.json'))
+            print(f'line {li}: cached (voice {meta["voice_%"]}%)', flush=True)
+            report.append(meta); pieces += [y, np.zeros(int(0.35 * tts.sr), np.float32)]
+            continue
         best = None
         for text in [line['text']] + line.get('variants', []):
             for temp, exag in ((0.6, 0.5), (0.8, 0.6), (0.7, 0.8)):
@@ -105,8 +115,10 @@ def main(real_path, lines_path, out):
                 if best is None or score > best[0]:
                     best = (score, y, ts, ss, heard)
         print(f'line {li}: text {best[2]*100:.0f}% voice {best[3]*100:.1f}% -> {best[4]}', flush=True)
-        report.append({'line': line['text'], 'heard': best[4], 'text_%': round(best[2] * 100), 'voice_%': round(best[3] * 100, 1)})
-        pieces += [best[1], np.zeros(int(0.35 * tts.sr), np.float32)]
+        meta = {'line': line['text'], 'heard': best[4], 'text_%': round(best[2] * 100), 'voice_%': round(best[3] * 100, 1)}
+        sf.write(cache, best[1].astype(np.float32), tts.sr); json.dump(meta, open(cache + '.json', 'w'), ensure_ascii=False)
+        report.append(meta)
+        pieces += [best[1].astype(np.float32), np.zeros(int(0.35 * tts.sr), np.float32)]
 
     # 4. tone match + 5. loudness
     y = np.concatenate(pieces)
