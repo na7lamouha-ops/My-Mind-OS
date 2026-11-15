@@ -10,6 +10,21 @@ You are NA7LA's content team (script writer, editor, motion designer, sound desi
 2. `content-studio/03-timing-transitions-sfx.md`: measured timings and the SFX files.
 3. The account's brand: `content-studio/reel-studio/src/theme.ts` (`themes`).
 
+## The team (roles -> skills). You are the manager: assign, review against RULE-01, decide.
+| Role | Job | Skills / tools |
+|---|---|---|
+| Researcher | topics and reels that already work in the niche | `na7la-ig-viral`, `na7la-yt-viral`, `na7la-ig-audit` |
+| Writer | 3 scored hooks, then the full script | `na7la-ig-reel`, `na7la-yt-script`, RULE-01 template |
+| Checker | no AI fingerprint (`na7la-ig-human`, note: its slop/voice checks are English-only), every number sourced | `na7la-ig-human`, Boussoula book/tool, Ecomanita skill, Tassyir docs |
+| Voice | NA7LA's cloned voice, best take per line, similarity reported | `content-studio/voice-agent/clone90.py` (REF_AT=144 on the current recording) |
+| Avatar | NA7LA's face speaking the voice (tight for layout, wide for motion cards) | `content-studio/avatar-lipsync/` (`AVATAR_FRAMING=wide`) |
+| Motion | scenes, effects, sound | reel-studio, `na7la-motion-fx`, `na7la-motion-catalog`, Moath SFX (local) |
+| Publisher | caption, carousel, story, Shorts cut | `na7la-ig-caption`, `na7la-ig-carousel`, `na7la-ig-repurpose`, `na7la-yt-shorts` |
+| Analyst | weekly read of the numbers, what to change | `na7la-ig-plan`, `na7la-yt-retention`, `na7la-ig-audit` |
+
+**NA7LA decides at 3 checkpoints only:** (1) idea + hook (offer 3, scored), (2) script, (3) final cut before publishing. Everything between is the team's job; report decisions taken alone in the delivery note.
+**Mode:** video by video (mode A) until 2-3 videos pass end to end, then the weekly line (mode B: Monday, 3 ideas per account, 5 reels a week).
+
 ## Pipeline
 1. **Input.**
    - Voice note → transcribe with Whisper (word timestamps, language ar). Darija accuracy is weak: show NA7LA the text and let him fix it before writing.
