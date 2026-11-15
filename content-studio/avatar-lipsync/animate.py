@@ -90,7 +90,7 @@ def main(portrait, model, voice, cues_path, out, size=1080):
     state = np.zeros(3, np.float32)
     brow = 0.0
     # framing: head + beard fill the square (centred on the nose)
-    box = int(min(H, W, face_w * 2.3))
+    box = int(min(H, W, face_w * (4.0 if os.environ.get('AVATAR_FRAMING') == 'wide' else 2.3)))
     x0 = int(np.clip(L[4, 0] - box / 2, 0, W - box)); y0 = int(np.clip(L[4, 1] - box * 0.5, 0, H - box))
     for i in range(n):
         state += (target[i] - state) * 0.55                    # ease toward the shape
