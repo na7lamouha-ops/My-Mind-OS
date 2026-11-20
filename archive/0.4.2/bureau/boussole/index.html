@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>بوصلة التاجر</title>
+<style>
+:root {
+  color-scheme: light dark;
+  --fond: #f6f1ea; --fond-2: #fffaf3; --fond-3: #efe6da;
+  --encre: #2b2622; --encre-2: #6b625a; --encre-3: #9a9087;
+  --trait: #e2d7c8; --trait-fort: #cdbfae;
+  --accent: #c8623c; --accent-encre: #ffffff;
+  --vert: #3e9c6a; --vert-fond: #e3f3ea;
+  --rouge: #cf4a3a; --rouge-fond: #f9e3df;
+  --orange: #e0912c; --orange-fond: #fbeedb;
+  --ombre: 0 1px 2px rgba(60, 40, 20, .08), 0 6px 18px rgba(60, 40, 20, .06);
+  --rayon: 12px;
+  --police: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Arabic", "Noto Naskh Arabic", "Geeza Pro", "DejaVu Sans", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --fond: #1d1a17; --fond-2: #27231f; --fond-3: #302b26;
+    --encre: #f1ebe3; --encre-2: #b9afa4; --encre-3: #857b71;
+    --trait: #3a342e; --trait-fort: #4d453d;
+    --accent: #e3885f; --accent-encre: #1d1a17;
+    --vert: #5cbf88; --vert-fond: #1f3a2c;
+    --rouge: #ee6a58; --rouge-fond: #45231f;
+    --orange: #f0a848; --orange-fond: #43301a;
+    --ombre: 0 1px 2px rgba(0, 0, 0, .35), 0 8px 24px rgba(0, 0, 0, .28);
+  }
+}
+:root[data-theme="dark"] {
+  --fond: #1d1a17; --fond-2: #27231f; --fond-3: #302b26;
+  --encre: #f1ebe3; --encre-2: #b9afa4; --encre-3: #857b71;
+  --trait: #3a342e; --trait-fort: #4d453d;
+  --accent: #e3885f; --accent-encre: #1d1a17;
+  --vert: #5cbf88; --vert-fond: #1f3a2c;
+  --rouge: #ee6a58; --rouge-fond: #45231f;
+  --orange: #f0a848; --orange-fond: #43301a;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--fond); color: var(--encre); font-family: var(--police); font-size: 15px; line-height: 1.55; }
+main { max-width: 1080px; margin: 0 auto; padding: 20px 16px 48px; }
+header { margin-bottom: 18px; }
+h1 { font-size: 24px; margin: 0 0 4px; }
+h2 { font-size: 16px; margin: 0 0 12px; }
+.sous { color: var(--encre-2); margin: 0; }
+.grille { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 16px; align-items: start; }
+@media (max-width: 860px) { .grille { grid-template-columns: minmax(0, 1fr); } }
+.carte { background: var(--fond-2); border: 1px solid var(--trait); border-radius: var(--rayon); box-shadow: var(--ombre); padding: 16px; margin-bottom: 16px; }
+.champs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 12px; }
+@media (max-width: 420px) { .champs { grid-template-columns: minmax(0, 1fr); } }
+.champ { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.champ.large { grid-column: 1 / -1; }
+.champ label { font-size: 13px; color: var(--encre-2); }
+.champ small { font-size: 12px; color: var(--encre-3); }
+.saisie { display: flex; align-items: stretch; border: 1px solid var(--trait-fort); border-radius: 9px; background: var(--fond); overflow: hidden; }
+.saisie:focus-within { border-color: var(--encre-2); box-shadow: 0 0 0 3px color-mix(in srgb, var(--encre-2) 18%, transparent); }
+.saisie input { flex: 1; min-width: 0; border: 0; background: transparent; padding: 8px 10px; font: inherit; color: inherit; outline: none; text-align: left; direction: ltr; font-variant-numeric: tabular-nums; }
+.saisie .unite { padding: 8px 10px; color: var(--encre-3); background: var(--fond-3); font-size: 13px; direction: ltr; display: flex; align-items: center; }
+.saisie[data-faux] { border-color: var(--rouge); }
+.duo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; }
+.verdict { border-radius: var(--rayon); padding: 14px 16px; margin-bottom: 16px; font-weight: 700; font-size: 17px; border: 1px solid transparent; }
+.verdict.gagne { background: var(--vert-fond); color: var(--vert); border-color: color-mix(in srgb, var(--vert) 35%, transparent); }
+.verdict.perd { background: var(--rouge-fond); color: var(--rouge); border-color: color-mix(in srgb, var(--rouge) 35%, transparent); }
+.verdict.attente { background: var(--fond-3); color: var(--encre-2); font-weight: 600; font-size: 15px; }
+.cles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+@media (max-width: 420px) { .cles { grid-template-columns: minmax(0, 1fr); } }
+.cle { background: var(--fond-2); border: 1px solid var(--trait); border-radius: var(--rayon); padding: 12px 14px; box-shadow: var(--ombre); }
+.cle .nom { font-size: 13px; color: var(--encre-2); }
+.cle .valeur { font-size: 22px; font-weight: 700; direction: ltr; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.cle .bis { font-size: 13px; color: var(--encre-3); direction: ltr; text-align: right; font-variant-numeric: tabular-nums; }
+.cle .aide { font-size: 12px; color: var(--encre-3); margin-top: 2px; }
+table { width: 100%; border-collapse: collapse; }
+td { padding: 7px 4px; border-bottom: 1px solid var(--trait); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+td.n { direction: ltr; text-align: left; white-space: nowrap; font-variant-numeric: tabular-nums; font-weight: 600; }
+td.n .bis { display: block; font-weight: 400; color: var(--encre-3); font-size: 12px; }
+td small { display: block; color: var(--encre-3); font-size: 12px; }
+tr.fort td { font-weight: 700; }
+.ligne-boutons { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+button { font: inherit; cursor: pointer; border: 1px solid var(--trait-fort); background: var(--fond); color: var(--encre); border-radius: 9px; padding: 7px 12px; }
+button:hover { border-color: var(--accent); }
+.note { color: var(--encre-3); font-size: 13px; margin: 6px 0 0; }
+.sortie li { margin: 4px 0; }
+.sortie { padding-inline-start: 18px; margin: 8px 0 0; }
+.etat { font-size: 12px; color: var(--encre-3); min-height: 1em; }
+footer { color: var(--encre-3); font-size: 13px; margin-top: 8px; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>بوصلة التاجر</h1>
+    <p class="sous">قبل ما تلانسي : شحال لازمك من كوموند، شحال تخيّط، وشحال تربح.</p>
+  </header>
+
+  <div class="grille">
+    <form id="saisies" class="carte" autocomplete="off" novalidate>
+      <h2>المنتوج</h2>
+      <div class="champs">
+        <div class="champ large"><label for="objectif">شحال تحب تربح فهاذ الموديل</label><div class="saisie"><input id="objectif" data-entier inputmode="decimal"><span class="unite">DA</span></div></div>
+        <div class="champ"><label for="prix">سومة البيع</label><div class="saisie"><input id="prix" data-entier inputmode="decimal"><span class="unite">DA</span></div></div>
+        <div class="champ"><label for="achat">سومة الشرا ولا الخياطة تاع الحبة</label><div class="saisie"><input id="achat" data-entier inputmode="decimal"><span class="unite">DA</span></div></div>
+        <div class="champ"><label for="emballage">التغليف تاع الحبة</label><div class="saisie"><input id="emballage" data-entier inputmode="decimal"><span class="unite">DA</span></div></div>
+        <div class="champ"><label for="livraison">التوصيل لي يخلص عليك</label><div class="saisie"><input id="livraison" data-entier inputmode="decimal"><span class="unite">DA</span></div></div>
+        <div class="champ"><label for="fraisCod">مصاريف الخلاص عند الاستلام</label><div class="saisie"><input id="fraisCod" data-entier inputmode="decimal"><span class="unite">DA</span></div></div>
+        <div class="champ"><label for="retour">الكولي لي يرجع : شحال يكلفك</label><div class="saisie"><input id="retour" data-entier inputmode="decimal"><span class="unite">DA</span></div></div>
+      </div>
+
+      <h2 style="margin-top:18px">النسب و البوب</h2>
+      <div class="champs">
+        <div class="champ"><label for="confirmation">التأكيد</label><div class="saisie"><input id="confirmation" inputmode="decimal"><span class="unite">%</span></div><small>من الكوموندات لي يدخلو : شحال يتأكدو</small></div>
+        <div class="champ"><label for="tauxLivraison">التوصيل</label><div class="saisie"><input id="tauxLivraison" inputmode="decimal"><span class="unite">%</span></div><small>من المأكدين : شحال يستلمو و يخلصو</small></div>
+        <div class="champ large"><label for="cplDollar">سومة الكوموند في ميتا</label>
+          <div class="duo">
+            <div class="saisie"><input id="cplDollar" inputmode="decimal"><span class="unite">$</span></div>
+            <div class="saisie"><input id="cpl" data-entier inputmode="decimal"><span class="unite">DA</span></div>
+          </div>
+          <small>اكتب وحدة برك : الأخرى تتحسب وحدها بالدولار تاعك.</small>
+        </div>
+        <div class="champ"><label for="surplus">الستوك الزايد</label><div class="saisie"><input id="surplus" inputmode="decimal"><span class="unite">%</span></div><small>فوق لي يوصلو، باش ما يخلاصش الستوك</small></div>
+        <div class="champ"><label for="taux">الدولار بقداش</label><div class="saisie"><input id="taux" inputmode="decimal"><span class="unite">DA</span></div><small>يتعمّر من التحضير تاع المكتب</small></div>
+      </div>
+      <div class="ligne-boutons">
+        <button type="button" id="depuis-reglages">جيب الأرقام تاع المكتب</button>
+        <button type="button" id="vider">فرّغ</button>
+      </div>
+      <p class="etat" id="etat"></p>
+    </form>
+
+    <section aria-live="polite">
+      <div class="verdict attente" id="verdict">عمّر الخانات، و الحساب يطلع وحدو.</div>
+
+      <div class="cles">
+        <div class="cle"><div class="nom">أقصى سومة للكوموند في ميتا</div><div class="valeur" id="k-sommet-d">—</div><div class="bis" id="k-sommet">—</div><div class="aide">إذا فاتتها، كل كوموند تخسّرك.</div></div>
+        <div class="cle"><div class="nom">الصافي في كل كوموند، بعد البوب</div><div class="valeur" id="k-net">—</div><div class="bis" id="k-net-d">—</div><div class="aide">هذا لي يقرّبك للهدف تاعك.</div></div>
+      </div>
+
+      <div class="carte" id="carte-chemin">
+        <h2>الطريق للهدف</h2>
+        <table>
+          <tr><td>الكوموندات لي لازم يدخلو</td><td class="n" id="r-leads">—</td></tr>
+          <tr><td>لي يتأكدو</td><td class="n" id="r-confirmees">—</td></tr>
+          <tr><td>لي يستلمو و يخلصو</td><td class="n" id="r-livrees">—</td></tr>
+          <tr><td>لي يرجعو<small>المأكدين ناقص لي خلصو</small></td><td class="n" id="r-retours">—</td></tr>
+          <tr class="fort"><td>الحبات لي تخيّطهم<small>منهم الزايدين</small></td><td class="n" id="r-stock">—</td></tr>
+        </table>
+      </div>
+
+      <div class="carte" id="carte-argent">
+        <h2>الدراهم</h2>
+        <table>
+          <tr><td>الربح في الحبة لي تخلصت<small>بعد الرجوع، قبل البوب</small></td><td class="n" id="r-marge">—</td></tr>
+          <tr><td>البوب الكل</td><td class="n" id="r-pub">—</td></tr>
+          <tr><td>السلعة</td><td class="n" id="r-achat">—</td></tr>
+          <tr><td>الكابيتال لي يخرج من جيبك في البداية<small>السلعة، و ثلث البوب</small></td><td class="n" id="r-capital-debut">—</td></tr>
+          <tr><td>الكابيتال الكل<small>السلعة، و البوب كامل</small></td><td class="n" id="r-capital-total">—</td></tr>
+          <tr class="fort"><td>الفايدة</td><td class="n" id="r-benefice">—</td></tr>
+          <tr><td>الروا على كابيتال البداية</td><td class="n" id="r-roi-debut">—</td></tr>
+          <tr><td>الروا على الكابيتال الكل</td><td class="n" id="r-roi-total">—</td></tr>
+          <tr><td>شحال من كوموند تتخلص باش يرجعلك كابيتال البداية</td><td class="n" id="r-recuperation">—</td></tr>
+        </table>
+      </div>
+
+      <div class="carte" id="carte-sortie" hidden>
+        <h2>باش يولّي يربح : تكفي وحدة من هاذو</h2>
+        <table>
+          <tr><td>ناقصك في كل كوموند</td><td class="n" id="d-manque">—</td></tr>
+          <tr><td>سومة الكوموند في ميتا تهبط لـ</td><td class="n" id="d-cpl">—</td></tr>
+          <tr><td>التوصيل يطلع لـ</td><td class="n" id="d-livraison">—</td></tr>
+          <tr><td>التأكيد يطلع لـ</td><td class="n" id="d-confirmation">—</td></tr>
+          <tr><td>سومة البيع تطلع لـ</td><td class="n" id="d-prix">—</td></tr>
+        </table>
+        <p class="note">وحدة برك تكفي، و الباقي يبقى كيما هو.</p>
+      </div>
+
+      <div class="carte">
+        <h2>الحدود، حتى بلا بوب</h2>
+        <table>
+          <tr><td>أقل سومة بيع</td><td class="n" id="p-prix">—</td></tr>
+          <tr><td>أقل نسبة توصيل</td><td class="n" id="p-livraison">—</td></tr>
+        </table>
+        <p class="note">تحت هاذو، الموديل يخسر حتى لو البوب بلاش.</p>
+      </div>
+
+      <footer>
+        <p>نفس الحساب تاع الأجون : التستينغ، الكوتش، السكايلينغ و الكارني.</p>
+        <p>الأرقام لي تكتبهم يبقاو في الجهاز تاعك برك.</p>
+      </footer>
+    </section>
+  </div>
+</main>
+
+<script src="calcul.js"></script>
+<script>
+(function () {
+  'use strict';
+  var B = window.Boussole;
+  var $ = function (id) { return document.getElementById(id); };
+  var CLE = 'ecom-manita-boussole-v1';
+  var CHAMPS = ['objectif', 'prix', 'achat', 'emballage', 'livraison', 'fraisCod', 'retour', 'confirmation', 'tauxLivraison', 'cplDollar', 'cpl', 'surplus', 'taux'];
+  var dernierCpl = 'cpl';   // le champ du cout de commande tapé en dernier ($ ou DA)
+
+  function lire(id) { var el = $(id); return B.lireNombre(el.value, el.hasAttribute('data-entier')); }
+  function ecrire(id, texte) { var el = $(id); if (el) el.textContent = texte; }
+  function argent(id, x, taux) { var el = $(id); el.textContent = B.dinars(x); if (taux > 0) { var s = document.createElement('span'); s.className = 'bis'; s.textContent = B.dollars(x, taux); el.appendChild(s); } }
+
+  function sauver() { try { var o = {}; CHAMPS.forEach(function (c) { o[c] = $(c).value; }); o._dernierCpl = dernierCpl; localStorage.setItem(CLE, JSON.stringify(o)); } catch (e) {} }
+  function restaurer() { try { var o = JSON.parse(localStorage.getItem(CLE) || 'null'); if (!o) return false; CHAMPS.forEach(function (c) { if (o[c] != null) $(c).value = o[c]; }); if (o._dernierCpl) dernierCpl = o._dernierCpl; return true; } catch (e) { return false; } }
+
+  function synchroniserCpl() {
+    var taux = lire('taux');
+    if (!(taux > 0)) return;
+    if (dernierCpl === 'cplDollar') { var d = lire('cplDollar'); $('cpl').value = d == null ? '' : String(Math.round(d * taux)); }
+    else { var a = lire('cpl'); $('cplDollar').value = a == null ? '' : (a / taux).toFixed(2).replace('.', ','); }
+  }
+
+  function entrees() {
+    var taux = lire('taux');
+    var cpl = lire('cpl');
+    if (dernierCpl === 'cplDollar' && taux > 0 && lire('cplDollar') != null) cpl = lire('cplDollar') * taux;
+    var pc = function (id) { var v = lire(id); return v == null ? null : v / 100; };
+    return {
+      objectif: lire('objectif'), prix: lire('prix'), achat: lire('achat'), emballage: lire('emballage'),
+      livraison: lire('livraison'), fraisCod: lire('fraisCod') == null ? 0 : lire('fraisCod'), retour: lire('retour'),
+      confirmation: pc('confirmation'), tauxLivraison: pc('tauxLivraison'), cpl: cpl, surplus: pc('surplus'), taux: taux
+    };
+  }
+
+  var LIENS = { objectif: 'objectif', prix: 'prix de vente', achat: "prix d'achat", emballage: 'emballage', livraison: 'livraison', fraisCod: 'frais COD', retour: 'retour', confirmation: 'confirmation', tauxLivraison: 'livraison (taux)', cpl: 'cout de la commande', surplus: 'surplus' };
+
+  function marquer(fautes) {
+    document.querySelectorAll('.saisie').forEach(function (s) { s.removeAttribute('data-faux'); });
+    Object.keys(LIENS).forEach(function (id) {
+      var touche = fautes.some(function (f) { return f.indexOf(LIENS[id] + ' :') === 0; });
+      if (touche) { var el = $(id === 'cpl' && dernierCpl === 'cplDollar' ? 'cplDollar' : id); if (el && el.value !== '') el.parentNode.setAttribute('data-faux', ''); }
+    });
+  }
+
+  function vider() {
+    ['k-sommet', 'k-sommet-d', 'k-net', 'k-net-d', 'r-leads', 'r-confirmees', 'r-livrees', 'r-retours', 'r-stock', 'r-marge', 'r-pub', 'r-achat', 'r-capital-debut', 'r-capital-total', 'r-benefice', 'r-roi-debut', 'r-roi-total', 'r-recuperation', 'p-prix', 'p-livraison'].forEach(function (id) { ecrire(id, '—'); });
+    $('carte-sortie').hidden = true;
+  }
+
+  function calculer() {
+    synchroniserCpl();
+    var e = entrees();
+    var r = B.calculer(e);
+    var v = $('verdict');
+    if (!r.ok) {
+      marquer(r.fautes);
+      vider();
+      var vides = r.fautes.filter(function (f) { return / : vide$/.test(f); }).length;
+      v.className = 'verdict attente';
+      v.textContent = vides === r.fautes.length ? 'عمّر الخانات، و الحساب يطلع وحدو.' : 'كاين خانة فيها رقم ما يمشيش : شوف لي باينة بالحمر.';
+      sauver();
+      return;
+    }
+    marquer([]);
+    var t = e.taux > 0 ? e.taux : 0;
+    v.className = 'verdict ' + (r.gagne ? 'gagne' : 'perd');
+    v.textContent = r.gagne ? 'هاذ الموديل يربح بهاذ الأرقام.' : 'هاذ الموديل يخسر بهاذ الأرقام.';
+
+    ecrire('k-sommet-d', t ? B.dollars(r.sommet, t) : B.dinars(r.sommet));
+    ecrire('k-sommet', t ? B.dinars(r.sommet) : 'عمّر الدولار');
+    ecrire('k-net', B.dinars(r.netLead));
+    ecrire('k-net-d', t ? B.dollars(r.netLead, t) : '—');
+    ecrire('p-prix', B.dinars(r.prixPlancher));
+    ecrire('p-livraison', r.livraisonPlancher == null ? '—' : B.pourcent(r.livraisonPlancher));
+    argent('r-marge', r.marge, t);
+
+    if (r.gagne) {
+      $('carte-sortie').hidden = true;
+      ecrire('r-leads', B.nombre(r.leads));
+      ecrire('r-confirmees', B.nombre(r.confirmees));
+      ecrire('r-livrees', B.nombre(r.livrees));
+      ecrire('r-retours', B.nombre(r.retours));
+      var st = $('r-stock'); st.textContent = B.nombre(r.stock); var bis = document.createElement('span'); bis.className = 'bis'; bis.textContent = '+' + B.nombre(r.surplusPieces); st.appendChild(bis);
+      argent('r-pub', r.pub, t); argent('r-achat', r.achatStock, t);
+      argent('r-capital-debut', r.capitalDebut, t); argent('r-capital-total', r.capitalTotal, t);
+      argent('r-benefice', r.benefice, t);
+      ecrire('r-roi-debut', B.pourcent(r.roiDebut)); ecrire('r-roi-total', B.pourcent(r.roiTotal));
+      ecrire('r-recuperation', r.recuperation == null ? '—' : B.nombre(r.recuperation));
+    } else {
+      ['r-leads', 'r-confirmees', 'r-livrees', 'r-retours', 'r-stock', 'r-pub', 'r-achat', 'r-capital-debut', 'r-capital-total', 'r-benefice', 'r-roi-debut', 'r-roi-total', 'r-recuperation'].forEach(function (id) { ecrire(id, '—'); });
+      var d = r.diagnostic;
+      $('carte-sortie').hidden = false;
+      argent('d-manque', d.manqueParLead, t);
+      if (d.cplMax == null) ecrire('d-cpl', 'حتى بلاش ما يكفيش');
+      else { var c = $('d-cpl'); c.textContent = t ? B.dollars(d.cplMax, t) : B.dinars(d.cplMax); if (t) { var s2 = document.createElement('span'); s2.className = 'bis'; s2.textContent = B.dinars(d.cplMax); c.appendChild(s2); } }
+      ecrire('d-livraison', d.livraisonMin == null ? 'ما يكفيش' : B.pourcent(d.livraisonMin));
+      ecrire('d-confirmation', d.confirmationMin == null ? 'ما يكفيش' : B.pourcent(d.confirmationMin));
+      argent('d-prix', d.prixMin, t);
+    }
+    sauver();
+  }
+
+  function depuisReglages(remplacer) {
+    if (location.protocol === 'file:') { ecrire('etat', 'افتح البوصلة من المكتب باش تجيب الأرقام تاعك.'); return Promise.resolve(); }
+    return fetch('/api/reglages', { headers: { accept: 'application/json' } }).then(function (rep) { if (!rep.ok) throw new Error(rep.status); return rep.json(); }).then(function (r) {
+      var c = r.couts || {}, d = r.declare || {};
+      var poser = function (id, v) { if (v == null || v === '' || !isFinite(+v)) return; if (remplacer || $(id).value === '') $(id).value = String(+v); };
+      poser('emballage', c.emballage); poser('livraison', c.livraison); poser('fraisCod', c.fraisCod); poser('retour', c.retour);
+      poser('confirmation', d.confirmation); poser('tauxLivraison', d.livraison); poser('taux', r.taux);
+      if ($('surplus').value === '') $('surplus').value = '20';
+      ecrire('etat', 'الأرقام تاع المكتب راهم هنا.');
+      calculer();
+    }).catch(function () { ecrire('etat', 'المكتب ما جاوبش : اكتب الأرقام بيدك.'); });
+  }
+
+  CHAMPS.forEach(function (id) {
+    $(id).addEventListener('input', function () { if (id === 'cplDollar' || id === 'cpl') dernierCpl = id; calculer(); });
+  });
+  $('depuis-reglages').addEventListener('click', function () { depuisReglages(true); });
+  $('vider').addEventListener('click', function () { CHAMPS.forEach(function (c) { $(c).value = ''; }); $('surplus').value = '20'; ecrire('etat', ''); try { localStorage.removeItem(CLE); } catch (e) {} calculer(); });
+  $('saisies').addEventListener('submit', function (ev) { ev.preventDefault(); });
+
+  restaurer();
+  if ($('surplus').value === '') $('surplus').value = '20';
+  calculer();
+  depuisReglages(false);
+})();
+</script>
+</body>
+</html>

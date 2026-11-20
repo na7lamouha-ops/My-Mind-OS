@@ -25,3 +25,12 @@
 .vercel
 next-env.d.ts
 tsconfig.tsbuildinfo
+
+# video skills
+.claude/skills/node_modules/
+.claude/skills/video-use/.env
+.claude/skills/**/__pycache__/
+__pycache__/
+# ecomanita
+ecomanita/bureau/config.local.json
+ecomanita/bureau/_dernier-tour-reel.json

@@ -1,0 +1,80 @@
+ecom manita — اقرا هاذي قبل كلش
+================================
+
+واش هو هاذا ؟
+المكتب تاع ecom manita : أجون تاع الذكاء الاصطناعي يخدمو في الجهاز تاعك.
+تبعث لينك الدرايف تاع الشوتينغ للروبو تاعك في تيليغرام،
+والأجون يدير المونتاج، الصفحة في تسيير، والبوب في ميتا.
+حتى حاجة ما تتلانسا بلا ما تضغط انت : لانسي.
+
+واش لازمك قبل ما تبدا :
+- PC بـ Windows ولا Mac
+- اشتراك Claude Pro (من claude.ai)
+- حساب تسيير فيه البوتيك تاعك
+- حساب ميتا للبوب (كونت بوبليسيتي و صفحة)
+- التوكن تاع ميتا : أبليكاسيون في الوضع Développement، مستعمل سيستام، والمدة « Jamais ».
+  تصنعهم مع Claude في التنصيب، وتلصق التوكن انت في « التحضير »، مرة وحدة.
+- تيليغرام في التليفون
+- موسيقى تاعك : عشرة على الأقل،
+  كل وحدة فوق اثناش ثانية
+
+التنصيب، الطريقة الساهلة (Claude يدير كلش) :
+- حل التطبيق تاع Claude، واضغط على « Code » الفوق.
+- اختار « Local »، ومن بعد الدوسي لي فيه هاذ الزيب (Téléchargements).
+- افتح الملف MESSAGE-A-COLLER-DANS-CLAUDE.txt، انسخو كامل، وحطّو لClaude.
+- من بعد : انت تكتب غير الموديباس، وتضغط « Autoriser » كي يسقسيك.
+
+التنصيب بيدك (إذا تحب) :
+- Windows : اضغط زوج مرات على INSTALLER-WINDOWS.bat
+- Mac : اضغط زوج مرات على INSTALLER-MAC.command
+إذا الجهاز سقساك : اختار « تشغيل على أي حال » ولا « Ouvrir ».
+
+من بعد التنصيب :
+في المكتب، افتح « التحضير » وكمّل الخطوات حتى يولّيو كامل خضر.
+البوب تمشي غير على ولايات الشمال، ماشي على الجزاير كامل.
+الولايات والكودات تاعهم واجدين في المكتب : ما تكتب والو.
+إذا ما توصّلش لولاية، نحّيها في « الإعدادات » وأكّد.
+
+الفيديوات لميتا :
+المكتب يبعثهم وحدو : يحل عنوان في الإنترنت غير وقت الإرسال،
+ميتا تديهم، ومن بعد يتسكّر وما يبقى والو في الإنترنت.
+العادة هي التونال : بلا حساب، بلا كارطة، بلا اشتراك.
+إذا التونال ما خدمش عندك، كاين خيار : الدوبو تاع Cloudflare بالمجان، يلزمو Visa ولا Mastercard ولا PayPal. الدليل :
+Cloudflare R2 (option) : 4-GUIDE-CLOUDFLARE-R2-GRATUIT.pdf
+في « التحضير »، الخطوة الخامسة : « جرّب الدوبو »، ومن بعد « ابعث فيديو تجربة لميتا ».
+
+أول حاجة بعد التنصيب (جديد في 0.4.0) : الفحص الطبي
+ابعث للروبو تاعك في تيليغرام : افحص حسابي
+المفتّش يقرا تسيير بلا ما يبدّل والو، ويعطيك نقطة من 100
+ويعطيك واجب واحد في المرة : علاش، ووين تضغط بالضبط.
+كي تكمل الواجب ابعث : عاود الفحص
+حتى ما يولّي الحساب «جاهز للتاست» (حتى نقطة حمرا)، ما تلانسي حتى موديل.
+
+قبل ما تبدا موديل :
+افتح « بوصلة التاجر » (لتحت في التحضير) وشوف شحال لازمك.
+
+باش تبدا موديل :
+ابعث لينك الدرايف للروبو تاعك في تيليغرام، وجاوب على الأسئلة.
+لينك واحد يقدر يكون فيه بزاف موديلات : المكتب يفرزهم وحدو،
+ويوريلك تصويرة كل موديل باش تأكدها.
+
+خلّي الجهاز مشعول : هو لي يخدم الخدمة.
+
+الخدمة باليد (إذا تحب أجون واحد برك) :
+في Claude، Code، حل محادثة جديدة على الدوسي ecom-manita-maison.
+اكتب / واختار الأجون : ecom-manita:manager ، ecom-manita:editeur ، ecom-manita:page ، ecom-manita:testing ، ecom-manita:scaling ، ecom-manita:coach ، ecom-manita:inspecteur ، ecom-manita:spy.
+كل أجون في المحادثة تاعو.
+الأجون SPY يقرا البوب تاع بلاد في المكتبة تاع ميتا : اكتب « spy dz ».
+الوضع تاع تيليغرام تاع SPY خيار برك : يلزمو حساب Cloudflare. ماشي من التنصيب.
+
+Ce dossier
+----------
+MESSAGE-A-COLLER-DANS-CLAUDE.txt   le message : ton Claude installe tout (onglet Code)
+INSTALLER-WINDOWS.bat              installe et demarre le bureau sur Windows (sans administrateur)
+INSTALLER-MAC.command              installe et demarre le bureau sur Mac (sans mot de passe administrateur)
+ARRETER-ECOM-MANITA                arrete le bureau (cree par l'installateur)
+_ETAT-INSTALLATION.txt             le resultat de l'installation, ligne par ligne
+bureau/                            le bureau (la page http://localhost:4620)
+plugin/                            les agents en mode manuel : une discussion par agent (/ecom-manita:manager, editeur ...)
+outils/                            les outils de la maison (montage, page, testing, coach, scaling, carnet)
+runtime/                           Node, Python, FFmpeg, cloudflared (poses par l'installateur)
