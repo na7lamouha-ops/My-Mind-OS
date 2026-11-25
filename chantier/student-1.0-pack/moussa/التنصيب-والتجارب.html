@@ -1,0 +1,879 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>التنصيب والتجارب</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Mise en page : un storyboard vertical en RTL, chaque étape est une « station » dessinée, reliée par un fil rouge comme le liseré de l'ensemble. */
+:root{
+  --bg:#f3f4f6; --panel:#ffffff; --ink:#1b2230; --mute:#5d6676; --line:#d5d9e1;
+  --thread:#d6264a; --thread-soft:#fbe4e9; --skin:#e9c9ad; --cloth:#20242c; --good:#1f7a4d; --good-soft:#e2f2ea;
+  --f-display:"Reem Kufi","Noto Kufi Arabic",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans Arabic","Segoe UI",Tahoma,system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#12151b; --panel:#1b2029; --ink:#e8ebf1; --mute:#9aa3b2; --line:#2f3643;
+  --thread:#ff5a78; --thread-soft:#3a1d25; --skin:#c9a487; --cloth:#3a414f; --good:#5fd39a; --good-soft:#163428; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12151b; --panel:#1b2029; --ink:#e8ebf1; --mute:#9aa3b2; --line:#2f3643;
+  --thread:#ff5a78; --thread-soft:#3a1d25; --skin:#c9a487; --cloth:#3a414f; --good:#5fd39a; --good-soft:#163428; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.75}
+.wrap{max-width:980px;margin:0 auto;padding-block:28px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:28px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.35}
+h1{font-size:clamp(1.8rem,5vw,2.6rem)}
+h2{font-size:clamp(1.3rem,3.4vw,1.7rem)}
+h3{font-size:1.1rem}
+p{margin:0}
+.lat{font-family:var(--f-mono);direction:ltr;unicode-bidi:isolate;font-size:.92em}
+.mute{color:var(--mute)}
+/* dessins */
+.ink{fill:var(--ink)} .cloth{fill:var(--cloth)} .skin{fill:var(--skin)} .thread{fill:var(--thread)} .paper{fill:var(--panel)}
+.stroke{fill:none;stroke:var(--ink);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.st-thread{fill:none;stroke:var(--thread);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.st-mute{fill:none;stroke:var(--line);stroke-width:2;stroke-linecap:round}
+.good{fill:var(--good)}
+/* héro */
+.hero{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px}
+.hero .txt{display:flex;flex-direction:column;gap:10px;min-width:0}
+.eyebrow{font-size:.82rem;letter-spacing:.04em;color:var(--thread);font-weight:600}
+.hero figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:4px}.hero svg{width:150px;height:auto}.hero figcaption{font-size:.85rem;color:var(--mute);text-align:center}
+@media (max-width:560px){.hero{grid-template-columns:1fr}.hero svg{width:120px;justify-self:center}}
+/* stations */
+.station{display:flex;flex-direction:column;gap:14px}
+.station-h{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.step{font-family:var(--f-display);color:var(--panel);background:var(--thread);border-radius:999px;padding:2px 12px;font-size:.9rem}
+.q-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.q{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.q svg{width:84px;height:84px;align-self:center}
+.q .kw{font-family:var(--f-mono);color:var(--thread);font-size:.9rem;direction:ltr;text-align:right}
+.q .ask{font-family:var(--f-display);font-size:1.15rem}
+.where{align-self:flex-start;font-size:.8rem;border-radius:999px;padding:1px 10px;border:1px solid var(--line);color:var(--mute)}
+.where.vid{border-color:var(--ink);color:var(--ink)}
+.where.txt{border-color:var(--thread);color:var(--thread)}
+.note{background:var(--thread-soft);border-radius:12px;padding:12px 14px}
+.ev{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:12px}
+.ev-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.ev-col{display:flex;flex-direction:column;gap:10px;min-width:0}
+.ev-h{font-family:var(--f-display);font-size:1.1rem;color:var(--thread)}
+.ev-sub{font-size:.85rem;margin-top:-8px}
+.ev-i{display:flex;gap:10px;align-items:center;border-top:1px solid var(--line);padding-top:10px}
+.ev-i svg{width:44px;height:44px;flex:none}
+.ev-i p{color:var(--mute);font-size:.92rem}
+.ev-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.ev-top .kw{font-family:var(--f-mono);color:var(--thread);font-size:.9rem;direction:ltr;unicode-bidi:isolate}
+.ev-grid{counter-reset:col}
+.ev-h{display:flex;align-items:center;gap:8px}
+.ev-h::before{counter-increment:col;content:counter(col);font-family:var(--f-mono);font-size:.78rem;min-width:22px;height:22px;border-radius:999px;border:1.5px solid var(--thread);color:var(--thread);display:inline-flex;align-items:center;justify-content:center;flex:none}
+.ev-col.not{background:var(--bg);border:1px dashed var(--line);border-radius:12px;padding:10px}
+.ev-col.not .ev-h{color:var(--mute)}
+.ev-col.yes{background:var(--good-soft);border:1px solid var(--good);border-radius:12px;padding:10px}
+.ev-col.yes .ev-h{color:var(--good)}
+.ev-col.yes .ev-h::before{border-color:var(--good);color:var(--good)}
+.ev-i .lat{color:var(--thread)}
+.tips{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:4px 16px;counter-reset:tip}
+.tips .ev-i b::before{counter-increment:tip;content:counter(tip);font-family:var(--f-mono);font-size:.75rem;min-width:20px;height:20px;border-radius:999px;background:var(--ink);color:var(--panel);display:inline-flex;align-items:center;justify-content:center;margin-inline-end:6px;vertical-align:2px}
+.num{font-family:var(--f-mono);font-weight:500;font-size:1.05rem;background:var(--ink);color:var(--panel);border-radius:999px;min-width:34px;height:34px;padding:0 6px;display:inline-flex;align-items:center;justify-content:center;align-self:center;direction:ltr;flex:none}
+.n{font-family:var(--f-mono);font-weight:500;font-size:.85rem;border:1.5px solid var(--ink);color:var(--ink);border-radius:999px;padding:0 9px;line-height:1.7;direction:ltr;unicode-bidi:isolate;display:inline-block;flex:none;background:var(--panel);vertical-align:2px}
+.road{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px}
+.road b{font-family:var(--f-display);font-weight:500;margin-inline-end:4px}
+.road a{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:2px 12px 2px 4px}
+.road a span{font-family:var(--f-mono);font-size:.8rem;background:var(--ink);color:var(--panel);border-radius:999px;min-width:22px;height:22px;padding:0 4px;display:inline-flex;align-items:center;justify-content:center}
+.road a:focus-visible{outline:3px solid var(--thread);outline-offset:2px}
+.road i{color:var(--mute);font-style:normal}
+.tbl-wrap{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:12px}
+.tbl{width:100%;min-width:560px;border-collapse:collapse;font-size:.9rem;line-height:1.5}
+.tbl caption{caption-side:top;text-align:left;padding:10px 12px 4px;font-weight:600}
+.tbl th,.tbl td{border-top:1px solid var(--line);padding:7px 12px;text-align:left;vertical-align:top}
+.tbl thead th{color:var(--mute);font-weight:500}
+.tbl td.win{color:var(--good);font-weight:600}
+.tbl td.lose{color:var(--thread)}
+.small{font-size:.85rem}
+.jar .ok{fill:var(--good-soft);stroke:none}
+.jar .ko{fill:var(--thread-soft);stroke:none}
+.jar .goal{fill:none;stroke:var(--thread);stroke-width:1.6;stroke-dasharray:6 5}
+.diagram .badge{fill:var(--ink)}
+.diagram .badge-t{fill:var(--panel);font-family:var(--f-mono);font-size:13px}
+.diagram .pill{fill:var(--thread-soft);stroke:var(--thread);stroke-width:1.4}
+.diagram .good-t{fill:var(--good);font-weight:600;font-size:15px}
+.diagram .cap{font-size:13px;fill:var(--ink);font-weight:600}
+.diagram .arrow{fill:none;stroke:var(--ink);stroke-width:2;marker-end:url(#fl)}
+.souk{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.souk-c{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.souk-fig{display:flex;justify-content:space-around;align-items:flex-end}
+.souk-fig figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:2px}
+.souk-fig svg{width:64px;height:64px}
+.souk-fig figcaption{font-size:.8rem;color:var(--mute)}
+.bub{border-radius:14px;padding:6px 12px;font-size:.95rem}
+.bub.q{background:var(--bg);border:1px solid var(--line);border-start-start-radius:4px}
+.bub.a{background:var(--thread-soft);border:1px solid var(--thread);border-start-end-radius:4px}
+.tag{align-self:flex-start;font-size:.85rem;font-weight:600;color:var(--panel);background:var(--thread);border-radius:999px;padding:1px 12px}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;counter-reset:st}
+.steps li{display:flex;gap:10px;align-items:flex-start}
+.steps li::before{counter-increment:st;content:counter(st);font-family:var(--f-mono);font-size:.8rem;min-width:24px;height:24px;border-radius:999px;background:var(--thread);color:var(--panel);display:inline-flex;align-items:center;justify-content:center;flex:none;margin-top:3px}
+.steps li.pre::before{content:"0";background:var(--mute)}
+.steps li.pre{counter-increment:none}
+.legend{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:2px;font-size:.92rem}
+.legend li{border-top:1px solid var(--line);padding-top:4px}
+.q .n{align-self:flex-start}
+.ok-t{color:var(--good)}
+.ko-t{color:var(--thread)}
+.tbl-wrap{direction:ltr}
+.test .diagram svg{min-width:400px}
+.rq{background:var(--panel);border:1px solid var(--line);border-inline-start:5px solid var(--ink);border-radius:12px;padding:10px 14px;display:flex;flex-direction:column;gap:6px}
+.rq-h{font-family:var(--f-display);font-size:1rem;color:var(--thread)}
+.rq ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:5px}
+.rq li{font-weight:600;line-height:1.6}
+.kwrow{display:flex;flex-wrap:wrap;gap:6px}
+.kwrow span{border:1px solid var(--line);border-radius:999px;padding:2px 12px;font-size:.92rem;background:var(--bg)}
+.kwrow b{color:var(--thread);margin-inline-end:6px;font-weight:600}
+.mods{font-size:.9rem}
+.mod{font-family:var(--f-mono);font-size:.8rem;direction:ltr;unicode-bidi:isolate;border:1px dashed var(--mute);color:var(--mute);border-radius:6px;padding:0 6px;white-space:nowrap}
+.station-h .mod{margin-inline-start:auto}
+h1 .lat,h2 .lat{font-family:var(--f-body);font-weight:700;font-size:1em}
+.edge{stroke:var(--bg);stroke-width:1.4;stroke-linejoin:round}
+.road{flex-direction:column;align-items:stretch;gap:10px}
+.road-h{margin:0;font-size:.95rem;color:var(--ink)}
+.road-r{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding-top:8px;border-top:1px dashed var(--line)}
+.road-r .mod{margin:0}
+.avcard{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px}
+.avcard figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:4px}
+.avcard svg{width:110px;height:auto}
+.avcard figcaption{font-size:.85rem;color:var(--mute)}
+.avcard dl{margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px 16px;min-width:0}
+.avcard dl div{border-top:1px solid var(--line);padding-top:6px}
+.avcard dt{font-size:.8rem;color:var(--thread);font-weight:600}
+.avcard dd{margin:0}
+@media (max-width:560px){.avcard{grid-template-columns:1fr}}
+.kit{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.kit-c{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.kit-h{font-size:.82rem;color:var(--thread);font-weight:600;margin:0}
+.thumb{font-family:var(--f-display);font-size:1.6rem;line-height:1.3;background:var(--ink);color:var(--panel);border-radius:10px;padding:14px;text-align:center;margin:0}
+.tbl.script{min-width:0}
+.tbl.script td,.tbl.script th{text-align:right;vertical-align:top}
+.tbl.script caption{text-align:right}
+.tbl.script .t{font-family:var(--f-mono);white-space:nowrap;direction:ltr;text-align:center}
+.prompt .copy{align-self:flex-start}
+.tbl-wrap.rtl{direction:rtl}
+.box-h{font-size:.8rem;font-weight:600;color:var(--thread);margin:0}
+.pro{background:var(--panel);border:1.5px solid var(--ink);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:12px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);border-radius:999px;padding:2px 12px;font-size:.92rem;background:var(--bg)}
+.chip b{color:var(--thread);font-weight:600}
+.chip b{margin-left:6px}
+.minirow{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:center;gap:8px 4px;counter-reset:nd;padding-top:4px}
+.nd{margin:0;display:flex;flex-direction:column;align-items:center;gap:4px;width:124px;text-align:center;position:relative}
+.nd::before{counter-increment:nd;content:counter(nd);position:absolute;top:-2px;inset-inline-start:22px;font-family:var(--f-mono);font-size:.72rem;min-width:20px;height:20px;border-radius:999px;background:var(--ink);color:var(--panel);display:inline-flex;align-items:center;justify-content:center}
+.nd svg{width:68px;height:68px;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:8px}
+.nd b{font-size:.95rem;display:block;line-height:1.4}
+.nd span{font-size:.8rem;color:var(--mute);display:block;line-height:1.45}
+.ar{font-size:1.5rem;line-height:1;color:var(--thread);margin-top:24px;flex:none}
+.calc{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.calc-t,.story-t{font-family:var(--f-display);font-size:1.15rem;line-height:1.5}
+.calc>table{width:100%;max-width:640px;border-collapse:collapse}
+.calc>table th{font-weight:500;text-align:right;padding:7px 0 7px 12px;border-top:1px solid var(--line);vertical-align:top}
+.calc>table td.v{font-family:var(--f-mono);font-size:.92rem;direction:ltr;text-align:left;padding:7px 0;border-top:1px solid var(--line);vertical-align:top;white-space:nowrap}
+.calc tr.sub th,.calc tr.sub td{font-weight:600}
+.calc tr.tot th,.calc tr.tot td{font-weight:700;color:var(--good);border-top:2px solid var(--ink)}
+.calc tr.cap th,.calc tr.cap td{color:var(--thread);font-weight:600}
+.hyp{font-size:.8rem;color:var(--mute);text-align:left;line-height:1.55}
+.calc .tbl{min-width:640px}
+.calc .tbl sup{font-size:.7em}
+.story{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:620px){.duo{grid-template-columns:1fr}}
+.side{border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.side.ko{background:var(--bg);border:1px dashed var(--mute)}
+.side.ok{background:var(--good-soft);border:1px solid var(--good)}
+.side-h{display:flex;align-items:center;gap:8px;font-family:var(--f-display);font-size:1.05rem}
+.side-h svg{width:46px;height:46px;flex:none}
+.res{font-weight:600;border-top:1px solid var(--line);padding-top:6px}
+.side.ko .res{color:var(--thread)}
+.side.ok .res{color:var(--good)}
+.jomla{background:var(--ink);color:var(--panel);border-radius:12px;padding:10px 14px;font-family:var(--f-display);font-size:1.1rem;line-height:1.6}
+.jomla b{color:var(--panel);opacity:.75;font-family:var(--f-body);font-size:.85rem;margin-inline-end:6px}
+.laws{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.law{background:var(--thread-soft);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;border-inline-start:5px solid var(--thread);min-width:0}
+.law-n{font-family:var(--f-display);font-size:1.2rem;line-height:1.45}
+.law-s{font-size:.95rem;border-top:1px solid var(--line);padding-top:6px}
+.law-s b{color:var(--thread)}
+.ex{display:flex;gap:10px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+.ex svg{width:40px;height:40px;flex:none}
+.ex b{color:var(--thread)}
+.rec{border:1px dashed var(--mute);border-radius:12px;padding:10px 14px;display:flex;flex-direction:column;gap:3px;font-size:.92rem;color:var(--mute)}
+.rec b{color:var(--ink);font-weight:600}
+.rec .cut{color:var(--ink)}
+.close{font-family:var(--f-display);font-size:clamp(1.2rem,3vw,1.5rem);text-align:center;padding:14px;border-block:2px solid var(--thread)}
+.wrap a{color:var(--thread)}
+.road a{color:var(--ink)}
+.hero .steps{font-size:.98rem}
+@media (max-width:420px){.nd{width:104px}.ar{font-size:1.2rem}}
+.calc .tbl td:not(:last-child),.calc .tbl th{white-space:nowrap}
+@media (max-width:560px){.minirow{display:grid;grid-template-columns:1fr 1fr;justify-items:center;gap:12px 8px}.minirow .ar{display:none}.nd{width:100%}.calc>table td.v{font-size:.82rem}}
+.hooks{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hooks .box-h{grid-column:1/-1}
+@media (max-width:620px){.hooks{grid-template-columns:1fr}}
+.hk{background:var(--panel);border:1.5px solid var(--thread);border-radius:12px;padding:10px 14px;font-weight:600;display:flex;gap:10px;align-items:flex-start}
+.hk-l{flex:none;min-width:26px;height:26px;border-radius:999px;background:var(--thread);color:var(--panel);display:inline-flex;align-items:center;justify-content:center;font-size:.85rem;margin-top:2px}
+.who{font-size:.95rem;color:var(--mute)}
+.who b{color:var(--ink)}
+.scr{background:var(--panel);border:1.5px dashed var(--ink);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.scr ol{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px;counter-reset:sc}
+.scr li{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline;border-top:1px solid var(--line);padding-top:8px}
+.scr li::before{counter-increment:sc;content:counter(sc);font-family:var(--f-mono);font-size:.75rem;min-width:22px;height:22px;border-radius:999px;background:var(--ink);color:var(--panel);display:inline-flex;align-items:center;justify-content:center;flex:none}
+.tool{font-family:var(--f-mono);font-size:.8rem;direction:ltr;unicode-bidi:isolate;border:1px solid var(--line);border-radius:6px;padding:0 6px;color:var(--thread);background:var(--bg);white-space:nowrap}
+.scr li>span:last-child{flex:1 1 220px;min-width:0}
+.task{background:var(--good-soft);border:1px solid var(--good);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:4px}
+.task .box-h{color:var(--good)}
+.before{background:var(--thread-soft);border-radius:12px;padding:12px 14px}
+.before ul{margin:4px 0 0;padding-inline-start:20px}
+.fclose{border-top:2px solid var(--ink);padding-top:10px;font-weight:600}
+.cmp th:first-child,.cmp tbody th{color:var(--thread);font-weight:600;white-space:nowrap}
+.cmp td{min-width:140px}
+.tbl caption{font-size:.85rem}
+.tbl.code{min-width:0}.tbl.code th{white-space:nowrap;width:1%}
+.say{display:none}
+.pro.js .say{display:flex;flex-direction:column;gap:8px;background:var(--bg);border:2px solid var(--thread);border-radius:14px;padding:12px 14px}
+.say-top{display:flex;align-items:center;gap:8px}
+.say-k{background:var(--thread);color:var(--panel);border-radius:999px;padding:0 12px;font-size:.85rem;font-weight:600}
+.say-who{font-family:var(--f-display);font-size:1.05rem}
+.say-t{font-size:1.12rem;line-height:1.85;font-weight:500;min-height:3.6em}
+.say-nav{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.say-nav button{align-self:auto}
+.say-n{font-family:var(--f-mono);font-size:.85rem;color:var(--mute);direction:ltr;unicode-bidi:isolate}
+.say-all summary{cursor:pointer;color:var(--thread);font-weight:600;font-size:.92rem}
+.say-list{margin:8px 0 0;padding-inline-start:20px;display:flex;flex-direction:column;gap:8px}
+.pro[data-say] .nd{cursor:pointer;border-radius:14px}
+.pro[data-say] .nd:focus-visible{outline:3px solid var(--thread);outline-offset:2px}
+.nd.on svg{border:2px solid var(--thread);box-shadow:0 0 0 5px var(--thread-soft)}
+.nd.on b{color:var(--thread)}
+.calc>table td.v small{display:block;font-family:var(--f-body);font-size:.8rem;font-weight:500;color:var(--mute);direction:rtl;text-align:left;white-space:normal;line-height:1.5}
+.calc>table th .op{display:block;margin-top:3px;font-family:var(--f-mono);font-size:.8rem;font-weight:500;color:var(--mute);direction:ltr;unicode-bidi:isolate;text-align:right}
+.calc tr.grp th{padding:16px 0 6px;font-family:var(--f-display);font-size:1rem;font-weight:600;color:var(--thread);border-top:2px solid var(--line)}
+/* schéma meta */
+.diagram{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px;overflow-x:auto}
+.diagram svg{display:block;min-width:620px;width:100%;height:auto}
+.diagram text{font-family:var(--f-body);fill:var(--ink)}
+.diagram .small{font-size:13px;fill:var(--mute)}
+.diagram .lab{font-size:15px;font-weight:600}
+.diagram .lab-t{font-size:14px;fill:var(--thread);font-weight:600}
+.box{fill:var(--panel);stroke:var(--ink);stroke-width:1.6}
+.box-t{fill:var(--thread-soft);stroke:var(--thread);stroke-width:1.6}
+.box-g{fill:var(--good-soft);stroke:var(--good);stroke-width:1.6}
+/* deux tests */
+.tests{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:720px){.tests{grid-template-columns:1fr}}
+.test{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.test .diagram{border:0;padding:0}
+.test .diagram svg{min-width:300px}
+.rule{font-weight:600}
+.judge{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:560px){.judge{grid-template-columns:1fr}}
+.j{border-radius:14px;padding:14px;border:1px solid var(--line);background:var(--panel);display:flex;gap:12px;align-items:flex-start}
+.j svg{width:56px;height:56px;flex:none}
+.j.ok{border-color:var(--good);background:var(--good-soft)}
+.prompt{background:var(--panel);border:1px dashed var(--ink);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.prompt pre{white-space:pre-wrap;margin:0;font-family:var(--f-body);background:var(--bg);border-radius:10px;padding:12px;line-height:1.8}
+button{font:inherit;border:1px solid var(--ink);background:var(--ink);color:var(--panel);border-radius:999px;padding:4px 16px;cursor:pointer;align-self:flex-start}
+button:focus-visible{outline:3px solid var(--thread);outline-offset:2px}
+footer{font-size:.85rem;color:var(--mute)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- femme voilée, ensemble noir à liseré rouge -->
+    <symbol id="femme" viewBox="0 0 120 200">
+      <path class="cloth edge" d="M34 76 L22 82 L13 126 L28 129 L35 98 Z"/>
+      <path class="cloth edge" d="M86 76 L98 82 L107 126 L92 129 L85 98 Z"/>
+      <path class="st-thread" d="M13 125 L28 128 M107 125 L92 128"/>
+      <circle class="skin" cx="20" cy="134" r="5.5"/><circle class="skin" cx="100" cy="134" r="5.5"/>
+      <path class="cloth edge" d="M32 131 L59 131 L57 186 L29 186 Z"/>
+      <path class="cloth edge" d="M61 131 L88 131 L91 186 L63 186 Z"/>
+      <path class="cloth edge" d="M34 74 L86 74 L92 133 L28 133 Z"/>
+      <path class="st-thread" d="M57 86 L53 133 M63 86 L67 133 M29 132 H91"/>
+      <path class="cloth edge" d="M60 8 C40 8 31 24 31 41 C31 55 35 64 30 78 C42 92 78 92 90 78 C85 64 89 55 89 41 C89 24 80 8 60 8 Z"/>
+      <ellipse class="skin" cx="60" cy="42" rx="14" ry="17"/>
+      <circle class="ink" cx="54.5" cy="40" r="1.9"/><circle class="ink" cx="65.5" cy="40" r="1.9"/>
+      <path class="stroke" d="M54 49 Q60 54 66 49" style="stroke-width:1.8"/>
+      <path class="paper" d="M27 186 H58 V194 H24 C24 190 25 187 27 186 Z"/><path class="stroke" d="M27 186 H58 V194 H24 C24 190 25 187 27 186 Z" style="stroke-width:1.6"/>
+      <path class="paper" d="M62 186 H93 C95 187 96 190 96 194 H62 Z"/><path class="stroke" d="M62 186 H93 C95 187 96 190 96 194 H62 Z" style="stroke-width:1.6"/>
+      <path class="st-thread" d="M30 191 H40 M80 191 H90" style="stroke-width:1.8"/>
+      <rect class="paper" x="98" y="138" width="17" height="20" rx="3"/><rect class="stroke" x="98" y="138" width="17" height="20" rx="3" style="stroke-width:1.6"/>
+      <path class="stroke" d="M101 138 C101 131 112 131 112 138" style="stroke-width:1.6"/>
+    </symbol>
+    <symbol id="fac" viewBox="0 0 80 80">
+      <path class="stroke" d="M8 30 L40 12 L72 30 Z"/>
+      <path class="stroke" d="M14 34 V62 M28 34 V62 M40 34 V62 M52 34 V62 M66 34 V62 M8 66 H72"/>
+      <path class="st-thread" d="M36 24 H44"/>
+    </symbol>
+    <symbol id="bureau" viewBox="0 0 80 80">
+      <path class="stroke" d="M22 22 H58 V46 H22 Z"/>
+      <path class="stroke" d="M14 52 H66 M40 46 V52 M10 64 H70"/>
+      <path class="st-thread" d="M28 30 H46 M28 37 H40"/>
+    </symbol>
+    <symbol id="cafe" viewBox="0 0 80 80">
+      <path class="stroke" d="M18 32 H54 V48 C54 58 46 64 36 64 C26 64 18 58 18 48 Z"/>
+      <path class="stroke" d="M54 38 C64 38 64 52 54 52 M12 70 H62"/>
+      <path class="st-thread" d="M28 14 C24 20 32 22 28 28 M40 14 C36 20 44 22 40 28"/>
+    </symbol>
+    <symbol id="calendrier" viewBox="0 0 80 80">
+      <rect class="stroke" x="14" y="18" width="52" height="48" rx="6"/>
+      <path class="stroke" d="M14 32 H66 M28 12 V24 M52 12 V24"/>
+      <rect class="thread" x="44" y="42" width="12" height="12" rx="2"/>
+    </symbol>
+    <symbol id="style" viewBox="0 0 80 80">
+      <path class="thread" d="M40 4 C31 4 26 11 26 20 C26 29 29 36 31 40 L49 40 C51 36 54 29 54 20 C54 11 49 4 40 4 Z"/>
+      <ellipse class="skin" cx="40" cy="19" rx="7" ry="8"/>
+      <path class="stroke" d="M6 68 L7 56 H17 C19 61 25 63 33 63 C37 63 39 65 39 68 Z"/>
+      <rect class="stroke" x="5" y="68" width="35" height="5" rx="2.5" style="stroke-width:1.8"/>
+      <path class="st-thread" d="M12 59 L15 62 M17 59 L20 62" style="stroke-width:1.8"/>
+      <path class="stroke" d="M48 52 H72 L70 76 H50 Z"/>
+      <path class="stroke" d="M55 52 C55 44 65 44 65 52"/>
+      <path class="st-thread" d="M50 62 H70"/>
+    </symbol>
+    <symbol id="bulle" viewBox="0 0 80 80">
+      <path class="st-thread" d="M10 16 H70 V52 H38 L24 66 V52 H10 Z"/>
+      <path class="st-thread" d="M20 28 H60 M20 40 H48"/>
+    </symbol>
+    <symbol id="cible" viewBox="0 0 80 80">
+      <circle class="stroke" cx="40" cy="40" r="28"/><circle class="stroke" cx="40" cy="40" r="16"/>
+      <circle class="thread" cx="40" cy="40" r="6"/>
+    </symbol>
+    <symbol id="bague" viewBox="0 0 80 80">
+      <circle class="stroke" cx="40" cy="50" r="20"/>
+      <path class="thread" d="M40 10 L50 22 L40 30 L30 22 Z"/>
+    </symbol>
+    <symbol id="main" viewBox="0 0 80 80">
+      <path class="stroke" d="M28 70 V38 C28 34 34 34 34 38 V20 C34 16 40 16 40 20 V34 V16 C40 12 46 12 46 16 V34 V20 C46 16 52 16 52 20 V40 C52 34 58 34 58 40 V50 C58 62 50 70 40 70 Z"/>
+      <circle class="thread" cx="43" cy="50" r="5"/><circle class="thread" cx="37" cy="27" r="2"/><circle class="thread" cx="49" cy="27" r="2"/>
+    </symbol>
+    <symbol id="croissant" viewBox="0 0 80 80">
+      <path class="cloth" d="M48 12 C30 14 18 28 18 44 C18 60 32 72 48 70 C36 64 30 54 30 42 C30 30 37 18 48 12 Z"/>
+      <path class="thread" d="M58 26 L60 32 L66 32 L61 36 L63 42 L58 38 L53 42 L55 36 L50 32 L56 32 Z"/>
+    </symbol>
+    <symbol id="toque" viewBox="0 0 80 80">
+      <path class="cloth" d="M8 32 L40 18 L72 32 L40 46 Z"/>
+      <path class="cloth" d="M22 40 V54 C30 62 50 62 58 54 V40 L40 48 Z"/>
+      <path class="st-thread" d="M66 34 V54"/><circle class="thread" cx="66" cy="57" r="3"/>
+    </symbol>
+    <symbol id="soleil" viewBox="0 0 80 80">
+      <circle class="thread" cx="40" cy="40" r="13"/>
+      <path class="st-thread" d="M40 10 V18 M40 62 V70 M10 40 H18 M62 40 H70 M19 19 L25 25 M55 55 L61 61 M61 19 L55 25 M25 55 L19 61"/>
+    </symbol>
+    <symbol id="flocon" viewBox="0 0 80 80">
+      <path class="stroke" d="M40 10 V70 M14 25 L66 55 M66 25 L14 55 M33 14 L40 21 L47 14 M33 66 L40 59 L47 66"/>
+    </symbol>
+    <symbol id="p-etud" viewBox="0 0 80 80">
+      <path class="cloth" d="M40 8 C31 8 27 15 27 23 C27 31 30 36 33 39 L47 39 C50 36 53 31 53 23 C53 15 49 8 40 8 Z"/><ellipse class="skin" cx="40" cy="23" rx="7" ry="8"/><path class="cloth" d="M31 38 L49 38 L55 72 L25 72 Z"/><path class="st-thread" d="M40 40 L36 58 M40 40 L44 58"/><path class="stroke" d="M47 40 L59 51"/><rect class="paper" x="54" y="50" width="16" height="16" rx="3"/><rect class="stroke" x="54" y="50" width="16" height="16" rx="3"/>
+    </symbol>
+    <symbol id="p-arousa" viewBox="0 0 80 80">
+      <path class="cloth" d="M40 8 C31 8 27 15 27 23 C27 31 30 36 33 39 L47 39 C50 36 53 31 53 23 C53 15 49 8 40 8 Z"/><ellipse class="skin" cx="40" cy="23" rx="7" ry="8"/><path class="cloth" d="M31 38 L49 38 L55 72 L25 72 Z"/><path class="st-thread" d="M40 40 L36 58 M40 40 L44 58"/><path class="st-thread" d="M31 11 L34 3 L40 8 L46 3 L49 11"/><circle class="thread" cx="40" cy="4" r="2"/>
+    </symbol>
+    <symbol id="p-mama" viewBox="0 0 80 80">
+      <g transform="translate(-10 0)"><path class="cloth" d="M40 8 C31 8 27 15 27 23 C27 31 30 36 33 39 L47 39 C50 36 53 31 53 23 C53 15 49 8 40 8 Z"/><ellipse class="skin" cx="40" cy="23" rx="7" ry="8"/><path class="cloth" d="M30 38 L50 38 L58 72 L22 72 Z"/></g><path class="stroke" d="M54 56 H68 V62 C68 67 65 70 61 70 C57 70 54 67 54 62 Z M68 58 C74 58 74 64 68 64 M54 58 L49 53"/><path class="st-thread" d="M58 51 H64"/>
+    </symbol>
+    <symbol id="p-enceinte" viewBox="0 0 80 80">
+      <path class="cloth" d="M40 8 C31 8 27 15 27 23 C27 31 30 36 33 39 L47 39 C50 36 53 31 53 23 C53 15 49 8 40 8 Z"/><ellipse class="skin" cx="40" cy="23" rx="7" ry="8"/><path class="cloth" d="M31 38 L47 38 C59 46 61 58 52 64 L55 72 L25 72 Z"/><path class="st-thread" d="M48 43 C57 49 57 58 51 62"/>
+    </symbol>
+    <symbol id="p-enfant" viewBox="0 0 80 80">
+      <g transform="translate(-10 0)"><path class="cloth" d="M40 8 C31 8 27 15 27 23 C27 31 30 36 33 39 L47 39 C50 36 53 31 53 23 C53 15 49 8 40 8 Z"/><ellipse class="skin" cx="40" cy="23" rx="7" ry="8"/><path class="cloth" d="M31 38 L49 38 L55 72 L25 72 Z"/><path class="st-thread" d="M40 40 L36 58 M40 40 L44 58"/></g><path class="ink" d="M56 46 C56 38 68 38 68 46 C66 42 58 42 56 46 Z"/><circle class="skin" cx="62" cy="47" r="6"/><path class="cloth" d="M57 54 H67 L70 72 H54 Z"/><path class="st-thread" d="M44 56 L57 58"/>
+    </symbol>
+    <symbol id="p-bureau" viewBox="0 0 80 80">
+      <g transform="translate(-8 0)"><path class="cloth" d="M40 8 C31 8 27 15 27 23 C27 31 30 36 33 39 L47 39 C50 36 53 31 53 23 C53 15 49 8 40 8 Z"/><ellipse class="skin" cx="40" cy="23" rx="7" ry="8"/><path class="cloth" d="M31 38 L49 38 L55 72 L25 72 Z"/><path class="st-thread" d="M40 40 L36 58 M40 40 L44 58"/><rect class="thread" x="42" y="44" width="5" height="7" rx="1"/></g><rect class="paper" x="52" y="52" width="20" height="15" rx="2"/><rect class="stroke" x="52" y="52" width="20" height="15" rx="2"/><path class="stroke" d="M58 52 V48 H66 V52"/><path class="st-thread" d="M52 58 H72"/>
+    </symbol>
+    <symbol id="p-prof" viewBox="0 0 80 80">
+      <g transform="translate(12 0)"><path class="cloth" d="M40 8 C31 8 27 15 27 23 C27 31 30 36 33 39 L47 39 C50 36 53 31 53 23 C53 15 49 8 40 8 Z"/><ellipse class="skin" cx="40" cy="23" rx="7" ry="8"/><path class="cloth" d="M31 38 L49 38 L55 72 L25 72 Z"/><path class="st-thread" d="M40 40 L36 58 M40 40 L44 58"/></g><rect class="paper" x="4" y="12" width="28" height="22" rx="2"/><rect class="stroke" x="4" y="12" width="28" height="22" rx="2"/><path class="st-thread" d="M9 19 H26 M9 26 H20"/><path class="stroke" d="M45 48 L30 37"/>
+    </symbol>
+    <symbol id="vendeur" viewBox="0 0 80 80">
+      <path class="stroke" d="M22 74 V50 C22 40 58 40 58 50 V74"/><path class="st-thread" d="M32 44 V74 M48 44 V74"/><circle class="skin" cx="40" cy="24" r="11"/><path class="ink" d="M28 21 C28 9 52 9 52 21 Z"/><path class="ink" d="M26 20 H58 V23 H26 Z"/><path class="ink" d="M34 29 C37 31 43 31 46 29 C43 32 37 32 34 29 Z"/><circle class="ink" cx="36" cy="24" r="1.4"/><circle class="ink" cx="44" cy="24" r="1.4"/>
+    </symbol>
+    <symbol id="jebba" viewBox="0 0 80 80">
+      <path class="cloth" d="M32 10 H48 L54 18 L68 30 L62 38 L54 32 L58 72 H22 L26 32 L18 38 L12 30 L26 18 Z"/><path class="st-thread" d="M40 12 V36 M35 16 H45 M25 67 H55"/>
+    </symbol>
+    <symbol id="tradi" viewBox="0 0 80 80">
+      <circle class="stroke" cx="40" cy="40" r="30"/><circle class="thread" cx="40" cy="40" r="6"/><path class="stroke" d="M40 33 C33 22 47 22 40 33 M40 47 C33 58 47 58 40 47 M33 40 C22 33 22 47 33 40 M47 40 C58 33 58 47 47 40"/><path class="st-thread" d="M22 22 L28 28 M58 22 L52 28 M22 58 L28 52 M58 58 L52 52"/>
+    </symbol>
+    <symbol id="sahra" viewBox="0 0 80 80">
+      <path class="cloth" d="M33 10 H47 L45 30 C55 44 61 58 66 72 H14 C19 58 25 44 35 30 Z"/><path class="st-thread" d="M35 30 H45"/><path class="thread" d="M62 10 L64 16 L70 18 L64 20 L62 26 L60 20 L54 18 L60 16 Z"/>
+    </symbol>
+    <symbol id="khimar" viewBox="0 0 80 80">
+      <path class="thread" d="M40 8 C26 8 18 20 18 34 C18 50 24 62 28 72 L52 72 C56 62 62 50 62 34 C62 20 54 8 40 8 Z"/><ellipse class="skin" cx="40" cy="32" rx="10" ry="12"/><circle class="ink" cx="36" cy="31" r="1.4"/><circle class="ink" cx="44" cy="31" r="1.4"/>
+    </symbol>
+    <symbol id="basket" viewBox="0 0 80 80">
+      <path class="stroke" d="M12 58 L14 38 H30 C34 46 44 49 58 49 C66 49 70 53 70 58 Z"/><rect class="stroke" x="10" y="58" width="62" height="7" rx="3"/><path class="st-thread" d="M22 42 L27 47 M29 42 L34 47"/>
+    </symbol>
+    <symbol id="sac" viewBox="0 0 80 80">
+      <path class="stroke" d="M18 30 H62 L58 70 H22 Z"/><path class="stroke" d="M30 30 C30 14 50 14 50 30"/><path class="st-thread" d="M21 44 H59"/>
+    </symbol>
+    <symbol id="ballerine" viewBox="0 0 80 80">
+      <path class="stroke" d="M10 58 C8 50 14 44 22 45 C30 46 36 44 42 41 C54 43 64 46 69 51 C73 55 71 60 66 60 H14 C12 60 11 59 10 58 Z"/><path class="st-thread" d="M36 44 C40 40 46 40 48 44 C46 48 40 48 36 44 Z"/>
+    </symbol>
+    <symbol id="talon" viewBox="0 0 80 80">
+      <path class="stroke" d="M16 34 C14 42 22 52 34 58 L66 60 C72 60 72 54 66 51 C56 47 48 46 42 42 L24 32 C20 30 17 31 16 34 Z"/><path class="stroke" d="M19 42 L21 70 H26"/><path class="st-thread" d="M30 37 L38 45"/>
+    </symbol>
+    <symbol id="bijou" viewBox="0 0 80 80">
+      <path class="stroke" d="M16 14 C16 44 64 44 64 14"/><circle class="thread" cx="23" cy="30" r="2.5"/><circle class="thread" cx="57" cy="30" r="2.5"/><circle class="thread" cx="31" cy="37" r="2.5"/><circle class="thread" cx="49" cy="37" r="2.5"/><path class="thread" d="M40 40 L47 51 L40 63 L33 51 Z"/>
+    </symbol>
+    <symbol id="coussin" viewBox="0 0 80 80">
+      <path class="stroke" d="M14 30 C14 22 22 20 40 20 C58 20 66 22 66 30 V50 C66 58 58 60 40 60 C22 60 14 58 14 50 Z"/><path class="st-thread" d="M26 40 H54"/><path class="stroke" d="M14 30 L8 26 M66 30 L72 26 M14 50 L8 54 M66 50 L72 54"/>
+    </symbol>
+    <symbol id="pansement" viewBox="0 0 80 80">
+      <g transform="rotate(-35 40 40)"><rect class="stroke" x="8" y="29" width="64" height="22" rx="11"/><rect class="thread" x="31" y="31" width="18" height="18" rx="3"/></g>
+    </symbol>
+    <symbol id="thermo" viewBox="0 0 80 80">
+      <path class="stroke" d="M34 14 C34 9 46 9 46 14 V47 C53 51 53 66 40 66 C27 66 27 51 34 47 Z"/><circle class="thread" cx="40" cy="57" r="6"/><path class="st-thread" d="M40 52 V24"/>
+    </symbol>
+    <symbol id="etoile" viewBox="0 0 80 80">
+      <path class="stroke" d="M40 10 L48 30 L70 31 L53 45 L59 66 L40 54 L21 66 L27 45 L10 31 L32 30 Z"/><path class="thread" d="M66 8 L67 12 L71 13 L67 14 L66 18 L65 14 L61 13 L65 12 Z"/>
+    </symbol>
+    <symbol id="cintre" viewBox="0 0 80 80">
+      <path class="stroke" d="M40 30 C40 25 46 24 46 18 C46 13 42 10 38 10 C34 10 32 13 32 16 M40 30 L10 54 H70 Z"/><path class="st-thread" d="M22 54 V66 M40 54 V70 M58 54 V66"/>
+    </symbol>
+    <symbol id="diamant" viewBox="0 0 80 80">
+      <path class="stroke" d="M14 30 L26 16 H54 L66 30 L40 66 Z M14 30 H66 M26 16 L34 30 L40 66 M54 16 L46 30 L40 66"/><path class="st-thread" d="M34 30 L40 16 L46 30"/>
+    </symbol>
+    <symbol id="valise" viewBox="0 0 80 80">
+      <rect class="stroke" x="12" y="26" width="56" height="40" rx="5"/><path class="stroke" d="M32 26 V18 H48 V26"/><path class="st-thread" d="M12 42 H68"/><circle class="thread" cx="40" cy="42" r="4"/>
+    </symbol>
+    <symbol id="cadeau" viewBox="0 0 80 80">
+      <rect class="stroke" x="14" y="34" width="52" height="32" rx="3"/><rect class="stroke" x="10" y="25" width="60" height="10" rx="2"/><path class="st-thread" d="M40 25 V66 M40 25 C30 12 21 21 32 25 M40 25 C50 12 59 21 48 25"/>
+    </symbol>
+    <symbol id="swap" viewBox="0 0 80 80">
+      <path class="stroke" d="M14 28 H62 M52 18 L62 28 L52 38"/><path class="st-thread" d="M66 52 H18 M28 42 L18 52 L28 62"/>
+    </symbol>
+    <symbol id="studio" viewBox="0 0 80 80">
+      <path class="stroke" d="M10 14 L32 20 V40 L10 46 Z"/><path class="stroke" d="M32 30 H38 M21 46 L14 72 M21 46 L28 72 M21 46 V72"/><path class="stroke" d="M54 72 H70 L68 58 H56 Z"/><path class="st-thread" d="M62 58 V34 M62 56 C62 46 54 42 50 38 M62 50 C62 42 70 40 74 36"/>
+    </symbol>
+    <symbol id="micro" viewBox="0 0 80 80">
+      <rect class="stroke" x="32" y="8" width="16" height="32" rx="8"/><path class="stroke" d="M24 32 C24 48 56 48 56 32 M40 48 V62 M30 62 H50"/><path class="st-thread" d="M14 20 C9 28 9 38 14 46 M66 20 C71 28 71 38 66 46"/>
+    </symbol>
+    <symbol id="oeil" viewBox="0 0 80 80">
+      <path class="stroke" d="M8 40 C20 22 60 22 72 40 C60 58 20 58 8 40 Z"/><circle class="thread" cx="40" cy="40" r="9"/><circle class="ink" cx="40" cy="40" r="3"/>
+    </symbol>
+    <symbol id="page" viewBox="0 0 80 80">
+      <rect class="paper" x="14" y="6" width="52" height="68" rx="5"/><rect class="stroke" x="14" y="6" width="52" height="68" rx="5"/><path class="st-mute" d="M14 18 H66"/><path class="stroke" d="M22 58 H58 M22 66 H46"/>
+    </symbol>
+    <symbol id="cadenas" viewBox="0 0 80 80">
+      <rect class="stroke" x="18" y="36" width="44" height="34" rx="5"/><path class="stroke" d="M28 36 V26 C28 12 52 12 52 26 V36"/><circle class="thread" cx="40" cy="52" r="5"/><path class="st-thread" d="M40 56 V62"/>
+    </symbol>
+    <symbol id="sablier" viewBox="0 0 80 80">
+      <path class="stroke" d="M20 10 H60 M20 70 H60 M24 10 C24 30 56 30 56 10 M24 70 C24 50 56 50 56 70 M24 10 C24 26 38 34 38 40 C38 46 24 54 24 70 M56 10 C56 26 42 34 42 40 C42 46 56 54 56 70"/><path class="thread" d="M30 66 C34 58 46 58 50 66 Z"/>
+    </symbol>
+    <symbol id="cash" viewBox="0 0 80 80">
+      <rect class="stroke" x="8" y="22" width="64" height="36" rx="4"/><circle class="thread" cx="40" cy="40" r="8"/><path class="st-thread" d="M17 31 V49 M63 31 V49"/>
+    </symbol>
+    <symbol id="camion" viewBox="0 0 80 80">
+      <rect class="stroke" x="6" y="22" width="40" height="32" rx="3"/><path class="stroke" d="M46 32 H60 L71 44 V54 H46 Z"/><circle class="paper" cx="20" cy="58" r="7"/><circle class="stroke" cx="20" cy="58" r="7"/><circle class="paper" cx="58" cy="58" r="7"/><circle class="stroke" cx="58" cy="58" r="7"/><path class="st-thread" d="M14 34 H36 M14 42 H30"/>
+    </symbol>
+    <symbol id="machine" viewBox="0 0 80 80">
+      <path class="stroke" d="M8 68 H72 M14 68 V60 H66 V68"/><path class="stroke" d="M20 60 V24 C20 18 24 15 30 15 H60 C64 15 66 18 66 22 V36 H56 V28 H32 V60"/><path class="stroke" d="M61 36 V46"/><path class="st-thread" d="M61 46 V56 M36 46 C42 40 48 50 54 44"/><circle class="thread" cx="44" cy="21" r="3"/>
+    </symbol>
+    <symbol id="agent" viewBox="0 0 80 80">
+      <rect class="stroke" x="18" y="24" width="44" height="36" rx="8"/><path class="stroke" d="M40 24 V15 M18 38 H12 V48 H18 M62 38 H68 V48 H62"/><circle class="thread" cx="40" cy="12" r="4"/><circle class="thread" cx="31" cy="40" r="4"/><circle class="thread" cx="49" cy="40" r="4"/><path class="st-thread" d="M32 51 H48"/>
+    </symbol>
+    <symbol id="loupe" viewBox="0 0 80 80">
+      <circle class="stroke" cx="34" cy="34" r="20"/><path class="stroke" style="stroke-width:5" d="M49 49 L68 68"/><path class="st-thread" d="M23 31 C25 25 30 22 35 22"/>
+    </symbol>
+    <symbol id="cahier" viewBox="0 0 80 80">
+      <rect class="stroke" x="20" y="10" width="46" height="60" rx="4"/><path class="st-thread" d="M28 10 V70"/><path class="stroke" d="M36 26 H58 M36 36 H58 M36 46 H52 M14 20 H24 M14 32 H24 M14 44 H24 M14 56 H24"/>
+    </symbol>
+    <symbol id="boussole" viewBox="0 0 80 80">
+      <circle class="stroke" cx="40" cy="40" r="28"/><path class="thread" d="M40 17 L46 40 L34 40 Z"/><path class="stroke" d="M34 40 L40 63 L46 40"/><circle class="ink" cx="40" cy="40" r="3"/>
+    </symbol>
+    <symbol id="escalier" viewBox="0 0 80 80">
+      <path class="stroke" d="M8 68 H24 V54 H40 V40 H56 V26 H72"/><path class="st-thread" d="M14 46 L32 28 M24 28 H32 V36"/>
+    </symbol>
+    <symbol id="abo" viewBox="0 0 60 60">
+      <rect class="stroke" x="18" y="4" width="24" height="12" rx="3"/><path class="st-mute" d="M30 16 V23 M14 23 H46 M14 23 V29 M46 23 V29"/><rect class="stroke" x="2" y="29" width="24" height="12" rx="3"/><rect class="stroke" x="34" y="29" width="24" height="12" rx="3"/><path class="st-thread" d="M14 41 V46 M46 41 V46"/><circle class="thread" cx="14" cy="52" r="5"/><circle class="thread" cx="46" cy="52" r="5"/>
+    </symbol>
+    <symbol id="cbo" viewBox="0 0 60 60">
+      <circle class="thread" cx="30" cy="7" r="5"/><path class="st-thread" d="M30 12 V15"/><rect class="stroke" x="18" y="15" width="24" height="12" rx="3"/><path class="st-thread" d="M30 27 V33 M14 33 H46 M14 33 V40 M46 33 V40"/><rect class="stroke" x="2" y="40" width="24" height="12" rx="3"/><rect class="stroke" x="34" y="40" width="24" height="12" rx="3"/>
+    </symbol>
+    <symbol id="tel" viewBox="0 0 60 100">
+      <rect class="paper" x="3" y="3" width="54" height="94" rx="9"/>
+      <rect class="stroke" x="3" y="3" width="54" height="94" rx="9"/>
+      <path class="stroke" d="M24 10 H36"/>
+    </symbol>
+    <symbol id="coupe" viewBox="0 0 60 60">
+      <path class="good" d="M16 8 H44 V20 C44 30 37 36 30 36 C23 36 16 30 16 20 Z"/>
+      <path class="good" d="M26 36 H34 V44 H40 V50 H20 V44 H26 Z"/>
+      <path style="fill:none;stroke:var(--good);stroke-width:3" d="M16 12 H8 C8 22 12 26 18 26 M44 12 H52 C52 22 48 26 42 26"/>
+    </symbol>
+    <symbol id="colis" viewBox="0 0 60 60">
+      <path class="stroke" d="M8 20 L30 10 L52 20 V44 L30 54 L8 44 Z M8 20 L30 30 L52 20 M30 30 V54"/>
+      <path class="st-thread" d="M19 15 L41 25"/>
+    </symbol>
+    <symbol id="clic" viewBox="0 0 60 60">
+      <path class="stroke" d="M22 12 V36 L16 30 C13 27 9 31 12 34 L24 48 H42 C46 48 48 44 48 40 V28 C48 24 42 24 42 28 V26 C42 22 36 22 36 26 V24 C36 20 30 20 30 24 V12 C30 8 22 8 22 12 Z"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="wrap" dir="rtl" lang="ar">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="pc" viewBox="0 0 80 80"><rect class="stroke" x="14" y="14" width="52" height="38" rx="4"/><path class="stroke" d="M6 64 H74 L67 56 H13 Z"/><path class="st-thread" d="M25 27 L33 33 L25 39 M37 41 H49"/></symbol>
+  <symbol id="term" viewBox="0 0 80 80"><rect class="stroke" x="8" y="14" width="64" height="52" rx="5"/><path class="st-mute" d="M8 25 H72"/><path class="st-thread" d="M18 37 L27 43 L18 49 M31 53 H45"/></symbol>
+  <symbol id="drive" viewBox="0 0 80 80"><path class="stroke" d="M29 12 H51 L73 51 L62 69 H18 L7 51 Z"/><path class="st-thread" d="M29 12 L51 51 H73 M7 51 L19 30"/></symbol>
+</defs></svg>
+<style>
+.axmap{list-style:none;margin:16px 0 0;padding:16px;display:grid;grid-template-columns:repeat(8,1fr);gap:10px;border:1.5px solid var(--line);border-radius:16px;background:var(--panel)}
+.axmap li{position:relative;min-width:0}
+.axmap li:not(:last-child)::after{content:"←";position:absolute;left:-10px;top:28px;font-weight:700;color:var(--ink)}
+.axmap a{display:flex;flex-direction:column;align-items:center;gap:6px;text-decoration:none;color:var(--ink);text-align:center}
+.axmap .ax-c{width:70px;height:70px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center}
+.axmap .ax-c svg{width:44px;height:44px}
+.axmap .ax-t{font-family:var(--f-display);font-weight:600;font-size:.95rem}
+@media (max-width:760px){.axmap{grid-template-columns:repeat(4,1fr);row-gap:18px}.axmap li:nth-child(4)::after{display:none}}
+.msg{margin:14px 0 0;border:1.5px solid var(--line);border-radius:12px;background:var(--panel);padding:10px 14px}
+.msg summary{cursor:pointer;font-family:var(--f-display);font-weight:600}
+.msg summary .lat,.rq .lat,.nd .lat{white-space:nowrap}
+.msg pre{white-space:pre-wrap;word-break:break-word;font-family:var(--f-mono);font-size:.82rem;line-height:1.55;margin:10px 0 0;text-align:left}
+.station .tbl-wrap{margin-top:14px}
+</style>
+
+<header class="hero">
+  <div class="txt">
+    <span class="eyebrow">التكوين · الجزء الأول</span>
+    <h1>التنصيب على الماك والويندوز، والتجارب الثلاثة</h1>
+    <p>نفس الباكي ونفس الميساج، في جهازين. ومن بعد ثلاث تجارب تورّي بلي الماشينة تخدم : السباي في المكتبة تاع ميتا، سباي الإنغاجمان، ولينك الدرايف.</p>
+  </div>
+  <figure><svg viewBox="0 0 80 80" role="img" aria-label="كمبيوتر"><use href="#pc"/></svg><figcaption>ماك وويندوز، نفس الطريق</figcaption></figure>
+</header>
+
+<section class="station" aria-labelledby="map">
+  <div class="station-h"><span class="step">الخريطة</span><h2 id="map">الطريق كامل، من اليمين للشمال</h2></div>
+  <ol class="axmap ax8" aria-label="الطريق تاع الجزء الأول">
+    <li><a href="#s0"><span class="ax-c"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#valise"/></svg></span><span class="ax-t">التحضير</span></a></li>
+    <li><a href="#s1"><span class="ax-c"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#pc"/></svg></span><span class="ax-t">التنصيب</span></a></li>
+    <li><a href="#s2"><span class="ax-c"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#term"/></svg></span><span class="ax-t">الفنيترة</span></a></li>
+    <li><a href="#s3"><span class="ax-c"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#cadenas"/></svg></span><span class="ax-t">الريغلاجات</span></a></li>
+    <li><a href="#s4"><span class="ax-c"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#loupe"/></svg></span><span class="ax-t">Ad Library</span></a></li>
+    <li><a href="#s5"><span class="ax-c"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#oeil"/></svg></span><span class="ax-t">Engagement</span></a></li>
+    <li><a href="#s6"><span class="ax-c"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#drive"/></svg></span><span class="ax-t">الدرايف</span></a></li>
+    <li><a href="#s7"><span class="ax-c"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#coupe"/></svg></span><span class="ax-t">البرهان</span></a></li>
+  </ol>
+</section>
+
+<section class="station" aria-labelledby="s0">
+  <div class="station-h"><span class="num">0</span><span class="step">التحضير</span><h2 id="s0">قبل ما تبدا التصوير</h2><span class="lat">Checklist</span><span class="mod" title="الموديل في البلان">M19</span></div>
+  <aside class="rq" aria-label="رؤوس أقلام">
+    <p class="rq-h">رؤوس أقلام</p>
+    <ul>
+      <li><span class="n">0.1</span> جهازين : ماك و <span class="lat">PC</span> ويندوز، والباكي لي في البيرو.</li>
+      <li><span class="n">0.2</span> بوتيك تجربة في <span class="lat">Tassyir</span>، كونت بوب، وروبو تيليغرام لكل جهاز.</li>
+      <li><span class="n">0.3</span> الموديباس والمفاتيح يتكتبو بلا كاميرا، ولا يتضبّبو في المونتاج.</li>
+    </ul>
+  </aside>
+  <div class="pro" role="group" aria-label="التحضير">
+    <p class="box-h">الشيما</p>
+    <div class="chips"><span class="chip"><b class="lat">Pro</b>حساب Claude</span><span class="chip"><b class="lat">USB</b>الباكي</span></div>
+    <div class="minirow"><figure class="nd" data-i="1"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#valise"/></svg><figcaption><b>الباكي</b><span>الستة فيشيات</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="2"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#pc"/></svg><figcaption><b>الماك</b><span>يوزر جديد</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="3"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#pc"/></svg><figcaption><b>الويندوز</b><span>محدّث وما يرقدش</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="4"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#tel"/></svg><figcaption><b>تيليغرام</b><span>روبو لكل جهاز</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="5"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#drive"/></svg><figcaption><b>الدرايف</b><span>لينك عام</span></figcaption></figure></div>
+  </div>
+  <div class="tbl-wrap"><table class="tbl" lang="fr" dir="ltr">
+    <caption>À préparer avant de filmer</caption>
+    <thead><tr><th>Quoi</th><th>Pourquoi</th></tr></thead>
+    <tbody>
+<tr><th>Le paquet : les 6 fichiers du dossier «&nbsp;Guide Installation Agent&nbsp;» (ton Bureau), sur une clé USB</th><td>c’est la version relue le 23 oct (229/229 depuis le zip ouvert à neuf)</td></tr>
+<tr><th>Mac : un NOUVEL utilisateur macOS (Réglages › Utilisateurs et groupes)</th><td>ton Mac a déjà un ecom-manita installé le 7 oct ; dans un utilisateur neuf l’installation part de zéro et ne touche pas la tienne</td></tr>
+<tr><th>PC Windows 11 64 bits : Windows Update fini, mise en veille «&nbsp;Jamais&nbsp;», 20 Go libres sur C:</th><td>une mise à jour en cours bloque Python (code 1618) ; PC en veille = bureau arrêté</td></tr>
+<tr><th>Un compte Claude Pro (le même peut servir sur les deux machines)</th><td>l’onglet «&nbsp;Code&nbsp;» demande Pro</td></tr>
+<tr><th>Tassyir : une boutique d’ESSAI</th><td>à l’essai Drive, la page produit se publie toute seule dès qu’elle est prête</td></tr>
+<tr><th>Meta : compte publicitaire actif, une page, un pixel</th><td>connecteur, comptes, essai vidéo, campagne</td></tr>
+<tr><th>Telegram sur ton téléphone : un robot BotFather par machine</th><td>deux bureaux ne lisent pas le même robot</td></tr>
+<tr><th>10 musiques mp3 de plus de 12 s</th><td>l’étape musique</td></tr>
+<tr><th>Un lien Drive PUBLIC : un seul modèle, un seul mannequin</th><td>l’essai Drive ; petit lot = montage plus court</td></tr>
+<tr><th>Engagement : la clé Instagram (app Meta + jeton) et quelques profils vêtement</th><td>le jeton va dans ig-spy.json, jamais à l’écran</td></tr>
+<tr><th>Windows : filmer en continu</th><td>si une ligne ECHEC sort, Claude la lit et relance : ça se garde ou se coupe au montage ; garder _ETAT-INSTALLATION.txt, serveur.log et epreuve.log</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="station" aria-labelledby="s1">
+  <div class="station-h"><span class="num">1</span><span class="step">التنصيب</span><h2 id="s1"><span class="lat">Claude</span> ينصّب، وانت تضغط «&nbsp;<span class="lat">Autoriser</span>&nbsp;»</h2><span class="lat">Installation</span><span class="mod" title="الموديل في البلان">M19</span></div>
+  <aside class="rq" aria-label="رؤوس أقلام">
+    <p class="rq-h">رؤوس أقلام</p>
+    <ul>
+      <li><span class="n">1.1</span> تحمّل <span class="lat">Claude</span>، تحل «&nbsp;<span class="lat">Code</span>&nbsp;»، تختار «&nbsp;<span class="lat">Local</span>&nbsp;» والدوسي <span class="lat">Téléchargements</span>، و«&nbsp;<span class="lat">Auto</span>&nbsp;».</li>
+      <li><span class="n">1.2</span> تلصق الميساج : <span class="lat">Claude</span> يحل الزيب ويحل الفنيترة تاع التنصيب.</li>
+      <li><span class="n">1.3</span> انت تكتب الموديباس وتضغط «&nbsp;<span class="lat">Autoriser</span>&nbsp;» برك. كلش آخر يديرو <span class="lat">Claude</span>.</li>
+    </ul>
+  </aside>
+  <div class="pro" role="group" aria-label="التنصيب">
+    <p class="box-h">الشيما</p>
+    <div class="chips"><span class="chip"><b class="lat">Code</b></span><span class="chip"><b class="lat">Local</b>في الجهاز نفسو</span><span class="chip"><b class="lat">Auto</b>بلا ما يسقسي كل خطوة</span></div>
+    <div class="minirow"><figure class="nd" data-i="1"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#pc"/></svg><figcaption><b>Claude</b><span>Code · Local · Auto</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="2"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#page"/></svg><figcaption><b>الميساج</b><span>لصق وإرسال</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="3"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#valise"/></svg><figcaption><b>الزيب</b><span>Claude يحلّو</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="4"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#term"/></svg><figcaption><b>الفنيترة</b><span>تنصّب كلش</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="5"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#cadenas"/></svg><figcaption><b>Autoriser</b><span>انت تضغط</span></figcaption></figure></div>
+  </div>
+  <div class="tbl-wrap"><table class="tbl" lang="fr" dir="ltr">
+    <caption>Ce que tu fais, et ce que tu dois voir</caption>
+    <thead><tr><th>Geste</th><th>Mac</th><th>Windows</th><th>Ce que tu dois voir</th></tr></thead>
+    <tbody>
+<tr><th>Copier les fichiers</th><td>dans Téléchargements</td><td>dans Téléchargements</td><td>les fichiers côte à côte ; le zip reste fermé</td></tr>
+<tr><th>Installer Claude</th><td>claude.com/download › Mac › glisser dans Applications</td><td>claude.com/download › Windows ; «&nbsp;Windows a protégé votre ordinateur&nbsp;» › Informations complémentaires › Exécuter quand même</td><td>l’app ouverte, ton nom en bas</td></tr>
+<tr><th>Onglet «&nbsp;Code&nbsp;»</th><td>«&nbsp;Local&nbsp;» › Select folder › Téléchargements › «&nbsp;Auto&nbsp;»</td><td>pareil</td><td>l’écran Code (pas «&nbsp;Upgrade&nbsp;»)</td></tr>
+<tr><th>Le message</th><td>ouvrir 2-MESSAGE, Cmd+A, Cmd+C, Cmd+V, Entrée</td><td>Ctrl+A, Ctrl+C, Ctrl+V, Entrée</td><td>Claude répond en darija et commence l’ÉTAPE 1</td></tr>
+<tr><th>ÉTAPE 1 : le zip (Claude)</th><td>ditto + xattr › ~/ecom-manita</td><td>Unblock-File + Expand-Archive › C:\Users\&lt;nom&gt;\ecom-manita</td><td>un dossier ecom-manita avec bureau, outils, plugin</td></tr>
+<tr><th>ÉTAPE 2 : la fenêtre (Claude)</th><td>Terminal : INSTALLER-MAC.command</td><td>PowerShell : installer-windows.ps1</td><td>«&nbsp;=== ecom manita : installation du bureau ===&nbsp;»</td></tr>
+<tr><th>La connexion (toi)</th><td>le navigateur s’ouvre sur claude.ai › Autoriser</td><td>pareil ; un code ? le coller dans la fenêtre + Entrée</td><td>la ligne connexion passe au vert</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="station" aria-labelledby="s2">
+  <div class="station-h"><span class="num">2</span><span class="step">الفنيترة</span><h2 id="s2">الفنيترة تكتب سطر بسطر، والسطر اللخراني هو الحكم</h2><span class="lat">VERDICT</span><span class="mod" title="الموديل في البلان">M19</span></div>
+  <aside class="rq" aria-label="رؤوس أقلام">
+    <p class="rq-h">رؤوس أقلام</p>
+    <ul>
+      <li><span class="n">2.1</span> كل سطر أخضر هو أداة تنصّبت : <span class="lat">Python</span>، <span class="lat">Node</span>، <span class="lat">ffmpeg</span>، التونال، و <span class="lat">Claude Code</span>.</li>
+      <li><span class="n">2.2</span> Claude يقرا الفيشي تاع الحالة وحدو، ويقولك وين راك.</li>
+      <li><span class="n">2.3</span> الصح هو «&nbsp;<span class="lat">VERDICT: INSTALLE</span>&nbsp;»، والصفحة تاع المكتب تتحل وحدها.</li>
+    </ul>
+  </aside>
+  <div class="pro" role="group" aria-label="الفنيترة">
+    <p class="box-h">الشيما</p>
+    <div class="chips"><span class="chip"><b class="lat">VERDICT</b>الحكم</span><span class="chip"><b class="lat">localhost:4620</b>المكتب</span></div>
+    <div class="minirow"><figure class="nd" data-i="1"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#machine"/></svg><figcaption><b>الأدوات</b><span>Python، Node، ffmpeg</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="2"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#cadenas"/></svg><figcaption><b>الكونيكسيون</b><span>Autoriser</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="3"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#agent"/></svg><figcaption><b>الأجونات</b><span>تتنصّبو</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="4"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#loupe"/></svg><figcaption><b>الفحص</b><span>الكونترولات</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="5"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#coupe"/></svg><figcaption><b>VERDICT</b><span>INSTALLE</span></figcaption></figure></div>
+  </div>
+  <div class="tbl-wrap"><table class="tbl" lang="fr" dir="ltr">
+    <caption>Les lignes de la fenêtre, dans l’ordre (fichier _ETAT-INSTALLATION.txt)</caption>
+    <thead><tr><th>Ligne</th><th>En vert, tu dois lire</th><th>Si rouge</th></tr></thead>
+    <tbody>
+<tr><th>macos: / windows:</th><td>la version du système, 64 bits</td><td>autre machine</td></tr>
+<tr><th>dossier:</th><td>le dossier ecom-manita</td><td>Claude refait l’ÉTAPE 1</td></tr>
+<tr><th>node:</th><td>node v24 (empreinte SHA-256 vérifiée)</td><td>internet ou antivirus : relancer</td></tr>
+<tr><th>python:</th><td>Python 3.13</td><td>Windows 1618 = une mise à jour en cours : attendre, relancer</td></tr>
+<tr><th>bibliotheques:</th><td>numpy, pillow, gdown, arabic-reshaper, python-bidi</td><td>relancer</td></tr>
+<tr><th>ffmpeg:</th><td>ffmpeg version 9</td><td>relancer ; Windows : antivirus ou Smart App Control</td></tr>
+<tr><th>cloudflared:</th><td>cloudflared version 2026</td><td>pas bloquant : R2 à la place</td></tr>
+<tr><th>claude:</th><td>Claude Code 2.1</td><td>internet : relancer</td></tr>
+<tr><th>connexion:</th><td>connecté à Claude</td><td>refaire «&nbsp;Autoriser&nbsp;», relancer</td></tr>
+<tr><th>reglages:</th><td>config.local.json et la maison ecom-manita-maison</td><td>—</td></tr>
+<tr><th>agents:</th><td>/ecom-manita:manager, editeur, page, testing, scaling, coach, spy…</td><td>Claude pose le plugin lui-même</td></tr>
+<tr><th>demarrage:</th><td>Mac : launchd · Windows : raccourci Démarrage + icône «&nbsp;ecom manita&nbsp;»</td><td>—</td></tr>
+<tr><th>sante:</th><td>ecom manita 0.3.8 sur http://localhost:4620</td><td>port pris : redémarrer, relancer</td></tr>
+<tr><th>epreuve:</th><td>✓ N/N contrôles passés (plusieurs minutes)</td><td>pas bloquant ; garder epreuve.log</td></tr>
+<tr><th>connecteurs:</th><td>A FAIRE : normal ici, ils viennent à l’ÉTAPE 3</td><td>—</td></tr>
+<tr><th>VERDICT:</th><td>VERDICT: INSTALLE + le navigateur s’ouvre sur le bureau</td><td>AVEC MANQUES / INCOMPLET : Claude lit les ECHEC, corrige, relance</td></tr>
+    </tbody>
+  </table></div>
+  <p class="mute">الفنيترة الصغيرة «&nbsp;ecom manita - le bureau&nbsp;» تبقى محلولة في البارة تحت. كي الجهاز يتشعل، المكتب يبدا وحدو.</p>
+</section>
+
+<section class="station" aria-labelledby="s3">
+  <div class="station-h"><span class="num">3</span><span class="step">الريغلاجات</span><h2 id="s3">Claude يسقسي، انت تجاوب</h2><span class="lat">Réglages</span><span class="mod" title="الموديل في البلان">M19</span></div>
+  <aside class="rq" aria-label="رؤوس أقلام">
+    <p class="rq-h">رؤوس أقلام</p>
+    <ul>
+      <li><span class="n">3.1</span> الكونيكتورات <span class="lat">Tassyir</span> و <span class="lat">Meta</span> في <span class="lat">claude.ai</span>، والكونتات والبوتيك.</li>
+      <li><span class="n">3.2</span> الأرقام سؤال بسؤال، والروبو تاع تيليغرام يبعث ميساج تجربة.</li>
+      <li><span class="n">3.3</span> فيديو تجربة يروح لميتا بلا حتى بوب، ومن بعد «&nbsp;افحص كلش&nbsp;» : كامل أخضر.</li>
+    </ul>
+  </aside>
+  <div class="pro" role="group" aria-label="الريغلاجات">
+    <p class="box-h">الشيما</p>
+    <div class="chips"><span class="chip"><b class="lat">Connecteur</b>الباب الرسمي</span><span class="chip"><b class="lat">BotFather</b>الروبو</span><span class="chip"><b class="lat">PASSE</b>نجح</span></div>
+    <div class="minirow"><figure class="nd" data-i="1"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#cadenas"/></svg><figcaption><b>الكونيكتورات</b><span>Tassyir وميتا</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="2"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#page"/></svg><figcaption><b>الكونتات</b><span>والبوتيك والولايات</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="3"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#cash"/></svg><figcaption><b>الأرقام</b><span>سؤال بسؤال</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="4"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#tel"/></svg><figcaption><b>الروبو</b><span>ميساج تجربة</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="5"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#studio"/></svg><figcaption><b>فيديو تجربة</b><span>لميتا، بلا بوب</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="6"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#coupe"/></svg><figcaption><b>افحص كلش</b><span>كامل PASSE</span></figcaption></figure></div>
+  </div>
+  <div class="tbl-wrap"><table class="tbl" lang="fr" dir="ltr">
+    <caption>Les étapes 3 à 9 du message, et le kit</caption>
+    <thead><tr><th>Étape</th><th>Ce que tu dois voir</th></tr></thead>
+    <tbody>
+<tr><th>3 · Connecteurs (claude.ai › Settings › Connectors › Ajouter un connecteur personnalisé)</th><td>Tassyir : https://api.tassyir.io/mcp · Meta Ads : https://mcp.facebook.com/ads ; la sonde trouve «&nbsp;tassyir&nbsp;» ET «&nbsp;meta&nbsp;»</td></tr>
+<tr><th>4 · Comptes, boutique, wilayas</th><td>la liste des comptes pub, pages, boutiques ; tu choisis la boutique d’ESSAI ; 25 wilayas du nord</td></tr>
+<tr><th>4 bis · Jeton Meta (optionnel)</th><td>pour le tournage : dire à Claude «&nbsp;فوت هاذ الخطوة&nbsp;» ; tout marche par le connecteur</td></tr>
+<tr><th>5 · Chiffres</th><td>dollar, budget max, emballage, livraison, retour, taux, code boutique, heure du rapport, jours atelier, créas par modèle</td></tr>
+<tr><th>6 · Robot Telegram</th><td>jeton BotFather collé dans «&nbsp;التحضير&nbsp;» (pas dans le chat), /start, le message d’essai arrive sur le téléphone</td></tr>
+<tr><th>7 · Dépôt + essai Meta</th><td>tunnel «&nbsp;PASSE&nbsp;», puis essai Meta «&nbsp;PASSE&nbsp;» : une mire de 5 s dans la bibliothèque, aucune pub</td></tr>
+<tr><th>8 · Musiques</th><td>la ligne «&nbsp;musiques&nbsp;» PASSE (10 morceaux de plus de 12 s)</td></tr>
+<tr><th>9 · Tout vérifier</th><td>chaque ligne PASSE ; sans jeton, les 2 lignes du jeton restent NON_VERIFIABLE</td></tr>
+<tr><th>Kit «&nbsp;النظام&nbsp;» (fichier 5-kit-ordre.zip)</th><td>ouvert, son message collé dans Claude Local, réponse «&nbsp;ORDRE INSTALLE&nbsp;»</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="station" aria-labelledby="s4">
+  <div class="station-h"><span class="num">4</span><span class="step">التجربة الأولى</span><h2 id="s4">السباي في المكتبة تاع ميتا</h2><span class="lat">Ad Library</span><span class="mod" title="الموديل في البلان">M4</span></div>
+  <aside class="rq" aria-label="رؤوس أقلام">
+    <p class="rq-h">رؤوس أقلام</p>
+    <ul>
+      <li><span class="n">4.1</span> ديسكيسيون جديدة في «&nbsp;<span class="lat">Code</span>&nbsp;»، تكتب <span class="lat">/ecom-manita:spy</span> وتلصق الميساج تاعو.</li>
+      <li><span class="n">4.2</span> كلمة وحدة : «&nbsp;<span class="lat">spy dz</span>&nbsp;». يقرا البوب تاع الدزاير في الشهر لي فات.</li>
+      <li><span class="n">4.3</span> يقرا برك : ما ينشر والو وما يمس حتى كونت.</li>
+    </ul>
+  </aside>
+  <div class="pro" role="group" aria-label="السباي">
+    <p class="box-h">الشيما</p>
+    <div class="chips"><span class="chip"><b class="lat">Ad Library</b>المكتبة تاع ميتا</span><span class="chip"><b class="lat">Spy</b>تشوف واش يديرو لخرين</span></div>
+    <div class="minirow"><figure class="nd" data-i="1"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#agent"/></svg><figcaption><b><span class="lat">/ecom-manita:spy</span></b><span>ديسكيسيون جديدة</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="2"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#page"/></svg><figcaption><b>الميساج</b><span>لصق</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="3"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#bulle"/></svg><figcaption><b>spy dz</b><span>كلمة وحدة</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="4"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#loupe"/></svg><figcaption><b>المكتبة</b><span>البوب تاع البلاد</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="5"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#cahier"/></svg><figcaption><b>الرابور</b><span>جداول وتصاور</span></figcaption></figure></div>
+  </div>
+  <div class="tbl-wrap"><table class="tbl" lang="fr" dir="ltr">
+    <caption>Ce que tu dois voir dans le rapport</caption>
+    <thead><tr><th>Partie</th><th>Contenu</th></tr></thead>
+    <tbody>
+<tr><th>Tableaux par verdict</th><td>en premier : les vendeurs SANS stock qui scalent après production</td></tr>
+<tr><th>Pour chaque boutique</th><td>la photo de ses deux modèles qui ont le plus de pubs, puis sa ligne : vagues, trous, jours en ligne, prix («&nbsp;prix ?&nbsp;» s’il n’est pas écrit)</td></tr>
+<tr><th>Pubs actives</th><td>«&nbsp;Pubs actives : N&nbsp;» ou «&nbsp;N (M lues)&nbsp;»</td></tr>
+<tr><th>Fin</th><td>deux ou trois phrases en darija ; une deuxième vérification avant de rendre</td></tr>
+<tr><th>Durée</th><td>de 15 à 40 min : filmer le lancement, couper, filmer le rapport</td></tr>
+    </tbody>
+  </table></div>
+  <details class="msg"><summary>الميساج تاع السباي، يتلصق بعد <span class="lat">/ecom-manita:spy</span></summary><pre lang="fr" dir="ltr">Tu es mon agent SPY. Lis la skill «&nbsp;/ecom-manita:spy&nbsp;» en entier avant de commencer.
+
+Ton travail, dès maintenant :
+
+1. Lance «&nbsp;spy dz&nbsp;» : applique les 7 étapes de la skill sur l'Algérie, fenêtre des 30 derniers jours.
+2. Rends-moi le résultat en tableaux, un par verdict, avec le lien de chaque page de pubs.
+3. Classe en premier les vendeurs SANS STOCK qui scalent après production : c'est le meilleur signal.
+4. Pour chaque vendeur, montre les vagues, CHAQUE trou entre deux vagues, et depuis combien de jours il est en ligne.
+5. Ne devine aucun prix : s'il n'est pas écrit dans la pub, écris «&nbsp;prix ?&nbsp;».
+6. Pour chaque boutique, dans l'ordre des verdicts, montre-moi la photo de ses deux modèles qui ont le plus de pubs (étape 5 bis de la skill), puis sa ligne du calcul (vagues, trous, en ligne, prix), puis «&nbsp;Pubs actives : N&nbsp;», ou «&nbsp;Pubs actives : N (M lues)&nbsp;» si la liste est coupée. Pas de nom de modèle sous la photo. Boutique sans photo : sa ligne seule.
+7. Vérifie par une deuxième méthode avant de rendre, comme dit l'étape 6 de la skill.
+8. Termine par deux ou trois phrases en darija, sans aucun chiffre dans les phrases arabes.
+
+Ensuite, à chaque fois que j'écris «&nbsp;spy&nbsp;» suivi d'un pays (dz, morocco, egypte, iraq, tunis), refais la même chose pour ce pays.
+
+Si le connecteur Meta Ads n'est pas branché, ou si mon compte publicitaire n'est pas actif, dis-le en une phrase et arrête-toi.</pre></details>
+</section>
+
+<section class="station" aria-labelledby="s5">
+  <div class="station-h"><span class="num">5</span><span class="step">التجربة الثانية</span><h2 id="s5">سباي الإنغاجمان في إنستغرام</h2><span class="lat">Engagement</span><span class="mod" title="الموديل في البلان">M5</span></div>
+  <aside class="rq" aria-label="رؤوس أقلام">
+    <p class="rq-h">رؤوس أقلام</p>
+    <ul>
+      <li><span class="n">5.1</span> ديسكيسيون جديدة، <span class="lat">/ecom-manita:engagement</span>، والميساج تاعو.</li>
+      <li><span class="n">5.2</span> المفتاح يتلصق في الفيشي <span class="lat">ig-spy.json</span>، ماشي في الشات. والبروفايلات في <span class="lat">profils.txt</span>.</li>
+      <li><span class="n">5.3</span> المشاهدات تقول واش يجبد الناس، ماشي واش يبيع.</li>
+    </ul>
+  </aside>
+  <div class="pro" role="group" aria-label="الإنغاجمان">
+    <p class="box-h">الشيما</p>
+    <div class="chips"><span class="chip"><b class="lat">Instagram</b></span><span class="chip"><b class="lat">Reels</b>الفيديوات</span><span class="chip"><b class="lat">Engagement</b>واش يجبد</span></div>
+    <div class="minirow"><figure class="nd" data-i="1"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#agent"/></svg><figcaption><b><span class="lat">/ecom-manita:engagement</span></b><span>ديسكيسيون جديدة</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="2"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#cadenas"/></svg><figcaption><b>المفتاح</b><span>في الفيشي، ماشي في الشات</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="3"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#oeil"/></svg><figcaption><b>البروفايلات</b><span>profils.txt</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="4"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#sablier"/></svg><figcaption><b>القراية</b><span>بالشوية</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="5"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#cahier"/></svg><figcaption><b>الجدول</b><span>وصفحة تتحل بكليك</span></figcaption></figure></div>
+  </div>
+  <div class="tbl-wrap"><table class="tbl" lang="fr" dir="ltr">
+    <caption>Ce que tu dois voir</caption>
+    <thead><tr><th>Moment</th><th>Mac</th><th>Windows</th></tr></thead>
+    <tbody>
+<tr><th>«&nbsp;preparer&nbsp;»</th><td>le dossier, ig-spy.json et profils.txt créés</td><td>pareil</td></tr>
+<tr><th>«&nbsp;cle&nbsp;»</th><td>ouvrir ig-spy.json avec TextEdit en «&nbsp;texte brut&nbsp;», coller la clé hors caméra</td><td>avec le Bloc-notes</td></tr>
+<tr><th>Python</th><td>python3</td><td>py</td></tr>
+<tr><th>«&nbsp;tout&nbsp;»</th><td>la lecture tourne en fond ; les pauses de Meta se font seules</td><td>pareil</td></tr>
+<tr><th>Le rendu</th><td>tableau : rang, profil avec lien, vidéos, total vues, pays lu ; un fichier texte et une page HTML</td><td>pareil</td></tr>
+<tr><th>Pour l’essai filmé</th><td>quelques profils seulement : la lecture ralentit quand Meta compte</td><td>pareil</td></tr>
+    </tbody>
+  </table></div>
+  <details class="msg"><summary>الميساج تاع الإنغاجمان، يتلصق بعد <span class="lat">/ecom-manita:engagement</span></summary><pre lang="fr" dir="ltr">Tu es mon agent ENGAGEMENT. Lis la skill «&nbsp;/ecom-manita:engagement&nbsp;» en entier avant de commencer.
+
+Ton travail, dès maintenant, sans attendre que je fasse quoi que ce soit :
+
+1. Lance «&nbsp;preparer&nbsp;» : crée mon dossier de travail, mon fichier de clé ig-spy.json et mon fichier profils.txt.
+2. Lance «&nbsp;cle&nbsp;». Si ma clé n'est pas encore remplie ou ne marche pas, donne-moi les étapes de la partie «&nbsp;LA CLÉ DU CLIENT&nbsp;» une par une, attends que je dise «&nbsp;c'est fait&nbsp;» après chacune, et dis-moi quel fichier ouvrir. Je colle ma clé dans ce fichier, JAMAIS dans la conversation. Ne m'affiche jamais mon jeton.
+3. Si profils.txt est vide, demande-moi ma liste de profils vêtement (je peux coller des noms ou des liens) et écris-la toi-même dans le fichier. N'invente aucun nom.
+4. Lance «&nbsp;tout&nbsp;» en tâche de fond (période : les 30 derniers jours). Les pauses de Meta se font toutes seules. Si Meta arrête la lecture, dis-le-moi en une phrase et relance la même commande plus tard : les profils déjà lus ne sont pas relus.
+5. Vérifie par les deux méthodes de la skill avant de rendre : «&nbsp;verifier&nbsp;» doit écrire PASSE, puis ouvre trois liens à l'œil si un navigateur est disponible (sinon écris «&nbsp;vérification à l'œil : NON VÉRIFIABLE&nbsp;»).
+6. Rends-moi : le tableau des profils classés (rang, profil avec lien, vidéos, total vues, pays lu), le chemin du fichier texte et de la page HTML à ouvrir d'un double-clic, et les profils en erreur.
+7. Rappelle que les vues de Meta mélangent pub et organique : ce sont des signes d'intérêt, pas des ventes.
+8. Termine par deux ou trois phrases en darija, sans aucun chiffre dans les phrases arabes.
+
+Ensuite, à chaque fois que j'écris «&nbsp;engagement&nbsp;» ou «&nbsp;spy profils&nbsp;», demande-moi la période (un mois, trois mois ou la saison de l'an passé), puis refais la même chose. Si j'ajoute des profils, ajoute-les à profils.txt et relance.
+
+Tu ne publies rien, tu ne touches à aucun compte, tu lis seulement.
+
+المفتاح تاعك تحطو غير في الفيشي، ماشي في الشات. أنا نقرا برك، ما ننشر والو وما نمس حتى كونت.</pre></details>
+</section>
+
+<section class="station" aria-labelledby="s6">
+  <div class="station-h"><span class="num">6</span><span class="step">التجربة الثالثة</span><h2 id="s6">لينك الدرايف للروبو</h2><span class="lat">Drive</span><span class="mod" title="الموديل في البلان">M7 · M17</span></div>
+  <aside class="rq" aria-label="رؤوس أقلام">
+    <p class="rq-h">رؤوس أقلام</p>
+    <ul>
+      <li><span class="n">6.1</span> لينك درايف واحد، عام، يتبعث للروبو تاع تيليغرام.</li>
+      <li><span class="n">6.2</span> الروبو يسقسي بالأزرار : شحال من موديل، تصويرة كل موديل، السومة والتايات.</li>
+      <li><span class="n">6.3</span> المكتب يمونتي، الصفحة تتنشر في بوتيك التجربة، والكومبانيا تتخلق محبوسة. وما تكتبش «&nbsp;لانسي&nbsp;».</li>
+    </ul>
+  </aside>
+  <div class="pro" role="group" aria-label="الدرايف">
+    <p class="box-h">الشيما</p>
+    <div class="chips"><span class="chip"><b class="lat">Drive</b>لينك عام</span><span class="chip"><b class="lat">PAUSED</b>محبوسة</span></div>
+    <div class="minirow"><figure class="nd" data-i="1"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#drive"/></svg><figcaption><b>لينك الدرايف</b><span>عام، واحد</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="2"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#tel"/></svg><figcaption><b>الروبو</b><span>يسقسي بالأزرار</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="3"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#studio"/></svg><figcaption><b>المونتاج</b><span>فيديوات لكل مانيكان</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="4"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#page"/></svg><figcaption><b>الصفحة</b><span>في بوتيك التجربة</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="5"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#cadenas"/></svg><figcaption><b>الكومبانيا</b><span>محبوسة</span></figcaption></figure></div>
+  </div>
+  <div class="tbl-wrap"><table class="tbl" lang="fr" dir="ltr">
+    <caption>Ce que tu dois voir</caption>
+    <thead><tr><th>Moment</th><th>Où</th></tr></thead>
+    <tbody>
+<tr><th>Partager le dossier Drive : «&nbsp;Tous les utilisateurs disposant du lien&nbsp;»</th><td>Google Drive</td></tr>
+<tr><th>Première question : combien de modèles</th><td>Telegram</td></tr>
+<tr><th>Une photo de chaque modèle trouvé, tu confirmes ; puis type, nom, couleurs, prix, tailles («&nbsp;même prix et mêmes tailles pour tout le lot ?&nbsp;» une seule fois)</th><td>Telegram</td></tr>
+<tr><th>Le montage avance</th><td>Telegram et http://localhost:4620 › «&nbsp;الموديلات&nbsp;»</td></tr>
+<tr><th>La page produit publiée</th><td>la boutique d’ESSAI dans Tassyir</td></tr>
+<tr><th>La campagne créée EN PAUSE, nom du modèle dans le tracking</th><td>Meta Ads Manager ; la question «&nbsp;لانسي&nbsp;» reste sans réponse</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="station" aria-labelledby="s7">
+  <div class="station-h"><span class="num">7</span><span class="step">البرهان</span><h2 id="s7">نفس النتيجة في الماك والويندوز</h2><span class="lat">Preuve</span><span class="mod" title="الموديل في البلان">M19</span></div>
+  <aside class="rq" aria-label="رؤوس أقلام">
+    <p class="rq-h">رؤوس أقلام</p>
+    <ul>
+      <li><span class="n">7.1</span> كل جهاز عندو نفس السطر اللخراني : «&nbsp;<span class="lat">VERDICT: INSTALLE</span>&nbsp;».</li>
+      <li><span class="n">7.2</span> نفس الأونغلي «&nbsp;التحضير&nbsp;» كامل أخضر، في الزوج.</li>
+      <li><span class="n">7.3</span> نفس الرابورات : السباي، الإنغاجمان، والألبوم تاع الدرايف.</li>
+    </ul>
+  </aside>
+  <div class="pro" role="group" aria-label="البرهان">
+    <p class="box-h">الشيما</p>
+    <div class="chips"><span class="chip"><b class="lat">Mac</b></span><span class="chip"><b class="lat">Windows</b></span></div>
+    <div class="minirow"><figure class="nd" data-i="1"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#pc"/></svg><figcaption><b>الماك</b><span>VERDICT: INSTALLE</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="2"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#pc"/></svg><figcaption><b>الويندوز</b><span>VERDICT: INSTALLE</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="3"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#loupe"/></svg><figcaption><b>السباي</b><span>الرابور</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="4"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#oeil"/></svg><figcaption><b>الإنغاجمان</b><span>الجدول</span></figcaption></figure><span class="ar" aria-hidden="true">←</span><figure class="nd" data-i="5"><svg viewBox="0 0 80 80" aria-hidden="true"><use href="#drive"/></svg><figcaption><b>الدرايف</b><span>الكومبانيا محبوسة</span></figcaption></figure></div>
+  </div>
+  <div class="tbl-wrap"><table class="tbl" lang="fr" dir="ltr">
+    <caption>Les plans à garder pour chaque machine</caption>
+    <thead><tr><th>Preuve</th><th>Où la filmer</th></tr></thead>
+    <tbody>
+<tr><th>VERDICT: INSTALLE</th><td>la fenêtre (Terminal ou PowerShell), et _ETAT-INSTALLATION.txt</td></tr>
+<tr><th>Tout en vert</th><td>http://localhost:4620 › «&nbsp;التحضير&nbsp;»</td></tr>
+<tr><th>Le rapport Ad Library</th><td>la discussion /ecom-manita:spy</td></tr>
+<tr><th>Le tableau engagement</th><td>la discussion /ecom-manita:engagement, et la page HTML</td></tr>
+<tr><th>Le lot Drive</th><td>Telegram, la boutique d’essai, Ads Manager (campagne en pause)</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<footer>
+  <p>الجزء الأول تاع التصوير : التنصيب والتجارب. الجزء الثاني يجي من بعد : كل أجون، كيفاش يخدم، واش يفيدك، وكيفاش تزيدلو ولا تبدّلو.</p>
+</footer>
+
+</div>
+
+<script>
+(function(){
+  document.querySelectorAll('button.copy').forEach(function(b){
+    var t=document.getElementById(b.getAttribute('data-copy')), lab=b.textContent;
+    b.addEventListener('click',function(){
+      function sel(){var r=document.createRange();r.selectNodeContents(t);var s=window.getSelection();s.removeAllRanges();s.addRange(r);b.textContent='تحدّد، انسخو';}
+      try{navigator.clipboard.writeText(t.textContent).then(function(){b.textContent='تنسخ';setTimeout(function(){b.textContent=lab;},1600);},sel);}catch(e){sel();}
+    });
+  });
+  document.querySelectorAll('.pro[data-say]').forEach(function(p){
+    var lines=[].slice.call(p.querySelectorAll('.say-list li')), nds=[].slice.call(p.querySelectorAll('.nd')),
+        t=p.querySelector('.say-t'), w=p.querySelector('.say-who'), n=p.querySelector('.say-n'), i=0;
+    function show(k){
+      i=Math.max(0,Math.min(lines.length-1,k)); var li=lines[i], key=li.getAttribute('data-i');
+      t.innerHTML=li.querySelector('.s').innerHTML; w.textContent=li.getAttribute('data-l');
+      n.textContent=(i+1)+' / '+lines.length;
+      nds.forEach(function(d){d.classList.toggle('on', d.getAttribute('data-i')===key);});
+    }
+    p.querySelector('.say-next').addEventListener('click',function(){show(i+1);});
+    p.querySelector('.say-prev').addEventListener('click',function(){show(i-1);});
+    nds.forEach(function(d){
+      d.setAttribute('tabindex','0'); d.setAttribute('role','button');
+      function go(){for(var k=0;k<lines.length;k++){if(lines[k].getAttribute('data-i')===d.getAttribute('data-i')){show(k);return;}}}
+      d.addEventListener('click',go);
+      d.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();go();}});
+    });
+    p.classList.add('js'); show(0);
+  });
+})();
+</script>
+
+</body></html>

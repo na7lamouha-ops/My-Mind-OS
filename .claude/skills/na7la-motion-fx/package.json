@@ -1,0 +1,9 @@
+{
+  "name": "hibai-motions",
+  "version": "1.0.0",
+  "description": "HibAI Motions by Hiba (@hibssssi): 16 short-form motion effects from your own clips.",
+  "private": true,
+  "dependencies": {
+    "puppeteer-core": "^22.15.0"
+  }
+}

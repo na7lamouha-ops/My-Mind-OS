@@ -1,0 +1,11 @@
+{
+  "nom": "ecom manita",
+  "port": 4620,
+  "modele": "sonnet",
+  "maison": "",
+  "atelier": "",
+  "telegram": { "token": "", "chat_id": "" },
+  "meta": { "jeton": "" },
+  "connecteurs": {},
+  "lectureSeuleVerifiee": "continuer"
+}

@@ -25,3 +25,22 @@
 .vercel
 next-env.d.ts
 tsconfig.tsbuildinfo
+
+# video skills
+.claude/skills/node_modules/
+.claude/skills/video-use/.env
+.claude/skills/**/__pycache__/
+__pycache__/
+# ecomanita
+ecomanita/bureau/config.local.json
+ecomanita/bureau/_dernier-tour-reel.json
+
+# personal media of the owner (reference photos, voice recordings, renders) — never committed
+content-studio/voice-agent/**/*.wav
+content-studio/voice-agent/**/*.mp3
+content-studio/voice-agent/**/*.m4a
+content-studio/avatar-lipsync/**/*.jpg
+content-studio/avatar-lipsync/**/*.jpeg
+content-studio/avatar-lipsync/**/*.png
+content-studio/avatar-lipsync/**/*.mp4
+content-studio/private/

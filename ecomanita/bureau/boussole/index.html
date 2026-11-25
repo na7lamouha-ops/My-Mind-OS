@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>بوصلة التاجر</title>
+<style>
+:root {
+  color-scheme: light dark;
+  --fond: #f6f1ea; --fond-2: #fffaf3; --fond-3: #efe6da;
+  --encre: #2b2622; --encre-2: #6b625a; --encre-3: #9a9087;
+  --trait: #e2d7c8; --trait-fort: #cdbfae;
+  --accent: #c8623c; --accent-encre: #ffffff;
+  --vert: #3e9c6a; --vert-fond: #e3f3ea;
+  --rouge: #cf4a3a; --rouge-fond: #f9e3df;
+  --orange: #e0912c; --orange-fond: #fbeedb;
+  --ombre: 0 1px 2px rgba(60, 40, 20, .08), 0 6px 18px rgba(60, 40, 20, .06);
+  --rayon: 12px;
+  --police: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Arabic", "Noto Naskh Arabic", "Geeza Pro", "DejaVu Sans", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --fond: #1d1a17; --fond-2: #27231f; --fond-3: #302b26;
+    --encre: #f1ebe3; --encre-2: #b9afa4; --encre-3: #857b71;
+    --trait: #3a342e; --trait-fort: #4d453d;
+    --accent: #e3885f; --accent-encre: #1d1a17;
+    --vert: #5cbf88; --vert-fond: #1f3a2c;
+    --rouge: #ee6a58; --rouge-fond: #45231f;
+    --orange: #f0a848; --orange-fond: #43301a;
+    --ombre: 0 1px 2px rgba(0, 0, 0, .35), 0 8px 24px rgba(0, 0, 0, .28);
+  }
+}
+:root[data-theme="dark"] {
+  --fond: #1d1a17; --fond-2: #27231f; --fond-3: #302b26;
+  --encre: #f1ebe3; --encre-2: #b9afa4; --encre-3: #857b71;
+  --trait: #3a342e; --trait-fort: #4d453d;
+  --accent: #e3885f; --accent-encre: #1d1a17;
+  --vert: #5cbf88; --vert-fond: #1f3a2c;
+  --rouge: #ee6a58; --rouge-fond: #45231f;
+  --orange: #f0a848; --orange-fond: #43301a;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--fond); color: var(--encre); font-family: var(--police); font-size: 15px; line-height: 1.55; }
+main { max-width: 1080px; margin: 0 auto; padding: 20px 16px 48px; }
+header { margin-bottom: 18px; }
+h1 { font-size: 24px; margin: 0 0 4px; }
+h2 { font-size: 16px; margin: 0 0 12px; }
+.sous { color: var(--encre-2); margin: 0; }
+.grille { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 16px; align-items: start; }
+@media (max-width: 860px) { .grille { grid-template-columns: minmax(0, 1fr); } }
+.carte { background: var(--fond-2); border: 1px solid var(--trait); border-radius: var(--rayon); box-shadow: var(--ombre); padding: 16px; margin-bottom: 16px; }
+.champs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 12px; }
+@media (max-width: 420px) { .champs { grid-template-columns: minmax(0, 1fr); } }
+.champ { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.champ.large { grid-column: 1 / -1; }
+.champ label { font-size: 13px; color: var(--encre-2); }
+.champ small { font-size: 12px; color: var(--encre-3); }
+.saisie { display: flex; align-items: stretch; border: 1px solid var(--trait-fort); border-radius: 9px; background: var(--fond); overflow: hidden; }
+.saisie:focus-within { border-color: var(--encre-2); box-shadow: 0 0 0 3px color-mix(in srgb, var(--encre-2) 18%, transparent); }
+.saisie input { flex: 1; min-width: 0; border: 0; background: transparent; padding: 8px 10px; font: inherit; color: inherit; outline: none; text-align: left; direction: ltr; font-variant-numeric: tabular-nums; }
+.saisie .unite { padding: 8px 10px; color: var(--encre-3); background: var(--fond-3); font-size: 13px; direction: ltr; display: flex; align-items: center; }
+.saisie[data-faux] { border-color: var(--rouge); }
+.duo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; }
+.verdict { border-radius: var(--rayon); padding: 14px 16px; margin-bottom: 16px; font-weight: 700; font-size: 17px; border: 1px solid transparent; }
+.verdict.gagne { background: var(--vert-fond); color: var(--vert); border-color: color-mix(in srgb, var(--vert) 35%, transparent); }
+.verdict.perd { background: var(--rouge-fond); color: var(--rouge); border-color: color-mix(in srgb, var(--rouge) 35%, transparent); }
+.verdict.attente { background: var(--fond-3); color: var(--encre-2); font-weight: 600; font-size: 15px; }
+.cles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+@media (max-width: 420px) { .cles { grid-template-columns: minmax(0, 1fr); } }
+.cle { background: var(--fond-2); border: 1px solid var(--trait); border-radius: var(--rayon); padding: 12px 14px; box-shadow: var(--ombre); }
+.cle .nom { font-size: 13px; color: var(--encre-2); }
+.cle .valeur { font-size: 22px; font-weight: 700; direction: ltr; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.cle .bis { font-size: 13px; color: var(--encre-3); direction: ltr; text-align: right; font-variant-numeric: tabular-nums; }
+.cle .aide { font-size: 12px; color: var(--encre-3); margin-top: 2px; }
+table { width: 100%; border-collapse: collapse; }
+td { padding: 7px 4px; border-bottom: 1px solid var(--trait); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+td.n { direction: ltr; text-align: left; white-space: nowrap; font-variant-numeric: tabular-nums; font-weight: 600; }
+td.n .bis { display: block; font-weight: 400; color: var(--encre-3); font-size: 12px; }
+td small { display: block; color: var(--encre-3); font-size: 12px; }
+tr.fort td { font-weight: 700; }
+.ligne-boutons { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+button { font: inherit; cursor: pointer; border: 1px solid var(--trait-fort); background: var(--fond); color: var(--encre); border-radius: 9px; padding: 7px 12px; }
+button:hover { border-color: var(--accent); }
+.note { color: var(--encre-3); font-size: 13px; margin: 6px 0 0; }
+.sortie li { margin: 4px 0; }
+.sortie { padding-inline-start: 18px; margin: 8px 0 0; }
+.etat { font-size: 12px; color: var(--encre-3); min-height: 1em; }
+footer { color: var(--encre-3); font-size: 13px; margin-top: 8px; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>بوصلة التاجر</h1>
+    <p class="sous">قبل ما تلانسي : شحال لازمك من كوموند، شحال تخيّط، وشحال تربح.</p>
+  </header>
+
+  <div class="grille">
+    <form id="saisies" class="carte" autocomplete="off" novalidate>
+      <h2>المنتوج</h2>
+      <div class="champs">
+        <div class="champ large"><label for="objectif">شحال تحب تربح فهاذ الموديل</label><div class="saisie"><input id="objectif" data-entier inputmode="decimal"><span class="unite">DA</span></div></div>
+        <div class="champ"><label for="prix">سومة البيع</label><div class="saisie"><input id="prix" data-entier inputmode="decimal"><span class="unite">DA</span></div></div>
+        <div class="champ"><label for="achat">سومة الشرا ولا الخياطة تاع الحبة</label><div class="saisie"><input id="achat" data-entier inputmode="decimal"><span class="unite">DA</span></div></div>
+        <div class="champ"><label for="emballage">التغليف تاع الحبة</label><div class="saisie"><input id="emballage" data-entier inputmode="decimal"><span class="unite">DA</span></div></div>
+        <div class="champ"><label for="livraison">التوصيل لي يخلص عليك</label><div class="saisie"><input id="livraison" data-entier inputmode="decimal"><span class="unite">DA</span></div></div>
+        <div class="champ"><label for="fraisCod">مصاريف الخلاص عند الاستلام</label><div class="saisie"><input id="fraisCod" data-entier inputmode="decimal"><span class="unite">DA</span></div></div>
+        <div class="champ"><label for="retour">الكولي لي يرجع : شحال يكلفك</label><div class="saisie"><input id="retour" data-entier inputmode="decimal"><span class="unite">DA</span></div></div>
+      </div>
+
+      <h2 style="margin-top:18px">النسب و البوب</h2>
+      <div class="champs">
+        <div class="champ"><label for="confirmation">التأكيد</label><div class="saisie"><input id="confirmation" inputmode="decimal"><span class="unite">%</span></div><small>من الكوموندات لي يدخلو : شحال يتأكدو</small></div>
+        <div class="champ"><label for="tauxLivraison">التوصيل</label><div class="saisie"><input id="tauxLivraison" inputmode="decimal"><span class="unite">%</span></div><small>من المأكدين : شحال يستلمو و يخلصو</small></div>
+        <div class="champ large"><label for="cplDollar">سومة الكوموند في ميتا</label>
+          <div class="duo">
+            <div class="saisie"><input id="cplDollar" inputmode="decimal"><span class="unite">$</span></div>
+            <div class="saisie"><input id="cpl" data-entier inputmode="decimal"><span class="unite">DA</span></div>
+          </div>
+          <small>اكتب وحدة برك : الأخرى تتحسب وحدها بالدولار تاعك.</small>
+        </div>
+        <div class="champ"><label for="surplus">الستوك الزايد</label><div class="saisie"><input id="surplus" inputmode="decimal"><span class="unite">%</span></div><small>فوق لي يوصلو، باش ما يخلاصش الستوك</small></div>
+        <div class="champ"><label for="taux">الدولار بقداش</label><div class="saisie"><input id="taux" inputmode="decimal"><span class="unite">DA</span></div><small>يتعمّر من التحضير تاع المكتب</small></div>
+      </div>
+      <div class="ligne-boutons">
+        <button type="button" id="depuis-reglages">جيب الأرقام تاع المكتب</button>
+        <button type="button" id="vider">فرّغ</button>
+      </div>
+      <p class="etat" id="etat"></p>
+    </form>
+
+
+    <section aria-live="polite">
+      <div class="verdict attente" id="verdict">عمّر الخانات، والبوصلة تحسب.</div>
+
+      <div class="carte">
+        <h2>السقف قبل ما تلانسي</h2>
+        <table>
+          <tr class="fort"><td>أقصى ثمن للكوموند المأكّدة<small>هذا هو اللي يحكم في التاست</small></td><td class="n" id="b-confirmee">—</td></tr>
+          <tr><td>في أسوأ حالة<small>التوصيل ينقص ثمن نقاط</small></td><td class="n" id="b-pire">—</td></tr>
+          <tr><td>أقصى ثمن لليد<small>كل كوموند تدخل، قبل التأكيد</small></td><td class="n" id="b-commande">—</td></tr>
+          <tr><td>أقصى ثمن للكولي الواصل<small>من بعد VALIDE</small></td><td class="n" id="b-livree">—</td></tr>
+        </table>
+      </div>
+
+      <div class="carte">
+        <h2>خطة التاست</h2>
+        <table>
+          <tr><td>البوجي في النهار</td><td class="n" id="b-budget">—</td></tr>
+          <tr><td>شحال من يوم</td><td class="n" id="b-jours">—</td></tr>
+          <tr><td>الحد : كي يوصل يحبس</td><td class="n" id="b-arret">—</td></tr>
+          <tr><td>بلا حتى ليد : يحبس عند</td><td class="n" id="b-zero">—</td></tr>
+        </table>
+        <p class="note">الحكم على المأكّدة، ماشي على اليوم الثالث.</p>
+      </div>
+
+      <div class="carte" id="carte-guide" hidden>
+        <h2>الطريق للهدف</h2>
+        <pre id="b-guide" style="white-space:pre-wrap;font-family:inherit;margin:0"></pre>
+      </div>
+
+      <footer>
+        <p id="b-version">كل رقم هنا من البوصلة.</p>
+        <p>الأرقام لي تكتبهم يبقاو في الجهاز تاعك برك.</p>
+      </footer>
+    </section>
+  </div>
+</main>
+
+<script>
+(function () {
+  'use strict';
+  // « الطالب 1.0 » (fix 7) : la page ne calcule RIEN. Elle envoie les champs au bureau, qui demande à la boussole 29.18
+  // (boussala_testweek pour le test, boussala_guide pour le chemin). Sans le bureau : pas de chiffre.
+  var $ = function (id) { return document.getElementById(id); };
+  var CLE = 'ecom-manita-boussole-v2';
+  var CHAMPS = ['objectif', 'prix', 'achat', 'emballage', 'livraison', 'fraisCod', 'retour', 'confirmation', 'tauxLivraison', 'cplDollar', 'cpl', 'surplus', 'taux'];
+  var ecrire = function (id, t) { var el = $(id); if (el) el.textContent = t; };
+  var nombre = function (x) { return Math.round(x).toLocaleString('fr-FR').replace(/ /g, ' '); };
+  var argent = function (id, da, usd) { var el = $(id); if (!el) return; el.textContent = nombre(da) + ' DA'; var s = document.createElement('span'); s.className = 'bis'; s.textContent = usd.toFixed(2) + ' $'; el.appendChild(s); };
+  function sauver() { try { var o = {}; CHAMPS.forEach(function (c) { o[c] = $(c).value; }); localStorage.setItem(CLE, JSON.stringify(o)); } catch (e) {} }
+  function restaurer() { try { var o = JSON.parse(localStorage.getItem(CLE) || 'null'); if (o) CHAMPS.forEach(function (c) { if (o[c] != null) $(c).value = o[c]; }); } catch (e) {} }
+  function vider() { ['b-confirmee', 'b-pire', 'b-commande', 'b-livree', 'b-budget', 'b-jours', 'b-arret', 'b-zero'].forEach(function (id) { ecrire(id, '—'); }); $('carte-guide').hidden = true; }
+  var minuteur = null;
+  function calculer() {
+    sauver();
+    clearTimeout(minuteur);
+    minuteur = setTimeout(envoyer, 350);
+  }
+  function envoyer() {
+    var v = $('verdict');
+    if (location.protocol === 'file:') { v.className = 'verdict attente'; v.textContent = 'افتح البوصلة من المكتب : هو اللي يحسب.'; return; }
+    var corps = {}; CHAMPS.forEach(function (c) { corps[c] = $(c).value; });
+    if ($('cplDollar').value && !$('cpl').value && $('taux').value) corps.cpl = String(Number($('cplDollar').value.replace(',', '.')) * Number($('taux').value.replace(',', '.')));
+    fetch('/api/boussole', { method: 'POST', headers: { 'content-type': 'application/json', 'x-manita': '1' }, body: JSON.stringify(corps) })
+      .then(function (r) { return r.json(); }).then(function (r) {
+        if (!r.ok) {
+          vider();
+          v.className = 'verdict attente';
+          v.textContent = r.cerveau === false ? 'العقل ما راهوش : البوصلة ما خدمتش.' : r.taux === false ? 'عمّر الدولار بقداش : البوصلة ما تحسبش بلاه.' : r.limites ? 'هاذ الموديل يخسر بهاذ الأرقام.' : 'عمّر الخانات، والبوصلة تحسب.';
+          if (r.limites && r.limites.ok === false) v.className = 'verdict perd';
+          return;
+        }
+        var L = r.limites, t = Number(corps.taux.replace(',', '.'));
+        v.className = 'verdict ' + (r.passe ? 'gagne' : 'perd');
+        v.textContent = r.passe ? 'هاذ الموديل يربح بهاذ الأرقام.' : 'هاذ الموديل يخسر بهاذ الأرقام.';
+        argent('b-confirmee', r.parConfirmeeDa, L.ceiling);
+        argent('b-pire', r.pireParConfirmeeDa, L.ceilingWorst);
+        argent('b-commande', r.parCommandeDa, L.maxLead);
+        argent('b-livree', r.parLivreeDa, r.parLivreeDa / t);
+        argent('b-budget', r.budgetRecommandeUsd * t, r.budgetRecommandeUsd);
+        ecrire('b-jours', String(r.joursRecommandes));
+        argent('b-arret', r.arretUsd * t, r.arretUsd);
+        argent('b-zero', r.zeroLeadStopUsd * t, r.zeroLeadStopUsd);
+        if (r.guide) { $('b-guide').textContent = r.guide; $('carte-guide').hidden = false; } else $('carte-guide').hidden = true;
+        ecrire('b-version', 'كل رقم هنا من البوصلة ' + r.version + '.');
+      }).catch(function () { v.className = 'verdict attente'; v.textContent = 'المكتب ما جاوبش : شعّل المكتب وعاود.'; });
+  }
+  function depuisReglages(remplacer) {
+    if (location.protocol === 'file:') return Promise.resolve();
+    return fetch('/api/reglages', { headers: { accept: 'application/json' } }).then(function (rep) { if (!rep.ok) throw new Error(rep.status); return rep.json(); }).then(function (r) {
+      var c = r.couts || {}, d = r.declare || {};
+      var poser = function (id, v) { if (v == null || v === '' || !isFinite(+v)) return; if (remplacer || $(id).value === '') $(id).value = String(+v); };
+      poser('emballage', c.emballage); poser('livraison', c.livraison); poser('fraisCod', c.fraisCod); poser('retour', c.retour);
+      poser('confirmation', d.confirmation); poser('tauxLivraison', d.livraison); poser('taux', r.taux);
+      ecrire('etat', 'الأرقام تاع المكتب راهم هنا.');
+      calculer();
+    }).catch(function () { ecrire('etat', 'المكتب ما جاوبش : اكتب الأرقام بيدك.'); });
+  }
+  CHAMPS.forEach(function (id) { $(id).addEventListener('input', calculer); });
+  $('depuis-reglages').addEventListener('click', function () { depuisReglages(true); });
+  $('vider').addEventListener('click', function () { CHAMPS.forEach(function (c) { $(c).value = ''; }); ecrire('etat', ''); try { localStorage.removeItem(CLE); } catch (e) {} vider(); });
+  $('saisies').addEventListener('submit', function (ev) { ev.preventDefault(); });
+  restaurer();
+  calculer();
+  depuisReglages(false);
+})();
+</script>
+</body>
+</html>

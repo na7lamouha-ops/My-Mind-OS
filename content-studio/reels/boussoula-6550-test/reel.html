@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>Boussoula 65/50 Test</title>
+<style>
+/* Brand = theme.ts › boussoula (IBM Plex Sans Arabic, gold on near-black). */
+@font-face{font-family:Plex;font-weight:500;src:url(assets/ibm-plex-sans-arabic-arabic-500-normal.woff2) format('woff2');unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+200C-200E,U+FB50-FDFF,U+FE70-FEFC}
+@font-face{font-family:Plex;font-weight:700;src:url(assets/ibm-plex-sans-arabic-arabic-700-normal.woff2) format('woff2');unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+200C-200E,U+FB50-FDFF,U+FE70-FEFC}
+@font-face{font-family:Plex;font-weight:500;src:url(assets/ibm-plex-sans-arabic-latin-500-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+2000-206F,U+2212}
+@font-face{font-family:Plex;font-weight:700;src:url(assets/ibm-plex-sans-arabic-latin-700-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+2000-206F,U+2212}
+:root{--bg:#0b0a10;--grid:rgba(255,255,255,.045);--surface:#18161f;--border:#2a2634;--text:#f0f0f5;--muted:#8d8a99;
+  --acc:#F5C542;--good:#2ee66f;--bad:#ff3b5c}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1080px;height:1920px;overflow:hidden;background:var(--bg)}
+body{font-family:Plex,sans-serif;color:var(--text);direction:rtl;font-weight:700}
+.abs{position:absolute}
+.ltr{direction:ltr;unicode-bidi:isolate;display:inline-block}
+#stage{position:absolute;inset:0;overflow:hidden;background:var(--bg)}
+#gridbg{position:absolute;inset:0;background-image:linear-gradient(var(--grid) 2px,transparent 2px),linear-gradient(90deg,var(--grid) 2px,transparent 2px);background-size:72px 72px}
+#glow{position:absolute;inset:0;background:radial-gradient(820px 820px at 50% 42%,rgba(245,197,66,.10),transparent 70%)}
+#progress{top:118px;left:80px;display:flex;gap:10px;direction:ltr}
+#progress i{width:56px;height:9px;border-radius:5px;background:var(--border);display:block}
+#progress i.on{background:var(--acc)}
+#brand{top:150px;left:80px;font-size:28px;color:var(--muted);display:flex;align-items:center;gap:10px;direction:rtl}
+#pill{top:100px;right:140px;background:var(--acc);color:var(--bg);font-size:36px;padding:6px 28px;border-radius:40px}
+#tag{top:178px;right:140px;font-size:26px;color:var(--muted);border:2px solid var(--border);padding:4px 18px;border-radius:30px;font-weight:500}
+.scene{position:absolute;inset:0;opacity:0}
+.t1,.t2{position:absolute;left:80px;right:140px;text-align:center;white-space:nowrap;line-height:1.25}
+.t1{top:250px;font-size:92px}
+.t2{top:380px;font-size:92px;color:var(--acc)}
+.vis{position:absolute;top:560px;left:80px;right:140px;height:620px}
+.col{position:absolute;top:0;bottom:0;width:380px;display:flex;flex-direction:column;align-items:center}
+.col.r{right:0}.col.l{left:0}
+.who{font-size:34px;color:var(--muted);font-weight:500}
+.card{width:340px;border-radius:30px;background:var(--surface);border:5px solid var(--border);text-align:center;padding:26px 0 22px}
+.card.bad{border-color:var(--bad)}.card.acc{border-color:var(--acc)}
+.big{font-size:100px;line-height:1.1}
+.sub{font-size:30px;color:var(--muted);font-weight:500}
+.chip{display:inline-block;padding:8px 26px;border-radius:40px;font-size:40px}
+.cnt{font-size:44px;margin-top:14px}
+#cash{position:absolute;top:-6px;left:20px;width:340px;text-align:center}
+#cash .chip{background:var(--good);color:var(--bg);font-size:52px;box-shadow:0 0 50px rgba(46,230,111,.45)}
+/* s1 funnel */
+.ship{margin-top:30px;font-size:48px;padding:14px 34px;border-radius:24px;background:var(--surface);border:4px solid var(--border)}
+.arrow{width:14px;height:120px;background:var(--border);position:relative;margin:26px 0 30px;border-radius:7px;transform-origin:50% 0}
+.arrow:after{content:'';position:absolute;left:50%;bottom:-22px;margin-left:-26px;border-left:26px solid transparent;border-right:26px solid transparent;border-top:30px solid var(--border)}
+.deliv{font-size:132px;line-height:1}
+.dl{font-size:36px;color:var(--muted);font-weight:500;margin-top:6px}
+#eq{position:absolute;left:50%;top:375px;width:110px;height:76px;margin-left:-55px}
+#eq i{position:absolute;left:0;right:0;height:22px;background:var(--acc);border-radius:11px;display:block;transform-origin:50% 50%}
+/* s2 boxes */
+.boxes{margin-top:24px;width:300px;height:424px;display:grid;grid-template-columns:repeat(5,52px);grid-auto-rows:52px;gap:10px;direction:rtl;align-content:end}
+.boxes i{display:block;border-radius:10px;background:var(--bad);opacity:0;position:relative;overflow:hidden}
+.boxes.acc i{background:var(--acc)}
+.boxes i.half{clip-path:inset(0 0 0 50%)}
+/* s3 bars */
+#bars{position:absolute;inset:0}
+.bar{position:absolute;bottom:70px;width:220px;border-radius:24px 24px 8px 8px;overflow:hidden}
+.bar .fill{position:absolute;left:0;right:0;bottom:0}
+#barR{right:80px}#barL{left:80px}
+#barR .fill{background:var(--bad)}#barL .fill{background:var(--acc)}
+#diff{position:absolute;left:0;right:0;top:0;background:var(--good)}
+.bv{position:absolute;width:380px;text-align:center;font-size:58px}
+.bk{position:absolute;bottom:0;width:380px;text-align:center;font-size:40px;color:var(--muted)}
+#plus{position:absolute;left:50%;top:-10px;transform:translateX(-50%);white-space:nowrap}
+#plus .chip{background:var(--good);color:var(--bg);font-size:56px;position:relative}
+#hl{position:absolute;left:10px;right:10px;bottom:-14px;height:12px;background:var(--acc);border-radius:6px;transform-origin:100% 50%}
+/* s4 recap */
+#from{position:absolute;top:60px;left:50%;transform:translateX(-50%);font-size:110px;color:var(--bad)}
+#strike{position:absolute;left:-20px;right:-20px;top:52%;height:14px;background:var(--text);border-radius:7px;transform-origin:100% 50%}
+#down{position:absolute;top:250px;left:50%;margin-left:-7px}
+#to{position:absolute;top:420px;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:64px;padding:22px 44px;border-radius:30px;background:var(--acc);color:var(--bg)}
+/* s5 CTA */
+#compass{position:absolute;top:10px;left:50%;width:250px;height:250px;margin-left:-125px}
+#link{position:absolute;top:310px;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:60px;padding:20px 46px;border-radius:30px;background:var(--surface);border:4px solid var(--acc)}
+#ask{position:absolute;top:480px;left:0;right:0;text-align:center;font-size:46px;color:var(--text)}
+/* captions */
+#cap{position:absolute;top:1250px;left:80px;right:140px;display:flex;justify-content:center;flex-wrap:wrap;gap:16px;min-height:90px}
+#cap span{font-size:64px;display:inline-block;opacity:0}
+#cap span.hi{background:var(--acc);color:var(--bg);padding:0 14px;border-radius:12px}
+#wipe{position:absolute;inset:0;background:var(--acc);transform:translateX(110%)}
+#inter{position:absolute;inset:0;background:var(--acc);color:var(--bg);opacity:0;display:flex;align-items:center;justify-content:center;text-align:center}
+#inter .in{font-size:104px;line-height:1.4;white-space:nowrap;margin-top:-120px}
+#inter b{display:inline-block;background:var(--bg);color:var(--acc);padding:0 34px;border-radius:22px;margin-top:24px}
+#fade{position:absolute;inset:0;background:#000;opacity:0}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="gridbg"></div><div id="glow"></div>
+  <div id="progress" class="abs"><i></i><i></i><i></i></div>
+  <div id="brand" class="abs"><svg width="30" height="30" viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" fill="none" stroke="#8d8a99" stroke-width="3"/><path d="M20 6 L25 20 L20 34 L15 20Z" fill="#F5C542"/></svg>البوصلة</div>
+  <div id="pill" class="abs"></div>
+  <div id="tag" class="abs">أرقام مثال · ماشي وعد</div>
+
+  <!-- S0 hook -->
+  <div class="scene" id="s0">
+    <div class="t1" id="s0t1"><span class="ltr">65/50</span> ولا <span class="ltr">50/65</span>؟</div>
+    <div class="t2" id="s0t2">نفس الطرود…</div>
+    <div class="vis">
+      <div class="col r" id="s0r"><div class="who">التاجر 1</div><div style="height:16px"></div>
+        <div class="card bad"><div class="big ltr">65/50</div><div class="sub">تأكيد / توصيل</div></div>
+        <div class="cnt"><span class="ltr" id="c0r">0</span> ليد</div></div>
+      <div class="col l" id="s0l"><div class="who">التاجر 2</div><div style="height:16px"></div>
+        <div class="card acc"><div class="big ltr">50/65</div><div class="sub">تأكيد / توصيل</div></div>
+        <div class="cnt"><span class="ltr" id="c0l">0</span> ليد</div></div>
+      <div id="cash" style="top:470px"><span class="chip"><span class="ltr">+10,500</span> دج</span></div>
+    </div>
+  </div>
+
+  <!-- S1 same delivered -->
+  <div class="scene" id="s1">
+    <div class="t1" id="s1t1">نفس الموصّل.</div>
+    <div class="t2" id="s1t2"><span class="ltr">32.5 = 32.5</span></div>
+    <div class="vis">
+      <div class="col r"><div class="ship" id="s1sr" style="border-color:var(--bad)"><span class="ltr">65</span> مبعوث</div>
+        <div class="arrow" id="s1ar"></div><div class="deliv ltr" id="s1dr">32.5</div><div class="dl" id="s1lr">موصّل</div></div>
+      <div class="col l"><div class="ship" id="s1sl" style="border-color:var(--acc)"><span class="ltr">50</span> مبعوث</div>
+        <div class="arrow" id="s1al"></div><div class="deliv ltr" id="s1dl">32.5</div><div class="dl" id="s1ll">موصّل</div></div>
+      <div id="eq"><i style="top:0"></i><i style="top:54px"></i></div>
+    </div>
+  </div>
+
+  <!-- S2 returns -->
+  <div class="scene" id="s2">
+    <div class="t1" id="s2t1">الراجع = هدف ملغى.</div>
+    <div class="t2" id="s2t2">ويخلّصك.</div>
+    <div class="vis">
+      <div class="col r"><div class="who"><span class="ltr">65/50</span></div><div class="boxes" id="bxr"></div>
+        <div class="cnt" style="color:var(--bad)"><span class="ltr" id="c2r">0</span> راجع</div></div>
+      <div class="col l"><div class="who"><span class="ltr">50/65</span></div><div class="boxes acc" id="bxl"></div>
+        <div class="cnt" style="color:var(--acc)"><span class="ltr" id="c2l">0</span> راجع</div></div>
+    </div>
+  </div>
+
+  <!-- S3 net -->
+  <div class="scene" id="s3">
+    <div class="t1" id="s3t1">الصافي.</div>
+    <div class="t2" id="s3t2">نفس <span class="ltr">100</span> ليد.</div>
+    <div class="vis"><div id="bars">
+      <div class="bv" id="bvR" style="right:0"><span class="ltr" id="c3r">0</span></div>
+      <div class="bv" id="bvL" style="left:0"><span class="ltr" id="c3l">0</span></div>
+      <div class="bar" id="barR"><div class="fill" id="fR"></div></div>
+      <div class="bar" id="barL"><div class="fill" id="fL"><div id="diff"></div></div></div>
+      <div class="bk" style="right:0"><span class="ltr">65/50</span></div>
+      <div class="bk" style="left:0"><span class="ltr">50/65</span></div>
+      <div id="plus"><span class="chip"><span class="ltr">+10,500</span> دج / <span class="ltr">100</span> ليد<i id="hl"></i></span></div>
+    </div></div>
+  </div>
+
+  <!-- S4 recap -->
+  <div class="scene" id="s4">
+    <div class="t1" id="s4t1">من قراية النسبة.</div>
+    <div class="t2" id="s4t2">لقراية الموصّل.</div>
+    <div class="vis">
+      <div id="from"><span class="ltr">65/50</span><i id="strike"></i></div>
+      <div class="arrow" id="down" style="background:var(--acc)"></div>
+      <div id="to">الربح على الموصّل</div>
+    </div>
+  </div>
+
+  <!-- S5 CTA -->
+  <div class="scene" id="s5">
+    <div class="t1" id="s5t1">احسبها في البوصلة.</div>
+    <div class="t2" id="s5t2">بأرقامك انت.</div>
+    <div class="vis">
+      <svg id="compass" viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="#18161f" stroke="#F5C542" stroke-width="4"/>
+        <circle cx="50" cy="50" r="36" fill="none" stroke="#2a2634" stroke-width="2" stroke-dasharray="2 5"/>
+        <g id="needle"><path d="M50 14 L58 50 L50 86 L42 50Z" fill="#2a2634"/><path d="M50 14 L58 50 L42 50Z" fill="#F5C542"/></g>
+        <circle cx="50" cy="50" r="5" fill="#f0f0f5"/></svg>
+      <div id="link"><span class="ltr">al-khaliya.space</span></div>
+      <div id="ask">وانت: <span class="ltr">65/50</span> ولا <span class="ltr">50/65</span>؟</div>
+    </div>
+  </div>
+
+  <div id="cap"></div>
+  <div id="inter"><div class="in">النسبة تسديدة…<br><b>الموصّل هدف.</b></div></div>
+  <div id="wipe"></div>
+  <div id="fade"></div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const cl=x=>Math.max(0,Math.min(1,x)), P=(t,a,b)=>cl((t-a)/(b-a));
+const eo=x=>1-Math.pow(1-x,3), eio=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+const eb=x=>{const c1=1.70158,c3=c1+1;return 1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2)};
+function rise(id,t,a,d=.4,dy=30){const p=eo(P(t,a,a+d));const e=$(id);e.style.opacity=p;e.style.transform=`translateY(${(1-p)*dy}px)`}
+function pop(id,t,a,d=.35,from=.6){const p=P(t,a,a+d);const e=$(id);e.style.opacity=Math.min(1,p*2);e.style.transform=`scale(${from+(1-from)*eb(p)})`}
+const nf=(v,dec=0)=>dec?v.toFixed(dec):Math.round(v).toLocaleString('en-US');
+function count(id,t,a,d,to,dec=0){$(id).textContent=nf(to*eo(P(t,a,a+d)),dec)}
+
+// ── timeline (s). Interrupt 10.3 → 11.8 = 55%–63% of 18.6 s ──
+const S=[[0,2.6],[2.6,6.0],[6.0,10.3],[10.3,11.8],[11.8,14.8],[14.8,16.4],[16.4,18.6]];
+const DUR=18.6, INT=3;
+const SCN=['s0','s1','s2',null,'s3','s4','s5'];
+const CH=[null,'01 · الموصّل','02 · الراجع',null,'03 · الصافي',null,null];
+const PROG=[0,1,2,2,3,3,3];
+const TAG=[1.3,14.8];            // «أرقام مثال» visible from the first money number to the last one
+// Captions = the voice-over lines (her voice slots onto these timings later). *word* = coloured word.
+const CAP=[
+ [0.30,1.30,'*100* ليد عند الجوج'],[1.30,2.55,'ماشي نفس *الدراهم*.'],
+ [2.80,4.20,'الأول يبعث 65، الثاني *50*.'],[4.20,5.95,'والجوج: *32.5* موصّل.'],
+ [6.20,8.20,'بصح الأول يرجعلو *32.5*'],[8.20,10.15,'والثاني غير *17.5* راجع.'],
+ [12.00,13.40,'92,000 ضد *102,500* دج'],[13.40,14.75,'*+10,500* دج في كل 100 ليد.'],
+ [15.00,16.35,'اقرا الربح على *الموصّل*.'],
+ [16.65,18.40,'وانت، الأول ولا *الثاني*؟']
+];
+
+// static builds: 32.5 and 17.5 returned parcels (last one is half)
+function boxes(id,n){const g=$(id);for(let i=0;i<Math.ceil(n);i++){const b=document.createElement('i');if(i===Math.ceil(n)-1&&n%1)b.className='half';g.appendChild(b)}}
+boxes('bxr',32.5);boxes('bxl',17.5);
+function fit(){document.querySelectorAll('.t1,.t2').forEach(e=>{let fs=parseFloat(getComputedStyle(e).fontSize);while(e.scrollWidth>e.clientWidth+1&&fs>40){fs-=2;e.style.fontSize=fs+'px'}})}
+const cap=$('cap');let capIdx=-2;
+function setCap(i){cap.innerHTML='';capIdx=i;if(i<0)return;
+  CAP[i][2].split(' ').forEach(w=>{const s=document.createElement('span');const hi=w.includes('*');s.textContent=w.replace(/\*/g,'');if(hi)s.className='hi';
+    if(/[/+A-Za-z]/.test(s.textContent)&&!/[\u0600-\u06FF]/.test(s.textContent)){s.style.direction='ltr';s.style.unicodeBidi='isolate'}cap.appendChild(s)})}
+
+const BAR_MAX=320;   // px for 102,500
+function render(t){
+  let k=S.findIndex(([a,b])=>t>=a&&t<b); if(k<0)k=S.length-1;
+  const a=S[k][0], lt=t-a;
+  SCN.forEach((id,i)=>{if(id)$(id).style.opacity=(i===k)?1:0});
+  $('pill').style.opacity=CH[k]?1:0; if(CH[k])$('pill').textContent=CH[k];
+  [...$('progress').children].forEach((e,i)=>e.className=i<PROG[k]?'on':'');
+  $('tag').style.opacity=(t>=TAG[0]&&t<TAG[1])?Math.min(1,(t-TAG[0])/0.2):0;
+  const id=SCN[k];
+  if(id){ if(k===0){$('s0t1').style.opacity=1;$('s0t1').style.transform=`scale(${1.06-0.06*eo(P(t,0,0.3))})`}  // hook text on frame 0
+          else rise(id+'t1',t,a+0.05,.35);
+          rise(id+'t2',t,a+(k===0?0.45:0.45),.4)}
+
+  if(k===0){pop('s0r',t,-0.2,.35,.7);pop('s0l',t,-0.1,.35,.7);
+    count('c0r',t,0.1,0.9,100);count('c0l',t,0.1,0.9,100);
+    pop('cash',t,1.4,.4,.4)}
+  if(k===1){pop('s1sr',t,a+0.2,.3);pop('s1sl',t,a+0.5,.3);
+    ['s1ar','s1al'].forEach((x,i)=>{const p=eo(P(t,a+0.8+i*0.15,a+1.2+i*0.15));$(x).style.transform=`scaleY(${p})`;$(x).style.opacity=p});
+    pop('s1dr',t,a+1.3,.35);pop('s1dl',t,a+1.6,.35);rise('s1lr',t,a+1.4,.3,15);rise('s1ll',t,a+1.7,.3,15);
+    count('s1dr',t,a+1.3,0.5,32.5,1);count('s1dl',t,a+1.6,0.5,32.5,1);
+    [...$('eq').children].forEach((x,i)=>{const p=eo(P(t,a+2.1+i*0.1,a+2.4+i*0.1));x.style.transform=`scaleX(${p})`})}
+  if(k===2){const bx=(gid,start,per)=>[...$(gid).children].forEach((e,i)=>{const p=P(t,start+i*per,start+i*per+0.12);e.style.opacity=p;e.style.transform=`translateY(${(1-eo(p))*-30}px)`});
+    bx('bxr',a+0.5,0.075);bx('bxl',a+0.5,0.075);
+    count('c2r',t,a+0.5,33*0.075,32.5,1);count('c2l',t,a+0.5,18*0.075,17.5,1)}
+  if(k===4){const g=eo(P(t,a+0.2,a+1.1));
+    const hR=BAR_MAX*92000/102500*g, hL=BAR_MAX*g;
+    $('barR').style.height=hR+'px';$('fR').style.height='100%';$('barL').style.height=hL+'px';$('fL').style.height='100%';
+    $('diff').style.height=(BAR_MAX*10500/102500*P(t,a+1.2,a+1.5))+'px';
+    $('bvR').style.bottom=(70+hR+10)+'px';$('bvL').style.bottom=(70+hL+10)+'px';
+    $('bvR').style.opacity=$('bvL').style.opacity=Math.min(1,g*3);
+    count('c3r',t,a+0.2,0.9,92000);count('c3l',t,a+0.2,0.9,102500);
+    pop('plus',t,a+1.55,.35,.5);$('plus').style.transform+=' translateX(-50%)';
+    $('hl').style.transform=`scaleX(${eo(P(t,a+1.95,a+2.2))})`}
+  if(k===5){pop('from',t,a+0.15,.3,.7);$('from').style.transform+=' translateX(-50%)';
+    $('strike').style.transform=`scaleX(${eo(P(t,a+0.45,a+0.7))})`;
+    const d=eo(P(t,a+0.6,a+0.9));$('down').style.transform=`scaleY(${d})`;$('down').style.opacity=d;
+    pop('to',t,a+0.85,.35,.6);$('to').style.transform+=' translateX(-50%)'}
+  if(k===6){pop('compass',t,a+0.15,.4,.5);
+    const sw=P(t,a+0.2,a+1.6);$('needle').setAttribute('transform',`rotate(${(1-eo(sw))*140*Math.cos(sw*9)} 50 50)`);
+    pop('link',t,a+0.5,.35,.7);$('link').style.transform+=' translateX(-50%)';rise('ask',t,a+0.8,.4)}
+
+  // interrupt: 8-frame fade, hard cut, sentence rises, box pops
+  const ti=S[INT][0];
+  $('fade').style.opacity=t<ti?0.85*P(t,ti-8/30,ti):0;
+  $('inter').style.opacity=k===INT?1:0;
+  if(k===INT){const p=eo(P(t,ti+0.05,ti+0.45));const g=$('inter').firstElementChild;g.style.opacity=p;g.style.transform=`translateY(${(1-p)*40}px)`;
+    const b=$('inter').querySelector('b');const q=eb(P(t,ti+0.55,ti+0.9));b.style.transform=`scale(${0.6+0.4*q})`;b.style.opacity=P(t,ti+0.55,ti+0.65)}
+
+  // 9-frame wipe at each change except into the interrupt (hard cut)
+  let wx=110;
+  for(let i=1;i<S.length;i++){if(i===INT)continue;const f=(t-(S[i][0]-4/30))*30;if(f>=0&&f<=9)wx=f<=4?110*(1-f/4):(f<=5?0:-110*(f-5)/4)}
+  $('wipe').style.transform=`translateX(${wx}%)`;
+
+  const ci=CAP.findIndex(c=>t>=c[0]&&t<c[1]);
+  if(ci!==capIdx)setCap(ci);
+  if(ci>=0){const [c0,c1]=CAP[ci];const sp=[...cap.children];const per=Math.min(.33,(c1-c0-.3)/sp.length);
+    sp.forEach((s,i)=>{const p=P(t,c0+i*per,c0+i*per+0.2);s.style.opacity=Math.min(1,p*1.5);s.style.transform=`translateY(${(1-eo(p))*18}px) scale(${.8+.2*eb(p)})`})}
+  cap.style.opacity=k===INT?0:1;
+  $('stage').style.opacity=1-P(t,DUR-0.3,DUR);
+}
+window.render=render; window.DUR=DUR; window.fit=fit;
+document.fonts.ready.then(fit);
+render(0);
+</script>
+</body>
+</html>
