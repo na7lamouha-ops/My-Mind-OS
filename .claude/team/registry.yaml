@@ -31,6 +31,10 @@ departments:
     name: "الديزاين"
     lead: design-director
     mission: "سلايدات الماتش 16:9، العناوين والكلمات، وحركات السلايدات (ecommanita-design-kit) — أمر «درس XX»"
+  social:
+    name: "المحتوى والسوشيال"
+    lead: na7la-content-team
+    mission: "ريلز وكاروسال وكابشن ويوتيوب لحسابات النحلة (البوصلة، ecomanita، tassyir، الشخصي) بـ RULE-01 وسكيلات na7la-*"
   course:
     name: "الدورة"
     lead: course-planner
@@ -222,3 +226,13 @@ agents:
     feeds: [ads-analyst]
     added: 2026-10-30
     why: "نقطة القوة تاع الدرس في بوستر، بالقالب برك"
+
+  # ---------------------------------------------------------------- social (from the Boussala session, 12–15/11)
+  na7la-content-team:
+    dept: social
+    role: "فريق محتوى الحسابات: ريلز بلا وجه، كابشن، إنستغرام ويوتيوب (قائد السوشيال)"
+    owns: [social.reel, social.carousel, social.caption, social.growth, social.youtube]
+    never: {video.opener: edprod-motion, course.lesson-edit: course-editor, video.qc-export: edprod-reviewer, product.cod-strategy: cod-strategist}
+    feeds: [ads-analyst]
+    added: 2026-11-15
+    why: "محتوى الحسابات كل نهار بقاعدة RULE-01 وreel-studio — تسجيلات حقيقية برك، بلا صوت مستنسخ ولا أفتار"

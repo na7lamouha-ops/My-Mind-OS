@@ -1,0 +1,6 @@
+# avatar photos + renders stay local (public repo)
+assets/av-*.png
+*.mp4
+*.wav
+stills/
+*.png

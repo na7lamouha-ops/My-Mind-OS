@@ -13,6 +13,7 @@ flowchart TB
   chief --> store["المتجر · tassyir-ops"]
   chief --> edprod["الفيديو · edprod"]
   chief --> design["الديزاين · design-director"]
+  chief --> social["المحتوى والسوشيال · na7la-content-team"]
   chief --> course["الدورة · course-planner"]
   chief --- team_manager("team-manager")
   growth --- ads_analyst("ads-analyst")
@@ -61,6 +62,7 @@ flowchart TB
   design_reviewer -.-> course_editor
   motion_designer -.-> course_editor
   promo_designer -.-> ads_analyst
+  social -.-> ads_analyst
 ```
 
 ## القيادة — القائد: `chief`
@@ -115,6 +117,14 @@ _سلايدات الماتش 16:9، العناوين والكلمات، وحرك
 | `design-reviewer` | بوابة السلايدات PASS/FAIL | `design.slides-qc` | motion-designer, course-editor | video.qc-export→edprod-reviewer | 2026-10-30 · حتى سلايد ما يخرج بلا ما يفوت على البوابة والعين |
 | `motion-designer` | موشن السلايدات: الحركات الخمسة | `design.slide-motion` | course-editor | video.render-motion→edprod-motion, video.opener→edprod-motion | 2026-10-30 · يحرّك السلايدات المصادقة: الصواعق، الشرارة، التمريرة، كرطة الحدث، الستائر |
 | `promo-designer` | الترويج الثابت: بوستر 4:5، كاروسال، ستوري | `design.promo-static` | ads-analyst | video.render-motion→edprod-motion, video.reel-template→edprod-motion, copy.titles→copywriter | 2026-10-30 · نقطة القوة تاع الدرس في بوستر، بالقالب برك |
+
+## المحتوى والسوشيال — القائد: `na7la-content-team`
+
+_ريلز وكاروسال وكابشن ويوتيوب لحسابات النحلة (البوصلة، ecomanita، tassyir، الشخصي) بـ RULE-01 وسكيلات na7la-*_
+
+| الوكيل | الدور | يملك | يعطي خدمتو لـ | ما يديرش (مولاها) | تزاد · علاش |
+|---|---|---|---|---|---|
+| `na7la-content-team` | فريق محتوى الحسابات: ريلز بلا وجه، كابشن، إنستغرام ويوتيوب (قائد السوشيال) | `social.reel`, `social.carousel`, `social.caption`, `social.growth`, `social.youtube` | ads-analyst | video.opener→edprod-motion, course.lesson-edit→course-editor, video.qc-export→edprod-reviewer, product.cod-strategy→cod-strategist | 2026-11-15 · محتوى الحسابات كل نهار بقاعدة RULE-01 وreel-studio — تسجيلات حقيقية برك، بلا صوت مستنسخ ولا أفتار |
 
 ## الدورة — القائد: `course-planner`
 
@@ -229,6 +239,11 @@ _محتوى الدورة ecommanita وتركيب الدروس من التسجي�
 | `product.cod-strategy` | `cod-strategist` |
 | `product.confirm-script` | `cod-strategist` |
 | `product.scale-cut` | `cod-strategist` |
+| `social.caption` | `na7la-content-team` |
+| `social.carousel` | `na7la-content-team` |
+| `social.growth` | `na7la-content-team` |
+| `social.reel` | `na7la-content-team` |
+| `social.youtube` | `na7la-content-team` |
 | `store.design` | `store-builder` |
 | `store.finance-report` | `tassyir-ops` |
 | `store.landing-page` | `store-builder` |
