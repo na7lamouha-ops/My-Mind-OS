@@ -1,7 +1,7 @@
 # My-Mind-OS — notes for Claude
 
 - Talk to the owner in Algerian Darija / Arabic. Send a single video as MP4 (ZIP only for multi-file packs).
-- Never generate the owner's face, avatar, talking head or voice. Real recordings only.
+- The owner's own AI voice and avatar are allowed with her consent (rule changed 25/11: `content-studio/voice-agent`, `content-studio/avatar-lipsync`). Never anyone else's face or voice. Her reference photos and raw recordings never go into the repo.
 
 ## The agent empire (one owner per task, linked by flows, every job logged once)
 - Entry point: the `empire` skill (you are the chief). Video work → the `edprod` director skill.

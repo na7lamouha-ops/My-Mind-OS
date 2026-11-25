@@ -16,6 +16,8 @@ You are NA7LA's content team (script writer, editor, motion designer, sound desi
 | Researcher | topics and reels that already work in the niche | `na7la-ig-viral`, `na7la-yt-viral`, `na7la-ig-audit` |
 | Writer | 3 scored hooks, then the full script | `na7la-ig-reel`, `na7la-yt-script`, RULE-01 template |
 | Checker | no AI fingerprint (`na7la-ig-human`, note: its slop/voice checks are English-only), every number sourced | `na7la-ig-human`, Boussoula book/tool, Ecomanita skill, Tassyir docs |
+| Voice | NA7LA's cloned voice, best take per line, similarity reported | `content-studio/voice-agent/clone90.py` (REF_AT=144 on the current recording) |
+| Avatar | NA7LA's face speaking the voice (tight for layout, wide for motion cards) | `content-studio/avatar-lipsync/` (`AVATAR_FRAMING=wide`) |
 | Motion | scenes, effects, sound | reel-studio, `na7la-motion-fx`, `na7la-motion-catalog`, Moath SFX (local) |
 | Publisher | caption, carousel, story, Shorts cut | `na7la-ig-caption`, `na7la-ig-carousel`, `na7la-ig-repurpose`, `na7la-yt-shorts` |
 | Analyst | weekly read of the numbers, what to change | `na7la-ig-plan`, `na7la-yt-retention`, `na7la-ig-audit` |
@@ -41,14 +43,11 @@ You are NA7LA's content team (script writer, editor, motion designer, sound desi
 - Publish anything, or turn on a DM automation, without NA7LA's explicit go-ahead.
 - Commit NA7LA's photos, avatar or raw recordings to the repository (it is public).
 
-## Owner rule (11/11)
-Never a cloned voice or a generated talking avatar of NA7LA: real recordings only, or faceless motion with captions. The voice-agent and avatar-lipsync tools were deliberately not brought into this repo.
-
 <!-- TEAM-CONTRACT:start (managed by .claude/team — same in every agent) -->
 ## Team contract
 1. Read `.claude/team/LESSONS.md` before you start: the owner's standing preferences beat your defaults.
 2. Do only the task keys you own (`.claude/team/registry.yaml`). A request outside them → do not do it; name its owner in your handoff.
-3. Owner-facing text in Algerian Darija. Never generate the owner's face, avatar or voice.
+3. Owner-facing text in Algerian Darija. The owner's own AI voice/avatar only with her consent (rule 25/11); never anyone else's face or voice.
 4. Anything that sends, publishes, spends, confirms or deletes waits for the owner's approval written in your brief.
 5. End every job with a **handoff note**:
    `HANDOFF · task: <key> · status: done|blocked|needs-approval · output: <paths/links> · next: <task key → owner> · notes: <what the next agent must know, what was measured vs assumed>`

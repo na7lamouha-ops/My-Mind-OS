@@ -124,7 +124,7 @@ _ريلز وكاروسال وكابشن ويوتيوب لحسابات النحل
 
 | الوكيل | الدور | يملك | يعطي خدمتو لـ | ما يديرش (مولاها) | تزاد · علاش |
 |---|---|---|---|---|---|
-| `na7la-content-team` | فريق محتوى الحسابات: ريلز بلا وجه، كابشن، إنستغرام ويوتيوب (قائد السوشيال) | `social.reel`, `social.carousel`, `social.caption`, `social.growth`, `social.youtube` | ads-analyst | video.opener→edprod-motion, course.lesson-edit→course-editor, video.qc-export→edprod-reviewer, product.cod-strategy→cod-strategist | 2026-11-15 · محتوى الحسابات كل نهار بقاعدة RULE-01 وreel-studio — تسجيلات حقيقية برك، بلا صوت مستنسخ ولا أفتار |
+| `na7la-content-team` | فريق محتوى الحسابات: ريلز بلا وجه، كابشن، إنستغرام ويوتيوب (قائد السوشيال) | `social.reel`, `social.carousel`, `social.caption`, `social.growth`, `social.youtube` | ads-analyst | video.opener→edprod-motion, course.lesson-edit→course-editor, video.qc-export→edprod-reviewer, product.cod-strategy→cod-strategist | 2026-11-15 · محتوى الحسابات كل نهار بقاعدة RULE-01 وreel-studio، بصوت النحلة وأفتارها بموافقتها |
 
 ## الدورة — القائد: `course-planner`
 

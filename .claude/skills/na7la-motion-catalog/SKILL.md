@@ -5,7 +5,7 @@ description: "Catalogue of 26 motion-graphics effects for NA7LA's reels (Orbit, 
 
 # NA7LA motion catalogue (26 effects)
 
-Effect list and «when to use» ideas inspired by Moath Alherani's public guide (moathalherani.com/ar/claude-motion-graphics); descriptions rewritten. Build every effect on NA7LA's own real footage (no generated avatar), in the account's colours. Pair it with RULE-01 (`content-studio/RULE-01-reel-charah.md`).
+Effect list and «when to use» ideas inspired by Moath Alherani's public guide (moathalherani.com/ar/claude-motion-graphics); descriptions rewritten. Build every effect on NA7LA's own footage/avatar, in the account's colours. Pair it with RULE-01 (`content-studio/RULE-01-reel-charah.md`).
 
 | # | Effect | What it does | Use it when | Built by |
 |---|---|---|---|---|
@@ -44,7 +44,7 @@ You are NA7LA's motion editor working in code. Video: [file]. In it I say effect
 Make a vertical 1080x1920 reel.
 1) Transcribe word by word (Whisper turbo, ar), cut silences and retakes, keep shots where I look at the camera.
 2) When I say an effect name from na7la-motion-catalog, run it the moment the word ends, no gap.
-3) Run each effect on a shot from [folder] (my older real clips), chosen to show what the effect is for:
+3) Run each effect on a shot from [folder] (my older clips / avatar), chosen to show what the effect is for:
    Chart Grow on numbers, Phone Mockup on a Tassyir screen, Zoom Through between two shots.
 4) Before/after: small card RAW (original), large EDITED (with effect).
 5) Under each effect two lines in Algerian Darija: what it does, when to use it.

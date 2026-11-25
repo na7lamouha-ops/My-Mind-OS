@@ -13,7 +13,7 @@ description: "HibAI Motions by Hiba (@hibssssi): turns the user's own talking-he
 ## NA7LA defaults (use unless the user says otherwise)
 - `theme`: `{"brand": "NA7LA", "accent": "#FFD24C", "handle": "na7la", "fontAr": "fonts/Tajawal-ExtraBold.ttf", "fontEn": "fonts/Tajawal-Bold.ttf"}`. Copy the Tajawal files from `content-studio/reels/boussoula-target/assets/` into `<project>/fonts/`. Ask NA7LA for the real handle and avatar before publishing.
 - Account colours: Boussoula `#FFD24C` on black; Ecomanita / Tassyir use their theme in `content-studio/reel-studio/src/theme.ts`.
-- Source clip: NA7LA's own real recording only (never a generated talking avatar or cloned voice — owner rule 11/11).
+- Source clip: NA7LA's own recording, or the talking-avatar video from `content-studio/avatar-lipsync/` (front-facing, mouth moving).
 - This cloud container: `CHROME_PATH=/opt/pw-browsers/chromium-1243/chrome-linux64/chrome`.
 - Sound on top of the cards: the Moath SFX pack (`content-studio/reel-studio/public/sfx-moath/`, local only) following RULE-01 §5.
 
